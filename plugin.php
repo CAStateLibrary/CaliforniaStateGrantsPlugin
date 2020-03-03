@@ -21,6 +21,7 @@ define( 'CSL_GRANTS_SUBMISSIONS_INC', CSL_GRANTS_SUBMISSIONS_PATH . 'includes/' 
 // Include files.
 require_once CSL_GRANTS_SUBMISSIONS_INC . 'functions/core.php';
 require_once CSL_GRANTS_SUBMISSIONS_INC . 'functions/cpt-grants.php';
+require_once CSL_GRANTS_SUBMISSIONS_INC . 'functions/metaboxes.php';
 
 // Activation/Deactivation.
 register_activation_hook( __FILE__, '\CslGrantsSubmissions\Core\activate' );
@@ -29,6 +30,7 @@ register_deactivation_hook( __FILE__, '\CslGrantsSubmissions\Core\deactivate' );
 // Bootstrap.
 CslGrantsSubmissions\Core\setup();
 CslGrantsSubmissions\CPT\Grants\setup();
+CslGrantsSubmissions\Metaboxes\setup();
 
 // Require Composer autoloader if it exists.
 if ( file_exists( CSL_GRANTS_SUBMISSIONS_PATH . '/vendor/autoload.php' ) ) {

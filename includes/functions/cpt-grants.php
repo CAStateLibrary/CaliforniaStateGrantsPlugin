@@ -21,7 +21,24 @@ function setup() {
 	};
 
 	add_action( 'init', $n( 'register' ) );
+	add_filter( 'use_block_editor_for_post_type', $n( 'disable_block_editor' ), 10, 2 );
 };
+
+/**
+ * Disables the block editor for this post type.
+ *
+ * @param bool $use
+ * @param string $post_type
+ *
+ * @return bool
+ */
+function disable_block_editor( $use, $post_type ) {
+	if ( POST_TYPE === $post_type ) {
+		return false;
+	}
+
+	return $use;
+}
 
 /**
  * Registers the post type.
