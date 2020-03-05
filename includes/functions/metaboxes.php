@@ -38,7 +38,28 @@ function add_metaboxes() {
  * Handles the save post action.
  */
 function save_post() {
+	if ( ! isset( $_POST[ NONCE_FIELD ] ) || ! wp_verify_nonce( $_POST[ NONCE_FIELD ], NONCE_ACTION ) || empty( $_POST['csl_items'] ) ) {
+		return;
+	}
 
+	$meta = [];
+	foreach( $_POST['csl_items'] as $meta_key => $value ) {
+		switch( $meta_key ) {
+			case 'grant_purpose':
+			case 'grant_description':
+			case 'elegibility_notes':
+			case 'elegibility_geographic':
+			case 'revenue_source_notes':
+			case 'matched_funding_notes':
+				$value = wp_kses_post( $value );
+				break;
+			default:
+				$value = sanitize_text_field( $value );
+				break;
+		}
+
+		$meta[ $meta_key ] = $value;
+	}
 }
 
 /**
@@ -85,10 +106,10 @@ function api_revenue_sources() {
  */
 function api_grant_categories() {
 	?>
-	<label for=""><input type="checkbox" name="csl_items[grant_categories]"><?php esc_html_e( 'Agriculture', 'csl-grants-submissions' ); ?></label>
-	<label for=""><input type="checkbox" name="csl_items[grant_categories]"><?php esc_html_e( 'Arts', 'csl-grants-submissions' ); ?></label>
-	<label for=""><input type="checkbox" name="csl_items[grant_categories]"><?php esc_html_e( 'Business & Commerce', 'csl-grants-submissions' ); ?></label>
-	<label for=""><input type="checkbox" name="csl_items[grant_categories]"><?php esc_html_e( 'Education', 'csl-grants-submissions' ); ?></label>
+	<label for=""><input type="checkbox" name="csl_items[grant_categories][]" value="agriculture"><?php esc_html_e( 'Agriculture', 'csl-grants-submissions' ); ?></label>
+	<label for=""><input type="checkbox" name="csl_items[grant_categories][]" value="arts"><?php esc_html_e( 'Arts', 'csl-grants-submissions' ); ?></label>
+	<label for=""><input type="checkbox" name="csl_items[grant_categories][]" value="business-commerce"><?php esc_html_e( 'Business & Commerce', 'csl-grants-submissions' ); ?></label>
+	<label for=""><input type="checkbox" name="csl_items[grant_categories][]" value="education"><?php esc_html_e( 'Education', 'csl-grants-submissions' ); ?></label>
 	<?php
 }
 
@@ -109,7 +130,7 @@ function render_metabox() {
 	?>
 	<p>
 		<label for="grant_id"><?php esc_html_e( 'Grant ID', 'csl-grants-submissions' ); ?></label>
-		<input type="text" id="grant_id">
+		<input type="text" id="grant_id" name="csl_items[grant_id]">
 	</p>
 	<p>
 		<label for="grant_agency"><?php esc_html_e( 'Grant Agency', 'csl-grants-submissions' ); ?></label>
@@ -148,7 +169,6 @@ function render_metabox() {
 	</p>
 	<p>
 		<span class="label"><?php esc_html_e( 'Applicant Type', 'csl-grants-submissions' ); ?></span>
-		<!--TODO: Get applicant types from API-->
 		<label><input type="checkbox" name="csl_items[applicant_type][]" value="any"><?php esc_html_e( 'Any', 'csl-grants-submissions' ); ?></label>
 		<?php api_applicant_types(); ?>
 	</p>
@@ -192,11 +212,11 @@ function render_metabox() {
 		</span>
 		<span class="group">
 			<label>
-				<input type="radio" name="csl_items[award_type][type]" value="between"><?php esc_html_e( 'Between', 'csl-grants-submissions'); ?>
+				<input type="radio" name="csl_items[award_type][type][between]" value="between"><?php esc_html_e( 'Between', 'csl-grants-submissions'); ?>
 			</label>
-			<input type="number" name="csl_items[award_type][type][values][low]" value="">
+			<input type="number" name="csl_items[award_type][type][between][values][low]" value="">
 			<?php esc_html_x( 'and', 'Exactly between X and Y', 'csl-grants-submissions' ); ?>
-			<input type="number" name="csl_items[award_type][type][values][high]" value="">
+			<input type="number" name="csl_items[award_type][type][between][values][high]" value="">
 		</span>
 		<label><input type="radio" name="csl_items[award_type][type]" value="dependant"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc...', 'csl-grants-submissions' ); ?></label>
 		<input type="number" name="csl_items[award_type][estimated]" placeholder="<?php esc_html_e( 'Enter award amount(s)', 'csl-grants-submissions' ); ?>">
@@ -221,6 +241,10 @@ function render_metabox() {
 		<input type="number" name="csl_items[period_of_performance]">
 		<select name="csl_items[period_of_performance_type]">
 			<option value=""><?php esc_html_e( 'Select time unit' ); ?></option>
+			<option value="day"><?php esc_html_e( 'Days', 'csl-grants-submissions' ); ?></option>
+			<option value="week"><?php esc_html_e( 'Weeks', 'csl-grants-submissions' ); ?></option>
+			<option value="month"><?php esc_html_e( 'Months', 'csl-grants-submissions' ); ?></option>
+			<option value="year"><?php esc_html_e( 'Year', 'csl-grants-submissions' ); ?></option>
 		</select>
 	</p>
 	<p>
