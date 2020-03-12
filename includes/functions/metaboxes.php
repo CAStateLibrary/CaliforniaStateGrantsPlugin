@@ -64,6 +64,8 @@ function save_post( $post_id ) {
 
 	if ( ! empty( $meta_fields ) ) {
 		foreach ( $meta_fields as $meta_field ) {
+			$value = array();
+
 			switch ( $meta_field['type'] ) {
 				case 'email':
 					$value = sanitize_email( $_POST[ $meta_field['id'] ] );
@@ -78,10 +80,8 @@ function save_post( $post_id ) {
 					$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
 					break;
 				case 'point_of_contact':
-					$value          = $_POST[ $meta_field['id'] ];
-					$value['name']  = ( isset( $value['name'] ) ) ? sanitize_text_field( $value['name'] ) : '';
-					$value['tel']   = ( isset( $value['tel'] ) ) ? sanitize_text_field( $value['tel'] ) : '';
-					$value['email'] = ( isset( $value['email'] ) ) ? sanitize_email( $value['email'] ) : '';
+					$value = $_POST[ $meta_field['id'] ];
+					array_walk( $value, 'sanitize_text_field' );
 					break;
 				case 'datetime-local':
 					$value = $_POST[ $meta_field['id'] ];
@@ -94,81 +94,65 @@ function save_post( $post_id ) {
 					);
 					break;
 				case 'estimated-number-awards':
-					$temp             = $_POST[ $meta_field['id'] ];
-					$temp['checkbox'] = ( isset( $temp['checkbox'] ) ) ? sanitize_text_field( $temp['checkbox'] ) : '';
-
-					if ( 'exact' === $temp['checkbox'] ) {
-						$value = array(
-							'checkbox' => $temp['checkbox'],
-							'exact'    => ( isset( $temp['exact'] ) ) ? absint( $temp['exact'] ) : '',
-						);
-					} elseif ( 'between' === $temp['checkbox'] ) {
-						$temp = array(
-							'checkbox' => $temp['checkbox'],
-						);
-
-						$temp['between']['low']  = ( isset( $temp['between']['low'] ) ) ? absint( $temp['between']['low'] ) : '';
-						$temp['between']['high'] = ( isset( $temp['between']['high'] ) ) ? absint( $temp['between']['high'] ) : '';
-
-						$value = $temp;
-					} elseif ( 'dependant' === $temp['checkbox'] ) {
-						$value = array(
-							'checkbox' => $temp['checkbox'],
-						);
-					} else {
-						$value = '';
-					}
-
-					break;
-				case 'estimated-award-amounts':
-					$temp             = $_POST[ $meta_field['id'] ];
-					$temp['checkbox'] = ( isset( $temp['checkbox'] ) ) ? sanitize_text_field( $temp['checkbox'] ) : '';
-
-					if ( 'same' === $temp['checkbox'] ) {
-						$value = array(
-							'checkbox' => $temp['checkbox'],
-						);
-
-						$value['same']['amount'] = ( isset( $temp['same']['amount'] ) ) ? absint( $temp['same']['amount'] ) : '';
-					} elseif ( 'different' === $temp['checkbox'] ) {
-						$value = array(
-							'checkbox' => $temp['checkbox'],
-						);
-
-						$value['different']['first']  = ( isset( $temp['different']['first'] ) ) ? absint( $temp['different']['first'] ) : '';
-						$value['different']['second'] = ( isset( $temp['different']['second'] ) ) ? absint( $temp['different']['second'] ) : '';
-						$value['different']['third']  = ( isset( $temp['different']['third'] ) ) ? absint( $temp['different']['third'] ) : '';
-					} elseif ( 'unknown' === $temp['checkbox'] ) {
-						$value = array(
-							'checkbox' => $temp['checkbox'],
-						);
-
-						$value['unknown']['first']  = ( isset( $temp['unknown']['first'] ) ) ? absint( $temp['unknown']['first'] ) : '';
-						$value['unknown']['second'] = ( isset( $temp['unknown']['second'] ) ) ? absint( $temp['unknown']['second'] ) : '';
-					} elseif ( 'dependant' === $temp['checkbox'] ) {
-						$value = array(
-							'checkbox' => $temp['checkbox'],
-						);
-					} else {
-						$value = '';
-					}
-
-					break;
-				case 'period-performance':
 					$value = $_POST[ $meta_field['id'] ];
 
-					if ( is_array( $value ) ) {
-						$value['num']   = absint( $value['num'] );
-						$value['units'] = sanitize_text_field( $value['units'] );
-					} else {
-						$value = '';
+					if ( 'exact' === $value['checkbox'] ) {
+						$value['between']['low']  = '';
+						$value['between']['high'] = '';
+					} elseif ( 'between' === $value['checkbox'] ) {
+						$value['exact'] = '';
+					} elseif ( 'dependant' === $value['checkbox'] ) {
+						$value['between']['low']  = '';
+						$value['between']['high'] = '';
+						$value['exact']           = '';
 					}
 
+					array_walk( $value, 'sanitize_text_field' );
+					break;
+				case 'estimated-award-amounts':
+					$value            = $_POST[ $meta_field['id'] ];
+					$temp['checkbox'] = ( isset( $temp['checkbox'] ) ) ? sanitize_text_field( $temp['checkbox'] ) : '';
+
+					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
+					if ( 'same' === $temp['checkbox'] ) {
+						$value['unknown']['first']    = '';
+						$value['unknown']['second']   = '';
+						$value['different']['first']  = '';
+						$value['different']['second'] = '';
+						$value['different']['third']  = '';
+					} elseif ( 'different' === $temp['checkbox'] ) {
+						$value['unknown']['first']  = '';
+						$value['unknown']['second'] = '';
+						$value['same']['amount']    = '';
+					} elseif ( 'unknown' === $temp['checkbox'] ) {
+						$value['different']['first']  = '';
+						$value['different']['second'] = '';
+						$value['different']['third']  = '';
+						$value['same']['amount']      = '';
+					} elseif ( 'dependant' === $temp['checkbox'] ) {
+						$value['unknown']['first']    = '';
+						$value['unknown']['second']   = '';
+						$value['different']['first']  = '';
+						$value['different']['second'] = '';
+						$value['different']['third']  = '';
+						$value['same']['amount']      = '';
+					}
+
+					array_walk( $value, 'sanitize_text_field' );
+					break;
+				case 'period-performance':
+					$value          = $_POST[ $meta_field['id'] ];
+					$value['num']   = ( isset( $value['num'] ) ) ? absint( $value['num'] ) : '';
+					$value['units'] = ( isset( $value['units'] ) ) ? sanitize_text_field( $value['units'] ) : '';
 					break;
 				case 'electronic-submission-method':
 					$value          = $_POST[ $meta_field['id'] ];
 					$value['email'] = ( isset( $value['email'] ) ) ? sanitize_email( $value['email'] ) : '';
 					$value['url']   = ( isset( $value['url'] ) ) ? esc_url_raw( $value['url'] ) : '';
+					break;
+				case 'application-deadline':
+					$value = $_POST[ $meta_field['id'] ];
+					array_walk( $value, 'sanitize_text_field' );
 					break;
 				default:
 					$value = sanitize_text_field( $_POST[ $meta_field['id'] ] );
@@ -232,6 +216,9 @@ function render_metabox() {
 			case 'electronic-submission-method':
 				render_submission_method( $meta_field );
 				break;
+			case 'application-deadline':
+				render_application_deadline( $meta_field );
+				break;
 			default:
 				render_input_field( $meta_field );
 				break;
@@ -290,6 +277,11 @@ function get_meta_fields() {
 			'type'   => 'select',
 			'source' => 'api',
 			'multi'  => true,
+		),
+		array(
+			'id'   => 'category-suggestion',
+			'name' => __( 'Category Suggestion(s)', 'grantsportal' ),
+			'type' => 'text',
 		),
 		array(
 			'id'         => 'purpose',
@@ -378,7 +370,20 @@ function get_meta_fields() {
 			'id'     => 'funds-disbursement-methods',
 			'name'   => __( 'Funds Disbursement Methods', 'csl-grants-submission' ),
 			'type'   => 'radio',
-			'source' => 'api',
+			'fields' => array(
+				array(
+					'id'   => 'advance',
+					'name' => __( 'Advance(s)', 'grantsportal' ),
+				),
+				array(
+					'id'   => 'reimbursement',
+					'name' => __( 'Reimbursement(s)', 'grantsportal' ),
+				),
+				array(
+					'id'   => 'combination',
+					'name' => __( 'Combination of Advance(s) and Reimbursement(s)', 'grantsportal' ),
+				),
+			),
 		),
 		array(
 			'id'   => 'funds-disbursement-details',
@@ -403,7 +408,7 @@ function get_meta_fields() {
 		array(
 			'id'   => 'application-deadline',
 			'name' => __( 'Application Deadline', 'csl-grants-submission' ),
-			'type' => 'text',
+			'type' => 'application-deadline',
 		),
 		array(
 			'id'   => 'electronic-submission-method',
@@ -614,9 +619,10 @@ function render_textarea( $meta_field = array() ) {
 		return;
 	}
 
-	$name  = $meta_field['name'] ?? '';
-	$id    = $meta_field['id'] ?? '';
-	$limit = $meta_field['text_limit'] ?? '';
+	$name        = $meta_field['name'] ?? '';
+	$id          = $meta_field['id'] ?? '';
+	$limit       = $meta_field['text_limit'] ?? '';
+	$description = $meta_field['description'] ?? '';
 
 	if ( empty( $id ) || empty( $name ) || empty( $limit ) ) {
 		return;
@@ -1017,6 +1023,94 @@ function render_point_of_contact_input( $meta_field ) {
 						<td>
 							<label for="<?php echo esc_attr( $id ); ?>-tel"><?php esc_html_e( 'Phone', 'csl-grants-submissions' ); ?></label>
 							<input type="tel" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[tel]" value="<?php echo esc_attr( $value['tel'] ); ?>" placeholder="1-555-555-5555" pattern="[0-9]{1}-[0-9]{3}-[0-9]{3}-[0-9]{4}" />
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<?php
+}
+
+/**
+ * Render the custom Application Deadline field
+ *
+ * @param array $meta_field The data with which to render the HTML field.
+ */
+function render_application_deadline( $meta_field ) {
+	if ( empty( $meta_field ) || ! is_array( $meta_field ) ) {
+		return;
+	}
+
+	$type = $meta_field['type'] ?? '';
+	$name = $meta_field['name'] ?? '';
+	$id   = $meta_field['id'] ?? '';
+
+	// Get the saved data
+	$value = get_post_meta( get_the_ID(), $id, true );
+	if ( ! isset( $value['deadline']['none'] ) ) {
+		$value['deadline']['none'] = '';
+	}
+	?>
+
+	<table class="table-object">
+		<tr>
+			<th>
+				<label for="<?php echo esc_attr( $id ); ?>">
+					<?php echo esc_html( $name ); ?>
+				</label>
+			</th>
+		</tr>
+		<tr>
+			<td>
+				<table class="table-object">
+					<tr>
+						<td>
+							<input <?php checked( $value['deadline']['none'], 'nodeadline' ); ?> type="checkbox" id="<?php echo esc_attr( $id ); ?>-nodeadline" name="<?php echo esc_attr( $id ); ?>[deadline][none]" value="nodeadline" />
+							<label for="<?php echo esc_attr( $id ); ?>-nodeadline"><?php esc_html_e( 'No Deadline', 'csl-grants-submissions' ); ?></label>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<script>
+								jQuery( document ).ready( function ( $ ) {
+									$( "#<?php echo esc_attr( $id ); ?>-date" ).datepicker( {
+										dateFormat: "MM d, yy"
+									} );
+									$( "#<?php echo esc_attr( $id ); ?>-date" ).datepicker( "setDate", "<?php echo esc_html( $value['deadline']['date'] ); ?>" );
+								} );
+							</script>
+							<label for="<?php echo esc_attr( $id ); ?>-date"><?php esc_html_e( 'Deadline Date', 'csl-grants-submissions' ); ?></label>
+							<input type="text" id="<?php echo esc_attr( $id ); ?>-date" name="<?php echo esc_attr( $id ); ?>[deadline][date]" value="<?php echo esc_attr( $value['deadline']['date'] ); ?>" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="<?php echo esc_attr( $id ); ?>-time"><?php esc_html_e( 'Deadline Time (optional)', 'csl-grants-submissions' ); ?></label>
+								<select id="<?php echo esc_attr( $id ); ?>-time" name="<?php echo esc_attr( $id ); ?>[deadline][time]">
+									<option value="none"><?php esc_html_e( 'No Deadline Time', 'csl-grants-submissions' ); ?></option>
+										<?php
+										for ( $time = 0; $time < 24; $time++ ) {
+											if ( 0 === $time ) {
+												$hour_top  = '12:00 am';
+												$hour_half = '12:30 am';
+											} elseif ( 12 < $time ) {
+												$hour_top  = ( $time - 12 ) . ':00 pm';
+												$hour_half = ( $time - 12 ) . ':30 pm';
+											} else {
+												$hour_top  = $time . ':00 am';
+												$hour_half = $time . ':30 am';
+											}
+											?>
+
+											<option <?php selected( $value['deadline']['time'], $hour_top ); ?> value="<?php echo esc_attr( $hour_top ); ?>"><?php echo esc_attr( $hour_top ); ?></option>
+											<option <?php selected( $value['deadline']['time'], $hour_half ); ?>value="<?php echo esc_attr( $hour_half ); ?>"><?php echo esc_attr( $hour_half ); ?></option>
+
+											<?php
+										}
+										?>
+								</select>
 						</td>
 					</tr>
 				</table>

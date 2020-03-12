@@ -170,6 +170,7 @@ function admin_scripts() {
 		true
 	);
 
+	wp_enqueue_script( 'jquery-ui-datepicker' );
 }
 
 /**
@@ -201,7 +202,6 @@ function styles() {
 			CSL_GRANTS_SUBMISSIONS_VERSION
 		);
 	}
-
 }
 
 /**
@@ -225,6 +225,12 @@ function admin_styles() {
 		CSL_GRANTS_SUBMISSIONS_VERSION
 	);
 
+	wp_enqueue_style(
+		'jquery_datepicker_css',
+		'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css',
+		array(),
+		CSL_GRANTS_SUBMISSIONS_VERSION
+	);
 }
 
 /**
