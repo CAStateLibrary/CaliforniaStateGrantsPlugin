@@ -1133,63 +1133,69 @@ function get_api_fields_by_id( $id = '' ) {
 		return;
 	}
 
-	$api_url = trailingslashit( API_URL ) . 'wp-json/wp/v2/';
+	$fields_to_display = wp_cache_get( $id, 'csl-grants-submissions' );
 
-	switch ( $id ) {
-		case 'relevant-categories':
-			$api_url .= 'grant-categories';
-			break;
-		case 'grantmaking-agency':
-			$api_url .= 'agencies';
-			break;
-		case 'eligibility-applicant-type':
-			$api_url .= 'applicant-types';
-			break;
-		case 'funds-disbursement-methods':
-			$api_url .= 'disbursement-methods';
-			break;
-		case 'opportunity-type':
-			$api_url .= 'opportunity-types';
-			break;
-		case 'revenue-source':
-			$api_url .= 'revenue-sources';
-			break;
-		default:
-			$api_url = null;
-			break;
-	}
+	if ( false === $fields_to_display ) {
+		$api_url = trailingslashit( API_URL ) . 'wp-json/wp/v2/';
 
-	if ( is_null( $api_url ) ) {
-		return;
-	}
-
-	$request = wp_remote_get( $api_url );
-
-	if ( is_wp_error( $request ) ) {
-		return array();
-	}
-
-	$response_code = wp_remote_retrieve_response_code( $request );
-	if ( 200 !== $response_code ) {
-		return array();
-	}
-
-	$response = json_decode( wp_remote_retrieve_body( $request ) );
-	if ( empty( $response ) ) {
-		return array();
-	}
-
-	$fields_to_display = array();
-
-	foreach ( $response as $field ) {
-		if ( ! isset( $field->name ) || ! isset( $field->slug ) ) {
-			continue;
+		switch ( $id ) {
+			case 'relevant-categories':
+				$api_url .= 'grant-categories';
+				break;
+			case 'grantmaking-agency':
+				$api_url .= 'agencies';
+				break;
+			case 'eligibility-applicant-type':
+				$api_url .= 'applicant-types';
+				break;
+			case 'funds-disbursement-methods':
+				$api_url .= 'disbursement-methods';
+				break;
+			case 'opportunity-type':
+				$api_url .= 'opportunity-types';
+				break;
+			case 'revenue-source':
+				$api_url .= 'revenue-sources';
+				break;
+			default:
+				$api_url = null;
+				break;
 		}
 
-		$fields_to_display[] = array(
-			'name' => sanitize_text_field( $field->name ),
-			'id'   => sanitize_text_field( $field->slug ),
-		);
+		if ( is_null( $api_url ) ) {
+			return;
+		}
+
+		$request = wp_remote_get( $api_url );
+
+		if ( is_wp_error( $request ) ) {
+			return array();
+		}
+
+		$response_code = wp_remote_retrieve_response_code( $request );
+		if ( 200 !== $response_code ) {
+			return array();
+		}
+
+		$response = json_decode( wp_remote_retrieve_body( $request ) );
+		if ( empty( $response ) ) {
+			return array();
+		}
+
+		$fields_to_display = array();
+
+		foreach ( $response as $field ) {
+			if ( ! isset( $field->name ) || ! isset( $field->slug ) ) {
+				continue;
+			}
+
+			$fields_to_display[] = array(
+				'name' => sanitize_text_field( $field->name ),
+				'id'   => sanitize_text_field( $field->slug ),
+			);
+		}
+
+		wp_cache_set( $id, $fields_to_display, 'csl-grants-submissions' );
 	}
 
 	return $fields_to_display;
