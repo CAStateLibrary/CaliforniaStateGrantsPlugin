@@ -9,7 +9,7 @@ namespace CslGrantsSubmissions\Metaboxes;
 
 const NONCE_ACTION = 'grant-submissions-metabox';
 const NONCE_FIELD  = '_grant_submission';
-const API_URL      = 'http://grantsportal.test';
+const API_URL      = 'https://cslportaldev.10uplabs.com';
 
 /**
  * Run setup hooks/filters
