@@ -9,7 +9,7 @@ namespace CslGrantsSubmissions\Metaboxes;
 
 const NONCE_ACTION = 'grant-submissions-metabox';
 const NONCE_FIELD  = '_grant_submission';
-const API_URL      = 'http://cslapi.test';
+const API_URL      = 'http://grantsportal.test';
 
 /**
  * Run setup hooks/filters
@@ -658,8 +658,14 @@ function render_submission_method( $meta_field = array() ) {
 		return;
 	}
 
+	// default values
+	$defaults = array(
+		'email' => '',
+		'url'   => '',
+	);
+
 	// Get the saved data
-	$value = get_post_meta( get_the_ID(), $id, true );
+	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
 	?>
 
 	<table class="table-object">
@@ -708,8 +714,14 @@ function render_period_performance( $meta_field = array() ) {
 		return;
 	}
 
+	// default values
+	$defaults = array(
+		'units' => '',
+		'num'   => '',
+	);
+
 	// Get the saved data
-	$value = get_post_meta( get_the_ID(), $id, true );
+	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
 	?>
 
 	<table class="table-object">
@@ -759,8 +771,25 @@ function render_award_amounts( $meta_field = array() ) {
 		return;
 	}
 
+	// default values
+	$defaults = array(
+		'checkbox'  => '',
+		'same'      => array(
+			'amount' => '',
+		),
+		'different' => array(
+			'first'  => '',
+			'second' => '',
+			'third'  => '',
+		),
+		'unknown'   => array(
+			'first'  => '',
+			'second' => '',
+		),
+	);
+
 	// Get the saved data
-	$value = get_post_meta( get_the_ID(), $id, true );
+	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
 	?>
 
 	<table class="table-object">
@@ -833,8 +862,18 @@ function render_number_awards( $meta_field = array() ) {
 		return;
 	}
 
+	// default values
+	$defaults = array(
+		'checkbox' => '',
+		'exact'    => '',
+		'between'  => array(
+			'low'  => '',
+			'high' => '',
+		),
+	);
+
 	// Get the saved data
-	$value = get_post_meta( get_the_ID(), $id, true );
+	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
 	?>
 
 	<table class="table-object">
@@ -897,8 +936,14 @@ function render_matching_funds( $meta_field = array() ) {
 		return;
 	}
 
+	// default values
+	$defaults = array(
+		'checkbox'   => '',
+		'percentage' => '',
+	);
+
 	// Get the saved data
-	$value = get_post_meta( get_the_ID(), $id, true );
+	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
 	?>
 
 	<table class="table-object">
@@ -951,8 +996,14 @@ function render_datepicker( $meta_field = array() ) {
 		return;
 	}
 
+	// default values
+	$defaults = array(
+		'open'  => '',
+		'close' => '',
+	);
+
 	// Get the saved data
-	$value = get_post_meta( get_the_ID(), $id, true );
+	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
 	?>
 
 	<table class="table-object">
@@ -992,8 +1043,15 @@ function render_point_of_contact_input( $meta_field ) {
 	$name = $meta_field['name'] ?? '';
 	$id   = $meta_field['id'] ?? '';
 
+	// default values
+	$defaults = array(
+		'name'  => '',
+		'email' => '',
+		'tel'   => '',
+	);
+
 	// Get the saved data
-	$value = get_post_meta( get_the_ID(), $id, true );
+	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
 	?>
 
 	<table class="table-object">
@@ -1047,11 +1105,17 @@ function render_application_deadline( $meta_field ) {
 	$name = $meta_field['name'] ?? '';
 	$id   = $meta_field['id'] ?? '';
 
+	// default values
+	$defaults = array(
+		'deadline' => array(
+			'none' => '',
+			'date' => '',
+			'time' => '',
+		),
+	);
+
 	// Get the saved data
-	$value = get_post_meta( get_the_ID(), $id, true );
-	if ( ! isset( $value['deadline']['none'] ) ) {
-		$value['deadline']['none'] = '';
-	}
+	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
 	?>
 
 	<table class="table-object">
