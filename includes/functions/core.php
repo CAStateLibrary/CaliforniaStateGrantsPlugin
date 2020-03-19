@@ -42,7 +42,7 @@ function setup() {
  * @return string
  */
 function get_grants_token() {
-	return sanitize_text_field( get_option( 'grants_token', '' ) );
+	return (string) get_option( 'grants_token', '' );
 }
 
 /**
@@ -75,7 +75,11 @@ function add_settings() {
  * Renders the grants token section.
  */
 function grants_token_render() {
-	echo 'section';
+	$token = get_grants_token();
+	?>
+	<input type="text" name="grants_token" value="<?php echo sanitize_text_field( $token ); ?>" id="grants_token">
+	<button onclick="generateToken()">Generate Token</button>
+	<?php
 }
 
 /**
