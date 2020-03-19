@@ -113,8 +113,8 @@ function setup() {
  * @param string   $user_email The user's email
  */
 function restrict_email_address( $errors, $username, $user_email ) {
-	if ( ! stristr( $user_email, 'ca.gov' ) ) {
-		$errors->add( 'invalid_emamil', __( '<strong>ERROR:</strong> You must register with a ca.gov email address.', 'grantsportal' ) );
+	if ( 0 === preg_match( '/\w+(\.ca\.gov|\@ca\.gov)$/', $user_email ) ) {
+		$errors->add( 'invalid_emamil', __( '<strong>ERROR:</strong> You must register with a California Government (ca.gov) email address.', 'grantsportal' ) );
 	}
 
 	return $errors;
