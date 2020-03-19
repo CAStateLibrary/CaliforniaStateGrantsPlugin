@@ -7,17 +7,20 @@
 
 namespace CslGrantsSubmissions\User_Roles;
 
-const CSL_USERS_VERSION = 0;
+const CSL_USERS_VERSION = 1;
 
 const GRANT_EDITOR_ROLE = array(
 	'slug' => 'grant-editor',
 	'caps' => array(
+		'edit_grant',
 		'edit_grants',
 		'edit_published_grants',
 		'edit_others_grants',
 		'edit_private_grants',
 		'read',
+		'read_grant',
 		'read_private_grants',
+		'delete_grant',
 		'delete_grants',
 		'delete_published_grants',
 		'delete_others_grants',
@@ -34,9 +37,12 @@ const GRANT_EDITOR_ROLE = array(
 const GRANT_CONTRIBUTOR_ROLE = array(
 	'slug' => 'grant-contributor',
 	'caps' => array(
+		'edit_grant',
 		'edit_grants',
 		'edit_published_grants',
 		'read',
+		'read_grant',
+		'delete_grant',
 		'delete_grants',
 		'delete_published_grants',
 		'publish_grants',
