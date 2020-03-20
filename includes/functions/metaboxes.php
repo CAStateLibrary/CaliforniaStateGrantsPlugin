@@ -1137,16 +1137,8 @@ function render_application_deadline( $meta_field ) {
 					</tr>
 					<tr>
 						<td>
-							<script>
-								jQuery( document ).ready( function ( $ ) {
-									$( "#<?php echo esc_attr( $id ); ?>-date" ).datepicker( {
-										dateFormat: "MM d, yy"
-									} );
-									$( "#<?php echo esc_attr( $id ); ?>-date" ).datepicker( "setDate", "<?php echo esc_html( $value['deadline']['date'] ); ?>" );
-								} );
-							</script>
 							<label for="<?php echo esc_attr( $id ); ?>-date"><?php esc_html_e( 'Deadline Date', 'csl-grants-submissions' ); ?></label>
-							<input type="text" id="<?php echo esc_attr( $id ); ?>-date" name="<?php echo esc_attr( $id ); ?>[deadline][date]" value="<?php echo esc_attr( $value['deadline']['date'] ); ?>" />
+							<input class="csl-datepicker" type="text" id="<?php echo esc_attr( $id ); ?>-date" name="<?php echo esc_attr( $id ); ?>[deadline][date]" value="<?php echo esc_attr( $value['deadline']['date'] ); ?>" />
 						</td>
 					</tr>
 					<tr>
