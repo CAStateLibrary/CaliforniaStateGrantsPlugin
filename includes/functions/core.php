@@ -31,7 +31,55 @@ function setup() {
 	// Hook to allow async or defer on asset loading.
 	add_filter( 'script_loader_tag', $n( 'script_loader_tag' ), 10, 2 );
 
+	add_action( 'admin_init', $n( 'add_settings' ) );
+
 	do_action( 'csl_grants_submissions_loaded' );
+}
+
+/**
+ * Gets the grants token if available.
+ *
+ * @return string
+ */
+function get_grants_token() {
+	return (string) get_option( 'grants_token', '' );
+}
+
+/**
+ * Sets up the settings fields.
+ */
+function add_settings() {
+	register_setting(
+		'general',
+		'grants_token',
+		array(
+			'show_in_rest' => false,
+			'type'         => 'string',
+			'description'  => __( 'Grants Token', 'csl-grants-submissions' ),
+		)
+	);
+
+	add_settings_field(
+		'grants_token',
+		__( 'Grants Token', 'csl-grants-submissions' ),
+		__NAMESPACE__ . '\\grants_token_render',
+		'general',
+		'default',
+		array(
+			'label_for' => 'grants_token',
+		)
+	);
+}
+
+/**
+ * Renders the grants token section.
+ */
+function grants_token_render() {
+	$token = get_grants_token();
+	?>
+	<input type="text" name="grants_token" value="<?php echo sanitize_text_field( $token ); ?>" id="grants_token">
+	<button onclick="generateToken()">Generate Token</button>
+	<?php
 }
 
 /**
