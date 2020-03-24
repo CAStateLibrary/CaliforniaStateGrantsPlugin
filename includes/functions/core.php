@@ -55,13 +55,13 @@ function add_settings() {
 		array(
 			'show_in_rest' => false,
 			'type'         => 'string',
-			'description'  => __( 'Grants Token', 'grantsportal' ),
+			'description'  => __( 'Grants Token', 'csl-grants-submissions' ),
 		)
 	);
 
 	add_settings_field(
 		'grants_token',
-		__( 'Grants Token', 'grantsportal' ),
+		__( 'Grants Token', 'csl-grants-submissions' ),
 		__NAMESPACE__ . '\\grants_token_render',
 		'general',
 		'default',
