@@ -66,6 +66,11 @@ function save_post( $post_id ) {
 		foreach ( $meta_fields as $meta_field ) {
 			$value = array();
 
+			if ( empty( $_POST[ $meta_field['id'] ] ) ) {
+				delete_post_meta( $post_id, $meta_field['id'] );
+				continue;
+			}
+
 			switch ( $meta_field['type'] ) {
 				case 'email':
 					$value = sanitize_email( $_POST[ $meta_field['id'] ] );
