@@ -110,8 +110,8 @@ function modify_grants_rest_params( $args, $request ) {
  * @return WP_REST_Response The modified response
  */
 function modify_grants_rest_response( $response, $post, $request ) {
-	//$new_response = wp_cache_get( 'grants_rest_response_' . $post->ID );
-	//if ( false === $new_response ) {
+	$new_response = wp_cache_get( 'grants_rest_response_' . $post->ID );
+	if ( false === $new_response ) {
 		// Fields that aren't needed in the REST response
 		$blacklisted_fields = array(
 			'grant-hash',
@@ -289,8 +289,8 @@ function modify_grants_rest_response( $response, $post, $request ) {
 			)
 		);
 
-	//	wp_cache_set( 'grants_rest_response_' . $post->ID, $new_response, '', WEEK_IN_SECONDS );
-	//}
+		wp_cache_set( 'grants_rest_response_' . $post->ID, $new_response, '', WEEK_IN_SECONDS );
+	}
 
 	return $new_response;
 }
