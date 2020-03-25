@@ -9,7 +9,7 @@ namespace CslGrantsSubmissions\Metaboxes;
 
 const NONCE_ACTION = 'grant-submissions-metabox';
 const NONCE_FIELD  = '_grant_submission';
-const API_URL      = 'https://cslportaldev.10uplabs.com';
+const API_URL      = 'http://cslapi.test';
 
 /**
  * Run setup hooks/filters
@@ -234,18 +234,18 @@ function render_metabox() {
 function get_meta_fields() {
 	return array(
 		array(
-			'id'         => 'grant-title',
+			'id'         => 'title',
 			'name'       => __( 'Grant Title', 'csl-grants-submission' ),
 			'type'       => 'textarea',
 			'text_limit' => 105,
 		),
 		array(
-			'id'   => 'grant-id',
+			'id'   => 'grant_id',
 			'name' => __( 'Grant ID', 'csl-grants-submission' ),
 			'type' => 'text',
 		),
 		array(
-			'id'     => 'grant-type',
+			'id'     => 'isForecasted',
 			'name'   => __( 'Grant Type', 'csl-grants-submission' ),
 			'type'   => 'radio',
 			'fields' => array(
@@ -266,20 +266,20 @@ function get_meta_fields() {
 			'source' => 'api',
 		),
 		array(
-			'id'     => 'opportunity-type',
+			'id'     => 'opportunityType',
 			'name'   => __( 'Opportunity Type', 'csl-grants-submission' ),
 			'type'   => 'radio',
 			'source' => 'api',
 		),
 		array(
-			'id'     => 'relevant-categories',
+			'id'     => 'grantCategories',
 			'name'   => __( 'Relevant Categories', 'csl-grants-submission' ),
 			'type'   => 'select',
 			'source' => 'api',
 			'multi'  => true,
 		),
 		array(
-			'id'   => 'category-suggestion',
+			'id'   => 'categorySuggestions',
 			'name' => __( 'Category Suggestion(s)', 'grantsportal' ),
 			'type' => 'text',
 		),
@@ -296,7 +296,7 @@ function get_meta_fields() {
 			'text_limit' => 3200,
 		),
 		array(
-			'id'     => 'required-loi',
+			'id'     => 'loiRequired',
 			'name'   => __( 'Required LOI', 'csl-grants-submission' ),
 			'type'   => 'radio',
 			'fields' => array(
@@ -311,7 +311,7 @@ function get_meta_fields() {
 			),
 		),
 		array(
-			'id'     => 'eligibility-applicant-type',
+			'id'     => 'applicantType',
 			'name'   => __( 'Eligibility: Applicant Type', 'csl-grants-submission' ),
 			'type'   => 'checkbox',
 			'source' => 'api',
@@ -323,13 +323,13 @@ function get_meta_fields() {
 			'text_limit' => 250,
 		),
 		array(
-			'id'         => 'eligibility-geographic',
+			'id'         => 'geoLimitations',
 			'name'       => __( 'Eligibility: Geographic', 'csl-grants-submission' ),
 			'type'       => 'textarea',
 			'text_limit' => 450,
 		),
 		array(
-			'id'     => 'revenue-source',
+			'id'     => 'revSources',
 			'name'   => __( 'Revenue Source', 'csl-grants-submission' ),
 			'type'   => 'radio',
 			'source' => 'api',
@@ -341,7 +341,7 @@ function get_meta_fields() {
 			'text_limit' => 200,
 		),
 		array(
-			'id'   => 'eligibility-matching-funds',
+			'id'   => 'matchingFunds',
 			'name' => __( 'Eligibility: Matching Funds', 'csl-grants-submission' ),
 			'type' => 'eligibility-matching-funds',
 		),
@@ -352,22 +352,22 @@ function get_meta_fields() {
 			'text_limit' => 300,
 		),
 		array(
-			'id'   => 'total-estimated-available-funding',
+			'id'   => 'estimatedAvailableFunds',
 			'name' => __( 'Total Estimated Available Funding', 'csl-grants-submission' ),
 			'type' => 'number',
 		),
 		array(
-			'id'   => 'estimated-number-awards',
+			'id'   => 'estimatedAwards',
 			'name' => __( 'Estimated Number of Awards', 'csl-grants-submission' ),
 			'type' => 'estimated-number-awards',
 		),
 		array(
-			'id'   => 'estimated-award-amounts',
+			'id'   => 'estimatedAmounts',
 			'name' => __( 'Estimated Award Amounts', 'csl-grants-submission' ),
 			'type' => 'estimated-award-amounts',
 		),
 		array(
-			'id'     => 'funds-disbursement-methods',
+			'id'     => 'disbursementMethod',
 			'name'   => __( 'Funds Disbursement Methods', 'csl-grants-submission' ),
 			'type'   => 'radio',
 			'fields' => array(
@@ -391,27 +391,32 @@ function get_meta_fields() {
 			'type' => 'textarea',
 		),
 		array(
-			'id'   => 'grant-open-close',
-			'name' => __( 'Grant Open/Close', 'csl-grants-submission' ),
+			'id'   => 'openDate',
+			'name' => __( 'Grant Open', 'csl-grants-submission' ),
 			'type' => 'datetime-local',
 		),
 		array(
-			'id'   => 'period-performance',
+			'id'   => 'closeDate',
+			'name' => __( 'Grant Close', 'csl-grants-submission' ),
+			'type' => 'datetime-local',
+		),
+		array(
+			'id'   => 'periodOfPerformance',
 			'name' => __( 'Period of Performance', 'csl-grants-submission' ),
 			'type' => 'period-performance',
 		),
 		array(
-			'id'   => 'expected-award-date',
+			'id'   => 'expectedAwardDate',
 			'name' => __( 'Expected Award Announcement Date', 'csl-grants-submission' ),
 			'type' => 'text',
 		),
 		array(
-			'id'   => 'application-deadline',
+			'id'   => 'deadline',
 			'name' => __( 'Application Deadline', 'csl-grants-submission' ),
 			'type' => 'application-deadline',
 		),
 		array(
-			'id'   => 'electronic-submission-method',
+			'id'   => 'electronicSubmission',
 			'name' => __( 'Electronic Application Submission Method', 'csl-grants-submission' ),
 			'type' => 'electronic-submission-method',
 		),
@@ -1195,7 +1200,7 @@ function get_api_fields_by_id( $id = '' ) {
 		$api_url = trailingslashit( API_URL ) . 'wp-json/wp/v2/';
 
 		switch ( $id ) {
-			case 'relevant-categories':
+			case 'grantCategories':
 				$api_url .= 'grant-categories';
 				break;
 			case 'grantmaking-agency':
@@ -1207,7 +1212,7 @@ function get_api_fields_by_id( $id = '' ) {
 			case 'funds-disbursement-methods':
 				$api_url .= 'disbursement-methods';
 				break;
-			case 'opportunity-type':
+			case 'opportunityType':
 				$api_url .= 'opportunity-types';
 				break;
 			case 'revenue-source':
