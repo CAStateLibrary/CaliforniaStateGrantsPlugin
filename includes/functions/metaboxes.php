@@ -72,6 +72,10 @@ function save_post( $post_id ) {
 			}
 
 			switch ( $meta_field['type'] ) {
+				case 'checkbox':
+					$value = $_POST[ $meta_field['id'] ];
+					array_walk( $value, 'sanitize_text_field' );
+					break;
 				case 'email':
 					$value = sanitize_email( $_POST[ $meta_field['id'] ] );
 					break;
@@ -506,15 +510,37 @@ function render_checkbox_field( $meta_field = array() ) {
 	$description = $meta_field['description'] ?? '';
 	$id          = $meta_field['id'] ?? '';
 
+	if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
+		$fields = get_api_fields_by_id( $id );
+	} elseif ( isset( $meta_fields['fields'] ) ) {
+		$fields = $meta_fields['fields'];
+	} else {
+		$fields = '';
+	}
+
+	if ( empty( $fields ) ) {
+		return;
+	}
+
 	// Get the saved data
 	$value = get_post_meta( get_the_ID(), $id, true );
 	?>
 
 	<p><strong><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label></strong></p>
 	<p><?php echo esc_html( $description ); ?></p>
-	<p><input <?php checked( $value, 'on' ); ?> type="checkbox" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>" value="on" /></p>
 
 	<?php
+	foreach ( $fields as $field ) {
+		$checked = ( in_array( $field['id'], $value, true ) ) ? 'checked' : '';
+		?>
+
+		<p>
+			<input <?php echo esc_attr( $checked ); ?> type="checkbox" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $id ); ?>[]" value="<?php echo esc_attr( $field['id'] ); ?>"/>
+			<label for="<?php echo esc_attr( $field['id'] ); ?>"><?php echo esc_html( $field['name'] ); ?></label>
+		</p>
+
+		<?php
+	}
 }
 
 /**
