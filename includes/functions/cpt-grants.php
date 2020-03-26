@@ -9,6 +9,8 @@ namespace CslGrantsSubmissions\CPT\Grants;
 
 use CslGrantsSubmissions\Metaboxes;
 use WP_REST_Response;
+use WP_Error;
+use WP_Http;
 
 /**
  * Defines the post type slug.
@@ -28,13 +30,70 @@ function setup() {
 
 	add_filter( 'rest_prepare_csl_grants', $n( 'modify_grants_rest_response' ), 10, 3 );
 	add_filter( 'rest_csl_grants_query', $n( 'modify_grants_rest_params' ), 10, 2 );
+
+	add_filter( 'rest_request_before_callbacks', $n( 'authenticate_rest_request' ), 10, 3 );
 };
+
+/**
+ * Authenticate the REST Requests
+ *
+ * @param WP_HTTP_Response|WP_Error $response Result to send
+ * @param array                     $handler Route handler used
+ * @param WP_REST_Request           $request Request used to generate $response
+ *
+ * @return WP_HTTP_Response|WP_Error WP_HTTP_Response if authentication succeeded, WP_Error otherwise
+ */
+function authenticate_rest_request( $response, $handler, $request ) {
+	$headers               = $request->get_headers();
+	$authorization_headers = $headers['authorization'];
+
+	if ( empty( $authorization_headers ) ) {
+		return new WP_Error( 'empty_auth_header', __( 'An authorization header must be provided.', 'csl-grants-submissions' ), array( 'status' => WP_Http::BAD_REQUEST ) );
+	}
+
+	$num_auth_headers = count( $authorization_headers );
+
+	$csl_auth_header = '';
+
+	if ( 1 === $num_auth_headers ) {
+		$csl_auth_header = $authorization_headers[0];
+	} else {
+		foreach ( $authorization_headers as $auth_header ) {
+			if ( false !== strpos( $auth_header, 'WP_X_CSL_Token' ) ) {
+				$csl_auth_header = $auth_header;
+				break;
+			}
+		}
+	}
+
+	if ( empty( $csl_auth_header ) || false === strpos( $csl_auth_header, 'WP_X_CSL_Token' ) ) {
+		return new WP_Error( 'wrong_auth_header', __( 'The proper authorization header must be provided.', 'csl-grants-submissions' ), array( 'status' => WP_Http::BAD_REQUEST ) );
+	}
+
+	// Auth header should be a string with first word being auth type, second being auth token
+	$auth_data = explode( ' ', $csl_auth_header );
+
+	// If the WP_X_CSL_Token header is provided without a token
+	if ( empty( $auth_data[1] ) ) {
+		return new WP_Error( 'no_auth_token', __( 'There was no auth token provided.', 'csl-grants-submissions' ), array( 'status' => WP_Http::BAD_REQUEST ) );
+	}
+
+	$received_token = sanitize_text_field( $auth_data[1] );
+	$stored_token   = 'test1';
+
+	if ( $stored_token !== $received_token ) {
+		return new WP_Error( 'invalid_auth', __( 'The authorization token does not match.', 'csl-grants-submissions' ), array( 'status' => WP_Http::UNAUTHORIZED ) );
+	}
+
+	// If we get here, authorization has passed and we can return the data.
+	return $response;
+}
 
 /**
  * Disables the block editor for this post type.
  *
- * @param bool $use
- * @param string $post_type
+ * @param bool   $use Whether to use the block editor
+ * @param string $post_type The current post type
  *
  * @return bool
  */
@@ -64,7 +123,7 @@ function register() {
 		'search_items'       => __( 'Search Grants', 'csl-grants-submissions' ),
 		'parent_item_colon'  => __( 'Parent Grants:', 'csl-grants-submissions' ),
 		'not_found'          => __( 'No grants found.', 'csl-grants-submissions' ),
-		'not_found_in_trash' => __( 'No grants found in Trash.', 'csl-grants-submissions' )
+		'not_found_in_trash' => __( 'No grants found in Trash.', 'csl-grants-submissions' ),
 	);
 
 	$args = array(
@@ -81,7 +140,7 @@ function register() {
 		'has_archive'        => true,
 		'hierarchical'       => false,
 		'menu_position'      => null,
-		'supports'           => array( 'title', 'editor', 'author' )
+		'supports'           => array( 'title', 'editor', 'author' ),
 	);
 
 	register_post_type( POST_TYPE, $args );
