@@ -1228,7 +1228,37 @@ function get_api_fields_by_id( $id = '' ) {
 	$fields_to_display = wp_cache_get( $id, 'csl-grants-submissions' );
 
 	if ( false === $fields_to_display ) {
-		$request = wp_remote_get( trailingslashit( API_URL ) . 'wp-json/wp/v2/' . $id );
+		$api_url = trailingslashit( API_URL ) . 'wp-json/wp/v2/';
+
+		switch ( $id ) {
+			case 'grantCategories':
+				$api_url .= 'grant_categories';
+				break;
+			case 'grantmaking-agency':
+				$api_url .= 'agencies';
+				break;
+			case 'applicantType':
+				$api_url .= 'applicant_types';
+				break;
+			case 'disbursementMethod':
+				$api_url .= 'disbursement_methods';
+				break;
+			case 'opportunityType':
+				$api_url .= 'opportunity_types';
+				break;
+			case 'revSources':
+				$api_url .= 'revenue_sources';
+				break;
+			default:
+				$api_url = null;
+				break;
+		}
+
+		if ( is_null( $api_url ) ) {
+			return;
+		}
+
+		$request = wp_remote_get( $api_url );
 
 		if ( is_wp_error( $request ) ) {
 			return array();
