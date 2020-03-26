@@ -45,7 +45,7 @@ function setup() {
  */
 function authenticate_rest_request( $response, $handler, $request ) {
 	$headers               = $request->get_headers();
-	$authorization_headers = $headers['authorization'];
+	$authorization_headers = $headers['authorization'] ?? '';
 
 	if ( empty( $authorization_headers ) ) {
 		return new WP_Error( 'empty_auth_header', __( 'An authorization header must be provided.', 'csl-grants-submissions' ), array( 'status' => WP_Http::BAD_REQUEST ) );
