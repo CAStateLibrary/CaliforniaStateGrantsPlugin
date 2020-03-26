@@ -7,6 +7,7 @@
 
 namespace CslGrantsSubmissions\CPT\Grants;
 
+use CslGrantsSubmissions\Core;
 use CslGrantsSubmissions\Metaboxes;
 use WP_REST_Response;
 use WP_Error;
@@ -79,9 +80,9 @@ function authenticate_rest_request( $response, $handler, $request ) {
 	}
 
 	$received_token = sanitize_text_field( $auth_data[1] );
-	$stored_token   = 'test1';
+	$stored_token   = sha1( Core\get_grants_token() );
 
-	if ( $stored_token !== $received_token ) {
+	if ( empty( $stored_token ) || $stored_token !== $received_token ) {
 		return new WP_Error( 'invalid_auth', __( 'The authorization token does not match.', 'csl-grants-submissions' ), array( 'status' => WP_Http::UNAUTHORIZED ) );
 	}
 
