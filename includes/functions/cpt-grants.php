@@ -38,15 +38,19 @@ function setup() {
 /**
  * Authenticate the REST Requests
  *
- * @param WP_HTTP_Response|WP_Error $response Result to send
+ * @param \WP_HTTP_Response|WP_Error $response Result to send
  * @param array                     $handler Route handler used
- * @param WP_REST_Request           $request Request used to generate $response
+ * @param \WP_REST_Request           $request Request used to generate $response
  *
- * @return WP_HTTP_Response|WP_Error WP_HTTP_Response if authentication succeeded, WP_Error otherwise
+ * @return \WP_HTTP_Response|WP_Error WP_HTTP_Response if authentication succeeded, WP_Error otherwise
  */
 function authenticate_rest_request( $response, $handler, $request ) {
 	$headers               = $request->get_headers();
 	$authorization_headers = $headers['authorization'] ?? '';
+
+	if ( 0 !== strpos( '/wp/v2/csl_grants', $request->get_route() ) ) {
+		return $response;
+	}
 
 	if ( empty( $authorization_headers ) ) {
 		return new WP_Error( 'empty_auth_header', __( 'An authorization header must be provided.', 'csl-grants-submissions' ), array( 'status' => WP_Http::BAD_REQUEST ) );
