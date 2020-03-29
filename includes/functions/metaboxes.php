@@ -352,7 +352,7 @@ function get_meta_fields() {
 		),
 		array(
 			'id'         => 'revenue-source-notes',
-			'name'       => __( 'Revenu Source Notes', 'csl-grants-submission' ),
+			'name'       => __( 'Revenue Source Notes', 'csl-grants-submission' ),
 			'type'       => 'textarea',
 			'text_limit' => 200,
 		),
@@ -1044,34 +1044,22 @@ function render_datepicker( $meta_field = array() ) {
 		return;
 	}
 
-	// default values
-	$defaults = array(
-		'open'  => '',
-		'close' => '',
-	);
-
 	// Get the saved data
-	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
+	$value = get_post_meta( get_the_ID(), $id, true );
 	?>
 
 	<table class="table-object">
 		<tr>
 			<th>
-				<?php echo esc_html( $name ); ?>
+				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 			</th>
 		</tr>
 		<tr>
 			<td>
-				<label for="open-date"><?php esc_html_e( 'Open Date', 'csl-grants-submissions' ); ?></label>
-				<input type="datetime-local" id="open-date" name="<?php echo esc_attr( $id ); ?>[open]" value="<?php echo esc_attr( $value['open'] ); ?>">
+				<input type="datetime-local" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>">
 			</td>
 		</tr>
 		<tr>
-			<td>
-				<label for="close-date"><?php esc_html_e( 'Close Date', 'csl-grants-submissions' ); ?></label>
-				<input type="datetime-local" id="close-date" name="<?php echo esc_attr( $id ); ?>[close]" value="<?php echo esc_attr( $value['close'] ); ?>">
-			</td>
-		</tr>
 	</table>
 
 	<?php

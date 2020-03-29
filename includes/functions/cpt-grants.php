@@ -145,7 +145,7 @@ function register() {
 		'has_archive'        => true,
 		'hierarchical'       => false,
 		'menu_position'      => null,
-		'supports'           => array( 'title', 'editor', 'author' ),
+		'supports'           => array( 'title', 'author' ),
 	);
 
 	register_post_type( POST_TYPE, $args );
@@ -168,10 +168,10 @@ function modify_grants_rest_params( $args, $request ) {
  * Modify the REST response for the Grants Post Type
  *
  * @param WP_REST_Response $response The response object
- * @param WP_Post          $post The post object
- * @param WP_REST_Request  $request The request object
+ * @param \WP_Post          $post The post object
+ * @param \WP_REST_Request  $request The request object
  *
- * @return WP_REST_Response The modified response
+ * @return \WP_REST_Response The modified response
  */
 function modify_grants_rest_response( $response, $post, $request ) {
 	$new_response = wp_cache_get( 'grants_rest_response_' . $post->ID );
