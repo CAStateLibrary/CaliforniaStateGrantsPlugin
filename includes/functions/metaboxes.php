@@ -1245,10 +1245,10 @@ function get_api_fields_by_id( $id = '' ) {
 				$api_url .= 'agencies';
 				break;
 			case 'applicantType':
-				$api_url .= 'applicant_types';
+				$api_url .= 'applicant_type';
 				break;
 			case 'disbursementMethod':
-				$api_url .= 'disbursement_methods';
+				$api_url .= 'disbursement_method';
 				break;
 			case 'opportunityType':
 				$api_url .= 'opportunity_types';
