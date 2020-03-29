@@ -1229,7 +1229,7 @@ function render_application_deadline( $meta_field ) {
  */
 function get_api_fields_by_id( $id = '' ) {
 	if ( empty( $id ) ) {
-		return [];
+		return array();
 	}
 
 	$fields_to_display = wp_cache_get( $id, 'csl-grants-submissions' );
@@ -1262,7 +1262,7 @@ function get_api_fields_by_id( $id = '' ) {
 		}
 
 		if ( is_null( $api_url ) ) {
-			return;
+			return array();
 		}
 
 		$request = wp_remote_get( $api_url );
@@ -1294,7 +1294,7 @@ function get_api_fields_by_id( $id = '' ) {
 			);
 		}
 
-		wp_cache_set( $id, $fields_to_display, 'csl-grants-submissions' );
+		wp_cache_set( $id, $fields_to_display, 'csl-grants-submissions', 6 * HOUR_IN_SECONDS );
 	}
 
 	return $fields_to_display;
