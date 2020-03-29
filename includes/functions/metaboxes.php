@@ -133,25 +133,25 @@ function save_post( $post_id ) {
 					break;
 				case 'estimated-award-amounts':
 					$value            = $_POST[ $meta_field['id'] ];
-					$temp['checkbox'] = ( isset( $temp['checkbox'] ) ) ? sanitize_text_field( $temp['checkbox'] ) : '';
+					$temp['checkbox'] = ( isset( $value['checkbox'] ) ) ? sanitize_text_field( $value['checkbox'] ) : '';
 
 					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
-					if ( 'same' === $temp['checkbox'] ) {
+					if ( 'same' === $value['checkbox'] ) {
 						$value['unknown']['first']    = '';
 						$value['unknown']['second']   = '';
 						$value['different']['first']  = '';
 						$value['different']['second'] = '';
 						$value['different']['third']  = '';
-					} elseif ( 'different' === $temp['checkbox'] ) {
+					} elseif ( 'different' === $value['checkbox'] ) {
 						$value['unknown']['first']  = '';
 						$value['unknown']['second'] = '';
 						$value['same']['amount']    = '';
-					} elseif ( 'unknown' === $temp['checkbox'] ) {
+					} elseif ( 'unknown' === $value['checkbox'] ) {
 						$value['different']['first']  = '';
 						$value['different']['second'] = '';
 						$value['different']['third']  = '';
 						$value['same']['amount']      = '';
-					} elseif ( 'dependant' === $temp['checkbox'] ) {
+					} elseif ( 'dependant' === $value['checkbox'] ) {
 						$value['unknown']['first']    = '';
 						$value['unknown']['second']   = '';
 						$value['different']['first']  = '';
