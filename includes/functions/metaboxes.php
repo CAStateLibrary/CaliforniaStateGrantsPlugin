@@ -519,8 +519,8 @@ function render_checkbox_field( $meta_field = array() ) {
 
 	if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 		$fields = get_api_fields_by_id( $id );
-	} elseif ( isset( $meta_fields['fields'] ) ) {
-		$fields = $meta_fields['fields'];
+	} elseif ( isset( $meta_field['fields'] ) ) {
+		$fields = $meta_field['fields'];
 	} else {
 		$fields = '';
 	}
@@ -570,8 +570,8 @@ function render_radio_field( $meta_field = array() ) {
 
 	if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 		$fields = get_api_fields_by_id( $id );
-	} elseif ( isset( $meta_fields['fields'] ) ) {
-		$fields = $meta_fields['fields'];
+	} elseif ( isset( $meta_field['fields'] ) ) {
+		$fields = $meta_field['fields'];
 	} else {
 		$fields = '';
 	}
@@ -622,8 +622,8 @@ function render_select_field( $meta_field = array() ) {
 
 	if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 		$fields = get_api_fields_by_id( $id );
-	} elseif ( isset( $meta_fields['fields'] ) ) {
-		$fields = $meta_fields['fields'];
+	} elseif ( isset( $meta_field['fields'] ) ) {
+		$fields = $meta_field['fields'];
 	} else {
 		$fields = '';
 	}
