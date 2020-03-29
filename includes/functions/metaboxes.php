@@ -528,8 +528,8 @@ function render_checkbox_field( $meta_field = array() ) {
 	if ( empty( $fields ) ) {
 		$fields = array(
 			array(
-				'id'   => '',
-				'name' => esc_html__( 'Select One', 'csl-grants-submissions' ),
+				'id'   => 'none',
+				'name' => esc_html__( 'None', 'csl-grants-submissions' ),
 			),
 		);
 	}
