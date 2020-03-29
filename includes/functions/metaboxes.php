@@ -24,6 +24,19 @@ function setup() {
 }
 
 /**
+ * A function to get the API URL.
+ *
+ * @return string
+ */
+function get_api_url() {
+	if ( defined( 'GRANTS_API_URL') ) {
+		return GRANTS_API_URL;
+	}
+
+	return API_URL;
+}
+
+/**
  * Setup TinyMCE editor
  *
  * @param string $content The content for the editor
@@ -242,12 +255,6 @@ function render_metabox() {
  */
 function get_meta_fields() {
 	return array(
-		array(
-			'id'         => 'title',
-			'name'       => __( 'Grant Title', 'csl-grants-submission' ),
-			'type'       => 'textarea',
-			'text_limit' => 105,
-		),
 		array(
 			'id'   => 'grant_id',
 			'name' => __( 'Grant ID', 'csl-grants-submission' ),
@@ -1228,7 +1235,7 @@ function get_api_fields_by_id( $id = '' ) {
 	$fields_to_display = wp_cache_get( $id, 'csl-grants-submissions' );
 
 	if ( false === $fields_to_display ) {
-		$api_url = trailingslashit( API_URL ) . 'wp-json/wp/v2/';
+		$api_url = trailingslashit( get_api_url() ) . 'wp-json/wp/v2/';
 
 		switch ( $id ) {
 			case 'grantCategories':
