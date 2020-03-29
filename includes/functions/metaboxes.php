@@ -543,7 +543,7 @@ function render_checkbox_field( $meta_field = array() ) {
 
 	<?php
 	foreach ( $fields as $field ) {
-		$checked = ( in_array( $field['id'], $value, true ) ) ? 'checked' : '';
+		$checked = ( in_array( $field['id'], (array) $value, true ) ) ? 'checked' : '';
 		?>
 
 		<p>
