@@ -526,7 +526,12 @@ function render_checkbox_field( $meta_field = array() ) {
 	}
 
 	if ( empty( $fields ) ) {
-		return;
+		$fields = array(
+			array(
+				'id'   => '',
+				'name' => esc_html__( 'Select One', 'csl-grants-submissions' ),
+			),
+		);
 	}
 
 	// Get the saved data
