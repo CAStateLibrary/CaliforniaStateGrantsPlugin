@@ -1229,7 +1229,7 @@ function render_application_deadline( $meta_field ) {
  */
 function get_api_fields_by_id( $id = '' ) {
 	if ( empty( $id ) ) {
-		return;
+		return [];
 	}
 
 	$fields_to_display = wp_cache_get( $id, 'csl-grants-submissions' );
