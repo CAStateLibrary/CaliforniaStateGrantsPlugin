@@ -180,6 +180,8 @@ function save_post( $post_id ) {
 			update_post_meta( $post_id, $meta_field['id'], $value );
 		}
 	}
+
+	wp_cache_delete( 'grants_rest_response_' . $post_id );
 }
 
 /**
