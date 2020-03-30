@@ -272,12 +272,6 @@ function get_meta_fields() {
 			),
 		),
 		array(
-			'id'     => 'grantmaking-agency',
-			'name'   => __( 'Grantmaking Agency/Department', 'csl-grants-submission' ),
-			'type'   => 'select',
-			'source' => 'api',
-		),
-		array(
 			'id'     => 'opportunityType',
 			'name'   => __( 'Opportunity Type', 'csl-grants-submission' ),
 			'type'   => 'radio',
@@ -1216,9 +1210,6 @@ function get_api_fields_by_id( $id = '' ) {
 		switch ( $id ) {
 			case 'grantCategories':
 				$api_url .= 'grant_categories';
-				break;
-			case 'grantmaking-agency':
-				$api_url .= 'agencies';
 				break;
 			case 'applicantType':
 				$api_url .= 'applicant_type';
