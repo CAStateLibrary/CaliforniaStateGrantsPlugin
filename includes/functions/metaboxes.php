@@ -1261,7 +1261,7 @@ function get_api_fields_by_id( $id = '' ) {
 			);
 		}
 
-		wp_cache_set( $id, $fields_to_display, 'csl-grants-submissions', 6 * HOUR_IN_SECONDS );
+		wp_cache_set( $id, $fields_to_display, 'csl-grants-submissions', 'csl-terms', 6 * HOUR_IN_SECONDS );
 	}
 
 	return $fields_to_display;
