@@ -105,10 +105,6 @@ function save_post( $post_id ) {
 					$value = $_POST[ $meta_field['id'] ];
 					array_walk( $value, 'sanitize_text_field' );
 					break;
-				case 'datetime-local':
-					$value = $_POST[ $meta_field['id'] ];
-					array_walk( $value, 'sanitize_text_field' );
-					break;
 				case 'eligibility-matching-funds':
 					$value = array(
 						'checkbox'   => sanitize_text_field( $_POST[ $meta_field['id'] ] ),
@@ -386,20 +382,7 @@ function get_meta_fields() {
 			'id'     => 'disbursementMethod',
 			'name'   => __( 'Funds Disbursement Methods', 'csl-grants-submission' ),
 			'type'   => 'radio',
-			'fields' => array(
-				array(
-					'id'   => 'advance',
-					'name' => __( 'Advance(s)', 'grantsportal' ),
-				),
-				array(
-					'id'   => 'reimbursement',
-					'name' => __( 'Reimbursement(s)', 'grantsportal' ),
-				),
-				array(
-					'id'   => 'combination',
-					'name' => __( 'Combination of Advance(s) and Reimbursement(s)', 'grantsportal' ),
-				),
-			),
+			'source' => 'api',
 		),
 		array(
 			'id'   => 'funds-disbursement-details',
