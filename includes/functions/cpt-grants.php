@@ -48,8 +48,6 @@ function authenticate_rest_request( $response, $handler, $request ) {
 	$headers               = $request->get_headers();
 	$authorization_headers = $headers['authorization'] ?? '';
 
-	return $response; // @TODO: DEBUG
-
 	if ( 0 !== strpos( '/wp/v2/csl_grants', $request->get_route() ) ) {
 		return $response;
 	}
