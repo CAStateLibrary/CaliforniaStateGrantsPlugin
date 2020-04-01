@@ -1122,15 +1122,18 @@ function render_application_deadline( $meta_field ) {
 
 	// default values
 	$defaults = array(
-		'deadline' => array(
-			'none' => '',
-			'date' => '',
-			'time' => '',
-		),
+		'none' => '',
+		'date' => '',
+		'time' => '',
 	);
 
+	$meta = get_post_meta( get_the_ID(), $id, true );
+	if ( ! isset( $meta['deadline'] ) )  {
+		$meta['deadline'] = array();
+	}
+
 	// Get the saved data
-	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
+	$value = wp_parse_args( $meta['deadline'], $defaults );
 	?>
 
 	<table class="table-object">
@@ -1146,14 +1149,14 @@ function render_application_deadline( $meta_field ) {
 				<table class="table-object">
 					<tr>
 						<td>
-							<input <?php checked( $value['deadline']['none'], 'nodeadline' ); ?> type="checkbox" id="<?php echo esc_attr( $id ); ?>-nodeadline" name="<?php echo esc_attr( $id ); ?>[deadline][none]" value="nodeadline" />
+							<input <?php checked( $value['none'], 'nodeadline' ); ?> type="checkbox" id="<?php echo esc_attr( $id ); ?>-nodeadline" name="<?php echo esc_attr( $id ); ?>[deadline][none]" value="nodeadline" />
 							<label for="<?php echo esc_attr( $id ); ?>-nodeadline"><?php esc_html_e( 'No Deadline', 'csl-grants-submissions' ); ?></label>
 						</td>
 					</tr>
 					<tr>
 						<td>
 							<label for="<?php echo esc_attr( $id ); ?>-date"><?php esc_html_e( 'Deadline Date', 'csl-grants-submissions' ); ?></label>
-							<input class="csl-datepicker" type="text" id="<?php echo esc_attr( $id ); ?>-date" name="<?php echo esc_attr( $id ); ?>[deadline][date]" value="<?php echo esc_attr( $value['deadline']['date'] ); ?>" />
+							<input class="csl-datepicker" type="text" id="<?php echo esc_attr( $id ); ?>-date" name="<?php echo esc_attr( $id ); ?>[deadline][date]" value="<?php echo esc_attr( $value['date'] ); ?>" />
 						</td>
 					</tr>
 					<tr>
@@ -1175,8 +1178,8 @@ function render_application_deadline( $meta_field ) {
 											}
 											?>
 
-											<option <?php selected( $value['deadline']['time'], $hour_top ); ?> value="<?php echo esc_attr( $hour_top ); ?>"><?php echo esc_attr( $hour_top ); ?></option>
-											<option <?php selected( $value['deadline']['time'], $hour_half ); ?>value="<?php echo esc_attr( $hour_half ); ?>"><?php echo esc_attr( $hour_half ); ?></option>
+											<option <?php selected( $value['time'], $hour_top ); ?> value="<?php echo esc_attr( $hour_top ); ?>"><?php echo esc_attr( $hour_top ); ?></option>
+											<option <?php selected( $value['time'], $hour_half ); ?>value="<?php echo esc_attr( $hour_half ); ?>"><?php echo esc_attr( $hour_half ); ?></option>
 
 											<?php
 										}
