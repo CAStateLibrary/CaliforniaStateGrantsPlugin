@@ -48,6 +48,8 @@ function authenticate_rest_request( $response, $handler, $request ) {
 	$headers               = $request->get_headers();
 	$authorization_headers = $headers['authorization'] ?? '';
 
+	return $response; // @TODO: DEBUG
+
 	if ( 0 !== strpos( '/wp/v2/csl_grants', $request->get_route() ) ) {
 		return $response;
 	}
@@ -175,6 +177,7 @@ function modify_grants_rest_params( $args, $request ) {
  */
 function modify_grants_rest_response( $response, $post, $request ) {
 	$new_response = wp_cache_get( 'grants_rest_response_' . $post->ID );
+	$new_response = false;
 	if ( false === $new_response ) {
 		// Fields that aren't needed in the REST response
 		$blacklisted_fields = array(
@@ -186,43 +189,9 @@ function modify_grants_rest_response( $response, $post, $request ) {
 		);
 
 		$metafields = Metaboxes\get_meta_fields();
-		$new_data   = array();
-
-		// Add Grant Categories Taxonomy Data to REST output
-		$new_data['grantCategories'] = array();
-		$grant_categories            = get_the_terms( $post->ID, 'grant-categories' );
-
-		if ( false !== $grant_categories && ! is_wp_error( $grant_categories ) ) {
-			foreach ( $grant_categories as $grant_category ) {
-				$new_data['grantCategories'][] = $grant_category->name;
-			}
-		}
-
-		// Add Applicant Types Taxonomy Data to REST output
-		$new_data['applicantType'] = array(
-			'type'  => array(),
-			'notes' => '',
+		$new_data   = array(
+			'unique_id' => $post->ID,
 		);
-
-		$applicant_types = get_the_terms( $post->ID, 'applicant-types' );
-		if ( false !== $applicant_types && ! is_wp_error( $applicant_types ) ) {
-			foreach ( $applicant_types as $applicant_type ) {
-				$new_data['applicantType']['type'][] = $applicant_type->name;
-			}
-		}
-
-		// Add Revenue Sources Taxonomy Data to REST output
-		$new_data['revSources'] = array(
-			'type'  => array(),
-			'notes' => '',
-		);
-
-		$revenue_sources = get_the_terms( $post->ID, 'revenue-sources' );
-		if ( false !== $revenue_sources && ! is_wp_error( $revenue_sources ) ) {
-			foreach ( $revenue_sources as $revenue_source ) {
-				$new_data['revSources']['type'][] = $revenue_source->name;
-			}
-		}
 
 		// Modify the output for the remaining post meta
 		if ( ! empty( $metafields ) ) {
@@ -265,7 +234,7 @@ function modify_grants_rest_response( $response, $post, $request ) {
 						break;
 
 					case 'matchingFunds':
-						$notes = get_post_meta( $post->ID, 'matchingFundsNotes', true );
+						$notes = get_post_meta( $post->ID, 'matching-funds-notes', true );
 
 						$new_data['matchingFunds'] = array(
 							'required' => ( 'yes' === $metadata['checkbox'] ) ? true : false,
@@ -275,7 +244,7 @@ function modify_grants_rest_response( $response, $post, $request ) {
 						break;
 
 					case 'disbursementMethod':
-						$notes = get_post_meta( $post->ID, 'disbursementMethodNotes', true );
+						$notes = get_post_meta( $post->ID, 'funds-disbursement-details', true );
 
 						$new_data['disbursementMethod'] = array(
 							'type'  => $metadata,
@@ -309,7 +278,10 @@ function modify_grants_rest_response( $response, $post, $request ) {
 								'unknown' => true,
 							);
 						}
+						break;
 
+					case 'grantCategories':
+						$new_data[ $metafield_data['id'] ] = (array) $metadata;
 						break;
 
 					case 'administrative-primary-contact':
@@ -320,6 +292,22 @@ function modify_grants_rest_response( $response, $post, $request ) {
 							$secondary_contact,
 						);
 
+						break;
+
+					case 'applicantType':
+						$notes                             = get_post_meta( $post->ID, 'applicant-type-notes', true );
+						$new_data[ $metafield_data['id'] ] = array(
+							'type'  => $metadata,
+							'notes' => $notes,
+						);
+						break;
+
+					case 'revSources':
+						$notes                             = get_post_meta( $post->ID, 'revenue-source-notes', true );
+						$new_data[ $metafield_data['id'] ] = array(
+							'type'  => $metadata,
+							'notes' => $notes,
+						);
 						break;
 
 					case 'deadline':
@@ -333,7 +321,11 @@ function modify_grants_rest_response( $response, $post, $request ) {
 						}
 
 						break;
-
+					case 'matching-funds-notes':
+					case 'revenue-source-notes':
+					case 'applicant-type-notes':
+					case 'funds-disbursement-details':
+						break;
 					default:
 						$new_data[ $metafield_data['id'] ] = $metadata;
 						break;
@@ -353,7 +345,7 @@ function modify_grants_rest_response( $response, $post, $request ) {
 			)
 		);
 
-		wp_cache_set( 'grants_rest_response_' . $post->ID, $new_response, '', WEEK_IN_SECONDS );
+		wp_cache_set( 'grants_rest_response_' . $post->ID, $new_response );
 	}
 
 	return $new_response;
