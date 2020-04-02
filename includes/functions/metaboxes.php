@@ -9,7 +9,7 @@ namespace CslGrantsSubmissions\Metaboxes;
 
 const NONCE_ACTION = 'grant-submissions-metabox';
 const NONCE_FIELD  = '_grant_submission';
-const API_URL      = 'https://cslportaldev.10uplabs.com';
+const API_URL      = 'http://cslapi.test';
 
 /**
  * Run setup hooks/filters
@@ -21,6 +21,19 @@ function setup() {
 
 	add_action( 'add_meta_boxes', $n( 'add_metaboxes' ) );
 	add_action( 'save_post', $n( 'save_post' ) );
+}
+
+/**
+ * A function to get the API URL.
+ *
+ * @return string
+ */
+function get_api_url() {
+	if ( defined( 'GRANTS_API_URL') ) {
+		return GRANTS_API_URL;
+	}
+
+	return API_URL;
 }
 
 /**
@@ -72,6 +85,10 @@ function save_post( $post_id ) {
 			}
 
 			switch ( $meta_field['type'] ) {
+				case 'checkbox':
+					$value = $_POST[ $meta_field['id'] ];
+					array_walk( $value, 'sanitize_text_field' );
+					break;
 				case 'email':
 					$value = sanitize_email( $_POST[ $meta_field['id'] ] );
 					break;
@@ -85,10 +102,6 @@ function save_post( $post_id ) {
 					$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
 					break;
 				case 'point_of_contact':
-					$value = $_POST[ $meta_field['id'] ];
-					array_walk( $value, 'sanitize_text_field' );
-					break;
-				case 'datetime-local':
 					$value = $_POST[ $meta_field['id'] ];
 					array_walk( $value, 'sanitize_text_field' );
 					break;
@@ -116,25 +129,25 @@ function save_post( $post_id ) {
 					break;
 				case 'estimated-award-amounts':
 					$value            = $_POST[ $meta_field['id'] ];
-					$temp['checkbox'] = ( isset( $temp['checkbox'] ) ) ? sanitize_text_field( $temp['checkbox'] ) : '';
+					$temp['checkbox'] = ( isset( $value['checkbox'] ) ) ? sanitize_text_field( $value['checkbox'] ) : '';
 
 					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
-					if ( 'same' === $temp['checkbox'] ) {
+					if ( 'same' === $value['checkbox'] ) {
 						$value['unknown']['first']    = '';
 						$value['unknown']['second']   = '';
 						$value['different']['first']  = '';
 						$value['different']['second'] = '';
 						$value['different']['third']  = '';
-					} elseif ( 'different' === $temp['checkbox'] ) {
+					} elseif ( 'different' === $value['checkbox'] ) {
 						$value['unknown']['first']  = '';
 						$value['unknown']['second'] = '';
 						$value['same']['amount']    = '';
-					} elseif ( 'unknown' === $temp['checkbox'] ) {
+					} elseif ( 'unknown' === $value['checkbox'] ) {
 						$value['different']['first']  = '';
 						$value['different']['second'] = '';
 						$value['different']['third']  = '';
 						$value['same']['amount']      = '';
-					} elseif ( 'dependant' === $temp['checkbox'] ) {
+					} elseif ( 'dependant' === $value['checkbox'] ) {
 						$value['unknown']['first']    = '';
 						$value['unknown']['second']   = '';
 						$value['different']['first']  = '';
@@ -167,6 +180,8 @@ function save_post( $post_id ) {
 			update_post_meta( $post_id, $meta_field['id'], $value );
 		}
 	}
+
+	wp_cache_delete( 'grants_rest_response_' . $post_id );
 }
 
 /**
@@ -239,18 +254,12 @@ function render_metabox() {
 function get_meta_fields() {
 	return array(
 		array(
-			'id'         => 'grant-title',
-			'name'       => __( 'Grant Title', 'csl-grants-submission' ),
-			'type'       => 'textarea',
-			'text_limit' => 105,
-		),
-		array(
-			'id'   => 'grant-id',
+			'id'   => 'grant_id',
 			'name' => __( 'Grant ID', 'csl-grants-submission' ),
 			'type' => 'text',
 		),
 		array(
-			'id'     => 'grant-type',
+			'id'     => 'isForecasted',
 			'name'   => __( 'Grant Type', 'csl-grants-submission' ),
 			'type'   => 'radio',
 			'fields' => array(
@@ -265,26 +274,20 @@ function get_meta_fields() {
 			),
 		),
 		array(
-			'id'     => 'grantmaking-agency',
-			'name'   => __( 'Grantmaking Agency/Department', 'csl-grants-submission' ),
-			'type'   => 'select',
-			'source' => 'api',
-		),
-		array(
-			'id'     => 'opportunity-type',
+			'id'     => 'opportunityType',
 			'name'   => __( 'Opportunity Type', 'csl-grants-submission' ),
 			'type'   => 'radio',
 			'source' => 'api',
 		),
 		array(
-			'id'     => 'relevant-categories',
+			'id'     => 'grantCategories',
 			'name'   => __( 'Relevant Categories', 'csl-grants-submission' ),
 			'type'   => 'select',
 			'source' => 'api',
 			'multi'  => true,
 		),
 		array(
-			'id'   => 'category-suggestion',
+			'id'   => 'categorySuggestions',
 			'name' => __( 'Category Suggestion(s)', 'grantsportal' ),
 			'type' => 'text',
 		),
@@ -301,7 +304,7 @@ function get_meta_fields() {
 			'text_limit' => 3200,
 		),
 		array(
-			'id'     => 'required-loi',
+			'id'     => 'loiRequired',
 			'name'   => __( 'Required LOI', 'csl-grants-submission' ),
 			'type'   => 'radio',
 			'fields' => array(
@@ -316,7 +319,7 @@ function get_meta_fields() {
 			),
 		),
 		array(
-			'id'     => 'eligibility-applicant-type',
+			'id'     => 'applicantType',
 			'name'   => __( 'Eligibility: Applicant Type', 'csl-grants-submission' ),
 			'type'   => 'checkbox',
 			'source' => 'api',
@@ -328,25 +331,25 @@ function get_meta_fields() {
 			'text_limit' => 250,
 		),
 		array(
-			'id'         => 'eligibility-geographic',
+			'id'         => 'geoLimitations',
 			'name'       => __( 'Eligibility: Geographic', 'csl-grants-submission' ),
 			'type'       => 'textarea',
 			'text_limit' => 450,
 		),
 		array(
-			'id'     => 'revenue-source',
+			'id'     => 'revSources',
 			'name'   => __( 'Revenue Source', 'csl-grants-submission' ),
 			'type'   => 'radio',
 			'source' => 'api',
 		),
 		array(
 			'id'         => 'revenue-source-notes',
-			'name'       => __( 'Revenu Source Notes', 'csl-grants-submission' ),
+			'name'       => __( 'Revenue Source Notes', 'csl-grants-submission' ),
 			'type'       => 'textarea',
 			'text_limit' => 200,
 		),
 		array(
-			'id'   => 'eligibility-matching-funds',
+			'id'   => 'matchingFunds',
 			'name' => __( 'Eligibility: Matching Funds', 'csl-grants-submission' ),
 			'type' => 'eligibility-matching-funds',
 		),
@@ -357,38 +360,25 @@ function get_meta_fields() {
 			'text_limit' => 300,
 		),
 		array(
-			'id'   => 'total-estimated-available-funding',
+			'id'   => 'estimatedAvailableFunds',
 			'name' => __( 'Total Estimated Available Funding', 'csl-grants-submission' ),
 			'type' => 'number',
 		),
 		array(
-			'id'   => 'estimated-number-awards',
+			'id'   => 'estimatedAwards',
 			'name' => __( 'Estimated Number of Awards', 'csl-grants-submission' ),
 			'type' => 'estimated-number-awards',
 		),
 		array(
-			'id'   => 'estimated-award-amounts',
+			'id'   => 'estimatedAmounts',
 			'name' => __( 'Estimated Award Amounts', 'csl-grants-submission' ),
 			'type' => 'estimated-award-amounts',
 		),
 		array(
-			'id'     => 'funds-disbursement-methods',
+			'id'     => 'disbursementMethod',
 			'name'   => __( 'Funds Disbursement Methods', 'csl-grants-submission' ),
 			'type'   => 'radio',
-			'fields' => array(
-				array(
-					'id'   => 'advance',
-					'name' => __( 'Advance(s)', 'grantsportal' ),
-				),
-				array(
-					'id'   => 'reimbursement',
-					'name' => __( 'Reimbursement(s)', 'grantsportal' ),
-				),
-				array(
-					'id'   => 'combination',
-					'name' => __( 'Combination of Advance(s) and Reimbursement(s)', 'grantsportal' ),
-				),
-			),
+			'source' => 'api',
 		),
 		array(
 			'id'   => 'funds-disbursement-details',
@@ -396,27 +386,32 @@ function get_meta_fields() {
 			'type' => 'textarea',
 		),
 		array(
-			'id'   => 'grant-open-close',
-			'name' => __( 'Grant Open/Close', 'csl-grants-submission' ),
+			'id'   => 'openDate',
+			'name' => __( 'Grant Open', 'csl-grants-submission' ),
 			'type' => 'datetime-local',
 		),
 		array(
-			'id'   => 'period-performance',
+			'id'   => 'closeDate',
+			'name' => __( 'Grant Close', 'csl-grants-submission' ),
+			'type' => 'datetime-local',
+		),
+		array(
+			'id'   => 'periodOfPerformance',
 			'name' => __( 'Period of Performance', 'csl-grants-submission' ),
 			'type' => 'period-performance',
 		),
 		array(
-			'id'   => 'expected-award-date',
+			'id'   => 'expectedAwardDate',
 			'name' => __( 'Expected Award Announcement Date', 'csl-grants-submission' ),
 			'type' => 'text',
 		),
 		array(
-			'id'   => 'application-deadline',
+			'id'   => 'deadline',
 			'name' => __( 'Application Deadline', 'csl-grants-submission' ),
 			'type' => 'application-deadline',
 		),
 		array(
-			'id'   => 'electronic-submission-method',
+			'id'   => 'electronicSubmission',
 			'name' => __( 'Electronic Application Submission Method', 'csl-grants-submission' ),
 			'type' => 'electronic-submission-method',
 		),
@@ -501,15 +496,42 @@ function render_checkbox_field( $meta_field = array() ) {
 	$description = $meta_field['description'] ?? '';
 	$id          = $meta_field['id'] ?? '';
 
+	if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
+		$fields = get_api_fields_by_id( $id );
+	} elseif ( isset( $meta_field['fields'] ) ) {
+		$fields = $meta_field['fields'];
+	} else {
+		$fields = '';
+	}
+
+	if ( empty( $fields ) ) {
+		$fields = array(
+			array(
+				'id'   => 'none',
+				'name' => esc_html__( 'None', 'csl-grants-submissions' ),
+			),
+		);
+	}
+
 	// Get the saved data
 	$value = get_post_meta( get_the_ID(), $id, true );
 	?>
 
 	<p><strong><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label></strong></p>
 	<p><?php echo esc_html( $description ); ?></p>
-	<p><input <?php checked( $value, 'on' ); ?> type="checkbox" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>" value="on" /></p>
 
 	<?php
+	foreach ( $fields as $field ) {
+		$checked = ( in_array( $field['id'], (array) $value, true ) ) ? 'checked' : '';
+		?>
+
+		<p>
+			<input <?php echo esc_attr( $checked ); ?> type="checkbox" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $id ); ?>[]" value="<?php echo esc_attr( $field['id'] ); ?>"/>
+			<label for="<?php echo esc_attr( $field['id'] ); ?>"><?php echo esc_html( $field['name'] ); ?></label>
+		</p>
+
+		<?php
+	}
 }
 
 /**
@@ -532,8 +554,8 @@ function render_radio_field( $meta_field = array() ) {
 
 	if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 		$fields = get_api_fields_by_id( $id );
-	} elseif ( isset( $meta_fields['fields'] ) ) {
-		$fields = $meta_fields['fields'];
+	} elseif ( isset( $meta_field['fields'] ) ) {
+		$fields = $meta_field['fields'];
 	} else {
 		$fields = '';
 	}
@@ -584,8 +606,8 @@ function render_select_field( $meta_field = array() ) {
 
 	if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 		$fields = get_api_fields_by_id( $id );
-	} elseif ( isset( $meta_fields['fields'] ) ) {
-		$fields = $meta_fields['fields'];
+	} elseif ( isset( $meta_field['fields'] ) ) {
+		$fields = $meta_field['fields'];
 	} else {
 		$fields = '';
 	}
@@ -1001,34 +1023,22 @@ function render_datepicker( $meta_field = array() ) {
 		return;
 	}
 
-	// default values
-	$defaults = array(
-		'open'  => '',
-		'close' => '',
-	);
-
 	// Get the saved data
-	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
+	$value = get_post_meta( get_the_ID(), $id, true );
 	?>
 
 	<table class="table-object">
 		<tr>
 			<th>
-				<?php echo esc_html( $name ); ?>
+				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 			</th>
 		</tr>
 		<tr>
 			<td>
-				<label for="open-date"><?php esc_html_e( 'Open Date', 'csl-grants-submissions' ); ?></label>
-				<input type="datetime-local" id="open-date" name="<?php echo esc_attr( $id ); ?>[open]" value="<?php echo esc_attr( $value['open'] ); ?>">
+				<input type="datetime-local" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>">
 			</td>
 		</tr>
 		<tr>
-			<td>
-				<label for="close-date"><?php esc_html_e( 'Close Date', 'csl-grants-submissions' ); ?></label>
-				<input type="datetime-local" id="close-date" name="<?php echo esc_attr( $id ); ?>[close]" value="<?php echo esc_attr( $value['close'] ); ?>">
-			</td>
-		</tr>
 	</table>
 
 	<?php
@@ -1112,15 +1122,18 @@ function render_application_deadline( $meta_field ) {
 
 	// default values
 	$defaults = array(
-		'deadline' => array(
-			'none' => '',
-			'date' => '',
-			'time' => '',
-		),
+		'none' => '',
+		'date' => '',
+		'time' => '',
 	);
 
+	$meta = get_post_meta( get_the_ID(), $id, true );
+	if ( ! isset( $meta['deadline'] ) )  {
+		$meta['deadline'] = array();
+	}
+
 	// Get the saved data
-	$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
+	$value = wp_parse_args( $meta['deadline'], $defaults );
 	?>
 
 	<table class="table-object">
@@ -1136,14 +1149,14 @@ function render_application_deadline( $meta_field ) {
 				<table class="table-object">
 					<tr>
 						<td>
-							<input <?php checked( $value['deadline']['none'], 'nodeadline' ); ?> type="checkbox" id="<?php echo esc_attr( $id ); ?>-nodeadline" name="<?php echo esc_attr( $id ); ?>[deadline][none]" value="nodeadline" />
+							<input <?php checked( $value['none'], 'nodeadline' ); ?> type="checkbox" id="<?php echo esc_attr( $id ); ?>-nodeadline" name="<?php echo esc_attr( $id ); ?>[deadline][none]" value="nodeadline" />
 							<label for="<?php echo esc_attr( $id ); ?>-nodeadline"><?php esc_html_e( 'No Deadline', 'csl-grants-submissions' ); ?></label>
 						</td>
 					</tr>
 					<tr>
 						<td>
 							<label for="<?php echo esc_attr( $id ); ?>-date"><?php esc_html_e( 'Deadline Date', 'csl-grants-submissions' ); ?></label>
-							<input class="csl-datepicker" type="text" id="<?php echo esc_attr( $id ); ?>-date" name="<?php echo esc_attr( $id ); ?>[deadline][date]" value="<?php echo esc_attr( $value['deadline']['date'] ); ?>" />
+							<input class="csl-datepicker" type="text" id="<?php echo esc_attr( $id ); ?>-date" name="<?php echo esc_attr( $id ); ?>[deadline][date]" value="<?php echo esc_attr( $value['date'] ); ?>" />
 						</td>
 					</tr>
 					<tr>
@@ -1165,8 +1178,8 @@ function render_application_deadline( $meta_field ) {
 											}
 											?>
 
-											<option <?php selected( $value['deadline']['time'], $hour_top ); ?> value="<?php echo esc_attr( $hour_top ); ?>"><?php echo esc_attr( $hour_top ); ?></option>
-											<option <?php selected( $value['deadline']['time'], $hour_half ); ?>value="<?php echo esc_attr( $hour_half ); ?>"><?php echo esc_attr( $hour_half ); ?></option>
+											<option <?php selected( $value['time'], $hour_top ); ?> value="<?php echo esc_attr( $hour_top ); ?>"><?php echo esc_attr( $hour_top ); ?></option>
+											<option <?php selected( $value['time'], $hour_half ); ?>value="<?php echo esc_attr( $hour_half ); ?>"><?php echo esc_attr( $hour_half ); ?></option>
 
 											<?php
 										}
@@ -1191,32 +1204,29 @@ function render_application_deadline( $meta_field ) {
  */
 function get_api_fields_by_id( $id = '' ) {
 	if ( empty( $id ) ) {
-		return;
+		return array();
 	}
 
 	$fields_to_display = wp_cache_get( $id, 'csl-grants-submissions' );
 
 	if ( false === $fields_to_display ) {
-		$api_url = trailingslashit( API_URL ) . 'wp-json/wp/v2/';
+		$api_url = trailingslashit( get_api_url() ) . 'wp-json/wp/v2/';
 
 		switch ( $id ) {
-			case 'relevant-categories':
-				$api_url .= 'grant-categories';
+			case 'grantCategories':
+				$api_url .= 'grant_categories';
 				break;
-			case 'grantmaking-agency':
-				$api_url .= 'agencies';
+			case 'applicantType':
+				$api_url .= 'applicant_type';
 				break;
-			case 'eligibility-applicant-type':
-				$api_url .= 'applicant-types';
+			case 'disbursementMethod':
+				$api_url .= 'disbursement_method';
 				break;
-			case 'funds-disbursement-methods':
-				$api_url .= 'disbursement-methods';
+			case 'opportunityType':
+				$api_url .= 'opportunity_types';
 				break;
-			case 'opportunity-type':
-				$api_url .= 'opportunity-types';
-				break;
-			case 'revenue-source':
-				$api_url .= 'revenue-sources';
+			case 'revSources':
+				$api_url .= 'revenue_sources';
 				break;
 			default:
 				$api_url = null;
@@ -1224,7 +1234,7 @@ function get_api_fields_by_id( $id = '' ) {
 		}
 
 		if ( is_null( $api_url ) ) {
-			return;
+			return array();
 		}
 
 		$request = wp_remote_get( $api_url );
@@ -1256,7 +1266,7 @@ function get_api_fields_by_id( $id = '' ) {
 			);
 		}
 
-		wp_cache_set( $id, $fields_to_display, 'csl-grants-submissions' );
+		wp_cache_set( $id, $fields_to_display, 'csl-grants-submissions', 'csl-terms', 6 * HOUR_IN_SECONDS );
 	}
 
 	return $fields_to_display;

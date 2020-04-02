@@ -1,11 +1,10 @@
 /* global jQuery */
 
 jQuery( document ).ready( function ( $ ) {
-	$( '.csl-datepicker' ).datepicker( {
-		dateFormat: 'MM d, yy'
+	$( '.csl-datepicker' ).each( function( i, obj ) {
+		obj.datepicker( { dateFormat: 'MM d, yy' } );
+		obj.datepicker( 'setDate', obj.val() );
 	} );
-
-	$( '.csl-datepicker' ).datepicker( 'setDate', $( '.csl-datepicker' ).val() );
 } );
 
 /**
