@@ -45,45 +45,16 @@ function setup() {
  * @return \WP_HTTP_Response|WP_Error WP_HTTP_Response if authentication succeeded, WP_Error otherwise
  */
 function authenticate_rest_request( $response, $handler, $request ) {
-	$headers               = $request->get_headers();
-	$authorization_headers = $headers['authorization'] ?? '';
-
+	$authorization_header = $request->get_header( 'authorization' );
 	if ( 0 !== strpos( '/wp/v2/csl_grants', $request->get_route() ) ) {
 		return $response;
 	}
 
-	if ( empty( $authorization_headers ) ) {
+	if ( empty( $authorization_header ) ) {
 		return new WP_Error( 'empty_auth_header', __( 'An authorization header must be provided.', 'csl-grants-submissions' ), array( 'status' => WP_Http::BAD_REQUEST ) );
 	}
 
-	$num_auth_headers = count( $authorization_headers );
-
-	$csl_auth_header = '';
-
-	if ( 1 === $num_auth_headers ) {
-		$csl_auth_header = $authorization_headers[0];
-	} else {
-		foreach ( $authorization_headers as $auth_header ) {
-			if ( false !== strpos( $auth_header, 'WP_X_CSL_Token' ) ) {
-				$csl_auth_header = $auth_header;
-				break;
-			}
-		}
-	}
-
-	if ( empty( $csl_auth_header ) || false === strpos( $csl_auth_header, 'WP_X_CSL_Token' ) ) {
-		return new WP_Error( 'wrong_auth_header', __( 'The proper authorization header must be provided.', 'csl-grants-submissions' ), array( 'status' => WP_Http::BAD_REQUEST ) );
-	}
-
-	// Auth header should be a string with first word being auth type, second being auth token
-	$auth_data = explode( ' ', $csl_auth_header );
-
-	// If the WP_X_CSL_Token header is provided without a token
-	if ( empty( $auth_data[1] ) ) {
-		return new WP_Error( 'no_auth_token', __( 'There was no auth token provided.', 'csl-grants-submissions' ), array( 'status' => WP_Http::BAD_REQUEST ) );
-	}
-
-	$received_token = sanitize_text_field( $auth_data[1] );
+	$received_token = sanitize_text_field( $authorization_header );
 	$stored_token   = sha1( Core\get_grants_token() );
 
 	if ( empty( $stored_token ) || $stored_token !== $received_token ) {
