@@ -159,7 +159,8 @@ function modify_grants_rest_response( $response, $post, $request ) {
 
 		$metafields = Metaboxes\get_meta_fields();
 		$new_data   = array(
-			'unique_id' => $post->ID,
+			'grantTitle' => get_the_title( $post->ID ),
+			'unique_id'  => $post->ID,
 		);
 
 		// Modify the output for the remaining post meta
@@ -207,6 +208,7 @@ function modify_grants_rest_response( $response, $post, $request ) {
 
 						$new_data['matchingFunds'] = array(
 							'required' => ( 'yes' === $metadata['checkbox'] ) ? true : false,
+							'percent'  => absint( $metadata['percent'] ?? 0 ),
 							'notes'    => $notes,
 						);
 
