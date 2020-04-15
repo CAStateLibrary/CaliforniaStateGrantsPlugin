@@ -1,10 +1,16 @@
 /* global jQuery */
 
 jQuery( document ).ready( function ( $ ) {
-	$( '.csl-datepicker' ).each( function( i, obj ) {
-		obj.datepicker( { dateFormat: 'MM d, yy' } );
-		obj.datepicker( 'setDate', obj.val() );
-	} );
+	const cslDatePickerPlugin = $( '.csl-datepicker-plugin' );
+
+	if ( cslDatePickerPlugin.length ) {
+		cslDatePickerPlugin.each( function () {
+			$( this ).datepicker( {dateFormat: 'MM d, yy'} );
+			if ( '' !== $( this ).val() ) {
+				$( this ).datepicker( 'setDate', $( this ).val() );
+			}
+		} );
+	}
 } );
 
 /**
