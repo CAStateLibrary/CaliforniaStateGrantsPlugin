@@ -570,10 +570,6 @@ function render_radio_field( $meta_field = array() ) {
 
 	<p><strong><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label></strong></p>
 	<p><?php echo esc_html( $description ); ?></p>
-	<p>
-		<input <?php checked( 'none', $value ); ?> type="radio" id="none" name="<?php echo esc_attr( $id ); ?>" value="none"/>
-		<label for="none"><?php esc_html_e( 'None', 'csl-grants-submissions' ); ?></label>
-	</p>
 
 	<?php foreach ( $fields as $field ) : ?>
 
