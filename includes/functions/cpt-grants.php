@@ -193,7 +193,6 @@ function modify_grants_rest_response( $response, $post, $request ) {
 								'dependent' => esc_html__( 'Dependant on number of awards.', 'grantsportal' ),
 							);
 						}
-
 						break;
 					case 'isForecasted':
 						$new_data['isForecasted'] = ( 'forecasted' === $metadata ) ? true : false;
