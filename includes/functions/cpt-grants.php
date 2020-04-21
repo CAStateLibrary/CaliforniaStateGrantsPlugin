@@ -154,13 +154,13 @@ function modify_grants_rest_response( $response, $post, $request ) {
 			'applications-submitted',
 			'matchingFundsNotes',
 			'disbursementMethodNotes',
-			'administrative-secondary-contact',
+			'adminSecondaryContact',
 		);
 
 		$metafields = Metaboxes\get_meta_fields();
 		$new_data   = array(
 			'grantTitle' => get_the_title( $post->ID ),
-			'unique_id'  => $post->ID,
+			'uniqueID'   => $post->ID,
 		);
 
 		// Modify the output for the remaining post meta
@@ -203,7 +203,7 @@ function modify_grants_rest_response( $response, $post, $request ) {
 						break;
 
 					case 'matchingFunds':
-						$notes = get_post_meta( $post->ID, 'matching-funds-notes', true );
+						$notes = get_post_meta( $post->ID, 'matchingFundsNotes', true );
 
 						$new_data['matchingFunds'] = array(
 							'required' => ( 'yes' === $metadata['checkbox'] ) ? true : false,
@@ -214,7 +214,7 @@ function modify_grants_rest_response( $response, $post, $request ) {
 						break;
 
 					case 'disbursementMethod':
-						$notes = get_post_meta( $post->ID, 'funds-disbursement-details', true );
+						$notes = get_post_meta( $post->ID, 'disbursementMethodNotes', true );
 
 						$new_data['disbursementMethod'] = array(
 							'type'  => $metadata,
@@ -254,9 +254,9 @@ function modify_grants_rest_response( $response, $post, $request ) {
 						$new_data[ $metafield_data['id'] ] = (array) $metadata;
 						break;
 
-					case 'administrative-primary-contact':
+					case 'adminPrimaryContact':
 						$metadata['primary']             = true;
-						$secondary_contact               = get_post_meta( $post->ID, 'administrative-secondary-contact', true );
+						$secondary_contact               = get_post_meta( $post->ID, 'adminSecondaryContact', true );
 						$new_data['internalContactInfo'] = array(
 							$metadata,
 							$secondary_contact,
@@ -265,7 +265,7 @@ function modify_grants_rest_response( $response, $post, $request ) {
 						break;
 
 					case 'applicantType':
-						$notes                             = get_post_meta( $post->ID, 'applicant-type-notes', true );
+						$notes                             = get_post_meta( $post->ID, 'applicantTypeNotes', true );
 						$new_data[ $metafield_data['id'] ] = array(
 							'type'  => $metadata,
 							'notes' => $notes,
@@ -273,7 +273,7 @@ function modify_grants_rest_response( $response, $post, $request ) {
 						break;
 
 					case 'revSources':
-						$notes                             = get_post_meta( $post->ID, 'revenue-source-notes', true );
+						$notes                             = get_post_meta( $post->ID, 'revenueSourceNotes', true );
 						$new_data[ $metafield_data['id'] ] = array(
 							'type'  => $metadata,
 							'notes' => $notes,
@@ -291,10 +291,10 @@ function modify_grants_rest_response( $response, $post, $request ) {
 						}
 
 						break;
-					case 'matching-funds-notes':
-					case 'revenue-source-notes':
-					case 'applicant-type-notes':
-					case 'funds-disbursement-details':
+					case 'matchingFundsNotes':
+					case 'revenueSourceNotes':
+					case 'applicantTypeNotes':
+					case 'disbursementMethodNotes':
 						break;
 					default:
 						$new_data[ $metafield_data['id'] ] = $metadata;

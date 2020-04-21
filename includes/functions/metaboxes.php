@@ -254,7 +254,7 @@ function render_metabox() {
 function get_meta_fields() {
 	return array(
 		array(
-			'id'   => 'grant_id',
+			'id'   => 'grantID',
 			'name' => __( 'Grant ID', 'csl-grants-submission' ),
 			'type' => 'text',
 		),
@@ -325,7 +325,7 @@ function get_meta_fields() {
 			'source' => 'api',
 		),
 		array(
-			'id'         => 'applicant-type-notes',
+			'id'         => 'applicantTypeNotes',
 			'name'       => __( 'Applicant Type Notes', 'csl-grants-submission' ),
 			'type'       => 'textarea',
 			'text_limit' => 250,
@@ -343,7 +343,7 @@ function get_meta_fields() {
 			'source' => 'api',
 		),
 		array(
-			'id'         => 'revenue-source-notes',
+			'id'         => 'revenueSourceNotes',
 			'name'       => __( 'Revenue Source Notes', 'csl-grants-submission' ),
 			'type'       => 'textarea',
 			'text_limit' => 200,
@@ -354,7 +354,7 @@ function get_meta_fields() {
 			'type' => 'eligibility-matching-funds',
 		),
 		array(
-			'id'         => 'matching-funds-notes',
+			'id'         => 'matchingFundsNotes',
 			'name'       => __( 'Matching Funds Notes', 'csl-grants-submission' ),
 			'type'       => 'textarea',
 			'text_limit' => 300,
@@ -381,7 +381,7 @@ function get_meta_fields() {
 			'source' => 'api',
 		),
 		array(
-			'id'   => 'funds-disbursement-details',
+			'id'   => 'disbursementMethodNotes',
 			'name' => __( 'Funds Disbursement Details', 'csl-grants-submission' ),
 			'type' => 'textarea',
 		),
@@ -416,37 +416,37 @@ function get_meta_fields() {
 			'type' => 'electronic-submission-method',
 		),
 		array(
-			'id'   => 'grant-details-url',
+			'id'   => 'grantDetailsURL',
 			'name' => __( 'Grant Details URL', 'csl-grants-submission' ),
 			'type' => 'url',
 		),
 		array(
-			'id'   => 'grantmaking-agency-url',
+			'id'   => 'grantMakingAgencyURL',
 			'name' => __( 'Grantmaking Agency/Department URL', 'csl-grants-submission' ),
 			'type' => 'url',
 		),
 		array(
-			'id'   => 'grant-updates-url',
+			'id'   => 'grantUpdatesURL',
 			'name' => __( 'Grant Updates Subscribe URL', 'csl-grants-submission' ),
 			'type' => 'url',
 		),
 		array(
-			'id'   => 'planned-events-url',
+			'id'   => 'plannedEventsURL',
 			'name' => __( 'Planned Events Information URL', 'csl-grants-submission' ),
 			'type' => 'url',
 		),
 		array(
-			'id'   => 'public-poc',
+			'id'   => 'contactInfo',
 			'name' => __( 'Public Point of Contact', 'csl-grants-submission' ),
 			'type' => 'point_of_contact',
 		),
 		array(
-			'id'   => 'administrative-primary-contact',
+			'id'   => 'adminPrimaryContact',
 			'name' => __( 'Administrative Primary Point of Contact', 'csl-grants-submission' ),
 			'type' => 'point_of_contact',
 		),
 		array(
-			'id'   => 'administrative-secondary-contact',
+			'id'   => 'adminSecondaryContact',
 			'name' => __( 'Administrative Secondary Point of Contact', 'csl-grants-submission' ),
 			'type' => 'point_of_contact',
 		),
