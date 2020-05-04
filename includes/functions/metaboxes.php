@@ -857,7 +857,7 @@ function render_award_amounts( $meta_field = array() ) {
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant">
-							<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependant on number of submissions received, application process, etc.', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc.', 'csl-grants-submission' ); ?></label>
 						</td>
 					</tr>
 				</table>
@@ -931,7 +931,7 @@ function render_number_awards( $meta_field = array() ) {
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant">
-							<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependant on number of submissions received, application process, etc.', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc.', 'csl-grants-submission' ); ?></label>
 						</td>
 					</tr>
 				</table>
