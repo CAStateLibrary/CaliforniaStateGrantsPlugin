@@ -1,9 +1,10 @@
 {
   "name": "10up/csl-grants-submissions",
   "description": "Csl Grants Submissions",
+  "type": "wordpress-plugin",
   "authors": [
     {
-      "name": "Author",
+      "name": "10up",
       "email": "info@10up.com"
     }
   ],
