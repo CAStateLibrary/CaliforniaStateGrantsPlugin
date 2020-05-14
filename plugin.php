@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: CslGrantsSubmissions
+ * Plugin Name: California State Grants
  * Plugin URI:
- * Description:
+ * Description: This plugin provides a WordPress dashboard interface to input California State Grant information and facilitate syncing that data with the California State Grants Portal.
  * Version:     0.1.0
  * Author:      10up
  * Author URI:  https://10up.com
