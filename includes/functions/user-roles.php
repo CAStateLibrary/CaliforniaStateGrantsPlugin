@@ -2,10 +2,10 @@
 /**
  * Responsible for the entire meta box of the edit page.
  *
- * @package CslGrantsSubmissions
+ * @package CaGov\Grants
  */
 
-namespace CslGrantsSubmissions\User_Roles;
+namespace CaGov\Grants\User_Roles;
 
 const CSL_USERS_VERSION = 1;
 
@@ -214,5 +214,3 @@ function update_role( $role, $capabilities ) {
 		}
 	}
 }
-
-

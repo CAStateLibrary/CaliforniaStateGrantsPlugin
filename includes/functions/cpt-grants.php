@@ -2,13 +2,13 @@
 /**
  * Handles all functionality related to the grants custom post type.
  *
- * @package CslGrantsSubmissions
+ * @package CaGov\Grants
  */
 
-namespace CslGrantsSubmissions\CPT\Grants;
+namespace CaGov\Grants\CPT\Grants;
 
-use CslGrantsSubmissions\Core;
-use CslGrantsSubmissions\Metaboxes;
+use CaGov\Grants\Core;
+use CaGov\Grants\Metaboxes;
 use WP_REST_Response;
 use WP_Error;
 use WP_Http;

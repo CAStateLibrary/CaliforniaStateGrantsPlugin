@@ -1,5 +1,5 @@
 <?php
-namespace CslGrantsSubmissions\Core;
+namespace CaGov\Grants\Core;
 
 /**
  * This is a very basic test case to get things started. You should probably rename this and make
@@ -13,7 +13,7 @@ namespace CslGrantsSubmissions\Core;
  *   - https://github.com/10up/wp_mock
  */
 
-use CslGrantsSubmissions as Base;
+use CaGov\Grants as Base;
 
 class Core_Tests extends Base\TestCase {
 
@@ -26,8 +26,8 @@ class Core_Tests extends Base\TestCase {
 	 */
 	public function test_setup() {
 		// Setup
-		\WP_Mock::expectActionAdded( 'init', 'CslGrantsSubmissions\Core\i18n' );
-		\WP_Mock::expectActionAdded( 'init', 'CslGrantsSubmissions\Core\init' );
+		\WP_Mock::expectActionAdded( 'init', 'CaGov\Grants\Core\i18n' );
+		\WP_Mock::expectActionAdded( 'init', 'CaGov\Grants\Core\init' );
 		\WP_Mock::expectAction( 'csl_grants_submissions_loaded' );
 
 		// Act
