@@ -105,7 +105,7 @@ function register() {
 	$args = array(
 		'labels'             => $labels,
 		'description'        => __( 'Description.', 'csl-grants-submissions' ),
-		'public'             => true,
+		'public'             => false,
 		'publicly_queryable' => true,
 		'show_ui'            => true,
 		'show_in_menu'       => true,
@@ -120,6 +120,13 @@ function register() {
 		'menu_position'      => null,
 		'supports'           => array( 'title', 'author' ),
 	);
+
+	/**
+	 * Filter the California Grants post type arguments.
+	 *
+	 * @param array $args The post type arguments.
+	 */
+	$args = apply_filters( 'ca_grants_post_type_args', $args );
 
 	register_post_type( POST_TYPE, $args );
 }
