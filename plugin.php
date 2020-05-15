@@ -23,16 +23,27 @@ require_once CSL_GRANTS_SUBMISSIONS_INC . 'functions/core.php';
 require_once CSL_GRANTS_SUBMISSIONS_INC . 'functions/cpt-grants.php';
 require_once CSL_GRANTS_SUBMISSIONS_INC . 'functions/metaboxes.php';
 
+// Require Composer autoloader if it exists.
+if ( file_exists( CSL_GRANTS_SUBMISSIONS_PATH . '/vendor/autoload.php' ) ) {
+	require_once CSL_GRANTS_SUBMISSIONS_PATH . 'vendor/autoload.php';
+} else {
+	// No composer, autoload our own classes.
+	spl_autoload_register(
+		function( $class ) {
+			$sanitized_class = str_replace( array( 'CaGov\Grants\\', '\\' ), array( '', '/' ), $class );
+			$file            = CSL_GRANTS_SUBMISSIONS_INC . '/classes/' . $sanitized_class . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+			}
+		}
+	);
+}
+
 // Activation/Deactivation.
 register_activation_hook( __FILE__, '\CslGrantsSubmissions\Core\activate' );
 register_deactivation_hook( __FILE__, '\CslGrantsSubmissions\Core\deactivate' );
 
-// Bootstrap.
+// Bootstrap files.
 CslGrantsSubmissions\Core\setup();
 CslGrantsSubmissions\CPT\Grants\setup();
 CslGrantsSubmissions\Metaboxes\setup();
-
-// Require Composer autoloader if it exists.
-if ( file_exists( CSL_GRANTS_SUBMISSIONS_PATH . '/vendor/autoload.php' ) ) {
-	require_once CSL_GRANTS_SUBMISSIONS_PATH . 'vendor/autoload.php';
-}
