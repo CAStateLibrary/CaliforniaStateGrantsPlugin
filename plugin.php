@@ -47,3 +47,13 @@ register_deactivation_hook( __FILE__, '\CslGrantsSubmissions\Core\deactivate' );
 CslGrantsSubmissions\Core\setup();
 CslGrantsSubmissions\CPT\Grants\setup();
 CslGrantsSubmissions\Metaboxes\setup();
+
+// Setup Post Type.
+$grants = new CaGov\Grants\PostTypes\Grants();
+$grants->setup();
+
+// Setup Settings.
+$settings = new CaGov\Grants\Admin\Settings();
+$settings->setup();
+$settings_page = new CaGov\Grants\Admin\SettingsPage();
+$settings_page->setup();

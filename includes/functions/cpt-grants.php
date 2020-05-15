@@ -26,9 +26,6 @@ function setup() {
 		return __NAMESPACE__ . '\\' . $fn;
 	};
 
-	add_action( 'init', $n( 'register' ) );
-	add_filter( 'use_block_editor_for_post_type', $n( 'disable_block_editor' ), 10, 2 );
-
 	add_filter( 'rest_prepare_ca_grants', $n( 'modify_grants_rest_response' ), 10, 3 );
 	add_filter( 'rest_ca_grants_query', $n( 'modify_grants_rest_params' ), 10, 2 );
 
@@ -63,72 +60,6 @@ function authenticate_rest_request( $response, $handler, $request ) {
 
 	// If we get here, authorization has passed and we can return the data.
 	return $response;
-}
-
-/**
- * Disables the block editor for this post type.
- *
- * @param bool   $use Whether to use the block editor
- * @param string $post_type The current post type
- *
- * @return bool
- */
-function disable_block_editor( $use, $post_type ) {
-	if ( POST_TYPE === $post_type ) {
-		return false;
-	}
-
-	return $use;
-}
-
-/**
- * Registers the post type.
- */
-function register() {
-	$labels = array(
-		'name'               => _x( 'CA Grants', 'post type general name', 'csl-grants-submissions' ),
-		'singular_name'      => _x( 'CA Grant', 'post type singular name', 'csl-grants-submissions' ),
-		'menu_name'          => _x( 'CA Grants', 'admin menu', 'csl-grants-submissions' ),
-		'name_admin_bar'     => _x( 'CA Grant', 'add new on admin bar', 'csl-grants-submissions' ),
-		'add_new'            => _x( 'Add New', 'grant', 'csl-grants-submissions' ),
-		'add_new_item'       => __( 'Add New CA Grant', 'csl-grants-submissions' ),
-		'new_item'           => __( 'New CA Grant', 'csl-grants-submissions' ),
-		'edit_item'          => __( 'Edit CA Grant', 'csl-grants-submissions' ),
-		'view_item'          => __( 'View CA Grant', 'csl-grants-submissions' ),
-		'all_items'          => __( 'All CA Grants', 'csl-grants-submissions' ),
-		'search_items'       => __( 'Search CA Grants', 'csl-grants-submissions' ),
-		'parent_item_colon'  => __( 'Parent CA Grants:', 'csl-grants-submissions' ),
-		'not_found'          => __( 'No grants found.', 'csl-grants-submissions' ),
-		'not_found_in_trash' => __( 'No grants found in Trash.', 'csl-grants-submissions' ),
-	);
-
-	$args = array(
-		'labels'             => $labels,
-		'description'        => __( 'Description.', 'csl-grants-submissions' ),
-		'public'             => false,
-		'publicly_queryable' => true,
-		'show_ui'            => true,
-		'show_in_menu'       => true,
-		'show_in_rest'       => true,
-		'query_var'          => true,
-		'rewrite'            => array( 'slug' => 'grants' ),
-		'rest_base'          => 'grants',
-		'capability_type'    => 'post',
-		'has_archive'        => true,
-		'hierarchical'       => false,
-		'menu_icon'          => 'dashicons-awards',
-		'menu_position'      => null,
-		'supports'           => array( 'title', 'author' ),
-	);
-
-	/**
-	 * Filter the California Grants post type arguments.
-	 *
-	 * @param array $args The post type arguments.
-	 */
-	$args = apply_filters( 'ca_grants_post_type_args', $args );
-
-	register_post_type( POST_TYPE, $args );
 }
 
 /**
