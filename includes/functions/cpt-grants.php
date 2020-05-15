@@ -16,7 +16,7 @@ use WP_Http;
 /**
  * Defines the post type slug.
  */
-const POST_TYPE = 'csl_grants';
+const POST_TYPE = 'ca_grants';
 
 /**
  * Sets up the file.
@@ -29,8 +29,8 @@ function setup() {
 	add_action( 'init', $n( 'register' ) );
 	add_filter( 'use_block_editor_for_post_type', $n( 'disable_block_editor' ), 10, 2 );
 
-	add_filter( 'rest_prepare_csl_grants', $n( 'modify_grants_rest_response' ), 10, 3 );
-	add_filter( 'rest_csl_grants_query', $n( 'modify_grants_rest_params' ), 10, 2 );
+	add_filter( 'rest_prepare_ca_grants', $n( 'modify_grants_rest_response' ), 10, 3 );
+	add_filter( 'rest_ca_grants_query', $n( 'modify_grants_rest_params' ), 10, 2 );
 
 	add_filter( 'rest_request_before_callbacks', $n( 'authenticate_rest_request' ), 10, 3 );
 };
@@ -46,7 +46,7 @@ function setup() {
  */
 function authenticate_rest_request( $response, $handler, $request ) {
 	$authorization_header = $request->get_header( 'authorization' );
-	if ( 0 !== strpos( '/wp/v2/csl_grants', $request->get_route() ) ) {
+	if ( 0 !== strpos( '/wp/v2/grants', $request->get_route() ) ) {
 		return $response;
 	}
 
@@ -86,18 +86,18 @@ function disable_block_editor( $use, $post_type ) {
  */
 function register() {
 	$labels = array(
-		'name'               => _x( 'CSL Grants', 'post type general name', 'csl-grants-submissions' ),
-		'singular_name'      => _x( 'CSL Grant', 'post type singular name', 'csl-grants-submissions' ),
-		'menu_name'          => _x( 'CSL Grants', 'admin menu', 'csl-grants-submissions' ),
-		'name_admin_bar'     => _x( 'CSL Grant', 'add new on admin bar', 'csl-grants-submissions' ),
+		'name'               => _x( 'CA Grants', 'post type general name', 'csl-grants-submissions' ),
+		'singular_name'      => _x( 'CA Grant', 'post type singular name', 'csl-grants-submissions' ),
+		'menu_name'          => _x( 'CA Grants', 'admin menu', 'csl-grants-submissions' ),
+		'name_admin_bar'     => _x( 'CA Grant', 'add new on admin bar', 'csl-grants-submissions' ),
 		'add_new'            => _x( 'Add New', 'grant', 'csl-grants-submissions' ),
-		'add_new_item'       => __( 'Add New CSL Grant', 'csl-grants-submissions' ),
-		'new_item'           => __( 'New CSL Grant', 'csl-grants-submissions' ),
-		'edit_item'          => __( 'Edit CSL Grant', 'csl-grants-submissions' ),
-		'view_item'          => __( 'View CSL Grant', 'csl-grants-submissions' ),
-		'all_items'          => __( 'All CSL Grants', 'csl-grants-submissions' ),
-		'search_items'       => __( 'Search CSL Grants', 'csl-grants-submissions' ),
-		'parent_item_colon'  => __( 'Parent CSL Grants:', 'csl-grants-submissions' ),
+		'add_new_item'       => __( 'Add New CA Grant', 'csl-grants-submissions' ),
+		'new_item'           => __( 'New CA Grant', 'csl-grants-submissions' ),
+		'edit_item'          => __( 'Edit CA Grant', 'csl-grants-submissions' ),
+		'view_item'          => __( 'View CA Grant', 'csl-grants-submissions' ),
+		'all_items'          => __( 'All CA Grants', 'csl-grants-submissions' ),
+		'search_items'       => __( 'Search CA Grants', 'csl-grants-submissions' ),
+		'parent_item_colon'  => __( 'Parent CA Grants:', 'csl-grants-submissions' ),
 		'not_found'          => __( 'No grants found.', 'csl-grants-submissions' ),
 		'not_found_in_trash' => __( 'No grants found in Trash.', 'csl-grants-submissions' ),
 	);
@@ -111,10 +111,12 @@ function register() {
 		'show_in_menu'       => true,
 		'show_in_rest'       => true,
 		'query_var'          => true,
-		'rewrite'            => array( 'slug' => 'csl-grant' ),
+		'rewrite'            => array( 'slug' => 'grants' ),
+		'rest_base'          => 'grants',
 		'capability_type'    => 'post',
 		'has_archive'        => true,
 		'hierarchical'       => false,
+		'menu_icon'          => 'dashicons-awards',
 		'menu_position'      => null,
 		'supports'           => array( 'title', 'author' ),
 	);
