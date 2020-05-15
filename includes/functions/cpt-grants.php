@@ -39,7 +39,7 @@ function setup() {
  * Authenticate the REST Requests
  *
  * @param \WP_HTTP_Response|WP_Error $response Result to send
- * @param array                     $handler Route handler used
+ * @param array                      $handler Route handler used
  * @param \WP_REST_Request           $request Request used to generate $response
  *
  * @return \WP_HTTP_Response|WP_Error WP_HTTP_Response if authentication succeeded, WP_Error otherwise
@@ -141,8 +141,8 @@ function modify_grants_rest_params( $args, $request ) {
  * Modify the REST response for the Grants Post Type
  *
  * @param WP_REST_Response $response The response object
- * @param \WP_Post          $post The post object
- * @param \WP_REST_Request  $request The request object
+ * @param \WP_Post         $post The post object
+ * @param \WP_REST_Request $request The request object
  *
  * @return \WP_REST_Response The modified response
  */
