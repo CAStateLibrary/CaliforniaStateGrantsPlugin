@@ -21,7 +21,6 @@ define( 'CSL_GRANTS_SUBMISSIONS_INC', CSL_GRANTS_SUBMISSIONS_PATH . 'includes/' 
 // Include files.
 require_once CSL_GRANTS_SUBMISSIONS_INC . 'functions/core.php';
 require_once CSL_GRANTS_SUBMISSIONS_INC . 'functions/cpt-grants.php';
-require_once CSL_GRANTS_SUBMISSIONS_INC . 'functions/metaboxes.php';
 
 // Require Composer autoloader if it exists.
 if ( file_exists( CSL_GRANTS_SUBMISSIONS_PATH . '/vendor/autoload.php' ) ) {
@@ -45,12 +44,12 @@ register_deactivation_hook( __FILE__, '\CslGrantsSubmissions\Core\deactivate' );
 
 // Bootstrap files.
 CslGrantsSubmissions\Core\setup();
-CslGrantsSubmissions\CPT\Grants\setup();
-CslGrantsSubmissions\Metaboxes\setup();
 
 // Setup Post Type.
 $grants = new CaGov\Grants\PostTypes\Grants();
 $grants->setup();
+$edit_grant = new CaGov\Grants\PostTypes\EditGrant();
+$edit_grant->setup();
 
 // Setup Settings.
 $settings = new CaGov\Grants\Admin\Settings();
