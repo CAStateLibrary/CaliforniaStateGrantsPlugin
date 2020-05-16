@@ -6,7 +6,7 @@
  * Version:     0.1.0
  * Author:      10up
  * Author URI:  https://10up.com
- * Text Domain: csl-grants-submissions
+ * Text Domain: ca-grants-plugin
  * Domain Path: /languages
  *
  * @package CaGov\Grants

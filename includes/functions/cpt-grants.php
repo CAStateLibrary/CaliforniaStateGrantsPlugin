@@ -48,14 +48,14 @@ function authenticate_rest_request( $response, $handler, $request ) {
 	}
 
 	if ( empty( $authorization_header ) ) {
-		return new WP_Error( 'empty_auth_header', __( 'An authorization header must be provided.', 'csl-grants-submissions' ), array( 'status' => WP_Http::BAD_REQUEST ) );
+		return new WP_Error( 'empty_auth_header', __( 'An authorization header must be provided.', 'ca-grants-plugin' ), array( 'status' => WP_Http::BAD_REQUEST ) );
 	}
 
 	$received_token = sanitize_text_field( $authorization_header );
 	$stored_token   = sha1( Core\get_grants_token() );
 
 	if ( empty( $stored_token ) || $stored_token !== $received_token ) {
-		return new WP_Error( 'invalid_auth', __( 'The authorization token does not match.', 'csl-grants-submissions' ), array( 'status' => WP_Http::UNAUTHORIZED ) );
+		return new WP_Error( 'invalid_auth', __( 'The authorization token does not match.', 'ca-grants-plugin' ), array( 'status' => WP_Http::UNAUTHORIZED ) );
 	}
 
 	// If we get here, authorization has passed and we can return the data.

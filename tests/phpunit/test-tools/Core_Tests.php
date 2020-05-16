@@ -47,10 +47,10 @@ class Core_Tests extends Base\TestCase {
 			'args' => array(),
 			'return' => 'en_US',
 		) );
-		\WP_Mock::onFilter( 'plugin_locale' )->with( 'en_US', 'csl-grants-submissions' )->reply( 'en_US' );
+		\WP_Mock::onFilter( 'plugin_locale' )->with( 'en_US', 'ca-grants-plugin' )->reply( 'en_US' );
 		\WP_Mock::userFunction( 'load_textdomain', array(
 			'times' => 1,
-			'args' => array( 'csl-grants-submissions', 'lang_dir/csl-grants-submissions/csl-grants-submissions-en_US.mo' ),
+			'args' => array( 'ca-grants-plugin', 'lang_dir/ca-grants-plugin/ca-grants-plugin-en_US.mo' ),
 		) );
 		\WP_Mock::userFunction( 'plugin_basename', array(
 			'times' => 1,
@@ -59,7 +59,7 @@ class Core_Tests extends Base\TestCase {
 		) );
 		\WP_Mock::userFunction( 'load_plugin_textdomain', array(
 			'times' => 1,
-			'args' => array( 'csl-grants-submissions', false, 'path/languages/' ),
+			'args' => array( 'ca-grants-plugin', false, 'path/languages/' ),
 		) );
 
 		// Act

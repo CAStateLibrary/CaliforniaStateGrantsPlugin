@@ -53,13 +53,13 @@ function add_settings() {
 		array(
 			'show_in_rest' => false,
 			'type'         => 'string',
-			'description'  => __( 'Grants Token', 'csl-grants-submissions' ),
+			'description'  => __( 'Grants Token', 'ca-grants-plugin' ),
 		)
 	);
 
 	add_settings_field(
 		'grants_token',
-		__( 'Grants Token', 'csl-grants-submissions' ),
+		__( 'Grants Token', 'ca-grants-plugin' ),
 		__NAMESPACE__ . '\\grants_token_render',
 		'general',
 		'default',
@@ -86,9 +86,9 @@ function grants_token_render() {
  * @return void
  */
 function i18n() {
-	$locale = apply_filters( 'plugin_locale', get_locale(), 'csl-grants-submissions' );
-	load_textdomain( 'csl-grants-submissions', WP_LANG_DIR . '/csl-grants-submissions/csl-grants-submissions-' . $locale . '.mo' );
-	load_plugin_textdomain( 'csl-grants-submissions', false, plugin_basename( CA_GRANTS_PATH ) . '/languages/' );
+	$locale = apply_filters( 'plugin_locale', get_locale(), 'ca-grants-plugin' );
+	load_textdomain( 'ca-grants-plugin', WP_LANG_DIR . '/ca-grants-plugin/ca-grants-plugin-' . $locale . '.mo' );
+	load_plugin_textdomain( 'ca-grants-plugin', false, plugin_basename( CA_GRANTS_PATH ) . '/languages/' );
 }
 
 /**

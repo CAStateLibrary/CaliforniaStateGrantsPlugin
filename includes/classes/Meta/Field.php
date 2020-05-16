@@ -144,7 +144,7 @@ class Field {
 			$fields = array(
 				array(
 					'id'   => 'none',
-					'name' => esc_html__( 'None', 'csl-grants-submissions' ),
+					'name' => esc_html__( 'None', 'ca-grants-plugin' ),
 				),
 			);
 		}
@@ -266,7 +266,7 @@ class Field {
 			</th>
 			<td>
 				<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>">
-					<option <?php selected( '', $value ); ?> value=""><?php esc_html_e( 'Select One', 'csl-grants-submissions' ); ?></option>
+					<option <?php selected( '', $value ); ?> value=""><?php esc_html_e( 'Select One', 'ca-grants-plugin' ); ?></option>
 					<?php foreach ( $fields as $field ) : ?>
 
 					<option <?php selected( $field['id'], $value ); ?> value="<?php echo esc_attr( $field['id'] ); ?>"><?php echo esc_html( $field['name'] ); ?></option>
@@ -601,7 +601,7 @@ class Field {
 			<tbody>
 				<tr>
 					<th>
-						<label for="<?php echo esc_attr( $id ); ?>-name"><?php esc_html_e( 'Name', 'csl-grants-submissions' ); ?></label>
+						<label for="<?php echo esc_attr( $id ); ?>-name"><?php esc_html_e( 'Name', 'ca-grants-plugin' ); ?></label>
 					</th>
 					<td>
 						<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>" />
@@ -609,7 +609,7 @@ class Field {
 				</tr>
 				<tr>
 					<th>
-						<label for="<?php echo esc_attr( $id ); ?>-email"><?php esc_html_e( 'Email', 'csl-grants-submissions' ); ?></label>
+						<label for="<?php echo esc_attr( $id ); ?>-email"><?php esc_html_e( 'Email', 'ca-grants-plugin' ); ?></label>
 					</th>
 					<td>
 						<input type="email" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[email]" value="<?php echo esc_attr( $value['email'] ); ?>" />
@@ -617,7 +617,7 @@ class Field {
 				</tr>
 				<tr>
 					<th>
-						<label for="<?php echo esc_attr( $id ); ?>-tel"><?php esc_html_e( 'Phone', 'csl-grants-submissions' ); ?></label>
+						<label for="<?php echo esc_attr( $id ); ?>-tel"><?php esc_html_e( 'Phone', 'ca-grants-plugin' ); ?></label>
 					</th>
 					<td>
 						<input type="tel" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[tel]" value="<?php echo esc_attr( $value['tel'] ); ?>" placeholder="1-555-555-5555" pattern="[0-9]{1}-[0-9]{3}-[0-9]{3}-[0-9]{4}" />
@@ -714,16 +714,16 @@ class Field {
 
 			<td>
 				<input <?php checked( $value['none'], 'nodeadline' ); ?> type="checkbox" id="<?php echo esc_attr( $id ); ?>-nodeadline" name="<?php echo esc_attr( $id ); ?>[deadline][none]" value="nodeadline" />
-				<label for="<?php echo esc_attr( $id ); ?>-nodeadline"><?php esc_html_e( 'No Deadline', 'csl-grants-submissions' ); ?></label>
+				<label for="<?php echo esc_attr( $id ); ?>-nodeadline"><?php esc_html_e( 'No Deadline', 'ca-grants-plugin' ); ?></label>
 				<br><br>
 
-				<label for="<?php echo esc_attr( $id ); ?>-date"><?php esc_html_e( 'Deadline Date', 'csl-grants-submissions' ); ?></label>
+				<label for="<?php echo esc_attr( $id ); ?>-date"><?php esc_html_e( 'Deadline Date', 'ca-grants-plugin' ); ?></label>
 				<input class="csl-datepicker-plugin" type="text" id="<?php echo esc_attr( $id ); ?>-date" name="<?php echo esc_attr( $id ); ?>[deadline][date]" value="<?php echo esc_attr( $value['date'] ); ?>" />
 				<br><br>
 
-				<label for="<?php echo esc_attr( $id ); ?>-time"><?php esc_html_e( 'Deadline Time (optional)', 'csl-grants-submissions' ); ?></label>
+				<label for="<?php echo esc_attr( $id ); ?>-time"><?php esc_html_e( 'Deadline Time (optional)', 'ca-grants-plugin' ); ?></label>
 				<select id="<?php echo esc_attr( $id ); ?>-time" name="<?php echo esc_attr( $id ); ?>[deadline][time]">
-					<option value="none"><?php esc_html_e( 'No Deadline Time', 'csl-grants-submissions' ); ?></option>
+					<option value="none"><?php esc_html_e( 'No Deadline Time', 'ca-grants-plugin' ); ?></option>
 						<?php
 						for ( $time = 0; $time < 24; $time++ ) {
 							if ( 0 === $time ) {
@@ -762,7 +762,7 @@ class Field {
 			return array();
 		}
 
-		$fields_to_display = wp_cache_get( $id, 'csl-grants-submissions' );
+		$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
 
 		if ( false === $fields_to_display ) {
 			$api_url = trailingslashit( self::get_api_url() ) . 'wp-json/wp/v2/';
@@ -821,7 +821,7 @@ class Field {
 				);
 			}
 
-			wp_cache_set( $id, $fields_to_display, 'csl-grants-submissions', 'csl-terms', 6 * HOUR_IN_SECONDS );
+			wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 6 * HOUR_IN_SECONDS );
 		}
 
 		return $fields_to_display;
