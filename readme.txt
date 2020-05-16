@@ -1,6 +1,6 @@
 === Csl Grants Submissions ===
 Contributors:      10up
-Tags: 
+Tags:
 Requires at least: 4.9
 Tested up to:      4.9
 Stable tag:        0.1.0
@@ -15,7 +15,7 @@ A brief description of the plugin.
 
 = Manual Installation =
 
-1. Upload the entire `/csl-grants-submissions` directory to the `/wp-content/plugins/` directory.
+1. Upload the entire `/ca-grants-plugin` directory to the `/wp-content/plugins/` directory.
 2. Activate Csl Grants Submissions through the 'Plugins' menu in WordPress.
 
 == Frequently Asked Questions ==

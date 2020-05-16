@@ -2,10 +2,10 @@
 /**
  * Core plugin functionality.
  *
- * @package CslGrantsSubmissions
+ * @package CaGov\Grants
  */
 
-namespace CslGrantsSubmissions\Core;
+namespace CaGov\Grants\Core;
 
 use \WP_Error as WP_Error;
 
@@ -53,13 +53,13 @@ function add_settings() {
 		array(
 			'show_in_rest' => false,
 			'type'         => 'string',
-			'description'  => __( 'Grants Token', 'csl-grants-submissions' ),
+			'description'  => __( 'Grants Token', 'ca-grants-plugin' ),
 		)
 	);
 
 	add_settings_field(
 		'grants_token',
-		__( 'Grants Token', 'csl-grants-submissions' ),
+		__( 'Grants Token', 'ca-grants-plugin' ),
 		__NAMESPACE__ . '\\grants_token_render',
 		'general',
 		'default',
@@ -86,9 +86,9 @@ function grants_token_render() {
  * @return void
  */
 function i18n() {
-	$locale = apply_filters( 'plugin_locale', get_locale(), 'csl-grants-submissions' );
-	load_textdomain( 'csl-grants-submissions', WP_LANG_DIR . '/csl-grants-submissions/csl-grants-submissions-' . $locale . '.mo' );
-	load_plugin_textdomain( 'csl-grants-submissions', false, plugin_basename( CSL_GRANTS_SUBMISSIONS_PATH ) . '/languages/' );
+	$locale = apply_filters( 'plugin_locale', get_locale(), 'ca-grants-plugin' );
+	load_textdomain( 'ca-grants-plugin', WP_LANG_DIR . '/ca-grants-plugin/ca-grants-plugin-' . $locale . '.mo' );
+	load_plugin_textdomain( 'ca-grants-plugin', false, plugin_basename( CA_GRANTS_PATH ) . '/languages/' );
 }
 
 /**
@@ -143,10 +143,10 @@ function get_enqueue_contexts() {
 function script_url( $script, $context ) {
 
 	if ( ! in_array( $context, get_enqueue_contexts(), true ) ) {
-		return new WP_Error( 'invalid_enqueue_context', 'Invalid $context specified in CslGrantsSubmissions script loader.' );
+		return new WP_Error( 'invalid_enqueue_context', 'Invalid $context specified in CaGov\Grants script loader.' );
 	}
 
-	return CSL_GRANTS_SUBMISSIONS_URL . "dist/js/${script}.js";
+	return CA_GRANTS_URL . "dist/js/${script}.js";
 
 }
 
@@ -161,10 +161,10 @@ function script_url( $script, $context ) {
 function style_url( $stylesheet, $context ) {
 
 	if ( ! in_array( $context, get_enqueue_contexts(), true ) ) {
-		return new WP_Error( 'invalid_enqueue_context', 'Invalid $context specified in CslGrantsSubmissions stylesheet loader.' );
+		return new WP_Error( 'invalid_enqueue_context', 'Invalid $context specified in CaGov\Grants stylesheet loader.' );
 	}
 
-	return CSL_GRANTS_SUBMISSIONS_URL . "dist/css/${stylesheet}.css";
+	return CA_GRANTS_URL . "dist/css/${stylesheet}.css";
 
 }
 
@@ -179,7 +179,7 @@ function scripts() {
 		'csl_grants_submissions_shared',
 		script_url( 'shared', 'shared' ),
 		[],
-		CSL_GRANTS_SUBMISSIONS_VERSION,
+		CA_GRANTS_VERSION,
 		true
 	);
 
@@ -187,7 +187,7 @@ function scripts() {
 		'csl_grants_submissions_frontend',
 		script_url( 'frontend', 'frontend' ),
 		[],
-		CSL_GRANTS_SUBMISSIONS_VERSION,
+		CA_GRANTS_VERSION,
 		true
 	);
 
@@ -204,7 +204,7 @@ function admin_scripts() {
 		'csl_grants_submissions_shared',
 		script_url( 'shared', 'shared' ),
 		[],
-		CSL_GRANTS_SUBMISSIONS_VERSION,
+		CA_GRANTS_VERSION,
 		true
 	);
 
@@ -212,7 +212,7 @@ function admin_scripts() {
 		'csl_grants_submissions_admin',
 		script_url( 'admin', 'admin' ),
 		[],
-		CSL_GRANTS_SUBMISSIONS_VERSION,
+		CA_GRANTS_VERSION,
 		true
 	);
 
@@ -230,7 +230,7 @@ function styles() {
 		'csl_grants_submissions_shared',
 		style_url( 'shared-style', 'shared' ),
 		[],
-		CSL_GRANTS_SUBMISSIONS_VERSION
+		CA_GRANTS_VERSION
 	);
 
 	if ( is_admin() ) {
@@ -238,14 +238,14 @@ function styles() {
 			'csl_grants_submissions_admin',
 			style_url( 'admin-style', 'admin' ),
 			[],
-			CSL_GRANTS_SUBMISSIONS_VERSION
+			CA_GRANTS_VERSION
 		);
 	} else {
 		wp_enqueue_style(
 			'csl_grants_submissions_frontend',
 			style_url( 'style', 'frontend' ),
 			[],
-			CSL_GRANTS_SUBMISSIONS_VERSION
+			CA_GRANTS_VERSION
 		);
 	}
 }
@@ -261,21 +261,21 @@ function admin_styles() {
 		'csl_grants_submissions_shared',
 		style_url( 'shared-style', 'shared' ),
 		[],
-		CSL_GRANTS_SUBMISSIONS_VERSION
+		CA_GRANTS_VERSION
 	);
 
 	wp_enqueue_style(
 		'csl_grants_submissions_admin',
 		style_url( 'admin-style', 'admin' ),
 		[],
-		CSL_GRANTS_SUBMISSIONS_VERSION
+		CA_GRANTS_VERSION
 	);
 
 	wp_enqueue_style(
 		'jquery_datepicker_css',
 		'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css',
 		array(),
-		CSL_GRANTS_SUBMISSIONS_VERSION
+		CA_GRANTS_VERSION
 	);
 }
 

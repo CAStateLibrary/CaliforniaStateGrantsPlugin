@@ -1,5 +1,5 @@
 <?php
-namespace CslGrantsSubmissions\Core;
+namespace CaGov\Grants\Core;
 
 /**
  * This is a very basic test case to get things started. You should probably rename this and make
@@ -13,7 +13,7 @@ namespace CslGrantsSubmissions\Core;
  *   - https://github.com/10up/wp_mock
  */
 
-use CslGrantsSubmissions as Base;
+use CaGov\Grants as Base;
 
 class Core_Tests extends Base\TestCase {
 
@@ -26,8 +26,8 @@ class Core_Tests extends Base\TestCase {
 	 */
 	public function test_setup() {
 		// Setup
-		\WP_Mock::expectActionAdded( 'init', 'CslGrantsSubmissions\Core\i18n' );
-		\WP_Mock::expectActionAdded( 'init', 'CslGrantsSubmissions\Core\init' );
+		\WP_Mock::expectActionAdded( 'init', 'CaGov\Grants\Core\i18n' );
+		\WP_Mock::expectActionAdded( 'init', 'CaGov\Grants\Core\init' );
 		\WP_Mock::expectAction( 'csl_grants_submissions_loaded' );
 
 		// Act
@@ -47,10 +47,10 @@ class Core_Tests extends Base\TestCase {
 			'args' => array(),
 			'return' => 'en_US',
 		) );
-		\WP_Mock::onFilter( 'plugin_locale' )->with( 'en_US', 'csl-grants-submissions' )->reply( 'en_US' );
+		\WP_Mock::onFilter( 'plugin_locale' )->with( 'en_US', 'ca-grants-plugin' )->reply( 'en_US' );
 		\WP_Mock::userFunction( 'load_textdomain', array(
 			'times' => 1,
-			'args' => array( 'csl-grants-submissions', 'lang_dir/csl-grants-submissions/csl-grants-submissions-en_US.mo' ),
+			'args' => array( 'ca-grants-plugin', 'lang_dir/ca-grants-plugin/ca-grants-plugin-en_US.mo' ),
 		) );
 		\WP_Mock::userFunction( 'plugin_basename', array(
 			'times' => 1,
@@ -59,7 +59,7 @@ class Core_Tests extends Base\TestCase {
 		) );
 		\WP_Mock::userFunction( 'load_plugin_textdomain', array(
 			'times' => 1,
-			'args' => array( 'csl-grants-submissions', false, 'path/languages/' ),
+			'args' => array( 'ca-grants-plugin', false, 'path/languages/' ),
 		) );
 
 		// Act

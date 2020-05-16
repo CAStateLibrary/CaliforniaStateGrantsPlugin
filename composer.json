@@ -1,5 +1,5 @@
 {
-  "name": "10up/csl-grants-submissions",
+  "name": "10up/ca-grants-plugin",
   "description": "Csl Grants Submissions",
   "type": "wordpress-plugin",
   "authors": [
@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "CslGrantsSubmissions\\": "includes/classes/"
+      "CaGov\\Grants\\": "includes/classes/"
     }
   },
   "require-dev": {

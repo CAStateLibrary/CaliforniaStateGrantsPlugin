@@ -51,7 +51,7 @@ module.exports = {
 	BrowserSyncConfig: {
 		host: 'localhost',
 		port: 3000,
-		proxy: 'http://csl-grants-submissions.test',
+		proxy: 'http://ca-grants-plugin.test',
 		open: false,
 		files: [
 			'**/*.php',

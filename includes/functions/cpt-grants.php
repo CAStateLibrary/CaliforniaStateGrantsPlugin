@@ -2,13 +2,13 @@
 /**
  * Handles all functionality related to the grants custom post type.
  *
- * @package CslGrantsSubmissions
+ * @package CaGov\Grants
  */
 
-namespace CslGrantsSubmissions\CPT\Grants;
+namespace CaGov\Grants\CPT\Grants;
 
-use CslGrantsSubmissions\Core;
-use CslGrantsSubmissions\Metaboxes;
+use CaGov\Grants\Core;
+use CaGov\Grants\Metaboxes;
 use WP_REST_Response;
 use WP_Error;
 use WP_Http;
@@ -16,7 +16,7 @@ use WP_Http;
 /**
  * Defines the post type slug.
  */
-const POST_TYPE = 'csl_grants';
+const POST_TYPE = 'ca_grants';
 
 /**
  * Sets up the file.
@@ -26,11 +26,8 @@ function setup() {
 		return __NAMESPACE__ . '\\' . $fn;
 	};
 
-	add_action( 'init', $n( 'register' ) );
-	add_filter( 'use_block_editor_for_post_type', $n( 'disable_block_editor' ), 10, 2 );
-
-	add_filter( 'rest_prepare_csl_grants', $n( 'modify_grants_rest_response' ), 10, 3 );
-	add_filter( 'rest_csl_grants_query', $n( 'modify_grants_rest_params' ), 10, 2 );
+	add_filter( 'rest_prepare_ca_grants', $n( 'modify_grants_rest_response' ), 10, 3 );
+	add_filter( 'rest_ca_grants_query', $n( 'modify_grants_rest_params' ), 10, 2 );
 
 	add_filter( 'rest_request_before_callbacks', $n( 'authenticate_rest_request' ), 10, 3 );
 };
@@ -39,87 +36,30 @@ function setup() {
  * Authenticate the REST Requests
  *
  * @param \WP_HTTP_Response|WP_Error $response Result to send
- * @param array                     $handler Route handler used
+ * @param array                      $handler Route handler used
  * @param \WP_REST_Request           $request Request used to generate $response
  *
  * @return \WP_HTTP_Response|WP_Error WP_HTTP_Response if authentication succeeded, WP_Error otherwise
  */
 function authenticate_rest_request( $response, $handler, $request ) {
 	$authorization_header = $request->get_header( 'authorization' );
-	if ( 0 !== strpos( '/wp/v2/csl_grants', $request->get_route() ) ) {
+	if ( 0 !== strpos( '/wp/v2/grants', $request->get_route() ) ) {
 		return $response;
 	}
 
 	if ( empty( $authorization_header ) ) {
-		return new WP_Error( 'empty_auth_header', __( 'An authorization header must be provided.', 'csl-grants-submissions' ), array( 'status' => WP_Http::BAD_REQUEST ) );
+		return new WP_Error( 'empty_auth_header', __( 'An authorization header must be provided.', 'ca-grants-plugin' ), array( 'status' => WP_Http::BAD_REQUEST ) );
 	}
 
 	$received_token = sanitize_text_field( $authorization_header );
 	$stored_token   = sha1( Core\get_grants_token() );
 
 	if ( empty( $stored_token ) || $stored_token !== $received_token ) {
-		return new WP_Error( 'invalid_auth', __( 'The authorization token does not match.', 'csl-grants-submissions' ), array( 'status' => WP_Http::UNAUTHORIZED ) );
+		return new WP_Error( 'invalid_auth', __( 'The authorization token does not match.', 'ca-grants-plugin' ), array( 'status' => WP_Http::UNAUTHORIZED ) );
 	}
 
 	// If we get here, authorization has passed and we can return the data.
 	return $response;
-}
-
-/**
- * Disables the block editor for this post type.
- *
- * @param bool   $use Whether to use the block editor
- * @param string $post_type The current post type
- *
- * @return bool
- */
-function disable_block_editor( $use, $post_type ) {
-	if ( POST_TYPE === $post_type ) {
-		return false;
-	}
-
-	return $use;
-}
-
-/**
- * Registers the post type.
- */
-function register() {
-	$labels = array(
-		'name'               => _x( 'CSL Grants', 'post type general name', 'csl-grants-submissions' ),
-		'singular_name'      => _x( 'CSL Grant', 'post type singular name', 'csl-grants-submissions' ),
-		'menu_name'          => _x( 'CSL Grants', 'admin menu', 'csl-grants-submissions' ),
-		'name_admin_bar'     => _x( 'CSL Grant', 'add new on admin bar', 'csl-grants-submissions' ),
-		'add_new'            => _x( 'Add New', 'grant', 'csl-grants-submissions' ),
-		'add_new_item'       => __( 'Add New CSL Grant', 'csl-grants-submissions' ),
-		'new_item'           => __( 'New CSL Grant', 'csl-grants-submissions' ),
-		'edit_item'          => __( 'Edit CSL Grant', 'csl-grants-submissions' ),
-		'view_item'          => __( 'View CSL Grant', 'csl-grants-submissions' ),
-		'all_items'          => __( 'All CSL Grants', 'csl-grants-submissions' ),
-		'search_items'       => __( 'Search CSL Grants', 'csl-grants-submissions' ),
-		'parent_item_colon'  => __( 'Parent CSL Grants:', 'csl-grants-submissions' ),
-		'not_found'          => __( 'No grants found.', 'csl-grants-submissions' ),
-		'not_found_in_trash' => __( 'No grants found in Trash.', 'csl-grants-submissions' ),
-	);
-
-	$args = array(
-		'labels'             => $labels,
-		'description'        => __( 'Description.', 'csl-grants-submissions' ),
-		'public'             => true,
-		'publicly_queryable' => true,
-		'show_ui'            => true,
-		'show_in_menu'       => true,
-		'show_in_rest'       => true,
-		'query_var'          => true,
-		'rewrite'            => array( 'slug' => 'csl-grant' ),
-		'capability_type'    => 'post',
-		'has_archive'        => true,
-		'hierarchical'       => false,
-		'menu_position'      => null,
-		'supports'           => array( 'title', 'author' ),
-	);
-
-	register_post_type( POST_TYPE, $args );
 }
 
 /**
@@ -139,8 +79,8 @@ function modify_grants_rest_params( $args, $request ) {
  * Modify the REST response for the Grants Post Type
  *
  * @param WP_REST_Response $response The response object
- * @param \WP_Post          $post The post object
- * @param \WP_REST_Request  $request The request object
+ * @param \WP_Post         $post The post object
+ * @param \WP_REST_Request $request The request object
  *
  * @return \WP_REST_Response The modified response
  */

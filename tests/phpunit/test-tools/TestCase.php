@@ -1,6 +1,6 @@
 <?php
 
-namespace CslGrantsSubmissions;
+namespace CaGov\Grants;
 
 use PHPUnit\Framework\TestResult;
 use Text_Template;
