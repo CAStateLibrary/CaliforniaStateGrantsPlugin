@@ -205,7 +205,7 @@ class SettingsPage {
 		<?php else : ?>
 		<p>
 			<?php esc_html_e( 'Time to add your first grant!', 'ca-grants-plugin' ); ?>
-			<a href="">
+			<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . Grants::CPT_SLUG ) ); ?>">
 				<?php esc_html_e( 'Click here to add a grant.', 'ca-grants-plugin' ); ?>
 			</a>
 		</p>
@@ -271,7 +271,7 @@ class SettingsPage {
 		if ( 'add_grant' === $this->get_current_step() && ! Grants::get_published_count() ) {
 			echo sprintf(
 				'<a href="%s" class="button button-primary">%s</a>',
-				esc_url( 'http://cslplugin.test/wp-admin/post-new.php?post_type=' . Grants::CPT_SLUG ),
+				esc_url( admin_url( 'post-new.php?post_type=' . Grants::CPT_SLUG ) ),
 				esc_html__( 'Add a grant', 'ca-grants-plugin' )
 			);
 			return;
@@ -285,6 +285,21 @@ class SettingsPage {
 			array(
 				'tabindex' => '1',
 			)
+		);
+	}
+
+	/**
+	 * Returns the url of the settings page.
+	 *
+	 * @return string
+	 */
+	public static function url() {
+		return add_query_arg(
+			array(
+				'post_type' => Grants::CPT_SLUG,
+				'page'      => 'settings',
+			),
+			admin_url( 'edit.php' )
 		);
 	}
 }
