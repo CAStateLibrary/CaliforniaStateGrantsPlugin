@@ -17,6 +17,7 @@ define( 'CA_GRANTS_VERSION', '0.1.0' );
 define( 'CA_GRANTS_URL', plugin_dir_url( __FILE__ ) );
 define( 'CA_GRANTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CA_GRANTS_INC', CA_GRANTS_PATH . 'includes/' );
+define( 'CA_GRANTS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 // Include files.
 require_once CA_GRANTS_INC . 'functions/core.php';

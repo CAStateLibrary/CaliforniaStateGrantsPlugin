@@ -55,6 +55,7 @@ class SettingsPage {
 		}
 		add_action( 'admin_menu', array( $this, 'register_settings_page' ), 1 );
 		add_action( 'current_screen', array( $this, 'maybe_handle_submit' ) );
+		add_action( 'plugin_action_links_' . CA_GRANTS_PLUGIN_BASENAME, array( $this, 'plugin_action_link' ) );
 
 		self::$init = true;
 	}
@@ -286,6 +287,11 @@ class SettingsPage {
 				'tabindex' => '1',
 			)
 		);
+	}
+
+	public function plugin_action_link( $links ) {
+		$link = sprintf( '<a href="%s">%s</a>', esc_url( self::url() ), esc_html( 'Settings', 'ca-grants-plugin' ) );
+		return array_merge( array( $link ), $links );
 	}
 
 	/**
