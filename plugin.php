@@ -56,3 +56,5 @@ $settings = new CaGov\Grants\Admin\Settings();
 $settings->setup();
 $settings_page = new CaGov\Grants\Admin\SettingsPage();
 $settings_page->setup();
+$notices = new CaGov\Grants\Admin\Notices;
+$notices->setup();
