@@ -7,6 +7,8 @@
 
 namespace CaGov\Grants\Core;
 
+use CaGov\Grants\Admin\Settings;
+
 use \WP_Error as WP_Error;
 
 /**
@@ -119,7 +121,7 @@ function activate() {
  * @return void
  */
 function deactivate() {
-
+	Settings::purge_settings();
 }
 
 
