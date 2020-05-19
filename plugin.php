@@ -45,6 +45,7 @@ register_deactivation_hook( __FILE__, '\CaGov\Grants\Core\deactivate' );
 
 // Bootstrap files.
 CaGov\Grants\Core\setup();
+CaGov\Grants\CPT\Grants\setup();
 
 // Setup Post Type.
 $grants = new CaGov\Grants\PostTypes\Grants();
@@ -57,5 +58,5 @@ $settings = new CaGov\Grants\Admin\Settings();
 $settings->setup();
 $settings_page = new CaGov\Grants\Admin\SettingsPage();
 $settings_page->setup();
-$notices = new CaGov\Grants\Admin\Notices;
+$notices = new CaGov\Grants\Admin\Notices();
 $notices->setup();

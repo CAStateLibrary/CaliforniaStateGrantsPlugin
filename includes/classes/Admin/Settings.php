@@ -137,4 +137,25 @@ class Settings {
 
 		return Grants::get_published_count() && $settings->get_setting( 'auth_token', false );
 	}
+
+	/**
+	 * Purges settings.
+	 *
+	 * @param  bool $hard Optional. True to hard purge all settings, false for recreatable settings.
+	 * @return bool
+	 */
+	public static function purge_settings( $hard = false ) : bool {
+		if ( $hard ) {
+			return delete_option( self::OPTION_NAME );
+		}
+
+		// If we're doing a soft purge, we want to persist the auth token.
+		$settings = new self();
+		$token    = $settings->get_setting( 'auth_token', false );
+
+		delete_option( self::OPTION_NAME );
+		$settings->update_setting( 'auth_token', $token );
+
+		return true;
+	}
 }
