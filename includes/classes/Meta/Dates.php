@@ -80,7 +80,7 @@ class Dates {
 			array(
 				'id'   => 'deadline',
 				'name' => __( 'Application Deadline', 'csl-grants-submission' ),
-				'type' => 'application-deadline',
+				'type' => 'datetime-local',
 			),
 		);
 	}

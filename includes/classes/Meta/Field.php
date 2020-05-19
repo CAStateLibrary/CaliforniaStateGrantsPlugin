@@ -698,9 +698,6 @@ class Field {
 		);
 
 		$meta = get_post_meta( get_the_ID(), $id, true );
-		if ( ! isset( $meta['deadline'] ) ) {
-			$meta['deadline'] = array();
-		}
 
 		// Get the saved data
 		$value = wp_parse_args( $meta['deadline'], $defaults );
