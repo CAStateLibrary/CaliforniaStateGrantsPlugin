@@ -49,7 +49,7 @@ class Notices {
 	 * @return void
 	 */
 	public function maybe_prompt_setup() {
-		if ( $this->settings->get_setting( 'auth_token' ) || Grants::get_published_count() || ! $this->can_notify_user() ) {
+		if ( ( $this->settings->get_setting( 'auth_token' ) && Grants::get_published_count() ) || ! $this->can_notify_user() ) {
 			return;
 		}
 		?>
@@ -92,6 +92,6 @@ class Notices {
 	 * @return boolean
 	 */
 	public function can_notify_user() {
-		return current_user_can( 'manage_options' );
+		return ( current_user_can( 'manage_options' ) && 'ca_grants_page_settings' !== get_current_screen()->id );
 	}
 }
