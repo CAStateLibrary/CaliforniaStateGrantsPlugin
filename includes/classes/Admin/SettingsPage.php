@@ -9,6 +9,9 @@ namespace CaGov\Grants\Admin;
 
 use CaGov\Grants\PostTypes\Grants;
 
+/**
+ * SettingsPage Class
+ */
 class SettingsPage {
 	/**
 	 * Init.
@@ -88,8 +91,15 @@ class SettingsPage {
 
 		$step  = filter_input( INPUT_POST, 'wizard_step', FILTER_SANITIZE_STRING );
 		$nonce = filter_input( INPUT_POST, 'ca_grants_nonce', FILTER_SANITIZE_STRING );
+		$reset = filter_input( INPUT_POST, 'ca_grants_settings_submit', FILTER_SANITIZE_STRING );
 
 		if ( ! in_array( $step, $this->steps, true ) || ! wp_verify_nonce( $nonce, $step ) ) {
+			return;
+		}
+
+		if ( 'Reset' === $reset ) {
+			$this->settings->purge_settings( true );
+			$this->settings->update_setting( 'wizard_step', $this->steps[0] );
 			return;
 		}
 
@@ -171,7 +181,7 @@ class SettingsPage {
 	 */
 	public function render_wizard_intro() {
 		?>
-		<h2>Getting Started</h2>
+		<h2><?php echo esc_html_e( 'Getting Started', 'ca-grants-plugin' ); ?></h2>
 		<p>
 			<?php esc_html_e( 'The California State Grants Portal offers this plugin to make it easy for state agencies and departments using WordPress to create grants and syncronize them with the central portal. To get started using this plugin, we create an endpoint where the Grants Portal can fetch your grant data and a unique token for your site. The Grants Portal will use this token to authenticate with this site when it attempts to syncronize with the grants you create.', 'ca-grants-plugin' ); ?>
 		</p>
@@ -185,7 +195,7 @@ class SettingsPage {
 	 */
 	public function render_wizard_add_grant() {
 		?>
-		<h2>Add Grants</h2>
+		<h2><?php echo esc_html_e( 'Add Grants', 'ca-grants-plugin' ); ?></h2>
 		<?php if ( Grants::get_published_count() ) : ?>
 		<p>
 			<?php
@@ -220,22 +230,26 @@ class SettingsPage {
 	 * @return void
 	 */
 	public function render_wizard_submit_endpoint() {
+		$submit_endpoint_url = CA_GRANTS_PORTAL_URL . 'submit-an-endpoint';
 		?>
-		<h2>Submit Endpoint</h2>
+		<h2><?php echo esc_html_e( 'Submit Endpoint', 'ca-grants-plugin' ); ?></h2>
 		<p>
-			<?php esc_html_e( 'Enter the following details when registering your endpoint on the Grants Portal:', 'ca-grants-plugin' ); ?>
+			<?php esc_html_e( 'Enter the following details when registering your endpoint on the', 'ca-grants-plugin' ); ?>
+			<a href="<?php echo esc_url( $submit_endpoint_url ); ?>">
+				<?php echo esc_html_e( 'Grants Portal:', 'ca-grants-plugin' ); ?>
+			</a>
 		</p>
 		<table class="form-table" role="presentation">
 			<tbody>
 				<tr>
-					<th><label for="ca_grants_endpoint">Endpoint URL</label></th>
+					<th><label for="ca_grants_endpoint"><?php echo esc_html_e( 'Endpoint URL', 'ca-grants-plugin' ); ?></label></th>
 					<td>
 						<input name="ca_grants_endpoint" id="ca_grants_endpoint" type="text" value="<?php echo esc_attr( $this->settings->get_endpoint_url() ); ?>" class="regular-text code" disabled>
 						<a href="javascript:void(0)" class="copy-clipboard" data-input-target="ca_grants_endpoint"><?php esc_html_e( 'Copy' ); ?></a>
 					</td>
 				</tr>
 				<tr>
-					<th><label for="ca_grants_auth_token">Authorization Token</label></th>
+					<th><label for="ca_grants_auth_token"><?php echo esc_html_e( 'Authorization Token', 'ca-grants-plugin' ); ?></label></th>
 					<td>
 						<input name="ca_grants_auth_token" id="ca_grants_auth_token" type="text" value="<?php echo esc_attr( $this->settings->get_auth_token() ); ?>" class="regular-text code" disabled>
 						<a href="javascript:void(0)" class="copy-clipboard" data-input-target="ca_grants_auth_token"><?php esc_html_e( 'Copy' ); ?></a>
@@ -254,7 +268,7 @@ class SettingsPage {
 	public function render_wizard_complete() {
 		?>
 		<p>
-			<?php esc_html_e( 'Setup is complete. The Grants Portal will periodically fetch your published grant data. Newly published grants will be automatically synced with the portal the next time the Portal fetches your grant data.  Thank you!', 'ca-grants-plugin' ); ?>
+			<?php esc_html_e( 'Setup is complete. The Grants Portal will periodically fetch your published grant data. Newly published grants will be automatically synced with the portal the next time the Portal fetches your grant data.  If you need to re-run installation, for example if you need to reset your authorization token, you can reset the plugin settings below.', 'ca-grants-plugin' ); ?>
 		</p>
 		<?php
 	}
@@ -266,6 +280,15 @@ class SettingsPage {
 	 */
 	public function continue_button() {
 		if ( 'complete' === $this->get_current_step() ) {
+			submit_button(
+				__( 'Reset Settings', 'ca-grants-plugin' ),
+				'primary',
+				'ca_grants_settings_submit',
+				true,
+				array(
+					'tabindex' => '1',
+				)
+			);
 			return;
 		}
 
@@ -279,7 +302,7 @@ class SettingsPage {
 		}
 
 		submit_button(
-			'Continue',
+			__( 'Continue', 'ca-grants-plugin' ),
 			'primary',
 			'ca_grants_settings_submit',
 			true,
@@ -289,6 +312,12 @@ class SettingsPage {
 		);
 	}
 
+	/**
+	 * Plugin action link
+	 *
+	 * @param  string $links Links on plugin page.
+	 * @return string
+	 */
 	public function plugin_action_link( $links ) {
 		$link = sprintf( '<a href="%s">%s</a>', esc_url( self::url() ), esc_html( 'Settings', 'ca-grants-plugin' ) );
 		return array_merge( array( $link ), $links );
