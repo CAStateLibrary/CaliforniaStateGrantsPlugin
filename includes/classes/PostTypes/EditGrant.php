@@ -267,6 +267,10 @@ class EditGrant {
 		}
 
 		$errors = get_post_meta( get_post()->ID, 'validation_errors', true );
+
+		if ( empty( $errors ) ) {
+			return;
+		}
 		?>
 		<div class="notice notice-error">
 			<p>
