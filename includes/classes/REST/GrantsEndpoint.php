@@ -61,7 +61,7 @@ class GrantsEndpoint {
 	 *                                              WP_Error otherwise.
 	 */
 	public function authenticate_rest_request( $response, $handler, $request ) {
-		if ( 0 !== strpos( '/wp/v2/grants', $request->get_route() ) ) {
+		if ( 0 !== strpos( $request->get_route(), '/wp/v2/grants' ) ) {
 			return $response;
 		}
 
