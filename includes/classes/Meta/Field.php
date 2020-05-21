@@ -351,10 +351,10 @@ class Field {
 			<td>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>[num]" value="<?php echo esc_attr( $value['num'] ); ?>"/>
 				<select name="<?php echo esc_attr( $id ); ?>[units]">
-					<option <?php selected( $value['units'], 'days' ); ?> value="days"><?php esc_html_e( 'Days', 'csl-grants-submission' ); ?></option>
-					<option <?php selected( $value['units'], 'weeks' ); ?>value="weeks"><?php esc_html_e( 'Weeks', 'csl-grants-submission' ); ?></option>
-					<option <?php selected( $value['units'], 'months' ); ?>value="months"><?php esc_html_e( 'Months', 'csl-grants-submission' ); ?></option>
-					<option <?php selected( $value['units'], 'years' ); ?>value="years"><?php esc_html_e( 'Years', 'csl-grants-submission' ); ?></option>
+					<option <?php selected( $value['units'], 'days' ); ?> value="days"><?php esc_html_e( 'Days', 'ca-grants-plugin' ); ?></option>
+					<option <?php selected( $value['units'], 'weeks' ); ?>value="weeks"><?php esc_html_e( 'Weeks', 'ca-grants-plugin' ); ?></option>
+					<option <?php selected( $value['units'], 'months' ); ?>value="months"><?php esc_html_e( 'Months', 'ca-grants-plugin' ); ?></option>
+					<option <?php selected( $value['units'], 'years' ); ?>value="years"><?php esc_html_e( 'Years', 'ca-grants-plugin' ); ?></option>
 				</select>
 			</td>
 		</tr>
@@ -408,26 +408,26 @@ class Field {
 			<td>
 
 				<input <?php checked( $value['checkbox'], 'same' ); ?> type="radio" id="<?php echo esc_attr( $id . '-same' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="same">
-				<label for="<?php echo esc_attr( $id . '-same' ); ?>"><?php esc_html_e( 'Same amount each award: ', 'csl-grants-submission' ); ?></label>
+				<label for="<?php echo esc_attr( $id . '-same' ); ?>"><?php esc_html_e( 'Same amount each award: ', 'ca-grants-plugin' ); ?></label>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>-same-amount" name="<?php echo esc_attr( $id ); ?>[same][amount]" value="<?php echo esc_attr( $value['same']['amount'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'different' ); ?> type="radio" id="<?php echo esc_attr( $id . '-different' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="different">
-				<label for="<?php echo esc_attr( $id . '-different' ); ?>"><?php esc_html_e( 'Different amount each award', 'csl-grants-submission' ); ?></label>
+				<label for="<?php echo esc_attr( $id . '-different' ); ?>"><?php esc_html_e( 'Different amount each award', 'ca-grants-plugin' ); ?></label>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>-different-first" name="<?php echo esc_attr( $id ); ?>[different][first]" value="<?php echo esc_attr( $value['different']['first'] ); ?>"/>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>-different-second" name="<?php echo esc_attr( $id ); ?>[different][second]" value="<?php echo esc_attr( $value['different']['second'] ); ?>"/>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>-different-third" name="<?php echo esc_attr( $id ); ?>[different][third]" value="<?php echo esc_attr( $value['different']['third'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'unknown' ); ?> type="radio" id="<?php echo esc_attr( $id . '-unknown' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="unknown">
-				<label for="<?php echo esc_attr( $id . '-unknown' ); ?>"><?php esc_html_e( 'Unknown; amount per award may range  between:', 'csl-grants-submission' ); ?></label>
+				<label for="<?php echo esc_attr( $id . '-unknown' ); ?>"><?php esc_html_e( 'Unknown; amount per award may range  between:', 'ca-grants-plugin' ); ?></label>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>-unknown-first" name="<?php echo esc_attr( $id ); ?>[unknown][first]" value="<?php echo esc_attr( $value['unknown']['first'] ); ?>"/>
-				<?php esc_html_e( ' to ', 'csl-grants-submission' ); ?>
+				<?php esc_html_e( ' to ', 'ca-grants-plugin' ); ?>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>-unknown-second" name="<?php echo esc_attr( $id ); ?>[unknown][second]" value="<?php echo esc_attr( $value['unknown']['second'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant">
-				<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc.', 'csl-grants-submission' ); ?></label>
+				<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc.', 'ca-grants-plugin' ); ?></label>
 
 			</td>
 		</tr>
@@ -474,19 +474,19 @@ class Field {
 
 			<td>
 				<input <?php checked( $value['checkbox'], 'exact' ); ?> type="radio" id="<?php echo esc_attr( $id . '-exactly' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="exact">
-				<label for="<?php echo esc_attr( $id . '-exactly' ); ?>"><?php esc_html_e( 'Exactly: ', 'csl-grants-submission' ); ?></label>
+				<label for="<?php echo esc_attr( $id . '-exactly' ); ?>"><?php esc_html_e( 'Exactly: ', 'ca-grants-plugin' ); ?></label>
 				<input class="small-text" type="text" id="<?php echo esc_attr( $id ); ?>-exactly" name="<?php echo esc_attr( $id ); ?>[exact]" value="<?php echo esc_attr( $value['exact'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'between' ); ?> type="radio" id="<?php echo esc_attr( $id . '-between' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="between">
-				<label for="<?php echo esc_attr( $id . '-between' ); ?>"><?php esc_html_e( 'Between', 'csl-grants-submission' ); ?></label>
+				<label for="<?php echo esc_attr( $id . '-between' ); ?>"><?php esc_html_e( 'Between', 'ca-grants-plugin' ); ?></label>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>-between-first" name="<?php echo esc_attr( $id ); ?>[between][low]" value="<?php echo esc_attr( $value['between']['low'] ); ?>"/>
-				<?php esc_html_e( ' and ', 'csl-grants-submission' ); ?>
+				<?php esc_html_e( ' and ', 'ca-grants-plugin' ); ?>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>-between-second" name="<?php echo esc_attr( $id ); ?>[between][high]" value="<?php echo esc_attr( $value['between']['high'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant">
-				<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc.', 'csl-grants-submission' ); ?></label>
+				<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc.', 'ca-grants-plugin' ); ?></label>
 			</td>
 		</tr>
 		<?php
@@ -527,11 +527,11 @@ class Field {
 			</th>
 			<td>
 				<input <?php checked( $value['checkbox'], 'no' ); ?> type="radio" id="<?php echo esc_attr( $id . '-no' ); ?>" name="<?php echo esc_attr( $id ); ?>" value="no">
-				<label for="<?php echo esc_attr( $id . '-no' ); ?>"><?php esc_html_e( 'No', 'csl-grants-submission' ); ?></label>
+				<label for="<?php echo esc_attr( $id . '-no' ); ?>"><?php esc_html_e( 'No', 'ca-grants-plugin' ); ?></label>
 				<br>
 
 				<input <?php checked( $value['checkbox'], 'yes' ); ?> type="radio" id="<?php echo esc_attr( $id . '-yes' ); ?>" name="<?php echo esc_attr( $id ); ?>" value="yes">
-				<label for="<?php echo esc_attr( $id . '-yes' ); ?>"><?php esc_html_e( 'Yes, with matching percentage: ', 'csl-grants-submission' ); ?></label>
+				<label for="<?php echo esc_attr( $id . '-yes' ); ?>"><?php esc_html_e( 'Yes, with matching percentage: ', 'ca-grants-plugin' ); ?></label>
 				<input class="small-text" type="text" name="<?php echo esc_attr( $id ); ?>-percentage" value="<?php echo esc_attr( $value['percentage'] ); ?>"/>
 			</td>
 		</tr>

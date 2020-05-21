@@ -62,67 +62,67 @@ class General {
 		return array(
 			array(
 				'id'   => 'grantID',
-				'name' => __( 'Grant ID', 'csl-grants-submission' ),
+				'name' => __( 'Grant ID', 'ca-grants-plugin' ),
 				'type' => 'text',
 				'description' => __( 'The title of the grant opportunity. This should be identical to the name for the grant opportunity on your own website, RFP/A, etc.', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'     => 'isForecasted',
-				'name'   => __( 'Grant Type', 'csl-grants-submission' ),
+				'name'   => __( 'Grant Type', 'ca-grants-plugin' ),
 				'type'   => 'radio',
 				'fields' => array(
 					array(
 						'id'   => 'forecasted',
-						'name' => __( 'Forcasted', 'csl-grants-submission' ),
+						'name' => __( 'Forcasted', 'ca-grants-plugin' ),
 					),
 					array(
 						'id'   => 'active',
-						'name' => __( 'Active', 'csl-grants-submission' ),
+						'name' => __( 'Active', 'ca-grants-plugin' ),
 					),
 				),
 			),
 			array(
 				'id'     => 'opportunityType',
-				'name'   => __( 'Opportunity Type', 'csl-grants-submission' ),
+				'name'   => __( 'Opportunity Type', 'ca-grants-plugin' ),
 				'type'   => 'radio',
 				'source' => 'api',
 			),
 			array(
 				'id'     => 'loiRequired',
-				'name'   => __( 'Letter of Intent Required', 'csl-grants-submission' ),
+				'name'   => __( 'Letter of Intent Required', 'ca-grants-plugin' ),
 				'type'   => 'radio',
 				'fields' => array(
 					array(
 						'id'   => 'yes',
-						'name' => __( 'Yes', 'csl-grants-submission' ),
+						'name' => __( 'Yes', 'ca-grants-plugin' ),
 					),
 					array(
 						'id'   => 'no',
-						'name' => __( 'No', 'csl-grants-submission' ),
+						'name' => __( 'No', 'ca-grants-plugin' ),
 					),
 				),
 			),
 			array(
 				'id'     => 'grantCategories',
-				'name'   => __( 'Relevant Categories', 'csl-grants-submission' ),
+				'name'   => __( 'Relevant Categories', 'ca-grants-plugin' ),
 				'type'   => 'checkbox',
 				'source' => 'api',
 				'multi'  => true,
 			),
 			array(
 				'id'   => 'categorySuggestions',
-				'name' => __( 'Category Suggestion(s)', 'grantsportal' ),
+				'name' => __( 'Category Suggestion(s)', 'ca-grants-plugin' ),
 				'type' => 'text',
 			),
 			array(
 				'id'         => 'purpose',
-				'name'       => __( 'Purpose', 'csl-grants-submission' ),
+				'name'       => __( 'Purpose', 'ca-grants-plugin' ),
 				'type'       => 'textarea',
 				'text_limit' => 450,
 			),
 			array(
 				'id'         => 'description',
-				'name'       => __( 'Description', 'csl-grants-submission' ),
+				'name'       => __( 'Description', 'ca-grants-plugin' ),
 				'type'       => 'textarea',
 				'text_limit' => 3200,
 			),

@@ -140,7 +140,7 @@ function modify_grants_rest_response( $response, $post, $request ) {
 							);
 						} elseif ( 'dependant' === $metadata['checkbox'] ) {
 							$new_data['estimatedAwards'] = array(
-								'dependent' => esc_html__( 'Dependant on number of awards.', 'grantsportal' ),
+								'dependent' => esc_html__( 'Dependant on number of awards.', 'ca-grants-plugin' ),
 							);
 						}
 						break;

@@ -59,19 +59,19 @@ class Eligibility {
 		return array(
 			array(
 				'id'     => 'applicantType',
-				'name'   => __( 'Eligibility: Applicant Type', 'csl-grants-submission' ),
+				'name'   => __( 'Eligibility: Applicant Type', 'ca-grants-plugin' ),
 				'type'   => 'checkbox',
 				'source' => 'api',
 			),
 			array(
 				'id'         => 'applicantTypeNotes',
-				'name'       => __( 'Applicant Type Notes', 'csl-grants-submission' ),
+				'name'       => __( 'Applicant Type Notes', 'ca-grants-plugin' ),
 				'type'       => 'textarea',
 				'text_limit' => 250,
 			),
 			array(
 				'id'         => 'geoLimitations',
-				'name'       => __( 'Eligibility: Geographic', 'csl-grants-submission' ),
+				'name'       => __( 'Eligibility: Geographic', 'ca-grants-plugin' ),
 				'type'       => 'textarea',
 				'text_limit' => 450,
 			),

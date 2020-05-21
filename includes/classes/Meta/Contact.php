@@ -71,27 +71,27 @@ class Contact {
 		return array(
 			array(
 				'id'   => 'electronicSubmission',
-				'name' => __( 'Submission Email', 'csl-grants-submission' ),
+				'name' => __( 'Submission Email', 'ca-grants-plugin' ),
 				'type' => 'electronic-submission-method',
 			),
 			array(
 				'id'   => 'grantDetailsURL',
-				'name' => __( 'Grant Details URL', 'csl-grants-submission' ),
+				'name' => __( 'Grant Details URL', 'ca-grants-plugin' ),
 				'type' => 'url',
 			),
 			array(
 				'id'   => 'grantMakingAgencyURL',
-				'name' => __( 'Grantmaking Agency/Department URL', 'csl-grants-submission' ),
+				'name' => __( 'Grantmaking Agency/Department URL', 'ca-grants-plugin' ),
 				'type' => 'url',
 			),
 			array(
 				'id'   => 'grantUpdatesURL',
-				'name' => __( 'Grant Updates Subscribe URL', 'csl-grants-submission' ),
+				'name' => __( 'Grant Updates Subscribe URL', 'ca-grants-plugin' ),
 				'type' => 'url',
 			),
 			array(
 				'id'   => 'plannedEventsURL',
-				'name' => __( 'Planned Events Information URL', 'csl-grants-submission' ),
+				'name' => __( 'Planned Events Information URL', 'ca-grants-plugin' ),
 				'type' => 'url',
 			),
 		);
@@ -106,17 +106,17 @@ class Contact {
 		return array(
 			array(
 				'id'   => 'contactInfo',
-				'name' => __( 'Public Point of Contact', 'csl-grants-submission' ),
+				'name' => __( 'Public Point of Contact', 'ca-grants-plugin' ),
 				'type' => 'point_of_contact',
 			),
 			array(
 				'id'   => 'adminPrimaryContact',
-				'name' => __( 'Administrative Primary Point of Contact', 'csl-grants-submission' ),
+				'name' => __( 'Administrative Primary Point of Contact', 'ca-grants-plugin' ),
 				'type' => 'point_of_contact',
 			),
 			array(
 				'id'   => 'adminSecondaryContact',
-				'name' => __( 'Administrative Secondary Point of Contact', 'csl-grants-submission' ),
+				'name' => __( 'Administrative Secondary Point of Contact', 'ca-grants-plugin' ),
 				'type' => 'point_of_contact',
 			),
 		);

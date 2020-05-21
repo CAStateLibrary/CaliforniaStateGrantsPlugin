@@ -255,199 +255,199 @@ function get_meta_fields() {
 	return array(
 		array(
 			'id'   => 'grantID',
-			'name' => __( 'Grant ID', 'csl-grants-submission' ),
+			'name' => __( 'Grant ID', 'ca-grants-plugin' ),
 			'type' => 'text',
 		),
 		array(
 			'id'     => 'isForecasted',
-			'name'   => __( 'Grant Type', 'csl-grants-submission' ),
+			'name'   => __( 'Grant Type', 'ca-grants-plugin' ),
 			'type'   => 'radio',
 			'fields' => array(
 				array(
 					'id'   => 'forecasted',
-					'name' => __( 'Forcasted', 'csl-grants-submission' ),
+					'name' => __( 'Forcasted', 'ca-grants-plugin' ),
 				),
 				array(
 					'id'   => 'active',
-					'name' => __( 'Active', 'csl-grants-submission' ),
+					'name' => __( 'Active', 'ca-grants-plugin' ),
 				),
 			),
 		),
 		array(
 			'id'     => 'opportunityType',
-			'name'   => __( 'Opportunity Type', 'csl-grants-submission' ),
+			'name'   => __( 'Opportunity Type', 'ca-grants-plugin' ),
 			'type'   => 'radio',
 			'source' => 'api',
 		),
 		array(
 			'id'     => 'grantCategories',
-			'name'   => __( 'Relevant Categories', 'csl-grants-submission' ),
+			'name'   => __( 'Relevant Categories', 'ca-grants-plugin' ),
 			'type'   => 'select',
 			'source' => 'api',
 			'multi'  => true,
 		),
 		array(
 			'id'   => 'categorySuggestions',
-			'name' => __( 'Category Suggestion(s)', 'grantsportal' ),
+			'name' => __( 'Category Suggestion(s)', 'ca-grants-plugin' ),
 			'type' => 'text',
 		),
 		array(
 			'id'         => 'purpose',
-			'name'       => __( 'Purpose', 'csl-grants-submission' ),
+			'name'       => __( 'Purpose', 'ca-grants-plugin' ),
 			'type'       => 'textarea',
 			'text_limit' => 450,
 		),
 		array(
 			'id'         => 'description',
-			'name'       => __( 'Description', 'csl-grants-submission' ),
+			'name'       => __( 'Description', 'ca-grants-plugin' ),
 			'type'       => 'textarea',
 			'text_limit' => 3200,
 		),
 		array(
 			'id'     => 'loiRequired',
-			'name'   => __( 'Required LOI', 'csl-grants-submission' ),
+			'name'   => __( 'Required LOI', 'ca-grants-plugin' ),
 			'type'   => 'radio',
 			'fields' => array(
 				array(
 					'id'   => 'yes',
-					'name' => __( 'Yes', 'csl-grants-submission' ),
+					'name' => __( 'Yes', 'ca-grants-plugin' ),
 				),
 				array(
 					'id'   => 'no',
-					'name' => __( 'No', 'csl-grants-submission' ),
+					'name' => __( 'No', 'ca-grants-plugin' ),
 				),
 			),
 		),
 		array(
 			'id'     => 'applicantType',
-			'name'   => __( 'Eligibility: Applicant Type', 'csl-grants-submission' ),
+			'name'   => __( 'Eligibility: Applicant Type', 'ca-grants-plugin' ),
 			'type'   => 'checkbox',
 			'source' => 'api',
 		),
 		array(
 			'id'         => 'applicantTypeNotes',
-			'name'       => __( 'Applicant Type Notes', 'csl-grants-submission' ),
+			'name'       => __( 'Applicant Type Notes', 'ca-grants-plugin' ),
 			'type'       => 'textarea',
 			'text_limit' => 250,
 		),
 		array(
 			'id'         => 'geoLimitations',
-			'name'       => __( 'Eligibility: Geographic', 'csl-grants-submission' ),
+			'name'       => __( 'Eligibility: Geographic', 'ca-grants-plugin' ),
 			'type'       => 'textarea',
 			'text_limit' => 450,
 		),
 		array(
 			'id'     => 'revSources',
-			'name'   => __( 'Revenue Source', 'csl-grants-submission' ),
+			'name'   => __( 'Revenue Source', 'ca-grants-plugin' ),
 			'type'   => 'radio',
 			'source' => 'api',
 		),
 		array(
 			'id'         => 'revenueSourceNotes',
-			'name'       => __( 'Revenue Source Notes', 'csl-grants-submission' ),
+			'name'       => __( 'Revenue Source Notes', 'ca-grants-plugin' ),
 			'type'       => 'textarea',
 			'text_limit' => 200,
 		),
 		array(
 			'id'   => 'matchingFunds',
-			'name' => __( 'Eligibility: Matching Funds', 'csl-grants-submission' ),
+			'name' => __( 'Eligibility: Matching Funds', 'ca-grants-plugin' ),
 			'type' => 'eligibility-matching-funds',
 		),
 		array(
 			'id'         => 'matchingFundsNotes',
-			'name'       => __( 'Matching Funds Notes', 'csl-grants-submission' ),
+			'name'       => __( 'Matching Funds Notes', 'ca-grants-plugin' ),
 			'type'       => 'textarea',
 			'text_limit' => 300,
 		),
 		array(
 			'id'   => 'estimatedAvailableFunds',
-			'name' => __( 'Total Estimated Available Funding', 'csl-grants-submission' ),
+			'name' => __( 'Total Estimated Available Funding', 'ca-grants-plugin' ),
 			'type' => 'number',
 		),
 		array(
 			'id'   => 'estimatedAwards',
-			'name' => __( 'Estimated Number of Awards', 'csl-grants-submission' ),
+			'name' => __( 'Estimated Number of Awards', 'ca-grants-plugin' ),
 			'type' => 'estimated-number-awards',
 		),
 		array(
 			'id'   => 'estimatedAmounts',
-			'name' => __( 'Estimated Award Amounts', 'csl-grants-submission' ),
+			'name' => __( 'Estimated Award Amounts', 'ca-grants-plugin' ),
 			'type' => 'estimated-award-amounts',
 		),
 		array(
 			'id'     => 'disbursementMethod',
-			'name'   => __( 'Funds Disbursement Methods', 'csl-grants-submission' ),
+			'name'   => __( 'Funds Disbursement Methods', 'ca-grants-plugin' ),
 			'type'   => 'radio',
 			'source' => 'api',
 		),
 		array(
 			'id'   => 'disbursementMethodNotes',
-			'name' => __( 'Funds Disbursement Details', 'csl-grants-submission' ),
+			'name' => __( 'Funds Disbursement Details', 'ca-grants-plugin' ),
 			'type' => 'textarea',
 		),
 		array(
 			'id'   => 'openDate',
-			'name' => __( 'Grant Open', 'csl-grants-submission' ),
+			'name' => __( 'Grant Open', 'ca-grants-plugin' ),
 			'type' => 'datetime-local',
 		),
 		array(
 			'id'   => 'closeDate',
-			'name' => __( 'Grant Close', 'csl-grants-submission' ),
+			'name' => __( 'Grant Close', 'ca-grants-plugin' ),
 			'type' => 'datetime-local',
 		),
 		array(
 			'id'   => 'periodOfPerformance',
-			'name' => __( 'Period of Performance', 'csl-grants-submission' ),
+			'name' => __( 'Period of Performance', 'ca-grants-plugin' ),
 			'type' => 'period-performance',
 		),
 		array(
 			'id'   => 'expectedAwardDate',
-			'name' => __( 'Expected Award Announcement Date', 'csl-grants-submission' ),
+			'name' => __( 'Expected Award Announcement Date', 'ca-grants-plugin' ),
 			'type' => 'text',
 		),
 		array(
 			'id'   => 'deadline',
-			'name' => __( 'Application Deadline', 'csl-grants-submission' ),
+			'name' => __( 'Application Deadline', 'ca-grants-plugin' ),
 			'type' => 'application-deadline',
 		),
 		array(
 			'id'   => 'electronicSubmission',
-			'name' => __( 'Electronic Application Submission Method', 'csl-grants-submission' ),
+			'name' => __( 'Electronic Application Submission Method', 'ca-grants-plugin' ),
 			'type' => 'electronic-submission-method',
 		),
 		array(
 			'id'   => 'grantDetailsURL',
-			'name' => __( 'Grant Details URL', 'csl-grants-submission' ),
+			'name' => __( 'Grant Details URL', 'ca-grants-plugin' ),
 			'type' => 'url',
 		),
 		array(
 			'id'   => 'grantMakingAgencyURL',
-			'name' => __( 'Grantmaking Agency/Department URL', 'csl-grants-submission' ),
+			'name' => __( 'Grantmaking Agency/Department URL', 'ca-grants-plugin' ),
 			'type' => 'url',
 		),
 		array(
 			'id'   => 'grantUpdatesURL',
-			'name' => __( 'Grant Updates Subscribe URL', 'csl-grants-submission' ),
+			'name' => __( 'Grant Updates Subscribe URL', 'ca-grants-plugin' ),
 			'type' => 'url',
 		),
 		array(
 			'id'   => 'plannedEventsURL',
-			'name' => __( 'Planned Events Information URL', 'csl-grants-submission' ),
+			'name' => __( 'Planned Events Information URL', 'ca-grants-plugin' ),
 			'type' => 'url',
 		),
 		array(
 			'id'   => 'contactInfo',
-			'name' => __( 'Public Point of Contact', 'csl-grants-submission' ),
+			'name' => __( 'Public Point of Contact', 'ca-grants-plugin' ),
 			'type' => 'point_of_contact',
 		),
 		array(
 			'id'   => 'adminPrimaryContact',
-			'name' => __( 'Administrative Primary Point of Contact', 'csl-grants-submission' ),
+			'name' => __( 'Administrative Primary Point of Contact', 'ca-grants-plugin' ),
 			'type' => 'point_of_contact',
 		),
 		array(
 			'id'   => 'adminSecondaryContact',
-			'name' => __( 'Administrative Secondary Point of Contact', 'csl-grants-submission' ),
+			'name' => __( 'Administrative Secondary Point of Contact', 'ca-grants-plugin' ),
 			'type' => 'point_of_contact',
 		),
 	);
@@ -762,10 +762,10 @@ function render_period_performance( $meta_field = array() ) {
 						<td>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>[num]" value="<?php echo esc_attr( $value['num'] ); ?>"/>
 							<select name="<?php echo esc_attr( $id ); ?>[units]">
-								<option <?php selected( $value['units'], 'days' ); ?> value="days"><?php esc_html_e( 'Days', 'csl-grants-submission' ); ?></option>
-								<option <?php selected( $value['units'], 'weeks' ); ?>value="weeks"><?php esc_html_e( 'Weeks', 'csl-grants-submission' ); ?></option>
-								<option <?php selected( $value['units'], 'months' ); ?>value="months"><?php esc_html_e( 'Months', 'csl-grants-submission' ); ?></option>
-								<option <?php selected( $value['units'], 'years' ); ?>value="years"><?php esc_html_e( 'Years', 'csl-grants-submission' ); ?></option>
+								<option <?php selected( $value['units'], 'days' ); ?> value="days"><?php esc_html_e( 'Days', 'ca-grants-plugin' ); ?></option>
+								<option <?php selected( $value['units'], 'weeks' ); ?>value="weeks"><?php esc_html_e( 'Weeks', 'ca-grants-plugin' ); ?></option>
+								<option <?php selected( $value['units'], 'months' ); ?>value="months"><?php esc_html_e( 'Months', 'ca-grants-plugin' ); ?></option>
+								<option <?php selected( $value['units'], 'years' ); ?>value="years"><?php esc_html_e( 'Years', 'ca-grants-plugin' ); ?></option>
 							</select>
 						</td>
 					</tr>
@@ -829,7 +829,7 @@ function render_award_amounts( $meta_field = array() ) {
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'same' ); ?> type="radio" id="<?php echo esc_attr( $id . '-same' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="same">
-							<label for="<?php echo esc_attr( $id . '-same' ); ?>"><?php esc_html_e( 'Same amount each award: ', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-same' ); ?>"><?php esc_html_e( 'Same amount each award: ', 'ca-grants-plugin' ); ?></label>
 							<input class="widefat" type="text" id="<?php echo esc_attr( $id ); ?>-same-amount" name="<?php echo esc_attr( $id ); ?>[same][amount]" value="<?php echo esc_attr( $value['same']['amount'] ); ?>"/>
 						</td>
 					</tr>
@@ -837,7 +837,7 @@ function render_award_amounts( $meta_field = array() ) {
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'different' ); ?> type="radio" id="<?php echo esc_attr( $id . '-different' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="different">
-							<label for="<?php echo esc_attr( $id . '-different' ); ?>"><?php esc_html_e( 'Different amount each award', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-different' ); ?>"><?php esc_html_e( 'Different amount each award', 'ca-grants-plugin' ); ?></label>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-different-first" name="<?php echo esc_attr( $id ); ?>[different][first]" value="<?php echo esc_attr( $value['different']['first'] ); ?>"/>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-different-second" name="<?php echo esc_attr( $id ); ?>[different][second]" value="<?php echo esc_attr( $value['different']['second'] ); ?>"/>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-different-third" name="<?php echo esc_attr( $id ); ?>[different][third]" value="<?php echo esc_attr( $value['different']['third'] ); ?>"/>
@@ -847,9 +847,9 @@ function render_award_amounts( $meta_field = array() ) {
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'unknown' ); ?> type="radio" id="<?php echo esc_attr( $id . '-unknown' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="unknown">
-							<label for="<?php echo esc_attr( $id . '-unknown' ); ?>"><?php esc_html_e( 'Unknown; amount per award may range  between:', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-unknown' ); ?>"><?php esc_html_e( 'Unknown; amount per award may range  between:', 'ca-grants-plugin' ); ?></label>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-unknown-first" name="<?php echo esc_attr( $id ); ?>[unknown][first]" value="<?php echo esc_attr( $value['unknown']['first'] ); ?>"/>
-							<?php esc_html_e( ' to ', 'csl-grants-submission' ); ?>
+							<?php esc_html_e( ' to ', 'ca-grants-plugin' ); ?>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-unknown-second" name="<?php echo esc_attr( $id ); ?>[unknown][second]" value="<?php echo esc_attr( $value['unknown']['second'] ); ?>"/>
 						</td>
 					</tr>
@@ -857,7 +857,7 @@ function render_award_amounts( $meta_field = array() ) {
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant">
-							<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc.', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc.', 'ca-grants-plugin' ); ?></label>
 						</td>
 					</tr>
 				</table>
@@ -913,7 +913,7 @@ function render_number_awards( $meta_field = array() ) {
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'exact' ); ?> type="radio" id="<?php echo esc_attr( $id . '-exactly' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="exact">
-							<label for="<?php echo esc_attr( $id . '-exactly' ); ?>"><?php esc_html_e( 'Exactly: ', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-exactly' ); ?>"><?php esc_html_e( 'Exactly: ', 'ca-grants-plugin' ); ?></label>
 							<input class="widefat" type="text" id="<?php echo esc_attr( $id ); ?>-exactly" name="<?php echo esc_attr( $id ); ?>[exact]" value="<?php echo esc_attr( $value['exact'] ); ?>"/>
 						</td>
 					</tr>
@@ -921,9 +921,9 @@ function render_number_awards( $meta_field = array() ) {
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'between' ); ?> type="radio" id="<?php echo esc_attr( $id . '-between' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="between">
-							<label for="<?php echo esc_attr( $id . '-between' ); ?>"><?php esc_html_e( 'Between', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-between' ); ?>"><?php esc_html_e( 'Between', 'ca-grants-plugin' ); ?></label>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-between-first" name="<?php echo esc_attr( $id ); ?>[between][low]" value="<?php echo esc_attr( $value['between']['low'] ); ?>"/>
-							<?php esc_html_e( ' and ', 'csl-grants-submission' ); ?>
+							<?php esc_html_e( ' and ', 'ca-grants-plugin' ); ?>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-between-second" name="<?php echo esc_attr( $id ); ?>[between][high]" value="<?php echo esc_attr( $value['between']['high'] ); ?>"/>
 						</td>
 					</tr>
@@ -931,7 +931,7 @@ function render_number_awards( $meta_field = array() ) {
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant">
-							<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc.', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-dependant' ); ?>"><?php esc_html_e( 'Dependent on number of submissions received, application process, etc.', 'ca-grants-plugin' ); ?></label>
 						</td>
 					</tr>
 				</table>
@@ -983,14 +983,14 @@ function render_matching_funds( $meta_field = array() ) {
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'no' ); ?> type="radio" id="<?php echo esc_attr( $id . '-no' ); ?>" name="<?php echo esc_attr( $id ); ?>" value="no">
-							<label for="<?php echo esc_attr( $id . '-no' ); ?>"><?php esc_html_e( 'No', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-no' ); ?>"><?php esc_html_e( 'No', 'ca-grants-plugin' ); ?></label>
 						</td>
 					</tr>
 
 					<tr>
 						<td>
 							<input <?php checked( $value['checkbox'], 'yes' ); ?> type="radio" id="<?php echo esc_attr( $id . '-yes' ); ?>" name="<?php echo esc_attr( $id ); ?>" value="yes">
-							<label for="<?php echo esc_attr( $id . '-yes' ); ?>"><?php esc_html_e( 'Yes, with matching percentage: ', 'csl-grants-submission' ); ?></label>
+							<label for="<?php echo esc_attr( $id . '-yes' ); ?>"><?php esc_html_e( 'Yes, with matching percentage: ', 'ca-grants-plugin' ); ?></label>
 							<input class="widefat" type="text" name="<?php echo esc_attr( $id ); ?>-percentage" value="<?php echo esc_attr( $value['percentage'] ); ?>"/>
 						</td>
 					</tr>

@@ -59,27 +59,27 @@ class Dates {
 		return array(
 			array(
 				'id'   => 'openDate',
-				'name' => __( 'Grant Open', 'csl-grants-submission' ),
+				'name' => __( 'Grant Open', 'ca-grants-plugin' ),
 				'type' => 'datetime-local',
 			),
 			array(
 				'id'   => 'closeDate',
-				'name' => __( 'Grant Close', 'csl-grants-submission' ),
+				'name' => __( 'Grant Close', 'ca-grants-plugin' ),
 				'type' => 'datetime-local',
 			),
 			array(
 				'id'   => 'periodOfPerformance',
-				'name' => __( 'Period of Performance', 'csl-grants-submission' ),
+				'name' => __( 'Period of Performance', 'ca-grants-plugin' ),
 				'type' => 'period-performance',
 			),
 			array(
 				'id'   => 'expectedAwardDate',
-				'name' => __( 'Expected Award Announcement Date', 'csl-grants-submission' ),
+				'name' => __( 'Expected Award Announcement Date', 'ca-grants-plugin' ),
 				'type' => 'text',
 			),
 			array(
 				'id'   => 'deadline',
-				'name' => __( 'Application Deadline', 'csl-grants-submission' ),
+				'name' => __( 'Application Deadline', 'ca-grants-plugin' ),
 				'type' => 'datetime-local',
 			),
 		);

@@ -59,51 +59,51 @@ class Funding {
 		return array(
 			array(
 				'id'     => 'revSources',
-				'name'   => __( 'Revenue Source', 'csl-grants-submission' ),
+				'name'   => __( 'Revenue Source', 'ca-grants-plugin' ),
 				'type'   => 'radio',
 				'source' => 'api',
 			),
 			array(
 				'id'         => 'revenueSourceNotes',
-				'name'       => __( 'Revenue Source Notes', 'csl-grants-submission' ),
+				'name'       => __( 'Revenue Source Notes', 'ca-grants-plugin' ),
 				'type'       => 'textarea',
 				'text_limit' => 200,
 			),
 			array(
 				'id'   => 'matchingFunds',
-				'name' => __( 'Eligibility: Matching Funds', 'csl-grants-submission' ),
+				'name' => __( 'Eligibility: Matching Funds', 'ca-grants-plugin' ),
 				'type' => 'eligibility-matching-funds',
 			),
 			array(
 				'id'         => 'matchingFundsNotes',
-				'name'       => __( 'Matching Funds Notes', 'csl-grants-submission' ),
+				'name'       => __( 'Matching Funds Notes', 'ca-grants-plugin' ),
 				'type'       => 'textarea',
 				'text_limit' => 300,
 			),
 			array(
 				'id'   => 'estimatedAvailableFunds',
-				'name' => __( 'Total Estimated Available Funding', 'csl-grants-submission' ),
+				'name' => __( 'Total Estimated Available Funding', 'ca-grants-plugin' ),
 				'type' => 'number',
 			),
 			array(
 				'id'   => 'estimatedAwards',
-				'name' => __( 'Estimated Number of Awards', 'csl-grants-submission' ),
+				'name' => __( 'Estimated Number of Awards', 'ca-grants-plugin' ),
 				'type' => 'estimated-number-awards',
 			),
 			array(
 				'id'   => 'estimatedAmounts',
-				'name' => __( 'Estimated Award Amounts', 'csl-grants-submission' ),
+				'name' => __( 'Estimated Award Amounts', 'ca-grants-plugin' ),
 				'type' => 'estimated-award-amounts',
 			),
 			array(
 				'id'     => 'disbursementMethod',
-				'name'   => __( 'Funds Disbursement Methods', 'csl-grants-submission' ),
+				'name'   => __( 'Funds Disbursement Methods', 'ca-grants-plugin' ),
 				'type'   => 'radio',
 				'source' => 'api',
 			),
 			array(
 				'id'   => 'disbursementMethodNotes',
-				'name' => __( 'Funds Disbursement Details', 'csl-grants-submission' ),
+				'name' => __( 'Funds Disbursement Details', 'ca-grants-plugin' ),
 				'type' => 'textarea',
 			),
 		);

@@ -114,7 +114,7 @@ function setup() {
  */
 function restrict_email_address( $errors, $username, $user_email ) {
 	if ( 0 === preg_match( '/\w+(\.ca\.gov|\@ca\.gov)$/', $user_email ) ) {
-		$errors->add( 'invalid_emamil', __( '<strong>ERROR:</strong> You must register with a California Government (ca.gov) email address.', 'grantsportal' ) );
+		$errors->add( 'invalid_emamil', __( '<strong>ERROR:</strong> You must register with a California Government (ca.gov) email address.', 'ca-grants-plugin' ) );
 	}
 
 	return $errors;
@@ -130,7 +130,7 @@ function add_user_agency_field( $user ) {
 	$agency         = get_user_meta( $user->ID, 'csl_agency', true );
 	?>
 
-	<h2><?php esc_html_e( 'Agency', 'grantsportal' ); ?></h2>
+	<h2><?php esc_html_e( 'Agency', 'ca-grants-plugin' ); ?></h2>
 	<table class="form-table" role="presentation">
 		<tbody>
 			<tr>
@@ -166,7 +166,7 @@ function save_agency_meta_field( $user_id ) {
 function add_grant_contributor() {
 	$role = get_role( GRANT_CONTRIBUTOR_ROLE['slug'] );
 	if ( is_null( $role ) ) {
-		add_role( GRANT_CONTRIBUTOR_ROLE['slug'], esc_html__( 'Grant Contributor', 'grantsportal' ) );
+		add_role( GRANT_CONTRIBUTOR_ROLE['slug'], esc_html__( 'Grant Contributor', 'ca-grants-plugin' ) );
 		$role = get_role( GRANT_CONTRIBUTOR_ROLE['slug'] );
 	}
 
@@ -179,7 +179,7 @@ function add_grant_contributor() {
 function add_grant_editor() {
 	$role = get_role( GRANT_EDITOR_ROLE['slug'] );
 	if ( is_null( $role ) ) {
-		add_role( GRANT_EDITOR_ROLE['slug'], esc_html__( 'Grant Editor', 'grantsportal' ) );
+		add_role( GRANT_EDITOR_ROLE['slug'], esc_html__( 'Grant Editor', 'ca-grants-plugin' ) );
 		$role = get_role( GRANT_EDITOR_ROLE['slug'] );
 	}
 
