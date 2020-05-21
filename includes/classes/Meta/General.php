@@ -88,9 +88,24 @@ class General {
 				'source' => 'api',
 			),
 			array(
+				'id'     => 'loiRequired',
+				'name'   => __( 'Letter of Intent Required', 'csl-grants-submission' ),
+				'type'   => 'radio',
+				'fields' => array(
+					array(
+						'id'   => 'yes',
+						'name' => __( 'Yes', 'csl-grants-submission' ),
+					),
+					array(
+						'id'   => 'no',
+						'name' => __( 'No', 'csl-grants-submission' ),
+					),
+				),
+			),
+			array(
 				'id'     => 'grantCategories',
 				'name'   => __( 'Relevant Categories', 'csl-grants-submission' ),
-				'type'   => 'select',
+				'type'   => 'checkbox',
 				'source' => 'api',
 				'multi'  => true,
 			),
