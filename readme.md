@@ -42,7 +42,7 @@ The plugin targets the following modern browsers:
 1. Upload the entire `/ca-grants-plugin` directory to the `/wp-content/plugins/` directory.
 2. Activate California State Grants plugin through the 'Plugins' menu in WordPress.
 
-### Setup Amazon Moments
+### Setup the California State Grants plugin
 
 1. Install the California State Grants plugin.
 2. Complete the settings walkthrough, CA Grants > Settings in the WordPress dashboard.
@@ -57,11 +57,11 @@ The plugin targets the following modern browsers:
 
 ## Changelog
 
-A complete listing of all notable changes to Amazon Moments are documented in [CHANGELOG.md](https://github.com/10up/ca-grants-plugin/blob/develop/CHANGELOG.md).
+A complete listing of all notable changes to the California State Grants plugin are documented in [CHANGELOG.md](https://github.com/10up/ca-grants-plugin/blob/develop/CHANGELOG.md).
 
 ## Contributing
 
-Please read the [CODE_OF_CONDUCT.md](https://github.com/10up/ca-grants-plugin/blob/develop/CODE_OF_CONDUCT.md) for details on our code of conduct, [CONTRIBUTING.md](https://github.com/10up/ca-grants-plugin/blob/develop/CONTRIBUTING.md) for details on the process for submitting pull requests to us, [translate.wordpress.org](https://translate.wordpress.org/) to help translate the plugin, and [CREDITS.md](https://github.com/10up/ca-grants-plugin/blob/develop/CREDITS.md) for a listing of maintainers, contributors, and libraries for Amazon Moments.
+Please read the [CODE_OF_CONDUCT.md](https://github.com/10up/ca-grants-plugin/blob/develop/CODE_OF_CONDUCT.md) for details on our code of conduct, [CONTRIBUTING.md](https://github.com/10up/ca-grants-plugin/blob/develop/CONTRIBUTING.md) for details on the process for submitting pull requests to us, [translate.wordpress.org](https://translate.wordpress.org/) to help translate the plugin, and [CREDITS.md](https://github.com/10up/ca-grants-plugin/blob/develop/CREDITS.md) for a listing of maintainers, contributors, and libraries for the California State Grants plugin.
 
 ## Like what you see?
 
