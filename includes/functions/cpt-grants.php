@@ -5,7 +5,7 @@
  * @package CaGov\Grants
  */
 
-namespace CaGov\Grants\CPT\Grants;
+namespace CaGov\Grants\REST;
 
 use CaGov\Grants\Core;
 use CaGov\Grants\Meta;

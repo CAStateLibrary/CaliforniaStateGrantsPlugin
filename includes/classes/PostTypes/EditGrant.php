@@ -7,7 +7,7 @@
 
 namespace CaGov\Grants\PostTypes;
 
-use CaGov\Grants\CPT\Grants as REST;
+use CaGov\Grants\REST;
 use CaGov\Grants\Meta;
 
 /**
