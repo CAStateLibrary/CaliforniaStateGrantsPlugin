@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: California State Grants
- * Plugin URI:
+ * Plugin URI:  https://github.com/10up/ca-grants-plugin
  * Description: This plugin provides a WordPress dashboard interface to input California State Grant information and facilitate syncing that data with the California State Grants Portal.
  * Version:     1.0.0-beta1
  * Author:      10up
