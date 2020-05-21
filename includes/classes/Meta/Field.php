@@ -74,8 +74,8 @@ class Field {
 	 * @return string
 	 */
 	public static function get_api_url() {
-		if ( defined( 'GRANTS_API_URL' ) ) {
-			return GRANTS_API_URL;
+		if ( defined( 'CA_GRANTS_PORTAL_JSON_URL' ) ) {
+			return CA_GRANTS_PORTAL_JSON_URL;
 		}
 
 		return self::API_URL;
@@ -762,7 +762,7 @@ class Field {
 		$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
 
 		if ( false === $fields_to_display ) {
-			$api_url = trailingslashit( self::get_api_url() ) . 'wp-json/wp/v2/';
+			$api_url = trailingslashit( self::get_api_url() ) . 'wp/v2/';
 
 			switch ( $id ) {
 				case 'grantCategories':

@@ -7,7 +7,7 @@
 
 namespace CaGov\Grants\PostTypes;
 
-use CaGov\Grants\PostTypes\Grant;
+use CaGov\Grants\CPT\Grants as REST;
 use CaGov\Grants\Meta;
 
 /**
@@ -67,6 +67,7 @@ class EditGrant {
 	public function setup() {
 		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
 		add_action( 'save_post', array( $this, 'save_post' ) );
+		add_action( 'admin_notices', array( $this, 'validation_errors' ) );
 	}
 
 	/**
@@ -212,6 +213,71 @@ class EditGrant {
 			}
 		}
 
+		$this->remote_validate( $post_id );
+
 		wp_cache_delete( 'grants_rest_response_' . $post_id );
+	}
+
+	/**
+	 * Remote validate.
+	 *
+	 * @param  int $post_id The grant ID to validate.
+	 * @return void
+	 */
+	public function remote_validate( $post_id ) {
+		$shimmed_response = REST\modify_grants_rest_response(
+			new \WP_REST_Response(),
+			get_post( $post_id ),
+			new \WP_REST_Request()
+		);
+
+		if ( $shimmed_response instanceof \WP_REST_Response ) {
+			$data = $shimmed_response->data;
+
+			if ( is_array( $data ) ) {
+				$validator = \wp_remote_get(
+					CA_GRANTS_PORTAL_JSON_URL . 'grantsportal/v1/remote_validation',
+					array(
+						'body' => array(
+							'data' => (array) $data,
+						),
+					)
+				);
+			}
+		}
+		$body   = \wp_remote_retrieve_body( $validator );
+		$errors = json_decode( $body );
+
+		if ( is_array( $errors ) && ! empty( $errors ) ) {
+			update_post_meta( $post_id, 'validation_errors', $errors );
+		} else {
+			delete_post_meta( $post_id, 'validation_errors' );
+		}
+	}
+
+	/**
+	 * Validation errors
+	 *
+	 * @return void
+	 */
+	public function validation_errors() {
+		$screen = get_current_screen();
+		if ( ! $screen || Grants::CPT_SLUG !== $screen->post_type ) {
+			return;
+		}
+
+		$errors = get_post_meta( get_post()->ID, 'validation_errors', true );
+		?>
+		<div class="notice notice-error">
+			<p>
+				<?php esc_html_e( 'The following fields will fail to validate when submitting this grant:', 'ca-grants-plugin' ); ?>
+				<ul>
+				<?php foreach ( $errors as $error ) : ?>
+					<li><code><?php echo esc_html( $error ); ?></code></li>
+				<?php endforeach; ?>
+				</ul>
+			</p>
+		</div>
+		<?php
 	}
 }
