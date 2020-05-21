@@ -262,7 +262,7 @@ class EditGrant {
 	 */
 	public function validation_errors() {
 		$screen = get_current_screen();
-		if ( ! $screen || Grants::CPT_SLUG !== $screen->post_type ) {
+		if ( ! $screen || Grants::CPT_SLUG !== $screen->post_type || 'post' !== $screen->base ) {
 			return;
 		}
 

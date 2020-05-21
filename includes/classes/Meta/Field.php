@@ -759,7 +759,7 @@ class Field {
 			return array();
 		}
 
-		$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
+		$fields_to_display = false; // wp_cache_get( $id, 'ca-grants-plugin' );
 
 		if ( false === $fields_to_display ) {
 			$api_url = trailingslashit( self::get_api_url() ) . 'wp/v2/';
@@ -818,7 +818,7 @@ class Field {
 				);
 			}
 
-			wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 6 * HOUR_IN_SECONDS );
+			wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 5 * HOUR_IN_SECONDS );
 		}
 
 		return $fields_to_display;
