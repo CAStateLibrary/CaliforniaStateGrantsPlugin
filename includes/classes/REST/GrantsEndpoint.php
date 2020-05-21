@@ -16,6 +16,9 @@ use WP_Rest_Request;
 use WP_Error;
 use WP_Http;
 
+/**
+ * GrantsEndpoint Class.
+ */
 class GrantsEndpoint {
 	/**
 	 * Init
@@ -195,7 +198,7 @@ class GrantsEndpoint {
 				Meta\Contact::get_fields()
 			);
 
-			$new_data   = array(
+			$new_data = array(
 				'grantTitle' => get_the_title( $post->ID ),
 				'uniqueID'   => $post->ID,
 			);
