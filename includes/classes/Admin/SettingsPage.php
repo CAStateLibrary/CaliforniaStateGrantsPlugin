@@ -97,7 +97,7 @@ class SettingsPage {
 			return;
 		}
 
-		if ( 'Reset' === $reset ) {
+		if ( 'Reset Settings' === $reset ) {
 			$this->settings->purge_settings( true );
 			$this->settings->update_setting( 'wizard_step', $this->steps[0] );
 			return;
