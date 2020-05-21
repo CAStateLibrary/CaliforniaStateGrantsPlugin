@@ -20,7 +20,7 @@ define( 'CA_GRANTS_INC', CA_GRANTS_PATH . 'includes/' );
 define( 'CA_GRANTS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 if ( ! defined( 'CA_GRANTS_PORTAL_URL' ) ) {
-	define( 'CA_GRANTS_PORTAL_URL', '//castlg-stage.10upmanaged.com/' );
+	define( 'CA_GRANTS_PORTAL_URL', 'https://castlg-stage.10upmanaged.com/' );
 }
 
 if ( ! defined( 'CA_GRANTS_PORTAL_JSON_URL' ) ) {
