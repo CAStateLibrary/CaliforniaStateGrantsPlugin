@@ -19,6 +19,14 @@ define( 'CA_GRANTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CA_GRANTS_INC', CA_GRANTS_PATH . 'includes/' );
 define( 'CA_GRANTS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
+if ( ! defined( 'CA_GRANTS_PORTAL_URL' ) ) {
+	define( 'CA_GRANTS_PORTAL_URL', '//castlg-stage.10upmanaged.com/' );
+}
+
+if ( ! defined( 'CA_GRANTS_PORTAL_JSON_URL' ) ) {
+	define( 'CA_GRANTS_PORTAL_JSON_URL', CA_GRANTS_PORTAL_URL . 'wp-json/' );
+}
+
 // Include files.
 require_once CA_GRANTS_INC . 'functions/core.php';
 require_once CA_GRANTS_INC . 'functions/cpt-grants.php';
