@@ -29,22 +29,13 @@ if ( ! defined( 'CA_GRANTS_PORTAL_JSON_URL' ) ) {
 
 // Include files.
 require_once CA_GRANTS_INC . 'functions/core.php';
-require_once CA_GRANTS_INC . 'functions/cpt-grants.php';
 
 // Require Composer autoloader if it exists.
 if ( file_exists( CA_GRANTS_PATH . '/vendor/autoload.php' ) ) {
 	require_once CA_GRANTS_PATH . 'vendor/autoload.php';
 } else {
 	// No composer, autoload our own classes.
-	spl_autoload_register(
-		function( $class ) {
-			$sanitized_class = str_replace( array( 'CaGov\Grants\\', '\\' ), array( '', '/' ), $class );
-			$file            = CA_GRANTS_INC . '/classes/' . $sanitized_class . '.php';
-			if ( file_exists( $file ) ) {
-				require_once $file;
-			}
-		}
-	);
+	spl_autoload_register( 'ca_grants_plugin_autoload' );
 }
 
 // Activation/Deactivation.
@@ -53,18 +44,45 @@ register_deactivation_hook( __FILE__, '\CaGov\Grants\Core\deactivate' );
 
 // Bootstrap files.
 CaGov\Grants\Core\setup();
-CaGov\Grants\REST\setup();
 
-// Setup Post Type.
-$grants = new CaGov\Grants\PostTypes\Grants();
-$grants->setup();
-$edit_grant = new CaGov\Grants\PostTypes\EditGrant();
-$edit_grant->setup();
+/**
+ * Plugin autoload callback
+ *
+ * @param  string $class The class to autoload.
+ * @return void
+ */
+function ca_grants_plugin_autoload( $class ) {
+	$sanitized_class = str_replace( array( 'CaGov\Grants\\', '\\' ), array( '', '/' ), $class );
+	$file            = CA_GRANTS_INC . '/classes/' . $sanitized_class . '.php';
+	if ( file_exists( $file ) ) {
+		require_once $file;
+	}
+}
 
-// Setup Settings.
-$settings = new CaGov\Grants\Admin\Settings();
-$settings->setup();
-$settings_page = new CaGov\Grants\Admin\SettingsPage();
-$settings_page->setup();
-$notices = new CaGov\Grants\Admin\Notices();
-$notices->setup();
+/**
+ * Plugin setup.
+ *
+ * @return array Array of intialized class instances.
+ */
+function ca_grants_plugin_setup() {
+	$classes = array(
+		'CaGov\Grants\PostTypes\Grants',
+		'CaGov\Grants\PostTypes\EditGrant',
+		'CaGov\Grants\Admin\Settings',
+		'CaGov\Grants\Admin\SettingsPage',
+		'CaGov\Grants\Admin\Notices',
+		'CaGov\Grants\REST\GrantsEndpoint',
+	);
+
+	return array_map(
+		function( $class ) {
+			$instance = new $class();
+			$instance->setup();
+			return $instance;
+		},
+		$classes
+	);
+}
+
+// Setup the plugin.
+ca_grants_plugin_setup();
