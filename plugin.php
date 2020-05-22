@@ -70,6 +70,7 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\PostTypes\EditGrant',
 		'CaGov\Grants\Admin\Settings',
 		'CaGov\Grants\Admin\SettingsPage',
+		'CaGov\Grants\Admin\WelcomePage',
 		'CaGov\Grants\Admin\Notices',
 		'CaGov\Grants\REST\GrantsEndpoint',
 	);

@@ -56,10 +56,9 @@ class Notices {
 		<div class="notice notice-warn">
 			<p>
 				<?php esc_html_e( 'Thanks for installing the California State Grants Plugin.', 'ca-grants-plugin' ); ?>
-				<a href="<?php echo esc_url( SettingsPage::url() ); ?>">
-					<?php esc_html_e( 'Click here to begin setup', 'ca-grants-plugin' ); ?>
+				<a href="<?php echo esc_url( WelcomePage::url() ); ?>">
+					<?php esc_html_e( 'Click here for help getting started.', 'ca-grants-plugin' ); ?>
 				</a>
-				<?php esc_html_e( ' and get started publishing grants to the Grants Portal.', 'ca-grants-plugin' ); ?>
 			</p>
 		</div>
 		<?php
@@ -92,6 +91,8 @@ class Notices {
 	 * @return boolean
 	 */
 	public function can_notify_user() {
-		return ( current_user_can( 'manage_options' ) && 'ca_grants_page_settings' !== get_current_screen()->id );
+		$screen_id = get_current_screen()->id;
+		$exclude   = array( 'ca_grants_page_settings', 'ca_grants_page_welcome' );
+		return current_user_can( 'manage_options' ) && ! in_array( $screen_id, $exclude, true );
 	}
 }

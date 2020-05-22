@@ -7,7 +7,8 @@
 
 namespace CaGov\Grants\PostTypes;
 
-use CaGov\Grants\REST;
+use CaGov\Grants\Admin\Settings;
+use CaGov\Grants\REST\GrantsEndpoint;
 use CaGov\Grants\Meta;
 
 /**
@@ -25,6 +26,20 @@ class EditGrant {
 	public static $init = false;
 
 	/**
+	 * Settings.
+	 *
+	 * @var Settings
+	 */
+	public $settings;
+
+	/**
+	 * Endpoint.
+	 *
+	 * @var GrantsEndpoint
+	 */
+	public $endpoint;
+
+	/**
 	 * Meta groups
 	 *
 	 * @var array
@@ -35,6 +50,8 @@ class EditGrant {
 	 * Constructor.
 	 */
 	public function __construct() {
+		$this->settings    = new Settings();
+		$this->endpoint    = new GrantsEndpoint();
 		$this->meta_groups = array(
 			'general'     => array(
 				'class' => 'CaGov\\Grants\\Meta\General',
@@ -65,9 +82,16 @@ class EditGrant {
 	 * @return void
 	 */
 	public function setup() {
+		if ( self::$init ) {
+			return;
+		}
+
 		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
-		add_action( 'save_post', array( $this, 'save_post' ) );
+		add_action( 'save_post_' . Grants::CPT_SLUG, array( $this, 'save_post' ) );
 		add_action( 'admin_notices', array( $this, 'validation_errors' ) );
+		add_action( 'admin_head', array( $this, 'maybe_hide_preview' ) );
+
+		self::$init = true;
 	}
 
 	/**
@@ -87,6 +111,24 @@ class EditGrant {
 				'high'
 			);
 		}
+	}
+
+	/**
+	 * Viewing edit grant page.
+	 *
+	 * @return bool
+	 */
+	public function viewing() {
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
+		$screen = get_current_screen();
+		if ( $screen && Grants::CPT_SLUG === $screen->post_type && 'post' === $screen->base ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -213,7 +255,10 @@ class EditGrant {
 			}
 		}
 
-		$this->remote_validate( $post_id );
+		// Remote validate if set.
+		if ( $this->settings->get_setting( 'remote_validation' ) ) {
+			$this->remote_validate( $post_id );
+		}
 
 		wp_cache_delete( 'grants_rest_response_' . $post_id );
 	}
@@ -225,7 +270,7 @@ class EditGrant {
 	 * @return void
 	 */
 	public function remote_validate( $post_id ) {
-		$shimmed_response = REST\modify_grants_rest_response(
+		$shimmed_response = $this->endpoint->modify_grants_rest_response(
 			new \WP_REST_Response(),
 			get_post( $post_id ),
 			new \WP_REST_Request()
@@ -235,7 +280,7 @@ class EditGrant {
 			$data = $shimmed_response->data;
 
 			if ( is_array( $data ) ) {
-				$validator = \wp_remote_get(
+				$validator = \wp_remote_post(
 					CA_GRANTS_PORTAL_JSON_URL . 'grantsportal/v1/remote_validation',
 					array(
 						'body' => array(
@@ -261,8 +306,7 @@ class EditGrant {
 	 * @return void
 	 */
 	public function validation_errors() {
-		$screen = get_current_screen();
-		if ( ! $screen || Grants::CPT_SLUG !== $screen->post_type || 'post' !== $screen->base ) {
+		if ( ! $this->viewing() || ! $this->settings->get_setting( 'remote_validation' ) ) {
 			return;
 		}
 
@@ -283,5 +327,23 @@ class EditGrant {
 			</p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Maybe hide preview button.
+	 *
+	 * @return void
+	 */
+	public function maybe_hide_preview() {
+		if ( ! $this->viewing() ) {
+			return;
+		}
+
+		$post_type = get_post_type_object( Grants::CPT_SLUG );
+		if ( ! $post_type || $post_type->public ) {
+			return;
+		}
+
+		echo '<style type="text/css">#post-preview, #view-post-btn{display: none;}</style>';
 	}
 }

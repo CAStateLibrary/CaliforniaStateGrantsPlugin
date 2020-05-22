@@ -38,13 +38,7 @@ class SettingsPage {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->settings    = new Settings();
-		$this->steps       = array(
-			'intro',
-			'add_grant',
-			'submit_endpoint',
-			'complete',
-		);
+		$this->settings = new Settings();
 	}
 
 	/**
@@ -63,12 +57,20 @@ class SettingsPage {
 		self::$init = true;
 	}
 
+	public function is_visible() {
+		return Grants::get_published_count();
+	}
+
 	/**
 	 * Register settings page.
 	 *
 	 * @return void
 	 */
 	public function register_settings_page() {
+		if ( ! $this->is_visible() ) {
+			return;
+		}
+
 		add_submenu_page(
 			'edit.php?post_type=' . GRANTS::CPT_SLUG,
 			esc_html__( 'Settings', 'ca-grants-plugin' ),
@@ -89,47 +91,26 @@ class SettingsPage {
 			return;
 		}
 
-		$step  = filter_input( INPUT_POST, 'wizard_step', FILTER_SANITIZE_STRING );
-		$nonce = filter_input( INPUT_POST, 'ca_grants_nonce', FILTER_SANITIZE_STRING );
-		$reset = filter_input( INPUT_POST, 'ca_grants_settings_submit', FILTER_SANITIZE_STRING );
+		$nonce    = filter_input( INPUT_POST, 'ca_grants_nonce', FILTER_SANITIZE_STRING );
+		$reset    = filter_input( INPUT_POST, 'ca_grants_settings_submit', FILTER_SANITIZE_STRING );
+		$validate = filter_input( INPUT_POST, 'ca_grants_remote_validation', FILTER_SANITIZE_STRING );
 
-		if ( ! in_array( $step, $this->steps, true ) || ! wp_verify_nonce( $nonce, $step ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'ca_grants_settings' ) ) {
 			return;
 		}
 
 		if ( 'Reset Settings' === $reset ) {
 			$this->settings->purge_settings( true );
-			$this->settings->update_setting( 'wizard_step', $this->steps[0] );
 			return;
 		}
 
-		$this->settings->update_setting( 'wizard_step', $this->get_next_step( $step ) );
-	}
-
-	/**
-	 * Get current step.
-	 *
-	 * @return string
-	 */
-	public function get_current_step() {
-		return $this->settings->get_setting( 'wizard_step', $this->steps[0] );
-	}
-
-	/**
-	 * Get next step.
-	 *
-	 * @param  string $step Optional. The step to start from.
-	 * @return string
-	 */
-	public function get_next_step( $step = null ) {
-		if ( ! $step ) {
-			$step = $this->get_current_step();
+		if ( 'on' === $validate ) {
+			$this->settings->update_setting( 'remote_validation', true );
+		} else {
+			$this->settings->update_setting( 'remote_validation', false );
 		}
-		$current = array_search( $step, $this->steps, true );
-		$max     = count( $this->steps ) - 1;
-
-		return $this->steps[ min( ++$current, $max ) ];
 	}
+
 
 	/**
 	 * Render settings page.
@@ -144,83 +125,32 @@ class SettingsPage {
 			</div>
 
 			<form class="grants-setting-page--content" method="post">
-				<?php wp_nonce_field( $this->get_current_step(), 'ca_grants_nonce' ); ?>
-				<input type="hidden" name="wizard_step" value="<?php echo esc_attr( $this->get_current_step() ); ?>" />
-
-				<div class="grants-setting-page--wizard">
-					<?php $this->render_wizard(); ?>
-				</div>
-
-				<?php $this->continue_button(); ?>
+			<?php
+				wp_nonce_field( 'ca_grants_settings', 'ca_grants_nonce' );
+				$this->render_intro();
+				$this->render_submit_endpoint();
+				$this->submit_buttons();
+			?>
 			</form>
 		</div>
 		<?php
 	}
 
-	/**
-	 * Renders the wizard up to the current step.
-	 *
-	 * @return void
-	 */
-	public function render_wizard() {
-		$current_step = $this->get_current_step();
-
-		foreach ( $this->steps as $step ) {
-			call_user_func( array( $this, 'render_wizard_' . $step ) );
-
-			if ( $step === $current_step ) {
-				break;
-			}
-		}
-	}
 
 	/**
 	 * Renders the wizard intro.
 	 *
 	 * @return void
 	 */
-	public function render_wizard_intro() {
+	public function render_intro() {
 		?>
-		<h2><?php echo esc_html_e( 'Getting Started', 'ca-grants-plugin' ); ?></h2>
 		<p>
-			<?php esc_html_e( 'The California State Grants Portal offers this plugin to make it easy for state agencies and departments using WordPress to create grants and syncronize them with the central portal. To get started using this plugin, we create an endpoint where the Grants Portal can fetch your grant data and a unique token for your site. The Grants Portal will use this token to authenticate with this site when it attempts to syncronize with the grants you create.', 'ca-grants-plugin' ); ?>
+			<?php esc_html_e( 'This plugin makes it easy for state agencies using WordPress to submit grant data directly to the California State Grants Portal. The plugin uses:', 'ca-grants-plugin' ); ?>
+			<ol>
+				<li><?php esc_html_e( 'An endpoint where the portal can automatically fetch your grant data every 24 hours', 'ca-grants-plugin' ); ?></li>
+				<li><?php esc_html_e( 'A token unique to your site that the portal will use to authenticate syncs.', 'ca-grants-plugin' ); ?></li>
+			</ol>
 		</p>
-		<?php
-	}
-
-	/**
-	 * Renders the add a grant wizard step.
-	 *
-	 * @return void
-	 */
-	public function render_wizard_add_grant() {
-		?>
-		<h2><?php echo esc_html_e( 'Add Grants', 'ca-grants-plugin' ); ?></h2>
-		<?php if ( Grants::get_published_count() ) : ?>
-		<p>
-			<?php
-			echo esc_html(
-				sprintf(
-					/* translators: %d is the number of published grants */
-					_n(
-						'The Grants Portal will sync the %d grant that you have published.',
-						'The Grants Portal will sync the %d grants that you have published.',
-						Grants::get_published_count(),
-						'ca-grants-plugin'
-					),
-					Grants::get_published_count()
-				)
-			);
-			?>
-		</p>
-		<?php else : ?>
-		<p>
-			<?php esc_html_e( 'Time to add your first grant!', 'ca-grants-plugin' ); ?>
-			<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . Grants::CPT_SLUG ) ); ?>">
-				<?php esc_html_e( 'Click here to add a grant.', 'ca-grants-plugin' ); ?>
-			</a>
-		</p>
-		<?php endif; ?>
 		<?php
 	}
 
@@ -229,15 +159,13 @@ class SettingsPage {
 	 *
 	 * @return void
 	 */
-	public function render_wizard_submit_endpoint() {
+	public function render_submit_endpoint() {
 		$submit_endpoint_url = CA_GRANTS_PORTAL_URL . 'submit-an-endpoint';
+		$remote_validation   = $this->settings->get_setting( 'remote_validation' );
 		?>
 		<h2><?php echo esc_html_e( 'Submit Endpoint', 'ca-grants-plugin' ); ?></h2>
 		<p>
-			<?php esc_html_e( 'Enter the following details when registering your endpoint on the', 'ca-grants-plugin' ); ?>
-			<a href="<?php echo esc_url( $submit_endpoint_url ); ?>">
-				<?php echo esc_html_e( 'Grants Portal:', 'ca-grants-plugin' ); ?>
-			</a>
+			<?php esc_html_e( 'Enter the information below on the grants portal site when you are ready to submit your first grant(s). You do not need to re-enter this information on the portal site with each grant; subsequent grants will all use this same information.', 'ca-grants-plugin' ); ?>
 		</p>
 		<table class="form-table" role="presentation">
 			<tbody>
@@ -255,21 +183,16 @@ class SettingsPage {
 						<a href="javascript:void(0)" class="copy-clipboard" data-input-target="ca_grants_auth_token"><?php esc_html_e( 'Copy' ); ?></a>
 					</td>
 				</tr>
+				<tr>
+					<th><?php esc_html_e( 'Grant Validation', 'ca-grants-plugin' ); ?></th>
+					<td>
+						<label for="ca_grants_remote_validation">
+							<input type="checkbox" name="ca_grants_remote_validation" id="ca_grants_remote_validation" <?php checked( ! ! $remote_validation ); ?>/>
+							<?php esc_html_e( 'Enable grants to be validated by the Grants Portal on save.', 'ca-grants-plugin' ); ?>
+						</label>
+					</td>
 			</tbody>
 		</table>
-		<?php
-	}
-
-	/**
-	 * Renders the completed wizard step.
-	 *
-	 * @return void
-	 */
-	public function render_wizard_complete() {
-		?>
-		<p>
-			<?php esc_html_e( 'Setup is complete. The Grants Portal will periodically fetch your published grant data. Newly published grants will be automatically synced with the portal the next time the Portal fetches your grant data.  If you need to re-run installation, for example if you need to reset your authorization token, you can reset the plugin settings below.', 'ca-grants-plugin' ); ?>
-		</p>
 		<?php
 	}
 
@@ -278,38 +201,40 @@ class SettingsPage {
 	 *
 	 * @return void
 	 */
-	public function continue_button() {
-		if ( 'complete' === $this->get_current_step() ) {
-			submit_button(
-				__( 'Reset Settings', 'ca-grants-plugin' ),
-				'primary',
-				'ca_grants_settings_submit',
-				true,
-				array(
-					'tabindex' => '1',
-				)
-			);
-			return;
-		}
-
-		if ( 'add_grant' === $this->get_current_step() && ! Grants::get_published_count() ) {
-			echo sprintf(
-				'<a href="%s" class="button button-primary">%s</a>',
-				esc_url( admin_url( 'post-new.php?post_type=' . Grants::CPT_SLUG ) ),
-				esc_html__( 'Add a grant', 'ca-grants-plugin' )
-			);
-			return;
-		}
-
-		submit_button(
-			__( 'Continue', 'ca-grants-plugin' ),
-			'primary',
-			'ca_grants_settings_submit',
-			true,
-			array(
-				'tabindex' => '1',
-			)
-		);
+	public function submit_buttons() {
+		?>
+		<p class="submit">
+			<span>
+			<?php
+				submit_button(
+					__( 'Update Settings', 'ca-grants-plugin' ),
+					'primary',
+					'ca_grants_settings_submit',
+					false,
+					array(
+						'tabindex' => '1',
+					)
+				);
+			?>
+			</span>
+			<span style="margin-left:16px">
+			<?php
+				submit_button(
+					__( 'Reset Settings', 'ca-grants-plugin' ),
+					'secondary',
+					'ca_grants_settings_submit',
+					false,
+					array(
+						'tabindex' => '1',
+					)
+				);
+			?>
+			</span>
+		</p>
+		<p>
+			<em><?php esc_html_e( 'The only time you should re-enter your endpoint URL or authorization token on the portal is if you use the Reset Settings button to generate a new token.', 'ca-grants-plugin' ); ?></em>
+		</p>
+		<?php
 	}
 
 	/**
@@ -319,6 +244,10 @@ class SettingsPage {
 	 * @return string
 	 */
 	public function plugin_action_link( $links ) {
+		if ( ! $this->is_visible() ) {
+			return $links;
+		}
+
 		$link = sprintf( '<a href="%s">%s</a>', esc_url( self::url() ), esc_html( 'Settings', 'ca-grants-plugin' ) );
 		return array_merge( array( $link ), $links );
 	}

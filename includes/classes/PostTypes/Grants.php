@@ -109,7 +109,7 @@ class Grants {
 	 * @return bool
 	 */
 	public function disable_block_editor( $use, $post_type ) {
-		if ( CPT_SLUG === $post_type ) {
+		if ( self::CPT_SLUG === $post_type ) {
 			return false;
 		}
 
