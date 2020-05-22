@@ -163,6 +163,11 @@ class Field {
 				<label for="<?php echo esc_attr( $field['id'] ); ?>"><?php echo esc_html( $field['name'] ); ?></label>
 				<br>
 			<?php endforeach; ?>
+			<?php if ( count( $fields ) > 1 ) : ?>
+				<p>
+					<a href="javascript:void(0)" class="checkbox--select-all">Select All</a>
+				</p>
+			<?php endif; ?>
 			</td>
 		</tr>
 		<?php
