@@ -148,7 +148,7 @@ class SettingsPage {
 			<?php esc_html_e( 'This plugin makes it easy for state agencies using WordPress to submit grant data directly to the California State Grants Portal. The plugin uses:', 'ca-grants-plugin' ); ?>
 			<ol>
 				<li><?php esc_html_e( 'An endpoint where the portal can automatically fetch your grant data every 24 hours', 'ca-grants-plugin' ); ?></li>
-				<li><?php esc_html_e( 'A token unique to your site that the portal will use to authenticate syncs.', 'ca-grants-plugin' ); ?></li>
+				<li><?php esc_html_e( 'A token unique to your site that the portal will use to authenticate syncs', 'ca-grants-plugin' ); ?></li>
 			</ol>
 		</p>
 		<?php
