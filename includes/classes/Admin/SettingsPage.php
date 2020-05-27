@@ -94,9 +94,14 @@ class SettingsPage {
 		$nonce    = filter_input( INPUT_POST, 'ca_grants_nonce', FILTER_SANITIZE_STRING );
 		$reset    = filter_input( INPUT_POST, 'ca_grants_settings_submit', FILTER_SANITIZE_STRING );
 		$validate = filter_input( INPUT_POST, 'ca_grants_remote_validation', FILTER_SANITIZE_STRING );
+		$updater  = filter_input( INPUT_POST, 'ca_grants_update_token', FILTER_SANITIZE_STRING );
 
 		if ( ! wp_verify_nonce( $nonce, 'ca_grants_settings' ) ) {
 			return;
+		}
+
+		if ( $updater ) {
+			$this->settings->update_setting( 'update_token', $updater );
 		}
 
 		if ( 'Reset Settings' === $reset ) {
@@ -184,6 +189,12 @@ class SettingsPage {
 					</td>
 				</tr>
 				<tr>
+					<th><label for="ca_grants_update_token"><?php echo esc_html_e( 'Authorization Token', 'ca-grants-plugin' ); ?></label></th>
+					<td>
+						<input name="ca_grants_update_token" id="ca_grants_update_token" type="password" value="<?php echo esc_attr( $this->settings->get_setting( 'update_token', '' ) ); ?>" class="regular-text code">
+					</td>
+				</tr>
+				<tr>
 					<th><?php esc_html_e( 'Grant Validation', 'ca-grants-plugin' ); ?></th>
 					<td>
 						<label for="ca_grants_remote_validation">
@@ -191,6 +202,7 @@ class SettingsPage {
 							<?php esc_html_e( 'Enable grants to be validated by the Grants Portal on save.', 'ca-grants-plugin' ); ?>
 						</label>
 					</td>
+				</tr>
 			</tbody>
 		</table>
 		<?php
