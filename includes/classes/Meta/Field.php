@@ -82,6 +82,28 @@ class Field {
 	}
 
 	/**
+	 * Tooltip
+	 *
+	 * @param  string $content Content to display within the tooltip.
+	 * @return void
+	 */
+	public static function tooltip( $content ) {
+		if ( ! $content ) {
+			return;
+		}
+		?>
+		<span class="a11y-tip a11y-tip--no-delay">
+			<a href="#!" class="a11y-tip__trigger">
+				<span class="dashicons dashicons-editor-help"></span>
+			</a>
+			<span class="a11y-tip__help">
+				<?php echo esc_html( $content ); ?>
+			</span>
+		</span>
+		<?php
+	}
+
+	/**
 	 * Render an input field
 	 *
 	 * @param array $meta_field The meta field to render
@@ -103,6 +125,7 @@ class Field {
 		<tr>
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 				<input
@@ -112,7 +135,6 @@ class Field {
 					id="<?php echo esc_attr( $id ); ?>"
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 				/>
-				<p class="description"><?php echo esc_html( $description ); ?></p>
 			</td>
 		</tr>
 		<?php
@@ -155,6 +177,7 @@ class Field {
 		<tr>
 			<th>
 				<label><?php echo esc_html( $name ); ?></label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 			<?php foreach ( $fields as $field ) : ?>
@@ -209,6 +232,7 @@ class Field {
 		<tr>
 			<th>
 				<?php echo esc_html( $name ); ?>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 				<fieldset>
@@ -225,7 +249,6 @@ class Field {
 							<span><?php echo esc_html( $field['name'] ); ?></span>
 						</label><br>
 					<?php endforeach; ?>
-					<p class="description"><?php echo esc_html( $description ); ?></p>
 				</fieldset>
 			</td>
 		</tr>
@@ -268,6 +291,7 @@ class Field {
 		<tr>
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 				<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>">
@@ -311,10 +335,10 @@ class Field {
 		<tr>
 			<th>
 				<label for="<?php esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 				<?php self::do_editor( $value, $id ); ?>
-				<p class="description"><?php echo esc_html( $description ); ?></p>
 			</td>
 		</tr>
 		<?php
@@ -330,8 +354,9 @@ class Field {
 			return;
 		}
 
-		$name = $meta_field['name'] ?? '';
-		$id   = $meta_field['id'] ?? '';
+		$name        = $meta_field['name'] ?? '';
+		$id          = $meta_field['id'] ?? '';
+		$description = $meta_field['description'] ?? '';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -352,6 +377,7 @@ class Field {
 				<label for="<?php echo esc_attr( $id ); ?>-num-units">
 					<?php echo esc_html( $name ); ?>
 				</label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>[num]" value="<?php echo esc_attr( $value['num'] ); ?>"/>
@@ -376,8 +402,9 @@ class Field {
 			return;
 		}
 
-		$name = $meta_field['name'] ?? '';
-		$id   = $meta_field['id'] ?? '';
+		$name        = $meta_field['name'] ?? '';
+		$id          = $meta_field['id'] ?? '';
+		$description = $meta_field['description'] ?? '';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -409,6 +436,7 @@ class Field {
 				<label for="<?php echo esc_attr( $id ); ?>">
 					<?php echo esc_html( $name ); ?>
 				</label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 
@@ -450,8 +478,9 @@ class Field {
 			return;
 		}
 
-		$name = $meta_field['name'] ?? '';
-		$id   = $meta_field['id'] ?? '';
+		$name        = $meta_field['name'] ?? '';
+		$id          = $meta_field['id'] ?? '';
+		$description = $meta_field['description'] ?? '';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -475,6 +504,7 @@ class Field {
 				<label for="<?php echo esc_attr( $id ); ?>">
 					<?php echo esc_html( $name ); ?>
 				</label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 
 			<td>
@@ -507,8 +537,9 @@ class Field {
 			return;
 		}
 
-		$name = $meta_field['name'] ?? '';
-		$id   = $meta_field['id'] ?? '';
+		$name        = $meta_field['name'] ?? '';
+		$id          = $meta_field['id'] ?? '';
+		$description = $meta_field['description'] ?? '';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -529,6 +560,7 @@ class Field {
 				<label for="<?php echo esc_attr( $id ); ?>">
 					<?php echo esc_html( $name ); ?>
 				</label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 				<input <?php checked( $value['checkbox'], 'no' ); ?> type="radio" id="<?php echo esc_attr( $id . '-no' ); ?>" name="<?php echo esc_attr( $id ); ?>" value="no">
@@ -554,8 +586,9 @@ class Field {
 			return;
 		}
 
-		$name = $meta_field['name'] ?? '';
-		$id   = $meta_field['id'] ?? '';
+		$name        = $meta_field['name'] ?? '';
+		$id          = $meta_field['id'] ?? '';
+		$description = $meta_field['description'] ?? '';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -567,6 +600,7 @@ class Field {
 		<tr>
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 				<input type="datetime-local" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>">
@@ -586,9 +620,10 @@ class Field {
 			return;
 		}
 
-		$type = $meta_field['type'] ?? '';
-		$name = $meta_field['name'] ?? '';
-		$id   = $meta_field['id'] ?? '';
+		$type        = $meta_field['type'] ?? '';
+		$name        = $meta_field['name'] ?? '';
+		$id          = $meta_field['id'] ?? '';
+		$description = $meta_field['description'] ?? '';
 
 		// default values
 		$defaults = array(
@@ -644,8 +679,9 @@ class Field {
 			return;
 		}
 
-		$name = $meta_field['name'] ?? '';
-		$id   = $meta_field['id'] ?? '';
+		$name        = $meta_field['name'] ?? '';
+		$id          = $meta_field['id'] ?? '';
+		$description = $meta_field['description'] ?? '';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -663,6 +699,7 @@ class Field {
 		<tr>
 			<th>
 				<label for="email_submission"><?php esc_html_e( 'Email Submission', 'csl-grants-portal' ); ?></label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 				<input type="email" name="<?php echo esc_attr( $id ); ?>[email]" value="<?php echo esc_attr( $value['email'] ); ?>" id="email_submission">
@@ -691,9 +728,10 @@ class Field {
 			return;
 		}
 
-		$type = $meta_field['type'] ?? '';
-		$name = $meta_field['name'] ?? '';
-		$id   = $meta_field['id'] ?? '';
+		$type        = $meta_field['type'] ?? '';
+		$name        = $meta_field['name'] ?? '';
+		$id          = $meta_field['id'] ?? '';
+		$description = $meta_field['description'] ?? '';
 
 		// default values
 		$defaults = array(
@@ -712,6 +750,7 @@ class Field {
 				<label for="<?php echo esc_attr( $id ); ?>">
 					<?php echo esc_html( $name ); ?>
 				</label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 
 			<td>

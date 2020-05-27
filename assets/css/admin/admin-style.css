@@ -1,3 +1,13 @@
 /**
  * CaGov\Grants - Admin Styles
  */
+
+@import "@10up/component-tooltip";
+
+a.a11y-tip__trigger {
+	text-decoration: none;
+}
+
+[role="tooltip"].a11y-tip__help {
+	z-index: 100000;
+}
