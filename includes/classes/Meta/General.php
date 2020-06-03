@@ -70,7 +70,6 @@ class General {
 				'id'          => 'isForecasted',
 				'name'        => __( 'Grant Type', 'ca-grants-plugin' ),
 				'type'        => 'radio',
-				'description' => __( 'Todo: Add helper text.', 'ca-grants-plugin' ),
 				'fields'      => array(
 					array(
 						'id'   => 'forecasted',
@@ -86,7 +85,6 @@ class General {
 				'id'          => 'opportunityType',
 				'name'        => __( 'Opportunity Type', 'ca-grants-plugin' ),
 				'type'        => 'radio',
-				'description' => __( 'Todo: Add helper text.', 'ca-grants-plugin' ),
 				'source'      => 'api',
 
 			),
@@ -94,7 +92,6 @@ class General {
 				'id'          => 'loiRequired',
 				'name'        => __( 'Letter of Intent Required', 'ca-grants-plugin' ),
 				'type'        => 'radio',
-				'description' => __( 'Todo: Add helper text.', 'ca-grants-plugin' ),
 				'fields'      => array(
 					array(
 						'id'   => 'yes',
@@ -110,7 +107,7 @@ class General {
 				'id'          => 'grantCategories',
 				'name'        => __( 'Relevant Categories', 'ca-grants-plugin' ),
 				'type'        => 'checkbox',
-				'description' => __( 'Todo: Add helper text.', 'ca-grants-plugin' ),
+				'description' => __( 'Please indicate the category (or categories) this grant opportunity belongs in. Categorizing your grant will allow users to narrow their search to find grants covering specific topics or areas of focus relevant to their needs. If your grant doesn’t fit into any of the categories presented, please select Uncategorized, and suggest a category in Category Suggestion(s) below.', 'ca-grants-plugin' ),
 				'source'      => 'api',
 				'multi'       => true,
 			),
@@ -118,20 +115,20 @@ class General {
 				'id'          => 'categorySuggestions',
 				'name'        => __( 'Category Suggestion(s)', 'ca-grants-plugin' ),
 				'type'        => 'text',
-				'description' => __( 'Todo: Add helper text.', 'ca-grants-plugin' ),
+				'description' => __( 'If you selected Uncategorized from the categories list above (or just have a suggestion for a category addition), please tell us the category you would like to see added to the list. (CA Grants Portal will add categories at its discretion; there is no guarantee a suggestion will be added.)', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'          => 'purpose',
 				'name'        => __( 'Purpose', 'ca-grants-plugin' ),
 				'type'        => 'textarea',
-				'description' => __( 'Todo: Add helper text.', 'ca-grants-plugin' ),
+				'description' => __( 'Please provide a brief outline of the goals and intended outcomes of this grant opportunity. In most cases, this information should already be available in your department’s documentation. If this is not the case, consider the following prompt, "At a high-level, what does your department hope to achieve as a result of this grant program?"', 'ca-grants-plugin' ),
 				'text_limit'  => 450,
 			),
 			array(
 				'id'          => 'description',
 				'name'        => __( 'Description', 'ca-grants-plugin' ),
 				'type'        => 'textarea',
-				'description' => __( 'Todo: Add helper text.', 'ca-grants-plugin' ),
+				'description' => __( 'Please provide an overview of the grant opportunity. This may include information such as: project such as the project scope, types of projects to be funded, allowable activities, eligibility exclusions, priority communities, or other types of priority, such as amount of match, grant award announcement mechanism, and/or past/average award size. If this grant opportunity uses a Letter of Intent process, please explain that in this section. Please also list any keywords that grant seekers might use to find this grant. For example, if this grant is specifically designated for certain geographies or for disadvantaged communities, list these words throughout your description for grantseekers to be able to search them in the filter.', 'ca-grants-plugin' ),
 				'text_limit'  => 3200,
 			),
 		);
