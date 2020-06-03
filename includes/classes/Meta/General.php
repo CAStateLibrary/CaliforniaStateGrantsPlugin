@@ -67,10 +67,10 @@ class General {
 				'description' => __( 'The identifier (typically numbers, letters or a combination of letters or numbers) that the state department uses to identify the grant. If your department does not use a Grant ID system, leave this field blank.', 'ca-grants-plugin' ),
 			),
 			array(
-				'id'          => 'isForecasted',
-				'name'        => __( 'Grant Type', 'ca-grants-plugin' ),
-				'type'        => 'radio',
-				'fields'      => array(
+				'id'     => 'isForecasted',
+				'name'   => __( 'Grant Type', 'ca-grants-plugin' ),
+				'type'   => 'radio',
+				'fields' => array(
 					array(
 						'id'   => 'forecasted',
 						'name' => __( 'Forcasted', 'ca-grants-plugin' ),
@@ -82,17 +82,17 @@ class General {
 				),
 			),
 			array(
-				'id'          => 'opportunityType',
-				'name'        => __( 'Opportunity Type', 'ca-grants-plugin' ),
-				'type'        => 'radio',
-				'source'      => 'api',
+				'id'     => 'opportunityType',
+				'name'   => __( 'Opportunity Type', 'ca-grants-plugin' ),
+				'type'   => 'radio',
+				'source' => 'api',
 
 			),
 			array(
-				'id'          => 'loiRequired',
-				'name'        => __( 'Letter of Intent Required', 'ca-grants-plugin' ),
-				'type'        => 'radio',
-				'fields'      => array(
+				'id'     => 'loiRequired',
+				'name'   => __( 'Letter of Intent Required', 'ca-grants-plugin' ),
+				'type'   => 'radio',
+				'fields' => array(
 					array(
 						'id'   => 'yes',
 						'name' => __( 'Yes', 'ca-grants-plugin' ),
@@ -128,7 +128,7 @@ class General {
 				'id'          => 'description',
 				'name'        => __( 'Description', 'ca-grants-plugin' ),
 				'type'        => 'textarea',
-				'description' => __( "Please provide an overview of the grant opportunity. This may include information such as: project such as the project scope, types of projects to be funded, allowable activities, eligibility exclusions, priority communities, or other types of priority, such as amount of match, grant award announcement mechanism, and/or past/average award size. If this grant opportunity uses a Letter of Intent process, please explain that in this section.<br/><br/>Please also list any keywords that grant seekers might use to find this grant. For example, if this grant is specifically designated for certain geographies or for disadvantaged communities, list these words throughout your description for grantseekers to be able to search them in the filter.", 'ca-grants-plugin' ),
+				'description' => __( 'Please provide an overview of the grant opportunity. This may include information such as: project such as the project scope, types of projects to be funded, allowable activities, eligibility exclusions, priority communities, or other types of priority, such as amount of match, grant award announcement mechanism, and/or past/average award size. If this grant opportunity uses a Letter of Intent process, please explain that in this section.<br/><br/>Please also list any keywords that grant seekers might use to find this grant. For example, if this grant is specifically designated for certain geographies or for disadvantaged communities, list these words throughout your description for grantseekers to be able to search them in the filter.', 'ca-grants-plugin' ),
 				'text_limit'  => 3200,
 			),
 		);
