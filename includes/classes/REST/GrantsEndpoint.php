@@ -247,7 +247,7 @@ class GrantsEndpoint {
 
 							$new_data['matchingFunds'] = array(
 								'required' => ( 'yes' === $metadata['checkbox'] ) ? true : false,
-								'percent'  => absint( $metadata['percent'] ?? 0 ),
+								'percent'  => absint( $metadata['percentage'] ?? 0 ),
 								'notes'    => $notes,
 							);
 
