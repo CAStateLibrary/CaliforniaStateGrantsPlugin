@@ -68,6 +68,7 @@ class Funding {
 				'name'       => __( 'Revenue Source Notes', 'ca-grants-plugin' ),
 				'type'       => 'textarea',
 				'text_limit' => 200,
+				'description' => __( 'Please specify information that may be helpful to applicants, such as proposition number, bond name/number, federal grant program, etc.', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'   => 'matchingFunds',
@@ -79,6 +80,7 @@ class Funding {
 				'name'       => __( 'Matching Funds Notes', 'ca-grants-plugin' ),
 				'type'       => 'textarea',
 				'text_limit' => 300,
+				'description' => __( 'Please provide any additional details and/or exceptions, or requirements around acceptable matched funding sources (e.g. public or private funding only). If your grant has no requirement for matching funds, but gives preference based on applications that have them, please indicate this in your Grant Description.', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'   => 'estimatedAvailableFunds',
@@ -102,9 +104,11 @@ class Funding {
 				'source' => 'api',
 			),
 			array(
-				'id'   => 'disbursementMethodNotes',
-				'name' => __( 'Funds Disbursement Details', 'ca-grants-plugin' ),
-				'type' => 'textarea',
+				'id'          => 'disbursementMethodNotes',
+				'name'        => __( 'Funds Disbursement Details', 'ca-grants-plugin' ),
+				'type'        => 'textarea',
+				'text_limit'  => 450,
+				'description' => __( 'Use this field to include 1-2 sentences providing details on the funds disbursement method.', 'ca-grants-plugin' ),
 			),
 		);
 	}
