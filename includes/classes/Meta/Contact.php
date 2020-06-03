@@ -70,9 +70,10 @@ class Contact {
 	public static function get_standard_fields() {
 		return array(
 			array(
-				'id'   => 'electronicSubmission',
-				'name' => __( 'Submission Email', 'ca-grants-plugin' ),
-				'type' => 'electronic-submission-method',
+				'id'          => 'electronicSubmission',
+				'name'        => __( 'Submission Email', 'ca-grants-plugin' ),
+				'type'        => 'electronic-submission-method',
+				'description' => __( 'AB2252 requires that applicants be able to submit grant proposals / applications electronically.', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'   => 'grantDetailsURL',
@@ -80,19 +81,22 @@ class Contact {
 				'type' => 'url',
 			),
 			array(
-				'id'   => 'grantMakingAgencyURL',
-				'name' => __( 'Grantmaking Agency/Department URL', 'ca-grants-plugin' ),
-				'type' => 'url',
+				'id'          => 'grantMakingAgencyURL',
+				'name'        => __( 'Grantmaking Agency/Department URL', 'ca-grants-plugin' ),
+				'type'        => 'url',
+				'description' => __( 'Please provide a link to the page on your department’s website where applicants may find further details about this grant opportunity (e.g. the full RFP, or additional information).', 'ca-grants-plugin' ),
 			),
 			array(
-				'id'   => 'grantUpdatesURL',
-				'name' => __( 'Grant Updates Subscribe URL', 'ca-grants-plugin' ),
-				'type' => 'url',
+				'id'          => 'grantUpdatesURL',
+				'name'        => __( 'Grant Updates Subscribe URL', 'ca-grants-plugin' ),
+				'type'        => 'url',
+				'description' => __( 'Please provide a link to your department’s website where applicants may learn more about it.', 'ca-grants-plugin' ),
 			),
 			array(
-				'id'   => 'plannedEventsURL',
-				'name' => __( 'Planned Events Information URL', 'ca-grants-plugin' ),
-				'type' => 'url',
+				'id'          => 'plannedEventsURL',
+				'name'        => __( 'Planned Events Information URL', 'ca-grants-plugin' ),
+				'type'        => 'url',
+				'description' => __( 'If there are any known events — workshops, public forums, meetings — planned for this grant, please provide a link to the page where applicants can find event details.', 'ca-grants-plugin' ),
 			),
 		);
 	}
