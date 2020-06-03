@@ -97,7 +97,7 @@ class Field {
 				<span class="dashicons dashicons-editor-help"></span>
 			</a>
 			<span class="a11y-tip__help">
-				<?php echo esc_html( $content ); ?>
+				<?php echo wp_kses_post( $content ); ?>
 			</span>
 		</span>
 		<?php
