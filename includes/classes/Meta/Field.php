@@ -613,10 +613,11 @@ class Field {
 			return;
 		}
 
-		$type        = $meta_field['type'] ?? '';
-		$name        = $meta_field['name'] ?? '';
-		$id          = $meta_field['id'] ?? '';
-		$description = $meta_field['description'] ?? '';
+		$type         = $meta_field['type'] ?? '';
+		$name         = $meta_field['name'] ?? '';
+		$id           = $meta_field['id'] ?? '';
+		$description  = $meta_field['description'] ?? '';
+		$section_note = $meta_field['section_note'] ?? '';
 
 		// default values
 		$defaults = array(
@@ -630,6 +631,9 @@ class Field {
 		?>
 
 		<h4><?php echo esc_html( $name ); ?></h4>
+		<?php if ( $section_note ) : ?>
+		<p class="section--note"><?php echo wp_kses_post( $section_note ); ?></p>
+		<?php endif; ?>
 		<table class="form-table">
 			<tbody>
 				<tr>
