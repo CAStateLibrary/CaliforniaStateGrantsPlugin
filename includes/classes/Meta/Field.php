@@ -810,7 +810,7 @@ class Field {
 
 			switch ( $id ) {
 				case 'grantCategories':
-					$api_url .= 'grant_categories';
+					$api_url .= 'grant_categories?per_page=100';
 					break;
 				case 'applicantType':
 					$api_url .= 'applicant_type';
