@@ -189,9 +189,10 @@ class SettingsPage {
 					</td>
 				</tr>
 				<tr>
-					<th><label for="ca_grants_update_token"><?php echo esc_html_e( 'Authorization Token', 'ca-grants-plugin' ); ?></label></th>
+					<th><label for="ca_grants_update_token"><?php echo esc_html_e( 'Update Token', 'ca-grants-plugin' ); ?></label></th>
 					<td>
 						<input name="ca_grants_update_token" id="ca_grants_update_token" type="password" value="<?php echo esc_attr( $this->settings->get_setting( 'update_token', '' ) ); ?>" class="regular-text code">
+						<p class="description"><?php esc_html_e( 'Optional. Enter the provided update token to receive updates while this plugin is in private beta.', 'ca-grants-plugin' ); ?></p>
 					</td>
 				</tr>
 				<tr>
