@@ -1,22 +1,20 @@
-=== Csl Grants Submissions ===
+=== CA Grants Plugin ===
 Contributors:      10up
 Tags:
 Requires at least: 4.9
 Tested up to:      4.9
 Stable tag:        0.1.0
 
-A brief description of the plugin.
+The California State Grants Plugin is the official WordPress plugin allowing you to manage your grant data within your own site running WordPress.
 
 == Description ==
 
-
-
-== Installation ==
+The California State Grants Plugin is the official WordPress plugin allowing you to manage your grant data within your own site running WordPress.
 
 = Manual Installation =
 
 1. Upload the entire `/ca-grants-plugin` directory to the `/wp-content/plugins/` directory.
-2. Activate Csl Grants Submissions through the 'Plugins' menu in WordPress.
+2. Activate CA Grants Plugin through the 'Plugins' menu in WordPress.
 
 == Frequently Asked Questions ==
 
