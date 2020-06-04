@@ -4,9 +4,6 @@ release
 .idea
 *.log
 
-# Project Files
-dist
-
 # Editors
 *.esproj
 *.tmproj
