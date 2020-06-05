@@ -49,7 +49,7 @@ class Notices {
 	 * @return void
 	 */
 	public function maybe_prompt_setup() {
-		if ( ( $this->settings->get_setting( 'auth_token' ) && Grants::get_published_count() ) || ! $this->can_notify_user() ) {
+		if ( Grants::get_published_count() || ! $this->can_notify_user() ) {
 			return;
 		}
 		?>
