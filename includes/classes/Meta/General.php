@@ -73,7 +73,7 @@ class General {
 				'fields' => array(
 					array(
 						'id'   => 'forecasted',
-						'name' => __( 'Forcasted', 'ca-grants-plugin' ),
+						'name' => __( 'Forecasted', 'ca-grants-plugin' ),
 					),
 					array(
 						'id'   => 'active',
