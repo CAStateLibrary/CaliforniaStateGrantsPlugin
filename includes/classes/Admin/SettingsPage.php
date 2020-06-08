@@ -170,7 +170,11 @@ class SettingsPage {
 		?>
 		<h2><?php echo esc_html_e( 'Submit Endpoint', 'ca-grants-plugin' ); ?></h2>
 		<p>
-			<?php esc_html_e( 'Enter the information below on the grants portal site when you are ready to submit your first grant(s). You do not need to re-enter this information on the portal site with each grant; subsequent grants will all use this same information.', 'ca-grants-plugin' ); ?>
+			<?php esc_html_e( 'Enter the information below on the', 'ca-grants-plugin' ); ?>
+			<a href="<?php echo esc_url( CA_GRANTS_PORTAL_URL . 'submit-an-endpoint/' ); ?>">
+				<?php esc_html_e( ' grants portal site', 'ca-grants-plugin' ); ?>
+			</a>
+			<?php esc_html_e( ' when you are ready to submit your first grant(s). You do not need to re-enter this information on the portal site with each grant; subsequent grants will all use this same information.', 'ca-grants-plugin' ); ?>
 		</p>
 		<table class="form-table" role="presentation">
 			<tbody>
