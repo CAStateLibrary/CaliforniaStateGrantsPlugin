@@ -104,6 +104,27 @@ class Field {
 	}
 
 	/**
+	 * Outputs an attribute for conditionally required inputs.
+	 *
+	 * @param array   $meta_field The meta field settings.
+	 * @param boolean $input      Whether the element is an <input>, ([required] attribute is valid).
+	 * @return void
+	 */
+	public static function conditional_required( $meta_field, $input = true ) {
+		if ( ! isset( $meta_field['required'] ) ) {
+			return;
+		}
+
+		if ( is_array( $meta_field['required'] ) ) {
+			if ( array( 'active', 'forecasted' ) === $meta_field['required'] && $input ) {
+				echo ' required="true" ';
+			} else {
+				printf( 'data-required-if="%s"', esc_attr( implode( ',', $meta_field['required'] ) ) );
+			}
+		}
+	}
+
+	/**
 	 * Render an input field
 	 *
 	 * @param array $meta_field The meta field to render
@@ -134,6 +155,7 @@ class Field {
 					value="<?php echo esc_attr( $value ); ?>"
 					id="<?php echo esc_attr( $id ); ?>"
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
+					<?php self::conditional_required( $meta_field ); ?>
 				/>
 			</td>
 		</tr>
@@ -179,7 +201,7 @@ class Field {
 				<label><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
-			<td>
+			<td <?php self::conditional_required( $meta_field, false ); ?>>
 			<?php foreach ( $fields as $field ) : ?>
 				<?php $checked = ( in_array( $field['id'], (array) $value, true ) ) ? 'checked' : ''; ?>
 				<input <?php echo esc_attr( $checked ); ?> type="checkbox" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $id ); ?>[]" value="<?php echo esc_attr( $field['id'] ); ?>"/>
@@ -245,6 +267,7 @@ class Field {
 								name="<?php echo esc_attr( $id ); ?>"
 								value="<?php echo esc_attr( $field['id'] ); ?>"
 								<?php checked( $field['id'], $value ); ?>
+								<?php self::conditional_required( $meta_field ); ?>
 							/>
 							<span><?php echo esc_html( $field['name'] ); ?></span>
 						</label><br>
@@ -294,7 +317,7 @@ class Field {
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
-				<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>">
+				<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>" <?php self::conditional_required( $meta_field ); ?>>
 					<option <?php selected( '', $value ); ?> value=""><?php esc_html_e( 'Select One', 'ca-grants-plugin' ); ?></option>
 					<?php foreach ( $fields as $field ) : ?>
 
@@ -338,7 +361,7 @@ class Field {
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
-				<?php self::do_editor( $value, $id ); ?>
+				<?php self::do_editor( $value, $id, $meta_field ); ?>
 			</td>
 		</tr>
 		<?php
@@ -380,7 +403,7 @@ class Field {
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
-				<input type="text" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>[num]" value="<?php echo esc_attr( $value['num'] ); ?>"/>
+				<input type="text" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>[num]" value="<?php echo esc_attr( $value['num'] ); ?>" <?php self::conditional_required( $meta_field ); ?>/>
 				<select name="<?php echo esc_attr( $id ); ?>[units]">
 					<option <?php selected( $value['units'], 'days' ); ?> value="days"><?php esc_html_e( 'Days', 'ca-grants-plugin' ); ?></option>
 					<option <?php selected( $value['units'], 'weeks' ); ?>value="weeks"><?php esc_html_e( 'Weeks', 'ca-grants-plugin' ); ?></option>
@@ -869,19 +892,65 @@ class Field {
 	 * Setup TinyMCE editor
 	 *
 	 * @param string $content The content for the editor
-	 * @param string $id HTML ID attribute for the TinyMCE textarea
+	 * @param string $id      HTML ID attribute for the TinyMCE textarea
+	 * @param string $args    WP Editor arguments.
 	 */
-	public static function do_editor( $content, $id ) {
-		wp_editor(
-			$content,
-			$id,
-			[
-				'media_buttons'    => false,
-				'drag_drop_upload' => false,
-				'teeny'            => true,
-				'quicktags'        => false,
-				'textarea_rows'    => 5,
-			]
+	public static function do_editor( $content, $id, $args = array() ) {
+		$settings = wp_parse_args(
+			$args,
+			self::get_wysiwyg_settings()
 		);
+		$class    = 'wysiwyg';
+		$required = ( isset( $settings['required'] ) && $settings['required'] );
+
+		if ( $required ) {
+			$class .= ' wysiwyg--required';
+		}
+
+		?>
+		<div
+			class="<?php echo esc_attr( $class ); ?>"
+			data-characters-limit="<?php echo esc_attr( $settings['text_limit'] ); ?>"
+			<?php self::conditional_required( $args, false ); ?>
+		>
+			<?php wp_editor( $content, $id, $settings ); ?>
+		</div>
+		<?php
+	}
+
+	/** Get WYSIWYG settings for grant form.
+	 *
+	 * @return array
+	 */
+	public static function get_wysiwyg_settings() {
+
+		$toolbar = array(
+			'bold',
+			'italic',
+			'underline',
+			'separator',
+			'alignleft',
+			'aligncenter',
+			'alignright',
+			'separator',
+			'link',
+			'unlink',
+			'undo',
+			'redo',
+		);
+
+		$settings = array(
+			'media_buttons' => false,
+			'quicktags'     => false,
+			'tinymce'       => array(
+				'toolbar1' => join( ',', $toolbar ),
+				'toolbar2' => '',
+				'toolbar3' => '',
+			),
+			'text_limit'    => -1,
+			'textarea_rows' => 5,
+		);
+
+		return $settings;
 	}
 }

@@ -67,10 +67,10 @@ class General {
 				'description' => __( 'The identifier (typically numbers, letters or a combination of letters or numbers) that the state department uses to identify the grant. If your department does not use a Grant ID system, leave this field blank.', 'ca-grants-plugin' ),
 			),
 			array(
-				'id'     => 'isForecasted',
-				'name'   => __( 'Grant Type', 'ca-grants-plugin' ),
-				'type'   => 'radio',
-				'fields' => array(
+				'id'       => 'isForecasted',
+				'name'     => __( 'Grant Type', 'ca-grants-plugin' ),
+				'type'     => 'radio',
+				'fields'   => array(
 					array(
 						'id'   => 'forecasted',
 						'name' => __( 'Forecasted', 'ca-grants-plugin' ),
@@ -80,19 +80,21 @@ class General {
 						'name' => __( 'Active', 'ca-grants-plugin' ),
 					),
 				),
+				'required' => array( 'active', 'forecasted' ),
 			),
 			array(
-				'id'     => 'opportunityType',
-				'name'   => __( 'Opportunity Type', 'ca-grants-plugin' ),
-				'type'   => 'radio',
-				'source' => 'api',
+				'id'       => 'opportunityType',
+				'name'     => __( 'Opportunity Type', 'ca-grants-plugin' ),
+				'type'     => 'radio',
+				'source'   => 'api',
+				'required' => array( 'active', 'forecasted' ),
 
 			),
 			array(
-				'id'     => 'loiRequired',
-				'name'   => __( 'Letter of Intent Required', 'ca-grants-plugin' ),
-				'type'   => 'radio',
-				'fields' => array(
+				'id'       => 'loiRequired',
+				'name'     => __( 'Letter of Intent Required', 'ca-grants-plugin' ),
+				'type'     => 'radio',
+				'fields'   => array(
 					array(
 						'id'   => 'yes',
 						'name' => __( 'Yes', 'ca-grants-plugin' ),
@@ -102,6 +104,7 @@ class General {
 						'name' => __( 'No', 'ca-grants-plugin' ),
 					),
 				),
+				'required' => array( 'active' ),
 			),
 			array(
 				'id'          => 'grantCategories',
@@ -110,6 +113,7 @@ class General {
 				'description' => __( 'Please indicate the category (or categories) this grant opportunity belongs in. Categorizing your grant will allow users to narrow their search to find grants covering specific topics or areas of focus relevant to their needs.<br/><br/>If your grant doesn’t fit into any of the categories presented, please select Uncategorized, and suggest a category in Category Suggestion(s) below.', 'ca-grants-plugin' ),
 				'source'      => 'api',
 				'multi'       => true,
+				'required'    => array( 'active' ),
 			),
 			array(
 				'id'          => 'categorySuggestions',
@@ -123,6 +127,7 @@ class General {
 				'type'        => 'textarea',
 				'description' => __( 'Please provide a brief outline of the goals and intended outcomes of this grant opportunity. In most cases, this information should already be available in your department’s documentation. If this is not the case, consider the following prompt, "At a high-level, what does your department hope to achieve as a result of this grant program?"', 'ca-grants-plugin' ),
 				'text_limit'  => 450,
+				'required'    => array( 'active' ),
 			),
 			array(
 				'id'          => 'description',
@@ -130,6 +135,7 @@ class General {
 				'type'        => 'textarea',
 				'description' => __( 'Please provide an overview of the grant opportunity. This may include information such as: project such as the project scope, types of projects to be funded, allowable activities, eligibility exclusions, priority communities, or other types of priority, such as amount of match, grant award announcement mechanism, and/or past/average award size. If this grant opportunity uses a Letter of Intent process, please explain that in this section.<br/><br/>Please also list any keywords that grant seekers might use to find this grant. For example, if this grant is specifically designated for certain geographies or for disadvantaged communities, list these words throughout your description for grantseekers to be able to search them in the filter.', 'ca-grants-plugin' ),
 				'text_limit'  => 3200,
+				'required'    => array( 'active', 'forecasted' ),
 			),
 		);
 	}
