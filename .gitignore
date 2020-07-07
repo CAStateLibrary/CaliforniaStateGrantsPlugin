@@ -23,3 +23,9 @@ Session.vim
 # Windows
 Thumbs.db
 Desktop.ini
+
+# Vendor Stuff
+/vendor/*
+!/vendor/autoload.php
+!/vendor/composer
+!/vendor/yahnis-elsts
