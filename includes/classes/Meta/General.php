@@ -85,7 +85,7 @@ class General {
 			array(
 				'id'       => 'opportunityType',
 				'name'     => __( 'Opportunity Type', 'ca-grants-plugin' ),
-				'type'     => 'radio',
+				'type'     => 'checkbox',
 				'source'   => 'api',
 				'required' => array( 'active', 'forecasted' ),
 
