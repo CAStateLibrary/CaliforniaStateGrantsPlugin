@@ -72,7 +72,7 @@ class Dates {
 			array(
 				'id'   => 'periodOfPerformance',
 				'name' => __( 'Period of Performance', 'ca-grants-plugin' ),
-				'type' => 'period-performance',
+				'type' => 'text',
 				'description' => __( 'What is the total length of time that the award is available and active (i.e. do recipients have access to grant funds only within a specific timeframe)?', 'ca-grants-plugin' ),
 			),
 			array(
