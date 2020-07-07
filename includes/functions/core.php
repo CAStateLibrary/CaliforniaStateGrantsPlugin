@@ -27,6 +27,11 @@ function setup() {
 	add_action( 'wp_enqueue_scripts', $n( 'styles' ) );
 	add_action( 'admin_enqueue_scripts', $n( 'admin_scripts' ) );
 	add_action( 'admin_enqueue_scripts', $n( 'admin_styles' ) );
+	add_action( 'post_edit_form_tag', function() {
+		echo ' class="form--validate"';
+	} );
+
+	add_action( 'tiny_mce_before_init', $n( 'tiny_mce_before_init' ) );
 
 	// Hook to allow async or defer on asset loading.
 	add_filter( 'script_loader_tag', $n( 'script_loader_tag' ), 10, 2 );
@@ -265,4 +270,26 @@ function script_loader_tag( $tag, $handle ) {
 	}
 
 	return $tag;
+}
+
+/**
+ * Filters the TinyMCE config before init.
+ *
+ * @param array $mce_init An array with TinyMCE config.
+ * @return array
+ */
+function tiny_mce_before_init( $mce_init ) {
+
+	$mce_init['setup'] = "function(editor) {
+		console.log( 'setting up editor' );
+		editor.on('keyup', function( event ) {
+			window.parent.postMessage( JSON.stringify({
+				type: 'editor.keyup',
+				dataId: event.target.getAttribute( 'data-id' ),
+				textContent: event.target.textContent
+			}), '*' );
+		});
+	}";
+
+	return $mce_init;
 }

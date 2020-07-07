@@ -60,6 +60,7 @@
     "cssnano": "^4.1.10",
     "eslint": "^6.8.0",
     "eslint-loader": "^3.0.3",
+    "formbouncerjs": "^1.4.6",
     "husky": "^3.1.0",
     "imagemin-webpack-plugin": "^2.4.2",
     "lint-staged": "^9.5.0",
