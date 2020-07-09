@@ -68,7 +68,7 @@ class Eligibility {
 				'id'          => 'applicantTypeNotes',
 				'name'        => __( 'Applicant Type Notes', 'ca-grants-plugin' ),
 				'type'        => 'textarea',
-				'text_limit'  => 250,
+				'text_limit'  => 450,
 				'description' => __( 'If applicable, include any clarifications or additional information regarding applicant type eligibility.', 'ca-grants-plugin' ),
 
 			),
