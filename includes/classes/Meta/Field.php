@@ -11,7 +11,7 @@ namespace CaGov\Grants\Meta;
  * Meta Field Class.
  */
 class Field {
-	const API_URL = 'http://grantsportal.test';
+	const API_URL = 'https://www.grants.ca.gov';
 
 	/**
 	 * Factory.
@@ -823,7 +823,7 @@ class Field {
 			return array();
 		}
 
-		$fields_to_display = false; // wp_cache_get( $id, 'ca-grants-plugin' );
+		$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
 
 		if ( false === $fields_to_display ) {
 			$api_url = trailingslashit( self::get_api_url() ) . 'wp/v2/';
