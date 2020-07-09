@@ -141,13 +141,7 @@ class EditGrant {
 			return;
 		}
 
-		$meta_fields = array_merge(
-			Meta\General::get_fields(),
-			Meta\Eligibility::get_fields(),
-			Meta\Funding::get_fields(),
-			Meta\Dates::get_fields(),
-			Meta\Contact::get_fields()
-		);
+		$meta_fields = $this->get_all_meta_fields();
 
 		if ( ! empty( $meta_fields ) ) {
 			foreach ( $meta_fields as $meta_field ) {
@@ -315,13 +309,19 @@ class EditGrant {
 		if ( empty( $errors ) ) {
 			return;
 		}
+
+		$meta_fields = $this->get_all_meta_fields();
 		?>
 		<div class="notice notice-error">
 			<p>
 				<?php esc_html_e( 'The following fields will fail to validate when submitting this grant:', 'ca-grants-plugin' ); ?>
 				<ul>
 				<?php foreach ( $errors as $error ) : ?>
-					<li><code><?php echo esc_html( $error ); ?></code></li>
+					<li>
+						<code>
+							<?php echo esc_html( $this->get_meta_field_display_name( $error ) ); ?>
+						</code>
+					</li>
 				<?php endforeach; ?>
 				</ul>
 			</p>
@@ -345,5 +345,43 @@ class EditGrant {
 		}
 
 		echo '<style type="text/css">#post-preview, #view-post-btn{display: none;}</style>';
+	}
+
+	/**
+	 * Get all meta fields.
+	 *
+	 * @return array
+	 */
+	protected function get_all_meta_fields() {
+		return array_merge(
+			Meta\General::get_fields(),
+			Meta\Eligibility::get_fields(),
+			Meta\Funding::get_fields(),
+			Meta\Dates::get_fields(),
+			Meta\Contact::get_fields()
+		);
+	}
+
+	/**
+	 * Get meta field display name.
+	 *
+	 * @param  string $field_id The field id.
+	 * @return string
+	 */
+	protected function get_meta_field_display_name( $field_id ) {
+		$meta_field = array_filter(
+			$this->get_all_meta_fields(),
+			function( $field ) use ( $field_id ) {
+				return $field['id'] === $field_id;
+			}
+		);
+
+		$meta_field = ! empty( $meta_field ) ? array_shift( $meta_field ) : false;
+
+		if ( $meta_field && isset( $meta_field['name'] ) ) {
+			return $meta_field['name'];
+		}
+
+		return (string) $field_id;
 	}
 }
