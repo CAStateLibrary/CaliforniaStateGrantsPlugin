@@ -65,10 +65,10 @@ class Funding {
 				'description' => __( 'If you select "other", please elaborate in the revenue source notes field below.', 'ca-grants-plugin' ),
 			),
 			array(
-				'id'         => 'revenueSourceNotes',
-				'name'       => __( 'Revenue Source Notes', 'ca-grants-plugin' ),
-				'type'       => 'textarea',
-				'text_limit' => 200,
+				'id'          => 'revenueSourceNotes',
+				'name'        => __( 'Revenue Source Notes', 'ca-grants-plugin' ),
+				'type'        => 'textarea',
+				'text_limit'  => 200,
 				'description' => __( 'Please specify information that may be helpful to applicants, such as proposition number, bond name/number, federal grant program, etc.', 'ca-grants-plugin' ),
 			),
 			array(
@@ -77,10 +77,10 @@ class Funding {
 				'type' => 'eligibility-matching-funds',
 			),
 			array(
-				'id'         => 'matchingFundsNotes',
-				'name'       => __( 'Matching Funds Notes', 'ca-grants-plugin' ),
-				'type'       => 'textarea',
-				'text_limit' => 450,
+				'id'          => 'matchingFundsNotes',
+				'name'        => __( 'Matching Funds Notes', 'ca-grants-plugin' ),
+				'type'        => 'textarea',
+				'text_limit'  => 450,
 				'description' => __( 'Please provide any additional details and/or exceptions, or requirements around acceptable matched funding sources (e.g. public or private funding only). If your grant has no requirement for matching funds, but gives preference based on applications that have them, please indicate this in your Grant Description.', 'ca-grants-plugin' ),
 			),
 			array(

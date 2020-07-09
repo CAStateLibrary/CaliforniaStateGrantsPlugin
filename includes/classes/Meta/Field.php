@@ -728,7 +728,8 @@ class Field {
 
 		<tr>
 			<th>
-				<label for="online_submission"><?php esc_html_e( 'Online submission form', 'csl-grants-portal' ); ?></label>
+				<label for="online_submission"><?php esc_html_e( 'Online Submission', 'csl-grants-portal' ); ?></label>
+				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
 				<input type="url" name="<?php echo esc_attr( $id ); ?>[url]" value="<?php echo esc_attr( $value['url'] ); ?>" id="online_submission">
