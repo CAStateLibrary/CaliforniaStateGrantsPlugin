@@ -21,7 +21,7 @@ define( 'CA_GRANTS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'CA_GRANTS_SOURCE_REPO', 'https://github.com/10up/ca-grants-plugin' );
 
 if ( ! defined( 'CA_GRANTS_PORTAL_URL' ) ) {
-	define( 'CA_GRANTS_PORTAL_URL', 'https://beta.grants.ca.gov/' );
+	define( 'CA_GRANTS_PORTAL_URL', 'https://www.grants.ca.gov/' );
 }
 
 if ( ! defined( 'CA_GRANTS_PORTAL_JSON_URL' ) ) {
