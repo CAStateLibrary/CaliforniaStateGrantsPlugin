@@ -71,12 +71,6 @@ class GrantsEndpoint {
 			return $auth_header_present;
 		}
 
-		// Ensure authorization scheme is supported.
-		$auth_scheme_supported = $this->auth_scheme_supported( $response, $request );
-		if ( is_wp_error( $auth_scheme_supported ) ) {
-			return $auth_scheme_supported;
-		}
-
 		// Ensure bearer token is valid.
 		$token_valid = $this->auth_token_valid( $response, $request );
 		if ( is_wp_error( $token_valid ) ) {
@@ -95,34 +89,11 @@ class GrantsEndpoint {
 	 * @return mixed                     Response if successful, WP_Error otherwise.
 	 */
 	protected function auth_header_present( $response, WP_REST_Request $request ) {
-		$auth_header = $request->get_header( 'Authorization' );
+		$auth_header = $request->get_header( 'X-CaGov-Token' );
 		if ( empty( $auth_header ) ) {
 			return new WP_Error(
 				'empty_auth_header',
 				__( 'An authorization header must be provided.', 'ca-grants-plugin' ),
-				array(
-					'status' => WP_Http::BAD_REQUEST,
-				)
-			);
-		}
-		return $response;
-	}
-
-	/**
-	 * Auth header type supported.
-	 *
-	 * @param  mixed           $response The current response object.
-	 * @param  WP_REST_Request $request  The current request object.
-	 * @return mixed                     Response if successful, WP_Error otherwise.
-	 */
-	protected function auth_scheme_supported( $response, WP_REST_Request $request ) {
-		$auth_header = $request->get_header( 'Authorization' );
-		$auth        = explode( ' ', $auth_header );
-		$auth_type   = $auth[0];
-		if ( ! is_array( $auth ) || 2 !== count( $auth ) || 'Bearer' !== $auth[0] ) {
-			return new WP_Error(
-				'auth_method_not_supported',
-				__( 'The authentication method used is not supported.' ),
 				array(
 					'status' => WP_Http::BAD_REQUEST,
 				)
@@ -139,9 +110,8 @@ class GrantsEndpoint {
 	 * @return mixed                     Response if successful, WP_Error otherwise.
 	 */
 	protected function auth_token_valid( $response, WP_REST_Request $request ) {
-		$auth_header  = $request->get_header( 'Authorization' );
-		$auth         = explode( ' ', $auth_header );
-		$auth_token   = sanitize_text_field( $auth[1] );
+		$auth_header  = $request->get_header( 'X-CaGov-Token' );
+		$auth_token   = sanitize_text_field( $auth_header );
 		$stored_token = sha1( $this->settings->get_auth_token() );
 		if ( empty( $stored_token ) || $stored_token !== $auth_token ) {
 			return new WP_Error(
