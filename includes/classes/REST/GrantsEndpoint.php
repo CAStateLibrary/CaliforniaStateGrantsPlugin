@@ -204,9 +204,9 @@ class GrantsEndpoint {
 								);
 							}
 							break;
-						case 'isForecasted':
-							$new_data['isForecasted'] = ( 'forecasted' === $metadata ) ? true : false;
-							break;
+						// case 'isForecasted':
+						// 	$new_data['isForecasted'] = ( 'forecasted' === $metadata ) ? true : false;
+						// 	break;
 
 						case 'loiRequired':
 							$new_data['loiRequired'] = ( 'yes' === $metadata ) ? true : false;
