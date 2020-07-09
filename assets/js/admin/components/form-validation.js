@@ -41,41 +41,6 @@ const setupForms = () => {
 				// Return validity
 				return isError;
 			},
-			isCloseDateValid: ( field ) => {
-
-				// Bail early.
-				if ( ! field.matches( '[name="closeDate[month]"], [name="closeDate[day]"], [name="closeDate[year]"]' ) ) {
-					return false;
-				}
-
-				const openDay = parseInt( document.querySelector( '[name="openDate[day]"]' ).value );
-				const openMonth = parseInt( document.querySelector( '[name="openDate[month]"]' ).value - 1 );
-				const openYear = parseInt( document.querySelector( '[name="openDate[year]"]' ).value );
-				const openDate = new Date( openYear, openMonth, openDay ).getTime();
-
-				// Bail if the open date isn't valid.
-				if ( isNaN( openDate ) ) {
-					return false;
-				}
-
-				const closeDay = parseInt( document.querySelector( '[name="closeDate[day]"]' ).value );
-				const closeMonth = parseInt( document.querySelector( '[name="closeDate[month]"]' ).value - 1 );
-				const closeYear = parseInt( document.querySelector( '[name="closeDate[year]"]' ).value );
-				const closeDate = new Date( closeYear, closeMonth, closeDay ).getTime();
-
-				// Bail if the close date isn't valid.
-				if ( isNaN( closeDate ) ) {
-					return false;
-				}
-
-				// Check the dates
-				if ( openDate < closeDate ) {
-					return false;
-				}
-
-				// Invalid
-				return true;
-			},
 			isDeadlineDateValid: ( field ) => {
 
 				// Bail early.
@@ -278,7 +243,6 @@ const setupForms = () => {
 		},
 		messages: {
 			hasRequiredCheckboxes: 'Please check at least one value.',
-			isCloseDateValid: 'Invalid date. Please check that the close date is after the open date.',
 			isDeadlineDateValid: 'Invalid date. Please check that the deadline is after the open date.',
 			isMethodValid: 'Please check that this matches submission method and that the URL or email is well formed.',
 			isRangeValid: 'Invalid range. Please check that the first number is lower than the second one.',
@@ -315,7 +279,6 @@ const setupForms = () => {
 const setupListeners = () => {
 
 	document.addEventListener( 'bouncerRemoveError', handleBouncerRemoveFieldsetError, false );
-	document.addEventListener( 'bouncerRemoveError', handleBouncerRemoveCloseDateError, false );
 	document.addEventListener( 'bouncerRemoveError', handleBouncerRemoveDeadlineDateError, false );
 	document.addEventListener( 'bouncerRemoveError', handleBouncerRemoveRangeError, false );
 
@@ -360,23 +323,6 @@ const handleBouncerRemoveFieldsetError = ( event ) => {
 
 	message.parentNode.removeChild( message );
 
-};
-
-/**
- * Handle bouncer remove close date error
- * @param {object} event the event object
- */
-const handleBouncerRemoveCloseDateError = ( event ) => {
-	const { target: field } = event;
-
-	// Bail early.
-	if ( ! field.matches( '[name="closeDate[month]"], [name="closeDate[day]"], [name="closeDate[year]"]' ) ) {
-		return;
-	}
-
-	const fieldset = field.closest( 'td' );
-
-	bouncer.validateAll( fieldset );
 };
 
 /**
