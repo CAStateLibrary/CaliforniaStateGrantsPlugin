@@ -58,10 +58,11 @@ class Funding {
 	public static function get_fields() {
 		return array(
 			array(
-				'id'     => 'revSources',
-				'name'   => __( 'Revenue Source', 'ca-grants-plugin' ),
-				'type'   => 'radio',
-				'source' => 'api',
+				'id'          => 'revSources',
+				'name'        => __( 'Revenue Source', 'ca-grants-plugin' ),
+				'type'        => 'radio',
+				'source'      => 'api',
+				'description' => __( 'If you select "other", please elaborate in the revenue source notes field below.', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'         => 'revenueSourceNotes',
