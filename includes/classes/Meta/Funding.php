@@ -80,7 +80,7 @@ class Funding {
 				'id'         => 'matchingFundsNotes',
 				'name'       => __( 'Matching Funds Notes', 'ca-grants-plugin' ),
 				'type'       => 'textarea',
-				'text_limit' => 300,
+				'text_limit' => 450,
 				'description' => __( 'Please provide any additional details and/or exceptions, or requirements around acceptable matched funding sources (e.g. public or private funding only). If your grant has no requirement for matching funds, but gives preference based on applications that have them, please indicate this in your Grant Description.', 'ca-grants-plugin' ),
 			),
 			array(
