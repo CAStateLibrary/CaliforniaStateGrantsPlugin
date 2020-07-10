@@ -27,9 +27,12 @@ function setup() {
 	add_action( 'wp_enqueue_scripts', $n( 'styles' ) );
 	add_action( 'admin_enqueue_scripts', $n( 'admin_scripts' ) );
 	add_action( 'admin_enqueue_scripts', $n( 'admin_styles' ) );
-	add_action( 'post_edit_form_tag', function() {
-		echo ' class="form--validate"';
-	} );
+	add_action(
+		'post_edit_form_tag',
+		function() {
+			echo ' class="form--validate"';
+		}
+	);
 
 	add_action( 'tiny_mce_before_init', $n( 'tiny_mce_before_init' ) );
 

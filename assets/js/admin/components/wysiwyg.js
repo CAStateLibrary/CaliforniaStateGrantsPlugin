@@ -39,7 +39,7 @@ const setupListeners = () => {
  */
 const handleWindowMessage = ( event ) => {
 	const { data } = event;
-	const { type, dataId, textContent } = JSON.parse( data );
+	const { type, dataId, textContent } = ( 'string' === typeof data ) ? JSON.parse( data ) : data;
 
 	if ( ! type || 'editor.keyup' !== type ) {
 		return;

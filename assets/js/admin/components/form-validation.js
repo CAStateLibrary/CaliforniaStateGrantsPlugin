@@ -423,13 +423,15 @@ const handleFormClick = ( event ) => {
 		return;
 	}
 
-	// Make a hidden input.
-	// For some reason, the button name/value doesn't get recorded with JS.
-	// This is a work around for that.
-	const input = form.querySelector( 'input[name="save"]' );
+	const { value } = event.target;
+	if ( value && 'Publish' === value ) {
+		const input = document.createElement( 'input' );
+		input.name = 'post_status';
+		input.type = 'hidden';
+		input.value = 'publish';
 
-	// Update appropriate data.
-	input.value = target.getAttribute( 'data-value' );
+		form.appendChild( input );
+	}
 
 	// Submit.
 	form.submit();
