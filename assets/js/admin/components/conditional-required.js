@@ -1,12 +1,12 @@
 const grantTypeInputs = Array.from( document.querySelectorAll( 'input[name="isForecasted"]' ) );
-const conditionalValidationInputs = Array.from( document.querySelectorAll( 'input[data-required-if]' ) );
-const conditionalValidationOther = Array.from( document.querySelectorAll( '[data-required-if]:not(input)' ) );
+const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if]';
+const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
 
 /**
  * Conditional requiring fields if grant is forecasted/active.
  */
 const main = () => {
-	if ( ! grantTypeInputs.length || ( ! conditionalValidationInputs.length && ! conditionalValidationOther.length ) ) {
+	if ( ! grantTypeInputs.length || ( ! getInputs().length && ! getOthers().length ) ) {
 		return;
 	}
 
@@ -30,8 +30,8 @@ const getCurrentGrantType = () => {
  * Refresh all the inputs with conditional required attributes.
  */
 const refreshRequiredAttributes = () => {
-	conditionalValidationInputs.forEach( input => maybeSetRequired( input ) );
-	conditionalValidationOther.forEach( el => maybeSetRequiredClass( el ) );
+	getInputs().forEach( input => maybeSetRequired( input ) );
+	getOthers().forEach( el => maybeSetRequiredClass( el ) );
 };
 
 /**
@@ -63,6 +63,16 @@ const maybeSetRequiredClass = el => {
 		}
 	}
 };
+
+/**
+ * Get inputs that require validation.
+ */
+const getInputs = () => Array.from( document.querySelectorAll( conditionalValidationInputs ) );
+
+/**
+ * Get other fields that require validation.
+ */
+const getOthers = () => Array.from( document.querySelectorAll( conditionalValidationOther ) );
 
 
 export default main;
