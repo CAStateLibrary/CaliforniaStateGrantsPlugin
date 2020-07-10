@@ -58,16 +58,18 @@ class Dates {
 	public static function get_fields() {
 		return array(
 			array(
-				'id'   => 'openDate',
-				'name' => __( 'Grant Open', 'ca-grants-plugin' ),
-				'type' => 'datetime-local',
+				'id'          => 'openDate',
+				'name'        => __( 'Grant Open', 'ca-grants-plugin' ),
+				'type'        => 'datetime-local',
 				'description' => __( 'Please indicate when the grant should be made available in full on the portal (Open Date).', 'ca-grants-plugin' ),
+				'required'    => array( 'active' ),
 			),
 			array(
-				'id'   => 'periodOfPerformance',
-				'name' => __( 'Period of Performance', 'ca-grants-plugin' ),
-				'type' => 'text',
+				'id'          => 'periodOfPerformance',
+				'name'        => __( 'Period of Performance', 'ca-grants-plugin' ),
+				'type'        => 'text',
 				'description' => __( 'What is the total length of time that the award is available and active (i.e. do recipients have access to grant funds only within a specific timeframe)?', 'ca-grants-plugin' ),
+				'required'    => array( 'active' ),
 			),
 			array(
 				'id'   => 'expectedAwardDate',
