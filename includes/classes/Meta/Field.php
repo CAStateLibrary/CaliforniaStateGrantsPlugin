@@ -248,6 +248,8 @@ class Field {
 			return;
 		}
 
+		$fields = self::maybe_sort_fields( $fields, $meta_field );
+
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
@@ -959,5 +961,31 @@ class Field {
 		);
 
 		return $settings;
+	}
+
+	/**
+	 * Applies sorting to the radio options of some meta fields.
+	 *
+	 * @param array $fields     The fields to sort.
+	 * @param array $meta_field Meta field data.
+	 * @return array
+	 */
+	public static function maybe_sort_fields( $fields, $meta_field ) {
+		switch ( $meta_field['id'] ) {
+			case 'revSources':
+				$order    = array( 'State', 'Federal', 'Both', 'Other' );
+				$index_of = function( $name ) use ( $order ) {
+					return array_search( $name, $order, true );
+				};
+				usort(
+					$fields,
+					function( $a, $b ) use ( $index_of ) {
+						return ( $index_of( $a['name'] ) < $index_of( $b['name'] ) ) ? -1 : 1;
+					}
+				);
+				return $fields;
+			default:
+				return $fields;
+		}
 	}
 }
