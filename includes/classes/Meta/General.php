@@ -67,12 +67,6 @@ class General {
 				'description' => __( 'The identifier (typically numbers, letters or a combination of letters or numbers) that the state department uses to identify the grant. If your department does not use a Grant ID system, leave this field blank.', 'ca-grants-plugin' ),
 			),
 			array(
-				'id'          => 'applicationsSubmitted',
-				'name'        => __( 'Applications Submitted', 'ca-grants-plugin' ),
-				'type'        => 'text',
-				'description' => __( 'After a grant is closed, this number reflects the number of applications submitted for that grant.', 'ca-grants-plugin' ),
-			),
-			array(
 				'id'       => 'isForecasted',
 				'name'     => __( 'Grant Type', 'ca-grants-plugin' ),
 				'type'     => 'radio',
