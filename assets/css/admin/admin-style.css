@@ -14,3 +14,7 @@ a.a11y-tip__trigger {
 	padding: 1.5em;
 	z-index: 100000;
 }
+
+.error-message.srt {
+	display: none;
+}
