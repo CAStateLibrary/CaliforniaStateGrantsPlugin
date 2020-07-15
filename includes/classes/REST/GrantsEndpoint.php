@@ -170,7 +170,7 @@ class GrantsEndpoint {
 
 			$new_data = array(
 				'grantTitle' => get_the_title( $post->ID ),
-				'uniqueID'   => $post->ID,
+				'uniqueID'   => strval( $post->ID ),
 			);
 
 			// Modify the output for the remaining post meta
@@ -186,6 +186,9 @@ class GrantsEndpoint {
 
 					// Some fields need special handling
 					switch ( $metafield_data['id'] ) {
+						case 'estimatedAvailableFunds':
+							$new_data['estimatedAvailableFunds'] = absint( $metadata );
+							break;
 						case 'estimatedAwards':
 							if ( 'exact' === $metadata['checkbox'] ) {
 								$new_data['estimatedAwards'] = array(
