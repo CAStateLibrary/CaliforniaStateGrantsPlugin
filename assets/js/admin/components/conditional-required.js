@@ -45,6 +45,13 @@ const maybeSetRequired = input => {
 	input.required = ( ! requiredIf || ! current )
 		? false
 		: -1 !== requiredIf.split( ',' ).map( s => s.trim() ).indexOf( current );
+
+	const label = input.closest( 'tr' ).querySelector( 'th' );
+	if ( input.required ) {
+		label.classList.add( 'required' );
+	} else {
+		label.classList.remove( 'required' );
+	}
 };
 
 /**
@@ -61,6 +68,13 @@ const maybeSetRequiredClass = el => {
 		} else {
 			el.classList.remove( 'fieldset--is-required' );
 		}
+	}
+
+	const label = el.closest( 'tr' ).querySelector( 'th' );
+	if ( el.classList.contains( 'fieldset--is-required' ) ) {
+		label.classList.add( 'required' );
+	} else {
+		label.classList.remove( 'required' );
 	}
 };
 

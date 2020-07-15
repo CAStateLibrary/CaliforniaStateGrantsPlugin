@@ -18,3 +18,7 @@ a.a11y-tip__trigger {
 .error-message.srt {
 	display: none;
 }
+
+th.required::before {
+	content: "*";
+}
