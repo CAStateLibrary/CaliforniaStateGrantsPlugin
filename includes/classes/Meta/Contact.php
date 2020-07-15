@@ -129,6 +129,7 @@ class Contact {
 				'id'           => 'adminSecondaryContact',
 				'name'         => __( 'Administrative Secondary Point of Contact', 'ca-grants-plugin' ),
 				'type'         => 'point_of_contact',
+				'required'     => array( 'active'),
 				'section_note' => __( 'This contact information is for <strong>internal use only</strong> (i.e. not public-facing). It will only be used when a representative from the California Grants Portal (CGP) need to contact a secondary grantmaker for administrative purposes.', 'ca-grants-plugin' ),
 			),
 		);
