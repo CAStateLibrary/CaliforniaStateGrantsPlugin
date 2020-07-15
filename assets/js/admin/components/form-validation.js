@@ -44,32 +44,25 @@ const setupForms = () => {
 			isDeadlineDateValid: ( field ) => {
 
 				// Bail early.
-				if ( ! field.matches( '[name="deadline[month]"], [name="deadline[day]"], [name="deadline[year]"]' ) ) {
+				if ( ! field.matches( '[name="deadline"]' ) ) {
 					return false;
 				}
 
-				const openDay = parseInt( document.querySelector( '[name="openDate[day]"]' ).value );
-				const openMonth = parseInt( document.querySelector( '[name="openDate[month]"]' ).value - 1 );
-				const openYear = parseInt( document.querySelector( '[name="openDate[year]"]' ).value );
-				const openDate = new Date( openYear, openMonth, openDay ).getTime();
+				const openDateInput = document.querySelector( '[name="openDate"]' );
+				const deadlineInput = document.querySelector( '[name="deadline"]' );
 
-				// Bail if the open date isn't valid.
-				if ( isNaN( openDate ) ) {
+				// Bail if either the values are missing.
+				if ( ! openDateInput.value || ! deadlineInput.value ) {
 					return false;
 				}
 
-				const deadlineDay = parseInt( document.querySelector( '[name="deadline[day]"]' ).value );
-				const deadlineMonth = parseInt( document.querySelector( '[name="deadline[month]"]' ).value - 1 );
-				const deadlineYear = parseInt( document.querySelector( '[name="deadline[year]"]' ).value );
-				const deadlineDate = new Date( deadlineYear, deadlineMonth, deadlineDay ).getTime();
-
-				// Bail if the close date isn't valid.
-				if ( isNaN( deadlineDate ) ) {
-					return false;
-				}
+				const openDate = new Date( openDateInput.value );
+				const deadline = new Date( deadlineInput.value );
+				console.log( 'opendate', openDate );
+				console.log( 'deadline', deadline );
 
 				// Check the dates
-				if ( openDate < deadlineDate ) {
+				if ( openDate < deadline ) {
 					return false;
 				}
 
@@ -333,7 +326,7 @@ const handleBouncerRemoveDeadlineDateError = ( event ) => {
 	const { target: field } = event;
 
 	// Bail early.
-	if ( ! field.matches( '[name="deadline[month]"], [name="deadline[day]"], [name="deadline[year]"]' ) ) {
+	if ( ! field.matches( '[name="deadline"]' ) ) {
 		return;
 	}
 
