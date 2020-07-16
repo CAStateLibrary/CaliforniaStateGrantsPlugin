@@ -18,7 +18,7 @@ define( 'CA_GRANTS_URL', plugin_dir_url( __FILE__ ) );
 define( 'CA_GRANTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CA_GRANTS_INC', CA_GRANTS_PATH . 'includes/' );
 define( 'CA_GRANTS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-define( 'CA_GRANTS_SOURCE_REPO', 'https://github.com/10up/ca-grants-plugin' );
+define( 'CA_GRANTS_SOURCE_REPO', 'https://github.com/CAStateLibrary/CAGrantsWordpressPlugin' );
 
 if ( ! defined( 'CA_GRANTS_PORTAL_URL' ) ) {
 	define( 'CA_GRANTS_PORTAL_URL', 'https://www.grants.ca.gov/' );
