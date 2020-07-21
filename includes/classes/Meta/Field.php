@@ -719,31 +719,37 @@ class Field {
 		$defaults = array(
 			'email' => '',
 			'url'   => '',
+			'type'  => 'none',
 		);
 
 		// Get the saved data
 		$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
+
+		// Back compat for type.
+		if ( 'none' === $value['type'] && ( ! empty( $value['email'] ) || ! empty( $value['url'] ) ) ) {
+			$value['type'] = ( ! empty( $value['url'] ) ) ? 'url' : 'email';
+		}
 		?>
 		<tr>
 			<th>
-				<label for="email_submission"><?php esc_html_e( 'Email Submission', 'csl-grants-portal' ); ?></label>
+				<label for="electronic_submission"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
-				<input type="email" name="<?php echo esc_attr( $id ); ?>[email]" value="<?php echo esc_attr( $value['email'] ); ?>" id="email_submission" <?php self::conditional_required( $meta_field ); ?>>
-			</td>
-		</tr>
+				<input <?php checked( $value['type'], 'email' ); ?> type="radio" id="<?php echo esc_attr( $id . '-email' ); ?>" name="<?php echo esc_attr( $id ); ?>[type]" value="email" <?php self::conditional_required( $meta_field ); ?>>
+				<label for="<?php echo esc_attr( $id . '-email' ); ?>"><?php esc_html_e( 'Email: ', 'ca-grants-plugin' ); ?></label>
+				<input type="email" name="<?php echo esc_attr( $id ); ?>[email]" value="<?php echo esc_attr( $value['email'] ); ?>" id="email_submission">
+				<br><br>
 
-		<tr>
-			<th>
-				<label for="online_submission"><?php esc_html_e( 'Online Submission', 'csl-grants-portal' ); ?></label>
-				<?php self::tooltip( $description ); ?>
-			</th>
-			<td>
-				<input type="url" name="<?php echo esc_attr( $id ); ?>[url]" value="<?php echo esc_attr( $value['url'] ); ?>" id="online_submission" <?php self::conditional_required( $meta_field ); ?>>
-			</td>
-		</tr>
+				<input <?php checked( $value['type'], 'url' ); ?> type="radio" id="<?php echo esc_attr( $id . '-url' ); ?>" name="<?php echo esc_attr( $id ); ?>[type]" value="url" <?php self::conditional_required( $meta_field ); ?>>
+				<label for="<?php echo esc_attr( $id . '-url' ); ?>"><?php esc_html_e( 'URL: ', 'ca-grants-plugin' ); ?></label>
+				<input type="url" name="<?php echo esc_attr( $id ); ?>[url]" value="<?php echo esc_attr( $value['url'] ); ?>" id="online_submission">
+				<br><br>
 
+				<input <?php checked( $value['type'], 'none' ); ?> type="radio" id="<?php echo esc_attr( $id . '-none' ); ?>" name="<?php echo esc_attr( $id ); ?>[type]" value="none" <?php self::conditional_required( $meta_field ); ?>>
+				<label for="<?php echo esc_attr( $id . '-url' ); ?>"><?php esc_html_e( 'None ', 'ca-grants-plugin' ); ?></label>
+			</td>
+		</tr
 		<?php
 	}
 
