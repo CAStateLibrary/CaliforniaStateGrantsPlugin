@@ -71,7 +71,7 @@ class Contact {
 		return array(
 			array(
 				'id'          => 'electronicSubmission',
-				'name'        => __( 'Submission Email', 'ca-grants-plugin' ),
+				'name'        => __( 'Electronic Submission', 'ca-grants-plugin' ),
 				'type'        => 'electronic-submission-method',
 				'description' => __( 'The Grant Information Act of 2018 requires each state agency, on or before July 1, 2020, to provide for the acceptance of electronic applications for any grant administered by the state agency, as appropriate.', 'ca-grants-plugin' ),
 				'required' => array( 'active' ),

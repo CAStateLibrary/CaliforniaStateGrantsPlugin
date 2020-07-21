@@ -65,6 +65,13 @@ class Dates {
 				'required'    => array( 'active' ),
 			),
 			array(
+				'id'          => 'anticipatedOpenDate',
+				'name'        => __( 'Anticipated Grant Open', 'ca-grants-plugin' ),
+				'type'        => 'text',
+				'description' => __( 'For <strong>forecasted</strong> grants only. You can use things like "Q1" or "Summer 2020"', 'ca-grants-plugin' ),
+				'required'    => array( 'forecasted' ),
+			),
+			array(
 				'id'          => 'periodOfPerformance',
 				'name'        => __( 'Period of Performance', 'ca-grants-plugin' ),
 				'type'        => 'text',
