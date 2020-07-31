@@ -79,9 +79,10 @@ class Dates {
 				'required'    => array( 'active' ),
 			),
 			array(
-				'id'   => 'expectedAwardDate',
-				'name' => __( 'Expected Award Announcement Date', 'ca-grants-plugin' ),
-				'type' => 'text',
+				'id'       => 'expectedAwardDate',
+				'name'     => __( 'Expected Award Announcement Date', 'ca-grants-plugin' ),
+				'type'     => 'text',
+				'required' => array( 'active' ),
 			),
 			array(
 				'id'   => 'deadline',
