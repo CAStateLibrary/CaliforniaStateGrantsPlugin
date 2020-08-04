@@ -59,7 +59,7 @@ class Dates {
 		return array(
 			array(
 				'id'          => 'openDate',
-				'name'        => __( 'Grant Open', 'ca-grants-plugin' ),
+				'name'        => __( 'Publish Date', 'ca-grants-plugin' ),
 				'type'        => 'datetime-local',
 				'description' => __( 'Please indicate when the grant should be made available in full on the portal (Open Date).', 'ca-grants-plugin' ),
 				'required'    => array( 'active', 'forecasted' ),
