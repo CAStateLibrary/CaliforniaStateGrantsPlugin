@@ -62,14 +62,13 @@ class Dates {
 				'name'        => __( 'Grant Open', 'ca-grants-plugin' ),
 				'type'        => 'datetime-local',
 				'description' => __( 'Please indicate when the grant should be made available in full on the portal (Open Date).', 'ca-grants-plugin' ),
-				'required'    => array( 'active' ),
+				'required'    => array( 'active', 'forecasted' ),
 			),
 			array(
 				'id'          => 'anticipatedOpenDate',
-				'name'        => __( 'Anticipated Grant Open', 'ca-grants-plugin' ),
+				'name'        => __( 'Anticipated Open Date', 'ca-grants-plugin' ),
 				'type'        => 'text',
 				'description' => __( 'For <strong>forecasted</strong> grants only. You can use things like "Q1" or "Summer 2020"', 'ca-grants-plugin' ),
-				'required'    => array( 'forecasted' ),
 			),
 			array(
 				'id'          => 'periodOfPerformance',
