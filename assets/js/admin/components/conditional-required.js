@@ -63,7 +63,7 @@ const maybeSetRequiredClass = el => {
 	const current        = getCurrentGrantType();
 
 	if ( current ) {
-		if ( requiredIf.split( ',' ).map( s => s.trim ).indexOf( current ) ) {
+		if ( -1 !== requiredIf.split( ',' ).map( s => s.trim() ).indexOf( current ) ) {
 			el.classList.add( 'fieldset--is-required' );
 		} else {
 			el.classList.remove( 'fieldset--is-required' );
