@@ -112,7 +112,7 @@ class Funding {
 			),
 			array(
 				'id'          => 'disbursementMethodNotes',
-				'name'        => __( 'Funding Notes', 'ca-grants-plugin' ),
+				'name'        => __( 'Funding Method Notes', 'ca-grants-plugin' ),
 				'type'        => 'textarea',
 				'text_limit'  => 450,
 				'description' => __( 'Use this field to include 1-2 sentences providing details on the funding method.', 'ca-grants-plugin' ),
