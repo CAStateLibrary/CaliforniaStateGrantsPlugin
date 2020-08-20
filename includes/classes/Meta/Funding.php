@@ -58,7 +58,7 @@ class Funding {
 	public static function get_fields() {
 		return array(
 			array(
-				'id'          => 'revSources',
+				'id'          => 'fundingSource',
 				'name'        => __( 'Funding Source', 'ca-grants-plugin' ),
 				'type'        => 'radio',
 				'source'      => 'api',
@@ -104,7 +104,7 @@ class Funding {
 				'required' => array( 'active' ),
 			),
 			array(
-				'id'       => 'disbursementMethod',
+				'id'       => 'fundingMethod',
 				'name'     => __( 'Funding Method', 'ca-grants-plugin' ),
 				'type'     => 'radio',
 				'source'   => 'api',

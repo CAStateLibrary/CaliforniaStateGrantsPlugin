@@ -850,13 +850,13 @@ class Field {
 				case 'applicantType':
 					$api_url .= 'applicant_type';
 					break;
-				case 'disbursementMethod':
+				case 'fundingMethod':
 					$api_url .= 'disbursement_method';
 					break;
 				case 'opportunityType':
 					$api_url .= 'opportunity_types';
 					break;
-				case 'revSources':
+				case 'fundingSource':
 					$api_url .= 'revenue_sources';
 					break;
 				default:
@@ -978,7 +978,7 @@ class Field {
 	 */
 	public static function maybe_sort_fields( $fields, $meta_field ) {
 		switch ( $meta_field['id'] ) {
-			case 'revSources':
+			case 'fundingSource':
 				$order    = array( 'State', 'Federal', 'Both', 'Other' );
 				$index_of = function( $name ) use ( $order ) {
 					return array_search( $name, $order, true );

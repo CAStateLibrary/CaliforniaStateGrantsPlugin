@@ -223,10 +223,10 @@ class GrantsEndpoint {
 
 							break;
 
-						case 'disbursementMethod':
+						case 'fundingMethod':
 							$notes = get_post_meta( $post->ID, 'disbursementMethodNotes', true );
 
-							$new_data['disbursementMethod'] = array(
+							$new_data['fundingMethod'] = array(
 								'type'  => $metadata,
 								'notes' => $notes,
 							);
@@ -282,7 +282,7 @@ class GrantsEndpoint {
 							);
 							break;
 
-						case 'revSources':
+						case 'fundingSource':
 							$notes                             = get_post_meta( $post->ID, 'revenueSourceNotes', true );
 							$new_data[ $metafield_data['id'] ] = array(
 								'type'  => $metadata,
