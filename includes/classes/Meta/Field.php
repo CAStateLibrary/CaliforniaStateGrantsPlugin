@@ -672,7 +672,11 @@ class Field {
 						<label for="<?php echo esc_attr( $id ); ?>-name"><?php esc_html_e( 'Name', 'ca-grants-plugin' ); ?></label>
 					</th>
 					<td>
-						<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>" <?php self::conditional_required( $meta_field ); ?>/>
+						<?php if ( $id == 'contactInfo' ) : ?>
+							<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>"?>/>
+						<?php else: ?>
+							<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>" <?php self::conditional_required( $meta_field ); ?>/>
+						<?php endif; ?>
 					</td>
 				</tr>
 				<tr>
