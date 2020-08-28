@@ -9,7 +9,7 @@
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [FAQs](#frequently-asked-questions)
-* [Screenshots](#screenshots)
+* [Support Level](#support-level)
 * [Contributing](#contributing)
 
 ## Overview
@@ -49,20 +49,10 @@ The plugin targets the following modern browsers:
 
 ## Frequently Asked Questions
 
-## Screenshots
-
 ## Support Level
 
-**Active:** 10up is actively working on this, and we expect to continue work for the foreseeable future including keeping tested up to the most recent version of WordPress. Bug reports, feature requests, questions, and pull requests are welcome.
-
-## Changelog
-
-A complete listing of all notable changes to the California State Grants plugin are documented in [CHANGELOG.md](https://github.com/10up/ca-grants-plugin/blob/develop/CHANGELOG.md).
+**Active:** CSL is actively working on this, and we expect to continue work for the foreseeable future including keeping tested up to the most recent version of WordPress. Bug reports, feature requests, questions, and pull requests are welcome.
 
 ## Contributing
 
-Please read the [CODE_OF_CONDUCT.md](https://github.com/10up/ca-grants-plugin/blob/develop/CODE_OF_CONDUCT.md) for details on our code of conduct, [CONTRIBUTING.md](https://github.com/10up/ca-grants-plugin/blob/develop/CONTRIBUTING.md) for details on the process for submitting pull requests to us, [translate.wordpress.org](https://translate.wordpress.org/) to help translate the plugin, and [CREDITS.md](https://github.com/10up/ca-grants-plugin/blob/develop/CREDITS.md) for a listing of maintainers, contributors, and libraries for the California State Grants plugin.
-
-## Like what you see?
-
-<a href="http://10up.com/contact/"><img src="https://10updotcom-wpengine.s3.amazonaws.com/uploads/2016/10/10up-Github-Banner.png" width="850" alt="Work with us at 10up"></a>
+This is a public project and we’d love to support any city or state interested in doing the same thing. If you have ideas on grants.ca.gov, send us a pull request or contact us at <a href="mailto:CAgrantsportal@library.ca.gov">CAgrantsportal@library.ca.gov</a>.
