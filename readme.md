@@ -38,7 +38,7 @@ The plugin targets the following modern browsers:
 
 ### Manual Installation
 
-1. Upload the entire `/CaliforniaStateGrantsPlugin-master` directory to the `/wp-content/plugins/` directory.
+1. Upload the entire `/CaliforniaStateGrantsPlugin` directory to the `/wp-content/plugins/` directory.
 2. Activate California State Grants plugin through the 'Plugins' menu in WordPress.
 
 ### Setup the California State Grants plugin
