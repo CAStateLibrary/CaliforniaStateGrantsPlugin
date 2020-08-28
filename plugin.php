@@ -1,24 +1,24 @@
 <?php
 /**
  * Plugin Name: California State Grants
- * Plugin URI:  https://github.com/10up/ca-grants-plugin
+ * Plugin URI:  https://github.com/CAStateLibrary/CaliforniaStateGrantsPlugin
  * Description: This plugin provides a WordPress dashboard interface to input California State Grant information and facilitate syncing that data with the California State Grants Portal.
- * Version:     0.2.1
- * Author:      10up
- * Author URI:  https://10up.com
- * Text Domain: ca-grants-plugin
+ * Version:     1.0
+ * Author:      CSL
+ * Author URI:  https://www.library.ca.gov/
+ * Text Domain: CaliforniaStateGrantsPlugin
  * Domain Path: /languages
  *
  * @package CaGov\Grants
  */
 
 // Useful global constants.
-define( 'CA_GRANTS_VERSION', '0.2.1' );
+define( 'CA_GRANTS_VERSION', '1.0' );
 define( 'CA_GRANTS_URL', plugin_dir_url( __FILE__ ) );
 define( 'CA_GRANTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CA_GRANTS_INC', CA_GRANTS_PATH . 'includes/' );
 define( 'CA_GRANTS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-define( 'CA_GRANTS_SOURCE_REPO', 'https://github.com/CAStateLibrary/CAGrantsWordpressPlugin' );
+define( 'CA_GRANTS_SOURCE_REPO', 'https://github.com/CAStateLibrary/CaliforniaStateGrantsPlugin' );
 
 if ( ! defined( 'CA_GRANTS_PORTAL_URL' ) ) {
 	define( 'CA_GRANTS_PORTAL_URL', 'https://www.grants.ca.gov/' );
@@ -72,7 +72,7 @@ function ca_grants_enable_updates() {
 	$updater         = Puc_v4_Factory::buildUpdateChecker(
 		CA_GRANTS_SOURCE_REPO,
 		__FILE__,
-		'ca-grants-plugin'
+		'CaliforniaStateGrantsPlugin'
 	);
 
 	if ( is_array( $plugin_settings ) && isset( $plugin_settings['update_token'] ) ) {
