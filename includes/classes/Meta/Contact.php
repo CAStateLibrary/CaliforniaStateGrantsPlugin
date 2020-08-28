@@ -116,21 +116,21 @@ class Contact {
 				'name'         => __( 'Public Point of Contact', 'ca-grants-plugin' ),
 				'type'         => 'point_of_contact',
 				'required'     => array( 'active' ),
-				'section_note' => __( 'AB2252 requires grantmakers to provide a valid email address and/or phone number that applicants may use to make inquiries or request information about the grant opportunity.', 'ca-grants-plugin' ),
+				'section_note' => __( 'AB2252 requires grantmakers to provide a valid email address and/or phone number that applicants may use to make inquiries or request information about the grant opportunity. Please enter the phone number in the following format: 1-555-555-5555.', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'           => 'adminPrimaryContact',
 				'name'         => __( 'Administrative Primary Point of Contact', 'ca-grants-plugin' ),
 				'type'         => 'point_of_contact',
 				'required'     => array( 'active' ),
-				'section_note' => __( 'This contact information is for <strong>internal use only</strong> (i.e. not public-facing). It will only be used when a representative from the California Grants Portal (CGP) need to contact the grantmaker for administrative purposes.', 'ca-grants-plugin' ),
+				'section_note' => __( 'This contact information is for <strong>internal use only</strong> (i.e. not public-facing). It will only be used when a representative from the California Grants Portal (CGP) need to contact the grantmaker for administrative purposes. Please enter the phone number in the following format: 1-555-555-5555.', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'           => 'adminSecondaryContact',
 				'name'         => __( 'Administrative Secondary Point of Contact', 'ca-grants-plugin' ),
 				'type'         => 'point_of_contact',
 				'required'     => array( 'active'),
-				'section_note' => __( 'This contact information is for <strong>internal use only</strong> (i.e. not public-facing). It will only be used when a representative from the California Grants Portal (CGP) need to contact a secondary grantmaker for administrative purposes.', 'ca-grants-plugin' ),
+				'section_note' => __( 'This contact information is for <strong>internal use only</strong> (i.e. not public-facing). It will only be used when a representative from the California Grants Portal (CGP) need to contact a secondary grantmaker for administrative purposes. Please enter the phone number in the following format: 1-555-555-5555.', 'ca-grants-plugin' ),
 			),
 		);
 	}

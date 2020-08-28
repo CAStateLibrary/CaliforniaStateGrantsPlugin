@@ -73,14 +73,17 @@ class Dates {
 			array(
 				'id'          => 'periodOfPerformance',
 				'name'        => __( 'Period of Performance', 'ca-grants-plugin' ),
-				'type'        => 'text',
+				'type'        => 'textarea',
 				'description' => __( 'What is the total length of time that the award is available and active (i.e. do recipients have access to grant funds only within a specific timeframe)?', 'ca-grants-plugin' ),
+				'text_limit'  => 20,
 				'required'    => array( 'active' ),
 			),
 			array(
 				'id'       => 'expectedAwardDate',
 				'name'     => __( 'Expected Award Announcement Date', 'ca-grants-plugin' ),
-				'type'     => 'text',
+				'type'     => 'textarea',
+				'description' => __( '<strong>The max character limit is 20 characters.</strong>', 'ca-grants-plugin' ),
+				'text_limit'  => 20,
 				'required' => array( 'active' ),
 			),
 			array(
