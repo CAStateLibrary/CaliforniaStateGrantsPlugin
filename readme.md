@@ -8,7 +8,6 @@
 * [Overview](#overview)
 * [Requirements](#requirements)
 * [Installation](#installation)
-* [FAQs](#frequently-asked-questions)
 * [Support Level](#support-level)
 * [Contributing](#contributing)
 
@@ -39,7 +38,7 @@ The plugin targets the following modern browsers:
 
 ### Manual Installation
 
-1. Upload the entire `/ca-grants-plugin` directory to the `/wp-content/plugins/` directory.
+1. Upload the entire `/CaliforniaStateGrantsPlugin-master` directory to the `/wp-content/plugins/` directory.
 2. Activate California State Grants plugin through the 'Plugins' menu in WordPress.
 
 ### Setup the California State Grants plugin
@@ -47,12 +46,10 @@ The plugin targets the following modern browsers:
 1. Install the California State Grants plugin.
 2. Complete the settings walkthrough, CA Grants > Settings in the WordPress dashboard.
 
-## Frequently Asked Questions
-
 ## Support Level
 
 **Active:** CSL is actively working on this, and we expect to continue work for the foreseeable future including keeping tested up to the most recent version of WordPress. Bug reports, feature requests, questions, and pull requests are welcome.
 
 ## Contributing
 
-This is a public project and we’d love to support any city or state interested in doing the same thing. If you have ideas on grants.ca.gov, send us a pull request or contact us at <a href="mailto:CAgrantsportal@library.ca.gov">CAgrantsportal@library.ca.gov</a>.
+This is a public project and we’d love to support any city or state interested in doing the same thing. If you have ideas for the grants.ca.gov, send us a pull request or contact us at <a href="mailto:CAgrantsportal@library.ca.gov">CAgrantsportal@library.ca.gov</a>.
