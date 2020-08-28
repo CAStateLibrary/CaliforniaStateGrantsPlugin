@@ -1,9 +1,10 @@
-=== Plugin Name ===
+=== California State Grants ===
 Contributors: castatelibrary
 Tags:
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
+Stable tag: trunk
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
