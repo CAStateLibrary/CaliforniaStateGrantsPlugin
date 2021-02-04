@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '66d03331270a7ac01388c72951959823aabaf67c',
+    'reference' => '6b1c934ac35c7f8d9ced6e64dcb9daac381a63eb',
     'name' => '10up/ca-grants-plugin',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '66d03331270a7ac01388c72951959823aabaf67c',
+      'reference' => '6b1c934ac35c7f8d9ced6e64dcb9daac381a63eb',
     ),
     '10up/phpcs-composer' => 
     array (
