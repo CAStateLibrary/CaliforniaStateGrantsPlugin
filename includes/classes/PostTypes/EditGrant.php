@@ -232,15 +232,17 @@ class EditGrant {
 						break;
 					case 'period-performance':
 						$temp_value          = $_POST[ $meta_field['id'] ];
-						$temp_value['num']   = ( isset( $temp_value['num'] ) ) ? absint( $temp_value['num'] ) : '';
-						$temp_value['units'] = ( isset( $temp_value['units'] ) ) ? sanitize_text_field( $temp_value['units'] ) : '';
-						$value = $temp_value;
+						$clean_value         = array();
+						$clean_value['num']   = ( isset( $temp_value['num'] ) ) ? absint( $temp_value['num'] ) : '';
+						$clean_value['units'] = ( isset( $temp_value['units'] ) ) ? sanitize_text_field( $temp_value['units'] ) : '';
+						$value = $clean_value;
 						break;
 					case 'electronic-submission-method':
 						$temp_value          = $_POST[ $meta_field['id'] ];
-						$temp_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
-						$temp_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
-						$value = $temp_value;
+						$clean_value         = array();
+						$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
+						$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
+						$value = $clean_value;
 						break;
 					case 'application-deadline':
 						$temp_value = $_POST[ $meta_field['id'] ];
