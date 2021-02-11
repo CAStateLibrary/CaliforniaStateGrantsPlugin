@@ -2,7 +2,7 @@
 
 > The California State Grants Plugin is the official WordPress plugin allowing you to manage your grant data within your own site running WordPress.
 
-[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.6%20tested-success.svg)
+[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.6.1%20tested-success.svg)
 
 ## Table of Contents
 * [Overview](#overview)

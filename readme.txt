@@ -2,7 +2,7 @@
 Contributors: castatelibrary
 Tags:
 Requires at least: 5.0
-Tested up to: 5.6
+Tested up to: 5.6.1
 Requires PHP: 5.6
 Stable tag: trunk
 License: GPLv2 or later
@@ -16,8 +16,8 @@ The California Grants Portal, grants.ca.gov, is managed and hosted by the Califo
 
 The California State Grants Plugin is the official WordPress plugin allowing the state agencies to submit their grant information via the plugin and manage the grant data within their WordPress site.
 
-Use Policy - https://www.grants.ca.gov/use-policy/
-Privacy Policy - https://www.grants.ca.gov/privacy-policy/
+*Use Policy* - https://www.grants.ca.gov/use-policy/
+*Privacy Policy* - https://www.grants.ca.gov/privacy-policy/
 
 The state agencies using this plugin to submit their grant opportunities will use the following steps:
 
