@@ -2,7 +2,7 @@
 
 > The California State Grants Plugin is the official WordPress plugin allowing you to manage your grant data within your own site running WordPress.
 
-[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.6.1%20tested-success.svg)
+[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.7.1%20tested-success.svg)
 
 ## Table of Contents
 * [Overview](#overview)
@@ -25,15 +25,7 @@ The California State Grants Plugin is the official WordPress plugin allowing the
 
 ## Specifications
 
-The state agencies using this plugin to submit their grant opportunities will use the following steps:
-
-* Download and implement the California Grants Portal WordPress plugin
-* Use the plugin to enter grant information within your own WordPress instance; when finished, the plugin will generate an endpoint URL
-* Return to the Portal and [create an account](https://www.grants.ca.gov/wp-login.php?action=register)
-* Once your account is verified, you will receive a link to an endpoint submission form
-* Submit your endpoint URL to allow the Grants Portal to access grant information entered via the plugin
-* Grant edits and additions continue to be made directly through your plugin instance
-* The Grants Portal will sync with the provided endpoint every 24 hours, updating grant information as necessary
+Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
 
 ## Requirements
 
@@ -56,15 +48,16 @@ The plugin targets the following modern browsers:
 
 ## Installation
 
-### Manual Installation
+### Manual Installation from GitHub
 
 1. Upload the entire `/CaliforniaStateGrantsPlugin` directory to the `/wp-content/plugins/` directory.
 2. Activate California State Grants plugin through the 'Plugins' menu in WordPress.
+3. Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
 
-### Setup the California State Grants plugin
+### Installing the California State Grants plugin from the WordPress plugin store
 
-1. Install the California State Grants plugin.
-2. Complete the settings walkthrough, CA Grants > Settings in the WordPress dashboard.
+1. Install and activate the [California State Grants plugin](https://wordpress.org/plugins/california-state-grants/) from the WordPress plugin store.
+2. Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
 
 ## Support Level
 

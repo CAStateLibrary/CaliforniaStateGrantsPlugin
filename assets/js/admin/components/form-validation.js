@@ -58,8 +58,6 @@ const setupForms = () => {
 
 				const openDate = new Date( openDateInput.value );
 				const deadline = new Date( deadlineInput.value );
-				console.log( 'opendate', openDate );
-				console.log( 'deadline', deadline );
 
 				// Check the dates
 				if ( openDate < deadline ) {
@@ -407,6 +405,10 @@ const handleFormClick = ( event ) => {
 	}
 
 	const form = target.closest( '.form--validate' );
+	if ( target.matches( '#save-post' ) ) {
+		form.submit();
+	}
+
 	const invalidFields = bouncer.validateAll( form );
 
 	// Check valid first.
@@ -436,12 +438,15 @@ const handleFormClick = ( event ) => {
  */
 const handleFormSubmit = ( event ) => {
 	const { target: form } = event;
+	const { submitter } = event;
 
-	const invalidFields = bouncer.validateAll( form );
+	if ( ! submitter.matches( '#save-post' ) ) {
+		const invalidFields = bouncer.validateAll( form );
 
-	if ( invalidFields.length ) {
-		event.preventDefault();
-		return;
+		if ( invalidFields.length ) {
+			event.preventDefault();
+			return;
+		}
 	}
 };
 

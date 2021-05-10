@@ -138,12 +138,14 @@ class Field {
 		$name        = $meta_field['name'] ?? '';
 		$description = $meta_field['description'] ?? '';
 		$id          = $meta_field['id'] ?? '';
+		$class       = $meta_field['class'] ?? '';
+		$maxlength   = $meta_field['maxlength'] ?? '';
 		$value       = get_post_meta( get_the_ID(), $id, true );
 
 		// Used for telephone fields
 		$pattern = 'placeholder=1-555-555-5555 pattern=[0-9]{1}-[0-9]{3}-[0-9]{3}-[0-9]{4}';
 		?>
-		<tr>
+		<tr class="<?php echo esc_attr( $class ); ?>">
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -154,6 +156,7 @@ class Field {
 					name="<?php echo esc_attr( $id ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
 					id="<?php echo esc_attr( $id ); ?>"
+					maxlength="<?php echo esc_attr( $maxlength ); ?>"
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
 				/>
@@ -606,6 +609,7 @@ class Field {
 
 		$name        = $meta_field['name'] ?? '';
 		$id          = $meta_field['id'] ?? '';
+		$class       = $meta_field['class'] ?? '';
 		$description = $meta_field['description'] ?? '';
 
 		if ( empty( $name ) || empty( $id ) ) {
@@ -615,7 +619,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr>
+		<tr class="<?php echo esc_attr( $class ); ?>">
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
