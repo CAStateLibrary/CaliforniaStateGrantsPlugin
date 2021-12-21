@@ -4,6 +4,7 @@ import Tooltips from './components/tooltips';
 import ConditionalRequired from './components/conditional-required';
 import FormValidation from './components/form-validation';
 import Wysiwyg from './components/wysiwyg';
+import ConditionalFormFields from './components/conditional-form-fields';
 
 // polyfill closest.
 if ( !Element.prototype.closest ) {
@@ -25,4 +26,5 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	Wysiwyg();
 	ConditionalRequired();
 	FormValidation();
+	ConditionalFormFields();
 } );

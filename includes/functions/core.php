@@ -235,7 +235,7 @@ function admin_styles() {
 
 	wp_enqueue_style(
 		'jquery_datepicker_css',
-		'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css',
+		style_url( 'jquery-ui', 'shared' ),
 		array(),
 		CA_GRANTS_VERSION
 	);

@@ -2,19 +2,30 @@
 
 > The California State Grants Plugin is the official WordPress plugin allowing you to manage your grant data within your own site running WordPress.
 
-[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.4%20tested-success.svg)
+[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.7.1%20tested-success.svg)
 
 ## Table of Contents
 * [Overview](#overview)
+* [Specifications](#specifications)
 * [Requirements](#requirements)
 * [Installation](#installation)
-* [FAQs](#frequently-asked-questions)
-* [Screenshots](#screenshots)
+* [Support Level](#support-level)
 * [Contributing](#contributing)
 
 ## Overview
 
-The California State Grants Plugin is the official WordPress plugin allowing you to manage your grant data within your own site running WordPress.
+The California Grants Portal, [grants.ca.gov](https://www.grants.ca.gov/), is managed and hosted by the California State Library. The [Grant Information Act of 2018](http://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=201720180AB2252) (Stats. 2018, Ch. 318) required the State Library to build one website by July 1, 2020, “that provides a centralized location … to find state grant opportunities.” State grantmaking agencies input and update their information into prescribed data fields to make all state grant opportunities searchable on [grants.ca.gov](https://www.grants.ca.gov/). The Grant Information Act requires state agencies to provide summaries of each of their grant or loan opportunities, including, among other items, information about how to apply and links that grantseekers can follow for more details. This site was built in collaboration with our vendor [10up](https://10up.com/).
+
+The California State Grants Plugin is the official WordPress plugin allowing the state agencies to submit their grant information via the plugin and manage the grant data within their WordPress site.
+
+### Policies Related to the California Grants Portal
+
+* [Use Policy](https://www.grants.ca.gov/use-policy/)
+* [Privacy Policy](https://www.grants.ca.gov/privacy-policy/)
+
+## Specifications
+
+Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
 
 ## Requirements
 
@@ -37,32 +48,21 @@ The plugin targets the following modern browsers:
 
 ## Installation
 
-### Manual Installation
+### Manual Installation from GitHub
 
-1. Upload the entire `/ca-grants-plugin` directory to the `/wp-content/plugins/` directory.
+1. Upload the entire `/CaliforniaStateGrantsPlugin` directory to the `/wp-content/plugins/` directory.
 2. Activate California State Grants plugin through the 'Plugins' menu in WordPress.
+3. Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
 
-### Setup the California State Grants plugin
+### Installing the California State Grants plugin from the WordPress plugin store
 
-1. Install the California State Grants plugin.
-2. Complete the settings walkthrough, CA Grants > Settings in the WordPress dashboard.
-
-## Frequently Asked Questions
-
-## Screenshots
+1. Install and activate the [California State Grants plugin](https://wordpress.org/plugins/california-state-grants/) from the WordPress plugin store.
+2. Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
 
 ## Support Level
 
-**Active:** 10up is actively working on this, and we expect to continue work for the foreseeable future including keeping tested up to the most recent version of WordPress. Bug reports, feature requests, questions, and pull requests are welcome.
-
-## Changelog
-
-A complete listing of all notable changes to the California State Grants plugin are documented in [CHANGELOG.md](https://github.com/10up/ca-grants-plugin/blob/develop/CHANGELOG.md).
+**Active:** CSL is actively working on this, and we expect to continue work for the foreseeable future including keeping tested up to the most recent version of WordPress. Bug reports, feature requests, questions, and pull requests are welcome.
 
 ## Contributing
 
-Please read the [CODE_OF_CONDUCT.md](https://github.com/10up/ca-grants-plugin/blob/develop/CODE_OF_CONDUCT.md) for details on our code of conduct, [CONTRIBUTING.md](https://github.com/10up/ca-grants-plugin/blob/develop/CONTRIBUTING.md) for details on the process for submitting pull requests to us, [translate.wordpress.org](https://translate.wordpress.org/) to help translate the plugin, and [CREDITS.md](https://github.com/10up/ca-grants-plugin/blob/develop/CREDITS.md) for a listing of maintainers, contributors, and libraries for the California State Grants plugin.
-
-## Like what you see?
-
-<a href="http://10up.com/contact/"><img src="https://10updotcom-wpengine.s3.amazonaws.com/uploads/2016/10/10up-Github-Banner.png" width="850" alt="Work with us at 10up"></a>
+This is a public project and we’d love to support any city or state interested in doing the same thing. If you have ideas for the grants.ca.gov, send us a pull request or contact us at <a href="mailto:CAgrantsportal@library.ca.gov">CAgrantsportal@library.ca.gov</a>.
