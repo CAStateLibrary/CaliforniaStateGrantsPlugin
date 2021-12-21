@@ -170,11 +170,11 @@ class SettingsPage {
 		?>
 		<h2><?php echo esc_html_e( 'Submit Endpoint', 'ca-grants-plugin' ); ?></h2>
 		<p>
-			<?php esc_html_e( 'Enter the information below on the', 'ca-grants-plugin' ); ?>
-			<a href="<?php echo esc_url( CA_GRANTS_PORTAL_URL . 'submit-an-endpoint/' ); ?>">
-				<?php esc_html_e( ' grants portal site', 'ca-grants-plugin' ); ?>
+			<?php esc_html_e( 'Please follow the detailed instructions provided in the ', 'ca-grants-plugin' ); ?>
+			<a href="<?php echo esc_url( CA_GRANTS_PORTAL_URL . 'part-iii-submitting-updating-and-maintaining-information/' ); ?>">
+				<?php esc_html_e( 'State Grantmakers Guide', 'ca-grants-plugin' ); ?>
 			</a>
-			<?php esc_html_e( ' when you are ready to submit your first grant(s). You do not need to re-enter this information on the portal site with each grant; subsequent grants will all use this same information.', 'ca-grants-plugin' ); ?>
+			<?php esc_html_e( ' to submit an endpoint.', 'ca-grants-plugin' ); ?>
 		</p>
 		<table class="form-table" role="presentation">
 			<tbody>
@@ -190,13 +190,6 @@ class SettingsPage {
 					<td>
 						<input name="ca_grants_auth_token" id="ca_grants_auth_token" type="text" value="<?php echo esc_attr( $this->settings->get_auth_token() ); ?>" class="regular-text code" disabled>
 						<a href="javascript:void(0)" class="copy-clipboard" data-input-target="ca_grants_auth_token"><?php esc_html_e( 'Copy' ); ?></a>
-					</td>
-				</tr>
-				<tr>
-					<th><label for="ca_grants_update_token"><?php echo esc_html_e( 'Update Token', 'ca-grants-plugin' ); ?></label></th>
-					<td>
-						<input name="ca_grants_update_token" id="ca_grants_update_token" type="password" value="<?php echo esc_attr( $this->settings->get_setting( 'update_token', '' ) ); ?>" class="regular-text code">
-						<p class="description"><?php esc_html_e( 'Optional. Enter the provided update token to receive updates while this plugin is in private beta.', 'ca-grants-plugin' ); ?></p>
 					</td>
 				</tr>
 				<tr>

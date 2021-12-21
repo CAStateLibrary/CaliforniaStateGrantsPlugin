@@ -1,5 +1,5 @@
 const grantTypeInputs = Array.from( document.querySelectorAll( 'input[name="isForecasted"]' ) );
-const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if]';
+const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if],input[required]';
 const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
 
 /**
@@ -43,7 +43,7 @@ const maybeSetRequired = input => {
 	const current        = getCurrentGrantType();
 
 	input.required = ( ! requiredIf || ! current )
-		? false
+		? input.required
 		: -1 !== requiredIf.split( ',' ).map( s => s.trim() ).indexOf( current );
 
 	const label = input.closest( 'tr' ).querySelector( 'th' );
@@ -63,7 +63,7 @@ const maybeSetRequiredClass = el => {
 	const current        = getCurrentGrantType();
 
 	if ( current ) {
-		if ( requiredIf.split( ',' ).map( s => s.trim ).indexOf( current ) ) {
+		if ( -1 !== requiredIf.split( ',' ).map( s => s.trim() ).indexOf( current ) ) {
 			el.classList.add( 'fieldset--is-required' );
 		} else {
 			el.classList.remove( 'fieldset--is-required' );
