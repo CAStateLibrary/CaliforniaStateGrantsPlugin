@@ -1,10 +1,10 @@
 === California State Grants ===
 Contributors: castatelibrary
-Tags:
+Tags: grants, loans, state government, California Grants Portal, submit your grants, California state agencies
 Requires at least: 5.0
-Tested up to: 5.7.1
-Requires PHP: 5.6
-Stable tag: 1.1
+Tested up to: 5.8.1
+Requires PHP: 7.4
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,6 +64,11 @@ Yes, Grant Contributors can use both the WordPress plugin and online form to sub
 5. The Endpoint URL and Authorization Token
 
 == Changelog ==
+
+= 1.1.1 =
+* Tested plugin functionality up to 5.8.1
+* Added an "Other" option for the Funding Method field
+* Updated the "Both" option for the Funding Source field to "Federal and State"
 
 = 1.1 =
 * Tested plugin functionality up to 5.7.1
