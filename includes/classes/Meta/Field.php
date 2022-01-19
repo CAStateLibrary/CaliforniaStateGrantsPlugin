@@ -196,6 +196,8 @@ class Field {
 			);
 		}
 
+		$fields = self::maybe_sort_fields( $fields, $meta_field );
+
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
@@ -997,6 +999,15 @@ class Field {
 						return ( $index_of( $a['name'] ) < $index_of( $b['name'] ) ) ? -1 : 1;
 					}
 				);
+				return $fields;
+			case 'applicantType':
+				// Move 'other' to the bottom of the list.
+				foreach ( $fields as $index => $field ) {
+					if ( isset( $field['id'] ) && 'other' === $field['id'] ) {
+						unset( $fields[ $index ] );
+						array_push( $fields, $field );
+					}
+				}
 				return $fields;
 			default:
 				return $fields;

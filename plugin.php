@@ -25,7 +25,7 @@ if ( ! defined( 'CA_GRANTS_PORTAL_URL' ) ) {
 }
 
 if ( ! defined( 'CA_GRANTS_PORTAL_JSON_URL' ) ) {
-	define( 'CA_GRANTS_PORTAL_JSON_URL', CA_GRANTS_PORTAL_URL . 'wp-json/' );
+	define( 'CA_GRANTS_PORTAL_JSON_URL', trailingslashit( CA_GRANTS_PORTAL_URL ) . 'wp-json/' );
 }
 
 // Include files.
