@@ -37,6 +37,12 @@ class Grants {
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
+		/**
+		 * Conditionally filters grant post-type arguments.
+		 */
+		if ( defined( 'CSL_IS_PORTAL' ) ) {
+			add_filter( 'ca_grants_post_type_args', array( $this, 'filter_portal_cpt_args' ), 10, 2 );
+		}
 
 		self::$init = true;
 	}
@@ -74,6 +80,51 @@ class Grants {
 		$args = apply_filters( 'ca_grants_post_type_args', $args );
 
 		register_post_type( self::CPT_SLUG, $args );
+	}
+
+	/**
+	 * Adds grant post type arguments, if the environment is the CSL Portal site.
+	 * 
+	 * @return array Grants post-type arguments.
+	 */
+	public function filter_portal_cpt_args() {
+		return array(
+			'labels' => array(
+				'archives'              => __( 'Grant Archives', 'ca-grants-plugin' ),
+				'attributes'            => __( 'Grant Attributes', 'ca-grants-plugin' ),
+				'insert_into_item'      => __( 'Insert Into Grant', 'ca-grants-plugin' ),
+				'uploaded_to_this_item' => __( 'Uploaded To This Grant', 'ca-grants-plugin' ),
+				'featured_image'        => _x( 'Featured Image', 'noun: the featured image currently displayed', 'ca-grants-plugin' ),
+				'set_featured_image'    => _x( 'Set featured image', 'action: choose a featured image', 'ca-grants-plugin' ),
+				'remove_featured_image' => _x( 'Remove featured image', 'action: remove the current featured image', 'ca-grants-plugin' ),
+				'use_featured_image'    => _x( 'Use as featured image', 'action: use an existing image as a feature', 'ca-grants-plugin' ),
+				'filter_items_list'     => __( 'Filter Grant list', 'ca-grants-plugin' ),
+				'items_list_navigation' => __( 'Grant list navigation', 'ca-grants-plugin' ),
+				'items_list'            => __( 'Grant list', 'ca-grants-plugin' ),
+				'view_items'            => __( 'View Grants', 'ca-grants-plugin' ),
+			),
+			'taxonomies'        => array(
+				'agencies',
+				'revenue_sources',
+				'opportunity_types',
+				'grant_categories',
+				'disbursement_method',
+				'applicant_type',
+			),
+			'public'            => true,
+			'hierarchical'      => false,
+			'show_ui'           => true,
+			'show_in_nav_menus' => true,
+			'supports'          => array( 'title', 'custom-fields', 'author' ),
+			'has_archive'       => true,
+			'rewrite'           => true,
+			'query_var'         => true,
+			'menu_position'     => null,
+			'menu_icon'         => 'dashicons-welcome-write-blog',
+			'show_in_rest'      => false,
+			'capability_type'   => 'grant',
+			'map_meta_cap'      => true,
+		);
 	}
 
 	/**
