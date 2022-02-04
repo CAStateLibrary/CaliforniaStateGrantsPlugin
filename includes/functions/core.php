@@ -298,13 +298,13 @@ function tiny_mce_before_init( $mce_init ) {
 }
 
 /**
- * Checks for definition of the CSL_IS_PORTAL constant,
+ * Checks for definition of the `CSL_IS_PORTAL` constant,
  * which indicates whether the environment is the CSL portal site.
  * 
  * @note This function is used to enable/disable core CA Grants plugin behavior,
  * 		 and will not function on any other WordPress installation.
  *
- * @return boolean true if CSL_IS_PORTAL constant is defined.
+ * @return boolean true if `CSL_IS_PORTAL` constant is defined, and has a boolean value of `true`.
  */
 function is_portal() {
 	if ( defined( 'CSL_IS_PORTAL' ) && true === CSL_IS_PORTAL ) {
