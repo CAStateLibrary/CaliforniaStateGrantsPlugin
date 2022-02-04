@@ -307,7 +307,7 @@ function tiny_mce_before_init( $mce_init ) {
  * @return boolean true if CSL_IS_PORTAL constant is defined.
  */
 function is_portal() {
-	if ( defined( 'CSL_IS_PORTAL' ) ) {
+	if ( defined( 'CSL_IS_PORTAL' ) && true === CSL_IS_PORTAL ) {
 		return true;
 	}
 	return false;
