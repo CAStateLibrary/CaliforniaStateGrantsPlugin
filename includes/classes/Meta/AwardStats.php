@@ -33,7 +33,6 @@ class AwardStats {
 	 * @return void
 	 */
 	public function render_metabox() {
-		wp_nonce_field( EditGrant::NONCE_ACTION, EditGrant::NONCE_FIELD );
 		if ( $this->description ) {
 			echo '<p class="grants-metabox-description">' . esc_html( $this->description ) . '</p>';
 		}
@@ -62,17 +61,17 @@ class AwardStats {
 		return array(
 			array(
 				'id'          => 'applicationNumber',
-				'name'        => __( 'Number of Applications Submitted
-				(number)', 'ca-grants-plugin' ),
+				'name'        => __( 'Number of Applications Submitted (number)', 'ca-grants-plugin' ),
 				'type'        => 'number',
 				'description' => __( 'Enter the total applications received for this funding opportunity.', 'ca-grants-plugin' ),
+				'required'    => array( 'active', 'forecasted' ),
 			),
 			array(
 				'id'          => 'grantsNumber',
-				'name'        => __( 'Number of Grants Awarded
-				(number)', 'ca-grants-plugin' ),
+				'name'        => __( 'Number of Grants Awarded (number)', 'ca-grants-plugin' ),
 				'type'        => 'number',
 				'description' => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
+				'required'    => array( 'active', 'forecasted' ),
 			),
 		);
 	}
