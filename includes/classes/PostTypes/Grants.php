@@ -37,8 +37,64 @@ class Grants {
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
+		add_filter( 'manage_' . self::CPT_SLUG . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
+		add_action( 'manage_' . self::CPT_SLUG . '_posts_custom_column', array( $this, 'custom_column_renderer' ) );
 
 		self::$init = true;
+	}
+
+	/**
+	 * Add custom column to grant CPT.
+	 *
+	 * @param array $columns List of post columns.
+	 *
+	 * @return array Return all columns data.
+	 */
+	public function set_custom_edit_columns( $columns ) {
+
+		$columns['award_data'] = __( 'Award Data', 'ca-grants-plugin' );
+
+		return $columns;
+	}
+
+	/**
+	 * Custom column renderer to show data for custom defined column.
+	 *
+	 * @param string $column Column name/slug.
+	 *
+	 * @return void
+	 */
+	public function custom_column_renderer( $column ) {
+
+		if ( 'award_data' !== $column ) {
+			return;
+		}
+
+		// TODO: Add link once E-3.4.5 is done.
+		printf(
+			'<a href="%s">%s</a>',
+			'#',
+			esc_html__( 'View Award Data', 'ca-grants-plugin' )
+		);
+
+		echo '<br/>';
+
+		// TODO: Add link once E-3.4.2 is done.
+		printf(
+			'<a href="%s">%s</a>',
+			'#',
+			esc_html__( 'Enter Award Data', 'ca-grants-plugin' )
+		);
+
+		echo '<br/>';
+
+		// TODO: Add link once E-3.6 is done.
+		printf(
+			'<a href="%s">%s</a>',
+			'#',
+			esc_html__( 'Bulk Upload Award Data', 'ca-grants-plugin' )
+		);
+
 	}
 
 	/**
