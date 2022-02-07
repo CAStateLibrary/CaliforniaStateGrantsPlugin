@@ -104,8 +104,8 @@ class Funding {
 				'required' => array( 'active' ),
 			),
 			array(
-				'id'          => 'fundingMethod',
-				'name'        => __( 'Funding Method', 'ca-grants-plugin' ),
+				'id'          => 'disbursementMethod',
+				'name'        => __( 'Disbursement Method', 'ca-grants-plugin' ),
 				'type'        => 'radio',
 				'source'      => 'api',
 				'description' => __( 'If you select "Other", please elaborate in the funding method notes field below.', 'ca-grants-plugin' ),
