@@ -24,7 +24,7 @@ class AwardStats {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->description = __( 'Enter Award Stats information.', 'ca-grants-plugin' );
+		$this->description = __( 'Keep this information about the grant up to date as new applications are submitted and grants are awarded.', 'ca-grants-plugin' );
 	}
 
 	/**
@@ -60,18 +60,20 @@ class AwardStats {
 	public static function get_fields() {
 		return array(
 			array(
-				'id'          => 'applicationNumber',
-				'name'        => __( 'Number of Applications Submitted (number)', 'ca-grants-plugin' ),
+				'id'          => 'applicationsSubmitted',
+				'name'        => __( 'Number of Applications Submitted', 'ca-grants-plugin' ),
 				'type'        => 'number',
 				'description' => __( 'Enter the total applications received for this funding opportunity.', 'ca-grants-plugin' ),
 				'required'    => array( 'active', 'forecasted' ),
+				'min'         => 0,
 			),
 			array(
-				'id'          => 'grantsNumber',
-				'name'        => __( 'Number of Grants Awarded (number)', 'ca-grants-plugin' ),
+				'id'          => 'grantsAwarded',
+				'name'        => __( 'Number of Grants Awarded', 'ca-grants-plugin' ),
 				'type'        => 'number',
 				'description' => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'required'    => array( 'active', 'forecasted' ),
+				'min'         => 0,
 			),
 		);
 	}
