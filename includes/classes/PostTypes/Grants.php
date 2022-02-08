@@ -73,7 +73,16 @@ class Grants {
 		 */
 		$args = apply_filters( 'ca_grants_post_type_args', $args );
 
-		register_post_type( self::CPT_SLUG, $args );
+		$cpt_slug = self::CPT_SLUG;
+
+		/**
+		 * Filter the California Grants post type slug.
+		 *
+		 * @param array $cpt_slug The post type slug.
+		 */
+		$cpt_slug = apply_filters( 'ca_grants_post_type_slug', $cpt_slug );
+
+		register_post_type( $cpt_slug, $args );
 	}
 
 	/**
