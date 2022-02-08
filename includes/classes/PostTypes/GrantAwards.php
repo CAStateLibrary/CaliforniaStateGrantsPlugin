@@ -98,14 +98,4 @@ class GrantAwards {
 			'not_found_in_trash' => __( 'No grants found in Trash.', 'ca-grants-plugin' ),
 		);
 	}
-
-	/**
-	 * Get the number of published grants.
-	 *
-	 * @static
-	 * @return int
-	 */
-	public static function get_published_count() {
-		return absint( wp_count_posts( self::CPT_SLUG )->publish );
-	}
 }
