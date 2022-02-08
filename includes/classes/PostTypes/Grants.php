@@ -38,7 +38,7 @@ class Grants {
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
 		add_filter( 'manage_' . self::CPT_SLUG . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
-		add_action( 'manage_' . self::CPT_SLUG . '_posts_custom_column', array( $this, 'custom_column_renderer' ) );
+		add_action( 'manage_' . self::CPT_SLUG . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
 
 		self::$init = true;
 	}
@@ -61,28 +61,34 @@ class Grants {
 	 * Custom column renderer to show data for custom defined column.
 	 *
 	 * @param string $column Column name/slug.
+	 * @param int    $grant_id The current grant ID.
 	 *
 	 * @return void
 	 */
-	public function custom_column_renderer( $column ) {
+	public function custom_column_renderer( $column, $grant_id ) {
 
 		if ( 'award_data' !== $column ) {
 			return;
 		}
 
-		// TODO: Add link once E-3.4.5 is done.
 		printf(
 			'<a href="%s">%s</a>',
-			'#',
+			esc_url(
+				add_query_arg(
+					[
+						'grant_id' => $grant_id,
+					],
+					admin_url( 'edit.php?post_type=csl_grant_awards' )
+				)
+			),
 			esc_html__( 'View Award Data', 'ca-grants-plugin' )
 		);
 
 		echo '<br/>';
 
-		// TODO: Add link once E-3.4.2 is done.
 		printf(
 			'<a href="%s">%s</a>',
-			'#',
+			esc_url( admin_url( 'post-new.php?post_type=csl_grant_awards' ) ),
 			esc_html__( 'Enter Award Data', 'ca-grants-plugin' )
 		);
 
