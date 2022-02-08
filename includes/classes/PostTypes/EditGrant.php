@@ -254,6 +254,32 @@ class EditGrant {
 						break;
 				}
 
+				/**
+				 * Filters the post-meta value, targeted by meta-field type.
+				 * 
+				 * The filter name is `ca_grants_post_meta_`,
+				 * followed by the meta-field type.
+				 * 
+				 * For example, using the `period-performance` meta-field:
+				 * `ca_grants_post_meta_period-performance`
+				 *
+				 * @param mixed $value The value to filter.
+				 */
+				$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['type'], $value );
+
+				/**
+				 * Filters the post-meta value, targeted by meta-field ID.
+				 * 
+				 * The filter name is `ca_grants_post_meta_`,
+				 * followed by the meta-field ID.
+				 * 
+				 * For example, assuming a field ID of 1234:
+				 * `ca_grants_post_meta_1234`
+				 *
+				 * @param mixed $value The value to filter.
+				 */
+				$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
+				
 				update_post_meta( $post_id, $meta_field['id'], $value );
 			}
 		}
