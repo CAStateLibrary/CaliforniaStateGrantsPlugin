@@ -53,6 +53,10 @@ class EditGrant {
 		$this->settings    = new Settings();
 		$this->endpoint    = new GrantsEndpoint();
 		$this->meta_groups = array(
+			'award-stats'     => array(
+				'class' => 'CaGov\\Grants\\Meta\\AwardStats',
+				'title' => __( 'Award Stats', 'ca-grants-plugin' ),
+			),
 			'general'     => array(
 				'class' => 'CaGov\\Grants\\Meta\General',
 				'title' => __( 'General Grant Information', 'ca-grants-plugin' ),
@@ -363,6 +367,7 @@ class EditGrant {
 	 */
 	protected function get_all_meta_fields() {
 		return array_merge(
+			Meta\AwardStats::get_fields(),
 			Meta\General::get_fields(),
 			Meta\Eligibility::get_fields(),
 			Meta\Funding::get_fields(),

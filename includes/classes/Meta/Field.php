@@ -141,6 +141,8 @@ class Field {
 		$class       = $meta_field['class'] ?? '';
 		$maxlength   = $meta_field['maxlength'] ?? '';
 		$value       = get_post_meta( get_the_ID(), $id, true );
+		$minnumber   = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : '';
+		$maxnumber   = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
 
 		// Used for telephone fields
 		$pattern = 'placeholder=1-555-555-5555 pattern=[0-9]{1}-[0-9]{3}-[0-9]{3}-[0-9]{4}';
@@ -159,6 +161,8 @@ class Field {
 					maxlength="<?php echo esc_attr( $maxlength ); ?>"
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
+					<?php echo esc_html( $minnumber ); ?>
+					<?php echo esc_html( $maxnumber ); ?>
 				/>
 			</td>
 		</tr>
