@@ -55,7 +55,7 @@ class GrantAwards {
 			'show_in_menu'       => true,
 			'show_in_rest'       => true,
 			'query_var'          => true,
-			'rewrite'            => array( 'slug' => self::CPT_SLUG ),
+			'rewrite'            => array( 'slug' => 'grant-awards' ),
 			'rest_base'          => 'grant-awards',
 			'capability_type'    => 'post',
 			'has_archive'        => true,
