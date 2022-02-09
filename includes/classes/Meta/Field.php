@@ -138,12 +138,16 @@ class Field {
 		$name        = $meta_field['name'] ?? '';
 		$description = $meta_field['description'] ?? '';
 		$id          = $meta_field['id'] ?? '';
+		$class       = $meta_field['class'] ?? '';
+		$maxlength   = $meta_field['maxlength'] ?? '';
 		$value       = get_post_meta( get_the_ID(), $id, true );
+		$minnumber   = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : '';
+		$maxnumber   = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
 
 		// Used for telephone fields
 		$pattern = 'placeholder=1-555-555-5555 pattern=[0-9]{1}-[0-9]{3}-[0-9]{3}-[0-9]{4}';
 		?>
-		<tr>
+		<tr class="<?php echo esc_attr( $class ); ?>">
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -154,8 +158,11 @@ class Field {
 					name="<?php echo esc_attr( $id ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
 					id="<?php echo esc_attr( $id ); ?>"
+					maxlength="<?php echo esc_attr( $maxlength ); ?>"
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
+					<?php echo esc_html( $minnumber ); ?>
+					<?php echo esc_html( $maxnumber ); ?>
 				/>
 			</td>
 		</tr>
@@ -469,14 +476,14 @@ class Field {
 
 				<input <?php checked( $value['checkbox'], 'same' ); ?> type="radio" id="<?php echo esc_attr( $id . '-same' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="same" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-same' ); ?>"><?php esc_html_e( 'Same amount each award: ', 'ca-grants-plugin' ); ?></label>
-				<input type="text" id="<?php echo esc_attr( $id ); ?>-same-amount" name="<?php echo esc_attr( $id ); ?>[same][amount]" value="<?php echo esc_attr( $value['same']['amount'] ); ?>"/>
+				<input type="number" id="<?php echo esc_attr( $id ); ?>-same-amount" name="<?php echo esc_attr( $id ); ?>[same][amount]" value="<?php echo esc_attr( $value['same']['amount'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'unknown' ); ?> type="radio" id="<?php echo esc_attr( $id . '-unknown' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="unknown" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-unknown' ); ?>"><?php esc_html_e( 'Amount per award may range  between:', 'ca-grants-plugin' ); ?></label>
-				<input type="text" id="<?php echo esc_attr( $id ); ?>-unknown-first" name="<?php echo esc_attr( $id ); ?>[unknown][first]" value="<?php echo esc_attr( $value['unknown']['first'] ); ?>"/>
+				<input type="number" id="<?php echo esc_attr( $id ); ?>-unknown-first" name="<?php echo esc_attr( $id ); ?>[unknown][first]" value="<?php echo esc_attr( $value['unknown']['first'] ); ?>"/>
 				<?php esc_html_e( ' to ', 'ca-grants-plugin' ); ?>
-				<input type="text" id="<?php echo esc_attr( $id ); ?>-unknown-second" name="<?php echo esc_attr( $id ); ?>[unknown][second]" value="<?php echo esc_attr( $value['unknown']['second'] ); ?>"/>
+				<input type="number" id="<?php echo esc_attr( $id ); ?>-unknown-second" name="<?php echo esc_attr( $id ); ?>[unknown][second]" value="<?php echo esc_attr( $value['unknown']['second'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant" <?php self::conditional_required( $meta_field ); ?>>
@@ -530,14 +537,14 @@ class Field {
 			<td>
 				<input <?php checked( $value['checkbox'], 'exact' ); ?> type="radio" id="<?php echo esc_attr( $id . '-exactly' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="exact" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-exactly' ); ?>"><?php esc_html_e( 'Exactly: ', 'ca-grants-plugin' ); ?></label>
-				<input class="small-text" type="text" id="<?php echo esc_attr( $id ); ?>-exactly" name="<?php echo esc_attr( $id ); ?>[exact]" value="<?php echo esc_attr( $value['exact'] ); ?>"/>
+				<input class="small-text" type="number" id="<?php echo esc_attr( $id ); ?>-exactly" name="<?php echo esc_attr( $id ); ?>[exact]" value="<?php echo esc_attr( $value['exact'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'between' ); ?> type="radio" id="<?php echo esc_attr( $id . '-between' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="between" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-between' ); ?>"><?php esc_html_e( 'Between', 'ca-grants-plugin' ); ?></label>
-				<input type="text" id="<?php echo esc_attr( $id ); ?>-between-first" name="<?php echo esc_attr( $id ); ?>[between][low]" value="<?php echo esc_attr( $value['between']['low'] ); ?>"/>
+				<input type="number" id="<?php echo esc_attr( $id ); ?>-between-first" name="<?php echo esc_attr( $id ); ?>[between][low]" value="<?php echo esc_attr( $value['between']['low'] ); ?>"/>
 				<?php esc_html_e( ' and ', 'ca-grants-plugin' ); ?>
-				<input type="text" id="<?php echo esc_attr( $id ); ?>-between-second" name="<?php echo esc_attr( $id ); ?>[between][high]" value="<?php echo esc_attr( $value['between']['high'] ); ?>"/>
+				<input type="number" id="<?php echo esc_attr( $id ); ?>-between-second" name="<?php echo esc_attr( $id ); ?>[between][high]" value="<?php echo esc_attr( $value['between']['high'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant" <?php self::conditional_required( $meta_field ); ?>>
@@ -589,7 +596,7 @@ class Field {
 
 				<input <?php checked( $value['checkbox'], 'yes' ); ?> type="radio" id="<?php echo esc_attr( $id . '-yes' ); ?>" name="<?php echo esc_attr( $id ); ?>" value="yes" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-yes' ); ?>"><?php esc_html_e( 'Yes, with matching percentage: ', 'ca-grants-plugin' ); ?></label>
-				<input class="small-text" type="text" name="<?php echo esc_attr( $id ); ?>-percentage" value="<?php echo esc_attr( $value['percentage'] ); ?>"/>
+				<input class="small-text" type="number" max="100" name="<?php echo esc_attr( $id ); ?>-percentage" value="<?php echo esc_attr( $value['percentage'] ); ?>"/>
 			</td>
 		</tr>
 
@@ -608,6 +615,7 @@ class Field {
 
 		$name        = $meta_field['name'] ?? '';
 		$id          = $meta_field['id'] ?? '';
+		$class       = $meta_field['class'] ?? '';
 		$description = $meta_field['description'] ?? '';
 
 		if ( empty( $name ) || empty( $id ) ) {
@@ -617,7 +625,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr>
+		<tr class="<?php echo esc_attr( $class ); ?>">
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -674,7 +682,11 @@ class Field {
 						<label for="<?php echo esc_attr( $id ); ?>-name"><?php esc_html_e( 'Name', 'ca-grants-plugin' ); ?></label>
 					</th>
 					<td>
-						<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>" <?php self::conditional_required( $meta_field ); ?>/>
+						<?php if ( $id == 'contactInfo' ) : ?>
+							<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>"/>
+						<?php else: ?>
+							<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>" <?php self::conditional_required( $meta_field ); ?>/>
+						<?php endif; ?>
 					</td>
 				</tr>
 				<tr>
@@ -721,31 +733,37 @@ class Field {
 		$defaults = array(
 			'email' => '',
 			'url'   => '',
+			'type'  => 'none',
 		);
 
 		// Get the saved data
 		$value = wp_parse_args( get_post_meta( get_the_ID(), $id, true ), $defaults );
+
+		// Back compat for type.
+		if ( 'none' === $value['type'] && ( ! empty( $value['email'] ) || ! empty( $value['url'] ) ) ) {
+			$value['type'] = ( ! empty( $value['url'] ) ) ? 'url' : 'email';
+		}
 		?>
 		<tr>
 			<th>
-				<label for="email_submission"><?php esc_html_e( 'Email Submission', 'csl-grants-portal' ); ?></label>
+				<label for="electronic_submission"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
-				<input type="email" name="<?php echo esc_attr( $id ); ?>[email]" value="<?php echo esc_attr( $value['email'] ); ?>" id="email_submission" <?php self::conditional_required( $meta_field ); ?>>
-			</td>
-		</tr>
+				<input <?php checked( $value['type'], 'email' ); ?> type="radio" id="<?php echo esc_attr( $id . '-email' ); ?>" name="<?php echo esc_attr( $id ); ?>[type]" value="email" <?php self::conditional_required( $meta_field ); ?>>
+				<label for="<?php echo esc_attr( $id . '-email' ); ?>"><?php esc_html_e( 'Email: ', 'ca-grants-plugin' ); ?></label>
+				<input type="email" name="<?php echo esc_attr( $id ); ?>[email]" value="<?php echo esc_attr( $value['email'] ); ?>" id="email_submission">
+				<br><br>
 
-		<tr>
-			<th>
-				<label for="online_submission"><?php esc_html_e( 'Online Submission', 'csl-grants-portal' ); ?></label>
-				<?php self::tooltip( $description ); ?>
-			</th>
-			<td>
-				<input type="url" name="<?php echo esc_attr( $id ); ?>[url]" value="<?php echo esc_attr( $value['url'] ); ?>" id="online_submission" <?php self::conditional_required( $meta_field ); ?>>
-			</td>
-		</tr>
+				<input <?php checked( $value['type'], 'url' ); ?> type="radio" id="<?php echo esc_attr( $id . '-url' ); ?>" name="<?php echo esc_attr( $id ); ?>[type]" value="url" <?php self::conditional_required( $meta_field ); ?>>
+				<label for="<?php echo esc_attr( $id . '-url' ); ?>"><?php esc_html_e( 'URL: ', 'ca-grants-plugin' ); ?></label>
+				<input type="url" name="<?php echo esc_attr( $id ); ?>[url]" value="<?php echo esc_attr( $value['url'] ); ?>" id="online_submission">
+				<br><br>
 
+				<input <?php checked( $value['type'], 'none' ); ?> type="radio" id="<?php echo esc_attr( $id . '-none' ); ?>" name="<?php echo esc_attr( $id ); ?>[type]" value="none" <?php self::conditional_required( $meta_field ); ?>>
+				<label for="<?php echo esc_attr( $id . '-url' ); ?>"><?php esc_html_e( 'None ', 'ca-grants-plugin' ); ?></label>
+			</td>
+		</tr
 		<?php
 	}
 
@@ -846,13 +864,13 @@ class Field {
 				case 'applicantType':
 					$api_url .= 'applicant_type';
 					break;
-				case 'disbursementMethod':
+				case 'fundingMethod':
 					$api_url .= 'disbursement_method';
 					break;
 				case 'opportunityType':
 					$api_url .= 'opportunity_types';
 					break;
-				case 'revSources':
+				case 'fundingSource':
 					$api_url .= 'revenue_sources';
 					break;
 				default:
@@ -974,7 +992,7 @@ class Field {
 	 */
 	public static function maybe_sort_fields( $fields, $meta_field ) {
 		switch ( $meta_field['id'] ) {
-			case 'revSources':
+			case 'fundingSource':
 				$order    = array( 'State', 'Federal', 'Both', 'Other' );
 				$index_of = function( $name ) use ( $order ) {
 					return array_search( $name, $order, true );

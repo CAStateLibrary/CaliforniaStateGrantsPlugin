@@ -53,6 +53,10 @@ class EditGrant {
 		$this->settings    = new Settings();
 		$this->endpoint    = new GrantsEndpoint();
 		$this->meta_groups = array(
+			'award-stats'     => array(
+				'class' => 'CaGov\\Grants\\Meta\\AwardStats',
+				'title' => __( 'Award Stats', 'ca-grants-plugin' ),
+			),
 			'general'     => array(
 				'class' => 'CaGov\\Grants\\Meta\General',
 				'title' => __( 'General Grant Information', 'ca-grants-plugin' ),
@@ -154,8 +158,9 @@ class EditGrant {
 
 				switch ( $meta_field['type'] ) {
 					case 'checkbox':
-						$value = $_POST[ $meta_field['id'] ];
-						array_walk( $value, 'sanitize_text_field' );
+						$temp_value = $_POST[ $meta_field['id'] ];
+						array_walk( $temp_value, 'sanitize_text_field' );
+						$value = $temp_value;
 						break;
 					case 'email':
 						$value = sanitize_email( $_POST[ $meta_field['id'] ] );
@@ -170,8 +175,9 @@ class EditGrant {
 						$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
 						break;
 					case 'point_of_contact':
-						$value = $_POST[ $meta_field['id'] ];
-						array_walk( $value, 'sanitize_text_field' );
+						$temp_value = $_POST[ $meta_field['id'] ];
+						array_walk( $temp_value, 'sanitize_text_field' );
+						$value = $temp_value;
 						break;
 					case 'eligibility-matching-funds':
 						$value = array(
@@ -180,65 +186,72 @@ class EditGrant {
 						);
 						break;
 					case 'estimated-number-awards':
-						$value = $_POST[ $meta_field['id'] ];
+						$temp_value = $_POST[ $meta_field['id'] ];
 
-						if ( 'exact' === $value['checkbox'] ) {
-							$value['between']['low']  = '';
-							$value['between']['high'] = '';
-						} elseif ( 'between' === $value['checkbox'] ) {
-							$value['exact'] = '';
-						} elseif ( 'dependant' === $value['checkbox'] ) {
-							$value['between']['low']  = '';
-							$value['between']['high'] = '';
-							$value['exact']           = '';
+						if ( 'exact' === $temp_value['checkbox'] ) {
+							$temp_value['between']['low']  = '';
+							$temp_value['between']['high'] = '';
+						} elseif ( 'between' === $temp_value['checkbox'] ) {
+							$temp_value['exact'] = '';
+						} elseif ( 'dependant' === $temp_value['checkbox'] ) {
+							$temp_value['between']['low']  = '';
+							$temp_value['between']['high'] = '';
+							$temp_value['exact']           = '';
 						}
 
-						array_walk( $value, 'sanitize_text_field' );
+						array_walk( $temp_value, 'sanitize_text_field' );
+						$value = $temp_value;
 						break;
 					case 'estimated-award-amounts':
-						$value            = $_POST[ $meta_field['id'] ];
-						$temp['checkbox'] = ( isset( $value['checkbox'] ) ) ? sanitize_text_field( $value['checkbox'] ) : '';
+						$temp_value            = $_POST[ $meta_field['id'] ];
+						$temp['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
 
 						// Make sure the text boxes for the options not selected are empty, to avoid confusion.
-						if ( 'same' === $value['checkbox'] ) {
-							$value['unknown']['first']    = '';
-							$value['unknown']['second']   = '';
-							$value['different']['first']  = '';
-							$value['different']['second'] = '';
-							$value['different']['third']  = '';
-						} elseif ( 'different' === $value['checkbox'] ) {
-							$value['unknown']['first']  = '';
-							$value['unknown']['second'] = '';
-							$value['same']['amount']    = '';
-						} elseif ( 'unknown' === $value['checkbox'] ) {
-							$value['different']['first']  = '';
-							$value['different']['second'] = '';
-							$value['different']['third']  = '';
-							$value['same']['amount']      = '';
-						} elseif ( 'dependant' === $value['checkbox'] ) {
-							$value['unknown']['first']    = '';
-							$value['unknown']['second']   = '';
-							$value['different']['first']  = '';
-							$value['different']['second'] = '';
-							$value['different']['third']  = '';
-							$value['same']['amount']      = '';
+						if ( 'same' === $temp_value['checkbox'] ) {
+							$temp_value['unknown']['first']    = '';
+							$temp_value['unknown']['second']   = '';
+							$temp_value['different']['first']  = '';
+							$temp_value['different']['second'] = '';
+							$temp_value['different']['third']  = '';
+						} elseif ( 'different' === $temp_value['checkbox'] ) {
+							$temp_value['unknown']['first']  = '';
+							$temp_value['unknown']['second'] = '';
+							$temp_value['same']['amount']    = '';
+						} elseif ( 'unknown' === $temp_value['checkbox'] ) {
+							$temp_value['different']['first']  = '';
+							$temp_value['different']['second'] = '';
+							$temp_value['different']['third']  = '';
+							$temp_value['same']['amount']      = '';
+						} elseif ( 'dependant' === $temp_value['checkbox'] ) {
+							$temp_value['unknown']['first']    = '';
+							$temp_value['unknown']['second']   = '';
+							$temp_value['different']['first']  = '';
+							$temp_value['different']['second'] = '';
+							$temp_value['different']['third']  = '';
+							$temp_value['same']['amount']      = '';
 						}
 
-						array_walk( $value, 'sanitize_text_field' );
+						array_walk( $temp_value, 'sanitize_text_field' );
+						$value = $temp_value;
 						break;
 					case 'period-performance':
-						$value          = $_POST[ $meta_field['id'] ];
-						$value['num']   = ( isset( $value['num'] ) ) ? absint( $value['num'] ) : '';
-						$value['units'] = ( isset( $value['units'] ) ) ? sanitize_text_field( $value['units'] ) : '';
+						$temp_value          = $_POST[ $meta_field['id'] ];
+						$clean_value         = array();
+						$clean_value['num']   = ( isset( $temp_value['num'] ) ) ? absint( $temp_value['num'] ) : '';
+						$clean_value['units'] = ( isset( $temp_value['units'] ) ) ? sanitize_text_field( $temp_value['units'] ) : '';
+						$value = $clean_value;
 						break;
 					case 'electronic-submission-method':
-						$value          = $_POST[ $meta_field['id'] ];
-						$value['email'] = ( isset( $value['email'] ) ) ? sanitize_email( $value['email'] ) : '';
-						$value['url']   = ( isset( $value['url'] ) ) ? esc_url_raw( $value['url'] ) : '';
+						$temp_value          = $_POST[ $meta_field['id'] ];
+						$clean_value         = array();
+						$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
+						$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
+						$value = $clean_value;
 						break;
 					case 'application-deadline':
-						$value = $_POST[ $meta_field['id'] ];
-						array_walk( $value, 'sanitize_text_field' );
+						$temp_value = $_POST[ $meta_field['id'] ];
+						array_walk( $temp_value, 'sanitize_text_field' );
+						$value = $temp_value;
 						break;
 					default:
 						$value = sanitize_text_field( $_POST[ $meta_field['id'] ] );
@@ -354,6 +367,7 @@ class EditGrant {
 	 */
 	protected function get_all_meta_fields() {
 		return array_merge(
+			Meta\AwardStats::get_fields(),
 			Meta\General::get_fields(),
 			Meta\Eligibility::get_fields(),
 			Meta\Funding::get_fields(),

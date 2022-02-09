@@ -58,16 +58,16 @@ class Funding {
 	public static function get_fields() {
 		return array(
 			array(
-				'id'          => 'revSources',
-				'name'        => __( 'Revenue Source', 'ca-grants-plugin' ),
+				'id'          => 'fundingSource',
+				'name'        => __( 'Funding Source', 'ca-grants-plugin' ),
 				'type'        => 'radio',
 				'source'      => 'api',
-				'description' => __( 'If you select "other", please elaborate in the revenue source notes field below.', 'ca-grants-plugin' ),
+				'description' => __( 'If you select "Other", please elaborate in the funding source notes field below.', 'ca-grants-plugin' ),
 				'required'    => array( 'active' ),
 			),
 			array(
 				'id'          => 'revenueSourceNotes',
-				'name'        => __( 'Revenue Source Notes', 'ca-grants-plugin' ),
+				'name'        => __( 'Funding Source Notes', 'ca-grants-plugin' ),
 				'type'        => 'textarea',
 				'text_limit'  => 200,
 				'description' => __( 'Please specify information that may be helpful to applicants, such as proposition number, bond name/number, federal grant program, etc.', 'ca-grants-plugin' ),
@@ -104,18 +104,19 @@ class Funding {
 				'required' => array( 'active' ),
 			),
 			array(
-				'id'       => 'disbursementMethod',
-				'name'     => __( 'Funds Disbursement Methods', 'ca-grants-plugin' ),
-				'type'     => 'radio',
-				'source'   => 'api',
-				'required' => array( 'active' ),
+				'id'          => 'fundingMethod',
+				'name'        => __( 'Funding Method', 'ca-grants-plugin' ),
+				'type'        => 'radio',
+				'source'      => 'api',
+				'description' => __( 'If you select "Other", please elaborate in the funding method notes field below.', 'ca-grants-plugin' ),
+				'required'    => array( 'active' ),
 			),
 			array(
 				'id'          => 'disbursementMethodNotes',
-				'name'        => __( 'Funds Disbursement Details', 'ca-grants-plugin' ),
+				'name'        => __( 'Funding Method Notes', 'ca-grants-plugin' ),
 				'type'        => 'textarea',
 				'text_limit'  => 450,
-				'description' => __( 'Use this field to include 1-2 sentences providing details on the funds disbursement method.', 'ca-grants-plugin' ),
+				'description' => __( 'Use this field to include 1-2 sentences providing details on the funding method.', 'ca-grants-plugin' ),
 			),
 		);
 	}

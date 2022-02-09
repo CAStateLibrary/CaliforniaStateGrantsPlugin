@@ -192,13 +192,13 @@ class GrantsEndpoint {
 						case 'estimatedAwards':
 							if ( 'exact' === $metadata['checkbox'] ) {
 								$new_data['estimatedAwards'] = array(
-									'exact' => $metadata['exact'],
+									'exact' => absint( $metadata['exact'] ),
 								);
 							} elseif ( 'between' === $metadata['checkbox'] ) {
 								$new_data['estimatedAwards'] = array(
 									'between' => array(
-										$metadata['between']['low'],
-										$metadata['between']['high'],
+										absint( $metadata['between']['low'] ),
+										absint( $metadata['between']['high'] ),
 									),
 								);
 							} elseif ( 'dependant' === $metadata['checkbox'] ) {
@@ -223,10 +223,10 @@ class GrantsEndpoint {
 
 							break;
 
-						case 'disbursementMethod':
+						case 'fundingMethod':
 							$notes = get_post_meta( $post->ID, 'disbursementMethodNotes', true );
 
-							$new_data['disbursementMethod'] = array(
+							$new_data['fundingMethod'] = array(
 								'type'  => $metadata,
 								'notes' => $notes,
 							);
@@ -236,7 +236,7 @@ class GrantsEndpoint {
 						case 'estimatedAmounts':
 							if ( 'same' === $metadata['checkbox'] ) {
 								$new_data['estimatedAmounts'] = array(
-									'same' => $metadata['same']['amount'],
+									'same' => absint( $metadata['same']['amount'] ),
 								);
 							} elseif ( 'different' === $metadata['checkbox'] ) {
 								$new_data['estimatedAmounts'] = array(
@@ -249,8 +249,8 @@ class GrantsEndpoint {
 							} elseif ( 'unknown' === $metadata['checkbox'] ) {
 								$new_data['estimatedAmounts'] = array(
 									'range' => array(
-										$metadata['unknown']['first'],
-										$metadata['unknown']['second'],
+										absint( $metadata['unknown']['first'] ),
+										absint( $metadata['unknown']['second'] ),
 									),
 								);
 							} elseif ( 'dependant' === $metadata['checkbox'] ) {
@@ -282,7 +282,7 @@ class GrantsEndpoint {
 							);
 							break;
 
-						case 'revSources':
+						case 'fundingSource':
 							$notes                             = get_post_meta( $post->ID, 'revenueSourceNotes', true );
 							$new_data[ $metafield_data['id'] ] = array(
 								'type'  => $metadata,

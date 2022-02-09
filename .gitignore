@@ -28,4 +28,5 @@ Desktop.ini
 /vendor/*
 !/vendor/autoload.php
 !/vendor/composer
-!/vendor/yahnis-elsts
+!/vendor/symfony
+!/vendor/myclabs
