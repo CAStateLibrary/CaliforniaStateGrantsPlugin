@@ -1,17 +1,22 @@
 const grantTypeInputs = Array.from( document.querySelectorAll( 'input[name="isForecasted"]' ) );
 const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if],input[required]';
 const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
+const conditionalVisibleElems = 'tr[data-visible-if]';
+const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select[name="recipientType"]' ) );
 
 /**
  * Conditional requiring fields if grant is forecasted/active.
  */
 const main = () => {
-	if ( ! grantTypeInputs.length || ( ! getInputs().length && ! getOthers().length ) ) {
-		return;
+
+	if ( getVisableElems().length ) {
+		grantAwardsRecipientTypes.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 	}
 
-	// Update required attributes when the input changes.
-	grantTypeInputs.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+	if ( grantTypeInputs.length ) {
+		// Update required attributes when the input changes.
+		grantTypeInputs.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+	}
 
 	// Kick things off.
 	refreshRequiredAttributes();
@@ -27,11 +32,29 @@ const getCurrentGrantType = () => {
 };
 
 /**
+ * Get current Recipient type.
+ */
+const getCurrentRecipientType = () => {
+	const [current] = grantAwardsRecipientTypes.filter( input => input.selectedIndex );
+
+	return current ? current.value : '';
+};
+
+/**
  * Refresh all the inputs with conditional required attributes.
  */
 const refreshRequiredAttributes = () => {
-	getInputs().forEach( input => maybeSetRequired( input ) );
-	getOthers().forEach( el => maybeSetRequiredClass( el ) );
+	if ( getInputs().length ) {
+		getInputs().forEach( input => maybeSetRequired( input ) );
+	}
+
+	if ( getOthers().length ) {
+		getOthers().forEach( el => maybeSetRequiredClass( el ) );
+	}
+
+	if ( getVisableElems().length ) {
+		getVisableElems().forEach( el => maybeSetHiddenClass( el ) );
+	}
 };
 
 /**
@@ -79,6 +102,37 @@ const maybeSetRequiredClass = el => {
 };
 
 /**
+ * Maybe set hidden class.
+ *
+ * @param {HTMLElement} el
+ */
+const maybeSetHiddenClass = el => {
+	const { visibleIf }  = el.dataset;
+	const current        = getCurrentRecipientType();
+	const visibleOptions = JSON.parse( visibleIf );
+
+	console.log( 'lol' );
+
+	if (
+		! visibleOptions
+		|| 'recipientType' !== visibleOptions['fieldId']
+	) {
+		return;
+	}
+
+	if (
+		'not_equal' === visibleOptions['compare'] && current === visibleOptions['value']
+		|| 'equal' === visibleOptions['compare'] && current !== visibleOptions['value']
+	) {
+		el.classList.add( 'hidden' );
+		el.querySelector( 'input' ).setAttribute( 'required', false );
+	} else {
+		el.classList.remove( 'hidden' );
+		el.querySelector( 'input' ).setAttribute( 'required', true );
+	}
+};
+
+/**
  * Get inputs that require validation.
  */
 const getInputs = () => Array.from( document.querySelectorAll( conditionalValidationInputs ) );
@@ -88,5 +142,9 @@ const getInputs = () => Array.from( document.querySelectorAll( conditionalValida
  */
 const getOthers = () => Array.from( document.querySelectorAll( conditionalValidationOther ) );
 
+/**
+ * Get data-visable-if elements.
+ */
+const getVisableElems = () => Array.from( document.querySelectorAll( conditionalVisibleElems ) );
 
 export default main;

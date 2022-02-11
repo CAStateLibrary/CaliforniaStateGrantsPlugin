@@ -115,32 +115,44 @@ class GrantAwards {
 				'name'        => __( 'Recipient Type', 'ca-grants-plugin' ),
 				'type'        => 'select',
 				'source'      => 'api',
-				'description' => __( 'Indicate the recipient type, or the recipient type of the primary awardee if multiple awardees.<br/>
+				'description' => __(
+					'Indicate the recipient type, or the recipient type of the primary awardee if multiple awardees.<br/>
 				<ol>
 					<li>Business: A for-profit sole proprietorship, partnership, corporation, or other type of business.</li>
 					<li>Individual: A person receiving on their own behalf (i.e., not on behalf of a company, organization, institution, or government).</li>
 					<li>Nonprofit Organization: Any nonprofit (501(c)(3) or others) or tax-exempt organization, including private schools and private universities.</li>
 					<li>Public Agency: Counties, cities, special districts, public K12 or higher education institutions, or any other government entity.</li>
 					<li>Tribal Government: Federally recognized Tribes located in California and non-federally recognized Tribes located in California with an established government structure.</li>
-				</ol>', 'ca-grants-plugin' ),
+				</ol>',
+					'ca-grants-plugin'
+				),
 				'required'    => true,
 			),
-			array( // TODO: This field is only visible if “Individual” is not chosen as the “Recipient Type”.
+			array(
 				'id'          => 'primeryRecipientName',
 				'name'        => __( 'Primary Recipient Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s name (legal name of the principal investigator, project lead, or institution name), or the name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
 				'required'    => true,
+				'visible'     => array(
+					'fieldId' => 'recipientType',
+					'value'   => 'individual',
+					'compare' => 'not_equal',
+				),
 			),
-			array( // TODO: This field is only visible if “Individual” is chosen as the “Recipient Type”.
+			array(
 				'id'          => 'primeryRecipientFirstName',
 				'name'        => __( 'Primary Recipient’s First Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s first name, or the first name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
-				// TODO: Required if “Individual” is chosen as the “Recipient Type”
 				'required'    => true,
+				'visible'   => array(
+					'fieldId' => 'recipientType',
+					'value'   => 'individual',
+					'compare' => 'equal',
+				),
 			),
 			array( // TODO: This field is only visible if “Individual” is chosen as the “Recipient Type”.
 				'id'          => 'primeryRecipientLastName',
@@ -150,6 +162,11 @@ class GrantAwards {
 				'maxlength'   => 100,
 				// TODO: Required if “Individual” is chosen as the “Recipient Type”
 				'required'    => true,
+				'visible'   => array(
+					'fieldId' => 'recipientType',
+					'value'   => 'individual',
+					'compare' => 'equal',
+				),
 			),
 			array(
 				'id'          => 'secondaryRecipients',
@@ -158,7 +175,7 @@ class GrantAwards {
 				'description' => __( 'Indicate if additional recipients (e.g. sub, secondary, or co-recipients/grantees) were listed in the application. ', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
 				'required'    => true,
-				'fields'   => array(
+				'fields'      => array(
 					array(
 						'id'   => 'yes',
 						'name' => __( 'Yes', 'ca-grants-plugin' ),
@@ -216,15 +233,18 @@ class GrantAwards {
 				'id'          => 'geoLocationServed',
 				'name'        => __( 'Geographic Location Served', 'ca-grants-plugin' ),
 				'type'        => 'select',
-				'description' => __( 'Select the geographic location the grant serves. This should be the area served by the funds.<br>Options are as follows:
-				<ol>
-					<li>County (select multiple if applicable)</li>
-					<li>Statewide (as defined by your department or agency)</li>
-					<li>Out-of-state</li>
-				</ol>
-				Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
+				'description' => __(
+					'Select the geographic location the grant serves. This should be the area served by the funds.<br>Options are as follows:
+					<ol>
+						<li>County (select multiple if applicable)</li>
+						<li>Statewide (as defined by your department or agency)</li>
+						<li>Out-of-state</li>
+					</ol>
+					Please update if changes are made in the grant agreement.',
+					'ca-grants-plugin'
+				),
 				'required'    => true,
-				'fields'   => array(
+				'fields'      => array(
 					array(
 						'id'   => 'county',
 						'name' => __( 'County', 'ca-grants-plugin' ),

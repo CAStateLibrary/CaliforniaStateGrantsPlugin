@@ -154,8 +154,8 @@ class EditGrantAwards {
 					$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
 					break;
 				case 'save_to_field':
-					$post_id = absint( $_POST[ $meta_field['field_id'] ] );
-					$value   = sanitize_text_field( $_POST[ $meta_field['id'] ] );
+					$grant_id = absint( $_POST[ $meta_field['field_id'] ] );
+					update_post_meta( $grant_id, $meta_field['id'], sanitize_text_field( $_POST[ $meta_field['id'] ] ) );
 					break;
 				case 'point_of_contact':
 					$temp_value = $_POST[ $meta_field['id'] ];

@@ -130,6 +130,23 @@ class Field {
 	}
 
 	/**
+	 * Outputs an attribute for conditionally visible inputs.
+	 *
+	 * @param array $meta_field The meta field settings.
+	 *
+	 * @return void
+	 */
+	public static function conditional_visible( $meta_field ) {
+		if ( ! isset( $meta_field['visible'] ) ) {
+			return;
+		}
+
+		if ( is_array( $meta_field['visible'] ) ) {
+			printf( 'data-visible-if="%s"', esc_attr( wp_json_encode( $meta_field['visible'] ) ) );
+		}
+	}
+
+	/**
 	 * Render an post finder field
 	 *
 	 * @param array $meta_field The meta field to render
@@ -191,6 +208,7 @@ class Field {
 
 		if ( 'save_to_field' === $meta_field['type'] && ! empty( $meta_field['field_id'] ) ) {
 			$post_id = get_post_meta( $post_id, $meta_field['field_id'], true ) ?: $post_id;
+			$meta_field['type'] = 'number';
 		}
 
 		$type        = $meta_field['type'] ?? '';
@@ -206,7 +224,7 @@ class Field {
 		// Used for telephone fields
 		$pattern = 'placeholder=1-555-555-5555 pattern=[0-9]{1}-[0-9]{3}-[0-9]{3}-[0-9]{4}';
 		?>
-		<tr class="<?php echo esc_attr( $class ); ?>">
+		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
