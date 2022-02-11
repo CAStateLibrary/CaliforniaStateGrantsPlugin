@@ -121,6 +121,8 @@ class Field {
 			} else {
 				printf( 'data-required-if="%s"', esc_attr( implode( ',', $meta_field['required'] ) ) );
 			}
+		} else if ( $meta_field['required'] === true ) {
+			echo ' required="true" ';
 		}
 	}
 
@@ -141,7 +143,7 @@ class Field {
 		$class       = $meta_field['class'] ?? '';
 		$maxlength   = $meta_field['maxlength'] ?? '';
 		$value       = get_post_meta( get_the_ID(), $id, true );
-		$minnumber   = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : '';
+		$minnumber   = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
 		$maxnumber   = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
 
 		// Used for telephone fields
@@ -161,8 +163,12 @@ class Field {
 					maxlength="<?php echo esc_attr( $maxlength ); ?>"
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
-					<?php echo esc_html( $minnumber ); ?>
-					<?php echo esc_html( $maxnumber ); ?>
+					<?php
+					  if ( 'number' === $type ) {
+							echo esc_html( $minnumber );
+							echo esc_html( $maxnumber );
+						}
+					?>
 				/>
 			</td>
 		</tr>
@@ -334,7 +340,8 @@ class Field {
 
 					<?php endforeach; ?>
 				</select>
-				<span><?php echo esc_html( $description ); ?></span>
+				<br/>
+				<span><?php echo wp_kses_post( $description ); ?></span>
 			</td>
 		</tr>
 		<?php
@@ -870,6 +877,15 @@ class Field {
 					break;
 				case 'fundingSource':
 					$api_url .= 'revenue_sources';
+					break;
+				case 'fiscalYear':
+					$api_url .= 'fiscal-year';
+					break;
+				case 'recipientType':
+					$api_url .= 'recipient-types';
+					break;
+				case 'countiesServed':
+					$api_url .= 'counties';
 					break;
 				default:
 					$api_url = null;

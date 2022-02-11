@@ -94,6 +94,7 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\PostTypes\Grants',
 		'CaGov\Grants\PostTypes\GrantAwards',
 		'CaGov\Grants\PostTypes\EditGrant',
+		'CaGov\Grants\PostTypes\EditGrantAwards',
 		'CaGov\Grants\Admin\Settings',
 		'CaGov\Grants\Admin\SettingsPage',
 		'CaGov\Grants\Admin\WelcomePage',
