@@ -62,6 +62,9 @@ class Field {
 			case 'application-deadline':
 				self::render_application_deadline( $meta_field );
 				break;
+			case 'post-finder':
+				self::render_post_finder_field( $meta_field );
+				break;
 			default:
 				self::render_input_field( $meta_field );
 				break;
@@ -121,9 +124,57 @@ class Field {
 			} else {
 				printf( 'data-required-if="%s"', esc_attr( implode( ',', $meta_field['required'] ) ) );
 			}
-		} else if ( $meta_field['required'] === true ) {
+		} elseif ( $meta_field['required'] === true ) {
 			echo ' required="true" ';
 		}
+	}
+
+	/**
+	 * Render an post finder field
+	 *
+	 * @param array $meta_field The meta field to render
+	 */
+	public static function render_post_finder_field( $meta_field = array() ) {
+		if ( empty( $meta_field ) || ! is_array( $meta_field ) ) {
+			return;
+		}
+
+		$default_options = array(
+			// Whether to show a positional number next to each item. Makes it easy to see which position each item has. Default true.
+			'show_numbers'   => true,
+			// Whether to show the Recent Post select input. Default true.
+			'show_recent'    => true,
+			// Limit how many items can be selected. Default 10.
+			'limit'          => 10,
+			// Whether to include the init script for the input. Default true. If false, add custom script for select and search.
+			'include_script' => true,
+			// Array of arguments passed to our WP_Query instances.
+			'args'           => array(),
+		);
+
+		$name        = $meta_field['name'] ?? '';
+		$id          = $meta_field['id'] ?? '';
+		$value       = get_post_meta( get_the_ID(), $id, true );
+		$options     = $meta_field['options'] ?? array();
+		$options     = wp_parse_args( $options, $default_options );
+		$class       = $meta_field['class'] ?? '';
+		$description = $meta_field['description'] ?? '';
+
+		?>
+		<tr class="<?php echo esc_attr( $class ); ?>">
+			<th>
+				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
+				<?php self::tooltip( $description ); ?>
+			</th>
+			<td>
+				<?php
+				if ( function_exists( 'pf_render' ) ) {
+					pf_render( $id, $value, $options );
+				}
+				?>
+			</td>
+		</tr>
+		<?php
 	}
 
 	/**
@@ -164,10 +215,10 @@ class Field {
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php
-					  if ( 'number' === $type ) {
-							echo esc_html( $minnumber );
-							echo esc_html( $maxnumber );
-						}
+					if ( 'number' === $type ) {
+						  echo esc_html( $minnumber );
+						  echo esc_html( $maxnumber );
+					}
 					?>
 				/>
 			</td>
