@@ -8,6 +8,7 @@
 namespace CaGov\Grants\Meta;
 
 use CaGov\Grants\PostTypes\EditGrantAwards;
+use CaGov\Grants\PostTypes\Grants as GrantsCPT;
 
 /**
  * General Grant Data Meta Class
@@ -61,12 +62,21 @@ class GrantAwards {
 	 */
 	public static function get_fields() {
 		return array(
-			array( // TODO: Use post finder and make it select field to get grants.
+			array(
 				'id'          => 'grantID',
 				'name'        => __( 'Associated Grant', 'ca-grants-plugin' ),
-				'type'        => 'text',
+				'type'        => 'post-finder',
 				'description' => __( 'Select the grant to enter award data for.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'options'     => array(
+					'show_numbers'   => false,
+					'show_recent'    => false,
+					'limit'          => 1,
+					'include_script' => true,
+					'args'           => array(
+						'post_type' => GrantsCPT::CPT_SLUG,
+					),
+				),
 			),
 			array( // TODO: Save this field value to selected grant id meta.
 				'id'          => 'applicationsSubmitted',

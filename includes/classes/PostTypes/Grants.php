@@ -112,8 +112,8 @@ class Grants {
 		$args = array(
 			'labels'             => $this->get_labels(),
 			'description'        => __( 'California State Grants.', 'ca-grants-plugin' ),
-			'public'             => false,
-			'publicly_queryable' => true,
+			'public'             => true,
+			'publicly_queryable' => false, // Hide single page.
 			'show_ui'            => true,
 			'show_in_menu'       => true,
 			'show_in_rest'       => true,
@@ -121,7 +121,7 @@ class Grants {
 			'rewrite'            => array( 'slug' => 'grants' ),
 			'rest_base'          => 'grants',
 			'capability_type'    => 'post',
-			'has_archive'        => true,
+			'has_archive'        => false, // Hide archive page.
 			'hierarchical'       => false,
 			'menu_icon'          => 'dashicons-awards',
 			'menu_position'      => null,
