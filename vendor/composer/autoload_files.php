@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     '320cde22f66dd4f5d3fd621d3e88b98f' => $vendorDir . '/symfony/polyfill-ctype/bootstrap.php',
     '6124b4c8570aa390c21fafd04a26c69f' => $vendorDir . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+    'f0dfc2753ba4b943b88bf8d4f2038beb' => $vendorDir . '/10up/post-finder/post-finder.php',
 );
