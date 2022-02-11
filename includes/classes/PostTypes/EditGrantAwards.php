@@ -50,7 +50,7 @@ class EditGrantAwards {
 	 */
 	public function __construct() {
 		$this->meta_groups = array(
-			'grantAwards'     => array(
+			'grantAwards' => array(
 				'class' => 'CaGov\\Grants\\Meta\\GrantAwards',
 				'title' => __( 'Grant Awards', 'ca-grants-plugin' ),
 			),
@@ -153,6 +153,10 @@ class EditGrantAwards {
 				case 'textarea':
 					$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
 					break;
+				case 'save_to_field':
+					$post_id = absint( $_POST[ $meta_field['field_id'] ] );
+					$value   = sanitize_text_field( $_POST[ $meta_field['id'] ] );
+					break;
 				case 'point_of_contact':
 					$temp_value = $_POST[ $meta_field['id'] ];
 					array_walk( $temp_value, 'sanitize_text_field' );
@@ -163,7 +167,9 @@ class EditGrantAwards {
 					break;
 			}
 
-			update_post_meta( $post_id, $meta_field['id'], $value );
+			if ( ! empty( $post_id ) ) {
+				update_post_meta( $post_id, $meta_field['id'], $value );
+			}
 		}
 	}
 
@@ -192,7 +198,7 @@ class EditGrantAwards {
 	 */
 	protected function get_all_meta_fields() {
 		return array_merge(
-			Meta\General::get_fields(),
+			Meta\GrantAwards::get_fields(),
 		);
 	}
 

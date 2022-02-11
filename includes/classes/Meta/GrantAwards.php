@@ -78,17 +78,19 @@ class GrantAwards {
 					),
 				),
 			),
-			array( // TODO: Save this field value to selected grant id meta.
+			array(
 				'id'          => 'applicationsSubmitted',
 				'name'        => __( 'Number of Applications Submitted', 'ca-grants-plugin' ),
-				'type'        => 'number',
+				'type'        => 'save_to_field',
+				'field_id'    => 'grantID',
 				'description' => __( 'Enter the total applications received for this funding opportunity.', 'ca-grants-plugin' ),
 				'required'    => true,
 			),
-			array( // TODO: Save this field value to selected grant id meta.
+			array(
 				'id'          => 'grantsAwarded',
 				'name'        => __( 'Number of Grants Awarded', 'ca-grants-plugin' ),
-				'type'        => 'number',
+				'type'        => 'save_to_field',
+				'field_id'    => 'grantID',
 				'description' => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'required'    => true,
 			),

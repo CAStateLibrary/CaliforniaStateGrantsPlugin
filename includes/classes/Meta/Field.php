@@ -187,13 +187,19 @@ class Field {
 			return;
 		}
 
+		$post_id = get_the_ID();
+
+		if ( 'save_to_field' === $meta_field['type'] && ! empty( $meta_field['field_id'] ) ) {
+			$post_id = get_post_meta( $post_id, $meta_field['field_id'], true ) ?: $post_id;
+		}
+
 		$type        = $meta_field['type'] ?? '';
 		$name        = $meta_field['name'] ?? '';
 		$description = $meta_field['description'] ?? '';
 		$id          = $meta_field['id'] ?? '';
 		$class       = $meta_field['class'] ?? '';
 		$maxlength   = $meta_field['maxlength'] ?? '';
-		$value       = get_post_meta( get_the_ID(), $id, true );
+		$value       = get_post_meta( $post_id, $id, true );
 		$minnumber   = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
 		$maxnumber   = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
 
