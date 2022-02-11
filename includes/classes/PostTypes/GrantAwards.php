@@ -37,6 +37,9 @@ class GrantAwards {
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 
+		add_action( 'restrict_manage_posts', array( $this, 'add_post_filters' ) );
+		add_action( 'parse_query', array( $this, 'filter_query' ) );
+
 		self::$init = true;
 	}
 
@@ -97,5 +100,55 @@ class GrantAwards {
 			'not_found'          => __( 'No grants found.', 'ca-grants-plugin' ),
 			'not_found_in_trash' => __( 'No grants found in Trash.', 'ca-grants-plugin' ),
 		);
+	}
+
+	/**
+	 * Add custom filter.
+	 * i.e Filter awards by grant id.
+	 *
+	 * @param string $post_type current post type.
+	 */
+	public function add_post_filters( $post_type ) {
+		if ( self::CPT_SLUG !== $post_type ) {
+			return;
+		}
+
+		$grant_id    = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
+		$grant_title = get_the_title( $grant_id );
+
+		sprintf(
+			'<label class="screen-reader-text" for="ca-grants-filter">%s</label>',
+			esc_html__( 'Filter by Grant', 'ca-grants-plugin' )
+		);
+		echo '<select name="ca_grants_filter" id="ca-grants-filter">';
+			printf(
+				'<option value="">%s</option>',
+				esc_html__( 'Any Grants', 'ca-grants-plugin' )
+			);
+		if ( ! empty( $grant_id ) && ! empty( $grant_title ) ) {
+			printf(
+				'<option value="%d" selected="selected">%s</option>',
+				$grant_id,
+				$grant_title
+			);
+		}
+		echo '</select>';
+	}
+
+	/**
+	 * Filter wires stories for WP_Query post list view.
+	 *
+	 * @param WP_Query $wp_query WP_Query object.
+	 */
+	public function filter_query( $wp_query ) {
+		$grant_id = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
+
+		if ( empty( $grant_id ) ) {
+			return;
+		}
+
+		$wp_query->set( 'meta_key', 'grantID' );
+		$wp_query->set( 'meta_value', $grant_id );
+		$wp_query->set( 'meta_compare', '=' );
 	}
 }
