@@ -31,14 +31,6 @@ class EditGrantAwards {
 	public $settings;
 
 	/**
-	 * Endpoint.
-	 * TODO: Modify endpoint as part of E-3.5.1.
-	 *
-	 * @var GrantsAwardEndpoint
-	 */
-	public $endpoint;
-
-	/**
 	 * Meta groups
 	 *
 	 * @var array

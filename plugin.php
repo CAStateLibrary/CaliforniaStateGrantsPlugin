@@ -100,6 +100,7 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\Admin\WelcomePage',
 		'CaGov\Grants\Admin\Notices',
 		'CaGov\Grants\REST\GrantsEndpoint',
+		'CaGov\Grants\REST\GrantAwardsEndpoint',
 	);
 
 	return array_map(
