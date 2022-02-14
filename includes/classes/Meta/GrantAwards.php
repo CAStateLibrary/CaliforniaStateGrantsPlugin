@@ -213,6 +213,7 @@ class GrantAwards {
 				'type'        => 'datetime-local',
 				'description' => __( 'Provide the start date per the grant agreement.  For grants that are one-time spending opportunities (such as a lump sum payment), the date the grant was awarded serves as both start and end dates. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'max_date'    => 'grantFundedEndDate',
 			),
 			array(
 				'id'          => 'grantFundedEndDate',
@@ -220,6 +221,7 @@ class GrantAwards {
 				'type'        => 'datetime-local',
 				'description' => __( 'Provide the expected close date per the grant agreement. For grants that are one-time spending opportunities (such as a lump sum payment), the date the grant was awarded serves as both start and end dates. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'min_date'    => 'grantFundedStartDate',
 			),
 			array(
 				'id'          => 'projectAbstract',

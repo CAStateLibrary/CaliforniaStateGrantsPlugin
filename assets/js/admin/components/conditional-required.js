@@ -4,6 +4,8 @@ const conditionalValidationInputs = 'input[data-required-if],textarea[data-requi
 const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
 const conditionalVisibleElems = 'tr[data-visible-if]';
 const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select[name="recipientType"]' ) );
+const startDateElem = Array.from( document.querySelectorAll( 'input[data-min-date-id]' ) );
+const endDateElem = Array.from( document.querySelectorAll( 'input[data-max-date-id]' ) );
 
 /**
  * Conditional requiring fields if grant is forecasted/active.
@@ -24,8 +26,17 @@ const main = () => {
 		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 	}
 
+	if ( startDateElem.length ) {
+		startDateElem.forEach( input => input.addEventListener( 'change', refreshMinMaxDateAttributes ) );
+	}
+
+	if ( endDateElem.length ) {
+		endDateElem.forEach( input => input.addEventListener( 'change', refreshMinMaxDateAttributes ) );
+	}
+
 	// Kick things off.
 	refreshRequiredAttributes();
+	refreshMinMaxDateAttributes();
 };
 
 /**
@@ -75,6 +86,28 @@ const refreshRequiredAttributes = () => {
 	if ( getVisableElems().length ) {
 		getVisableElems().forEach( el => maybeSetHiddenClass( el ) );
 	}
+};
+
+/**
+ * Refresh min and max date for grant funded dates.
+ */
+const refreshMinMaxDateAttributes = () => {
+
+	if ( ! startDateElem.length && ! endDateElem.length ) {
+		return;
+	}
+
+	startDateElem.forEach( input => {
+		const { minDateId } = input.dataset;
+		const minDateElem =  document.getElementById( minDateId );
+		input.setAttribute( 'min', minDateElem.value );
+	} );
+
+	endDateElem.forEach( input => {
+		const { maxDateId } = input.dataset;
+		const maxDateElem =  document.getElementById( maxDateId );
+		input.setAttribute( 'max', maxDateElem.value );
+	} );
 };
 
 /**
