@@ -216,7 +216,10 @@ class GrantAwardsEndpoint {
 	public function modify_grants_rest_params( $args, $request ) {
 		$grant_id      = sanitize_text_field( $request->get_param( 'grant_id' ) );
 		$fiscal_year   = sanitize_text_field( $request->get_param( 'fiscal_year' ) );
-		$override_args = array();
+		$orderby       = sanitize_text_field( $request->get_param( 'orderby' ) );
+		$override_args = array(
+			'orderby' => 'title',
+		);
 
 		if ( ! empty( $grant_id ) ) {
 			$override_args['meta_query'][] = array(
@@ -232,6 +235,26 @@ class GrantAwardsEndpoint {
 				'value'   => $fiscal_year,
 				'compare' => '=',
 			);
+		}
+
+		if ( ! empty( $orderby ) ) {
+			$orderby_mappings = array(
+				'name'       => 'title', // Post Title
+				'project'    => 'projectTitle', // Project Title
+				'amount'     => 'totalAwardAmount', // Total Award Amount
+				'start_date' => 'grantFundedStartDate', // Beginning Date of Grant-Funded Project
+				'end_date'   => 'grantFundedEndDate', // End Date of Grant-Funded Project
+			);
+
+			if ( 'name' === $orderby ) {
+				$override_args['orderby'] = $orderby_mappings[ $orderby ];
+			} elseif ( 'amount' === $orderby ) {
+				$override_args['orderby']  = 'meta_value_num';
+				$override_args['meta_key'] = $orderby_mappings[ $orderby ];
+			} else {
+				$override_args['orderby']  = 'meta_value';
+				$override_args['meta_key'] = $orderby_mappings[ $orderby ];
+			}
 		}
 
 		return wp_parse_args( $override_args, $args );
