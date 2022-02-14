@@ -954,7 +954,7 @@ class Field {
 					$api_url .= 'revenue_sources';
 					break;
 				case 'fiscalYear':
-					$api_url .= 'fiscal-year';
+					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=3';
 					break;
 				case 'recipientType':
 					$api_url .= 'recipient-types';
