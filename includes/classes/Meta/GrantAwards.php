@@ -134,11 +134,11 @@ class GrantAwards {
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s name (legal name of the principal investigator, project lead, or institution name), or the name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
-				'required'    => true,
 				'visible'     => array(
-					'fieldId' => 'recipientType',
-					'value'   => 'individual',
-					'compare' => 'not_equal',
+					'fieldId'  => 'recipientType',
+					'value'    => 'individual',
+					'compare'  => 'not_equal',
+					'required' => true,
 				),
 			),
 			array(
@@ -147,25 +147,24 @@ class GrantAwards {
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s first name, or the first name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
-				'required'    => true,
-				'visible'   => array(
-					'fieldId' => 'recipientType',
-					'value'   => 'individual',
-					'compare' => 'equal',
+				'visible'     => array(
+					'fieldId'  => 'recipientType',
+					'value'    => 'individual',
+					'compare'  => 'equal',
+					'required' => true,
 				),
 			),
-			array( // TODO: This field is only visible if “Individual” is chosen as the “Recipient Type”.
+			array(
 				'id'          => 'primeryRecipientLastName',
 				'name'        => __( 'Primary Recipient’s Last Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s last name, or the last name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
-				// TODO: Required if “Individual” is chosen as the “Recipient Type”
-				'required'    => true,
-				'visible'   => array(
-					'fieldId' => 'recipientType',
-					'value'   => 'individual',
-					'compare' => 'equal',
+				'visible'     => array(
+					'fieldId'  => 'recipientType',
+					'value'    => 'individual',
+					'compare'  => 'equal',
+					'required' => true,
 				),
 			),
 			array(
@@ -207,12 +206,13 @@ class GrantAwards {
 				'description' => __( 'Provide any additional details, including: exceptions, amount or source (state, federal, in-kind, etc.) limitations, and matching funding percentage, if applicable.', 'ca-grants-plugin' ),
 				'text_limit'  => 300,
 			),
-			array( // TODO: Validation value should be <= the end date ( grantFundedEndDate ).
+			array(
 				'id'          => 'grantFundedStartDate',
 				'name'        => __( 'Beginning Date of Grant-Funded Project', 'ca-grants-plugin' ),
 				'type'        => 'datetime-local',
 				'description' => __( 'Provide the start date per the grant agreement.  For grants that are one-time spending opportunities (such as a lump sum payment), the date the grant was awarded serves as both start and end dates. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'max_date'    => 'grantFundedEndDate',
 			),
 			array(
 				'id'          => 'grantFundedEndDate',
@@ -220,6 +220,7 @@ class GrantAwards {
 				'type'        => 'datetime-local',
 				'description' => __( 'Provide the expected close date per the grant agreement. For grants that are one-time spending opportunities (such as a lump sum payment), the date the grant was awarded serves as both start and end dates. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'min_date'    => 'grantFundedStartDate',
 			),
 			array(
 				'id'          => 'projectAbstract',
@@ -259,7 +260,7 @@ class GrantAwards {
 					),
 				),
 			),
-			array( // TODO: [Verify] Required if “County” was selected as the “Geographic Location Served”
+			array(
 				'id'          => 'countiesServed',
 				'name'        => __( 'Counties Served', 'ca-grants-plugin' ),
 				'type'        => 'checkbox',

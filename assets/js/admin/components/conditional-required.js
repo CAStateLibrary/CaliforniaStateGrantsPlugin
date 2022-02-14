@@ -1,8 +1,11 @@
 const grantTypeInputs = Array.from( document.querySelectorAll( 'input[name="isForecasted"]' ) );
+const geoLocationServedElem = Array.from( document.querySelectorAll( 'select[name="geoLocationServed"]' ) );
 const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if],input[required]';
 const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
 const conditionalVisibleElems = 'tr[data-visible-if]';
 const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select[name="recipientType"]' ) );
+const startDateElem = Array.from( document.querySelectorAll( 'input[data-min-date-id]' ) );
+const endDateElem = Array.from( document.querySelectorAll( 'input[data-max-date-id]' ) );
 
 /**
  * Conditional requiring fields if grant is forecasted/active.
@@ -18,8 +21,22 @@ const main = () => {
 		grantTypeInputs.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 	}
 
+	if ( geoLocationServedElem.length ) {
+		// Update required attributes when the input changes.
+		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+	}
+
+	if ( startDateElem.length ) {
+		startDateElem.forEach( input => input.addEventListener( 'change', refreshMinMaxDateAttributes ) );
+	}
+
+	if ( endDateElem.length ) {
+		endDateElem.forEach( input => input.addEventListener( 'change', refreshMinMaxDateAttributes ) );
+	}
+
 	// Kick things off.
 	refreshRequiredAttributes();
+	refreshMinMaxDateAttributes();
 };
 
 /**
@@ -27,6 +44,20 @@ const main = () => {
  */
 const getCurrentGrantType = () => {
 	const [current] = grantTypeInputs.filter( input => input.checked );
+
+	return current ? current.value : '';
+};
+
+/**
+ * Get current geo location.
+ */
+const getCurrentGeoLocation = () => {
+
+	if ( ! geoLocationServedElem.length ) {
+		return '';
+	}
+
+	const [current] = geoLocationServedElem.filter( input => input.value );
 
 	return current ? current.value : '';
 };
@@ -58,6 +89,28 @@ const refreshRequiredAttributes = () => {
 };
 
 /**
+ * Refresh min and max date for grant funded dates.
+ */
+const refreshMinMaxDateAttributes = () => {
+
+	if ( ! startDateElem.length && ! endDateElem.length ) {
+		return;
+	}
+
+	startDateElem.forEach( input => {
+		const { minDateId } = input.dataset;
+		const minDateElem =  document.getElementById( minDateId );
+		input.setAttribute( 'min', minDateElem.value );
+	} );
+
+	endDateElem.forEach( input => {
+		const { maxDateId } = input.dataset;
+		const maxDateElem =  document.getElementById( maxDateId );
+		input.setAttribute( 'max', maxDateElem.value );
+	} );
+};
+
+/**
  * Maybe set required attribute.
  * @param {HTMLElement} input
  */
@@ -83,7 +136,13 @@ const maybeSetRequired = input => {
  */
 const maybeSetRequiredClass = el => {
 	const { requiredIf } = el.dataset;
-	const current        = getCurrentGrantType();
+	let current = '';
+
+	if ( geoLocationServedElem.length ) {
+		current = getCurrentGeoLocation();
+	} else if ( grantTypeInputs.length ) {
+		current = getCurrentGrantType();
+	}
 
 	if ( current ) {
 		if ( -1 !== requiredIf.split( ',' ).map( s => s.trim() ).indexOf( current ) ) {
@@ -111,8 +170,6 @@ const maybeSetHiddenClass = el => {
 	const current        = getCurrentRecipientType();
 	const visibleOptions = JSON.parse( visibleIf );
 
-	console.log( 'lol' );
-
 	if (
 		! visibleOptions
 		|| 'recipientType' !== visibleOptions['fieldId']
@@ -125,10 +182,16 @@ const maybeSetHiddenClass = el => {
 		|| 'equal' === visibleOptions['compare'] && current !== visibleOptions['value']
 	) {
 		el.classList.add( 'hidden' );
-		el.querySelector( 'input' ).setAttribute( 'required', false );
+
+		if ( true === visibleOptions['required'] ) {
+			el.querySelector( 'input' ).removeAttribute( 'required' );
+		}
 	} else {
 		el.classList.remove( 'hidden' );
-		el.querySelector( 'input' ).setAttribute( 'required', true );
+
+		if ( true === visibleOptions['required'] ) {
+			el.querySelector( 'input' ).setAttribute( 'required', true );
+		}
 	}
 };
 

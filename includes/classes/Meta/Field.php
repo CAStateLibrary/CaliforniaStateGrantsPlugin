@@ -207,7 +207,7 @@ class Field {
 		$post_id = get_the_ID();
 
 		if ( 'save_to_field' === $meta_field['type'] && ! empty( $meta_field['field_id'] ) ) {
-			$post_id = get_post_meta( $post_id, $meta_field['field_id'], true ) ?: $post_id;
+			$post_id            = get_post_meta( $post_id, $meta_field['field_id'], true ) ?: $post_id;
 			$meta_field['type'] = 'number';
 		}
 
@@ -697,6 +697,8 @@ class Field {
 		$id          = $meta_field['id'] ?? '';
 		$class       = $meta_field['class'] ?? '';
 		$description = $meta_field['description'] ?? '';
+		$max_date    = $meta_field['max_date'] ? 'data-max-date-id=' . $meta_field['max_date'] : '';
+		$min_date    = $meta_field['min_date'] ? 'data-min-date-id=' . $meta_field['min_date'] : '';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -717,6 +719,8 @@ class Field {
 					name="<?php echo esc_attr( $id ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
 					<?php self::conditional_required( $meta_field ); ?>
+					<?php echo esc_html( $max_date ); ?>
+					<?php echo esc_html( $min_date ); ?>
 				>
 			</td>
 		</tr>
@@ -764,7 +768,7 @@ class Field {
 					<td>
 						<?php if ( $id == 'contactInfo' ) : ?>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>"/>
-						<?php else: ?>
+						<?php else : ?>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>" <?php self::conditional_required( $meta_field ); ?>/>
 						<?php endif; ?>
 					</td>
@@ -954,7 +958,7 @@ class Field {
 					$api_url .= 'revenue_sources';
 					break;
 				case 'fiscalYear':
-					$api_url .= 'fiscal-year';
+					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=3';
 					break;
 				case 'recipientType':
 					$api_url .= 'recipient-types';
