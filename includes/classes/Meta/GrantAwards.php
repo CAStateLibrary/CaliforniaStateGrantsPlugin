@@ -134,11 +134,11 @@ class GrantAwards {
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s name (legal name of the principal investigator, project lead, or institution name), or the name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
-				'required'    => true,
 				'visible'     => array(
-					'fieldId' => 'recipientType',
-					'value'   => 'individual',
-					'compare' => 'not_equal',
+					'fieldId'  => 'recipientType',
+					'value'    => 'individual',
+					'compare'  => 'not_equal',
+					'required' => true,
 				),
 			),
 			array(
@@ -147,11 +147,11 @@ class GrantAwards {
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s first name, or the first name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
-				'required'    => true,
-				'visible'   => array(
-					'fieldId' => 'recipientType',
-					'value'   => 'individual',
-					'compare' => 'equal',
+				'visible'     => array(
+					'fieldId'  => 'recipientType',
+					'value'    => 'individual',
+					'compare'  => 'equal',
+					'required' => true,
 				),
 			),
 			array( // TODO: This field is only visible if “Individual” is chosen as the “Recipient Type”.
@@ -161,11 +161,11 @@ class GrantAwards {
 				'description' => __( 'Provide the award recipient’s last name, or the last name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
 				// TODO: Required if “Individual” is chosen as the “Recipient Type”
-				'required'    => true,
-				'visible'   => array(
-					'fieldId' => 'recipientType',
-					'value'   => 'individual',
-					'compare' => 'equal',
+				'visible'     => array(
+					'fieldId'  => 'recipientType',
+					'value'    => 'individual',
+					'compare'  => 'equal',
+					'required' => true,
 				),
 			),
 			array(

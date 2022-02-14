@@ -111,8 +111,6 @@ const maybeSetHiddenClass = el => {
 	const current        = getCurrentRecipientType();
 	const visibleOptions = JSON.parse( visibleIf );
 
-	console.log( 'lol' );
-
 	if (
 		! visibleOptions
 		|| 'recipientType' !== visibleOptions['fieldId']
@@ -125,10 +123,16 @@ const maybeSetHiddenClass = el => {
 		|| 'equal' === visibleOptions['compare'] && current !== visibleOptions['value']
 	) {
 		el.classList.add( 'hidden' );
-		el.querySelector( 'input' ).setAttribute( 'required', false );
+
+		if ( true === visibleOptions['required'] ) {
+			el.querySelector( 'input' ).removeAttribute( 'required' );
+		}
 	} else {
 		el.classList.remove( 'hidden' );
-		el.querySelector( 'input' ).setAttribute( 'required', true );
+
+		if ( true === visibleOptions['required'] ) {
+			el.querySelector( 'input' ).setAttribute( 'required', true );
+		}
 	}
 };
 
