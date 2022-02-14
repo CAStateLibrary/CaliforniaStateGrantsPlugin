@@ -85,22 +85,6 @@ function ca_grants_enable_updates() {
 }
 
 /**
- * Checks for definition of the `CSL_IS_PORTAL` constant and its' value,
- * which indicates whether the environment is the CSL portal site.
- * 
- * @note This function is used to enable/disable core CA Grants plugin behavior,
- * 		 and will not function on any other WordPress installation.
- *
- * @return boolean Returns `true` if the `CSL_IS_PORTAL` constant is defined, and has a boolean value of `true`.
- */
-function csl_is_portal() {
-	if ( defined( 'CSL_IS_PORTAL' ) && true === CSL_IS_PORTAL ) {
-		return true;
-	}
-	return false;
-}
-
-/**
  * Plugin setup.
  *
  * @return array Array of intialized class instances.
