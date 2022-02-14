@@ -1,4 +1,5 @@
 const grantTypeInputs = Array.from( document.querySelectorAll( 'input[name="isForecasted"]' ) );
+const geoLocationServedElem = Array.from( document.querySelectorAll( 'select[name="geoLocationServed"]' ) );
 const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if],input[required]';
 const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
 const conditionalVisibleElems = 'tr[data-visible-if]';
@@ -18,6 +19,11 @@ const main = () => {
 		grantTypeInputs.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 	}
 
+	if ( geoLocationServedElem.length ) {
+		// Update required attributes when the input changes.
+		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+	}
+
 	// Kick things off.
 	refreshRequiredAttributes();
 };
@@ -27,6 +33,20 @@ const main = () => {
  */
 const getCurrentGrantType = () => {
 	const [current] = grantTypeInputs.filter( input => input.checked );
+
+	return current ? current.value : '';
+};
+
+/**
+ * Get current geo location.
+ */
+const getCurrentGeoLocation = () => {
+
+	if ( ! geoLocationServedElem.length ) {
+		return '';
+	}
+
+	const [current] = geoLocationServedElem.filter( input => input.value );
 
 	return current ? current.value : '';
 };
@@ -83,7 +103,13 @@ const maybeSetRequired = input => {
  */
 const maybeSetRequiredClass = el => {
 	const { requiredIf } = el.dataset;
-	const current        = getCurrentGrantType();
+	let current = '';
+
+	if ( geoLocationServedElem.length ) {
+		current = getCurrentGeoLocation();
+	} else if ( grantTypeInputs.length ) {
+		current = getCurrentGrantType();
+	}
 
 	if ( current ) {
 		if ( -1 !== requiredIf.split( ',' ).map( s => s.trim() ).indexOf( current ) ) {
