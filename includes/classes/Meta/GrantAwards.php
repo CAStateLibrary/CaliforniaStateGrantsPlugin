@@ -154,13 +154,12 @@ class GrantAwards {
 					'required' => true,
 				),
 			),
-			array( // TODO: This field is only visible if “Individual” is chosen as the “Recipient Type”.
+			array(
 				'id'          => 'primeryRecipientLastName',
 				'name'        => __( 'Primary Recipient’s Last Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s last name, or the last name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
-				// TODO: Required if “Individual” is chosen as the “Recipient Type”
 				'visible'     => array(
 					'fieldId'  => 'recipientType',
 					'value'    => 'individual',
@@ -207,7 +206,7 @@ class GrantAwards {
 				'description' => __( 'Provide any additional details, including: exceptions, amount or source (state, federal, in-kind, etc.) limitations, and matching funding percentage, if applicable.', 'ca-grants-plugin' ),
 				'text_limit'  => 300,
 			),
-			array( // TODO: Validation value should be <= the end date ( grantFundedEndDate ).
+			array(
 				'id'          => 'grantFundedStartDate',
 				'name'        => __( 'Beginning Date of Grant-Funded Project', 'ca-grants-plugin' ),
 				'type'        => 'datetime-local',
@@ -261,7 +260,7 @@ class GrantAwards {
 					),
 				),
 			),
-			array( // TODO: [Verify] Required if “County” was selected as the “Geographic Location Served”
+			array(
 				'id'          => 'countiesServed',
 				'name'        => __( 'Counties Served', 'ca-grants-plugin' ),
 				'type'        => 'checkbox',
