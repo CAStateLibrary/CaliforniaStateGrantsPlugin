@@ -66,7 +66,7 @@ class GrantAwards {
 				'id'          => 'grantID',
 				'name'        => __( 'Associated Grant', 'ca-grants-plugin' ),
 				'type'        => 'post-finder',
-				'description' => __( 'Select the grant to enter award data for.', 'ca-grants-plugin' ),
+				'description' => __( 'Select a grant to enter award data.', 'ca-grants-plugin' ),
 				'required'    => true,
 				'options'     => array(
 					'show_numbers'   => false,
@@ -83,7 +83,7 @@ class GrantAwards {
 				'name'        => __( 'Number of Applications Submitted', 'ca-grants-plugin' ),
 				'type'        => 'save_to_field',
 				'field_id'    => 'grantID',
-				'description' => __( 'Enter the total applications received for this funding opportunity.', 'ca-grants-plugin' ),
+				'description' => __( 'Enter the total number of applications received for this grant.', 'ca-grants-plugin' ),
 				'required'    => true,
 			),
 			array(
@@ -91,7 +91,7 @@ class GrantAwards {
 				'name'        => __( 'Number of Grants Awarded', 'ca-grants-plugin' ),
 				'type'        => 'save_to_field',
 				'field_id'    => 'grantID',
-				'description' => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
+				'description' => __( 'Enter the number of individual awardees for this grant. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'required'    => true,
 			),
 			array(
@@ -99,7 +99,7 @@ class GrantAwards {
 				'name'        => __( 'Fiscal Year', 'ca-grants-plugin' ),
 				'type'        => 'select',
 				'source'      => 'api',
-				'description' => __( 'Select the Fiscal Year this award belongs to.', 'ca-grants-plugin' ),
+				'description' => __( 'Select the fiscal year in which this grant opportunity closed for applications.', 'ca-grants-plugin' ),
 				'required'    => true,
 			),
 			array(
@@ -133,7 +133,7 @@ class GrantAwards {
 				'name'        => __( 'Primary Recipient Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s name (legal name of the principal investigator, project lead, or institution name), or the name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
-				'maxlength'   => 100,
+				'maxlength'   => 200,
 				'visible'     => array(
 					'fieldId'  => 'recipientType',
 					'value'    => 'individual',
@@ -145,7 +145,7 @@ class GrantAwards {
 				'id'          => 'primeryRecipientFirstName',
 				'name'        => __( 'Primary Recipient’s First Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
-				'description' => __( 'Provide the award recipient’s first name, or the first name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
+				'description' => __( 'Provide the award recipient’s first name, or the first name of the primary awardee if multiple recipients. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
 				'visible'     => array(
 					'fieldId'  => 'recipientType',
@@ -158,7 +158,7 @@ class GrantAwards {
 				'id'          => 'primeryRecipientLastName',
 				'name'        => __( 'Primary Recipient’s Last Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
-				'description' => __( 'Provide the award recipient’s last name, or the last name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
+				'description' => __( 'Provide the award recipient’s last name, or the last name of the primary awardee if multiple recipients. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
 				'visible'     => array(
 					'fieldId'  => 'recipientType',
