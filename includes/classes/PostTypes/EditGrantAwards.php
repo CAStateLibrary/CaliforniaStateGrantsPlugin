@@ -69,6 +69,7 @@ class EditGrantAwards {
 
 		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
 		add_action( 'save_post_' . GrantAwards::CPT_SLUG, array( $this, 'save_post' ) );
+		add_action( 'save_post_' . GrantAwards::CPT_SLUG, array( $this, 'save_post_title' ), 11 );
 		add_action( 'admin_head', array( $this, 'maybe_hide_preview' ) );
 
 		self::$init = true;
@@ -154,8 +155,8 @@ class EditGrantAwards {
 					$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
 					break;
 				case 'save_to_field':
-					$post_id = absint( $_POST[ $meta_field['field_id'] ] );
-					$value   = sanitize_text_field( $_POST[ $meta_field['id'] ] );
+					$grant_id = absint( $_POST[ $meta_field['field_id'] ] );
+					update_post_meta( $grant_id, $meta_field['id'], sanitize_text_field( $_POST[ $meta_field['id'] ] ) );
 					break;
 				case 'point_of_contact':
 					$temp_value = $_POST[ $meta_field['id'] ];
@@ -170,6 +171,38 @@ class EditGrantAwards {
 			if ( ! empty( $post_id ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );
 			}
+		}
+	}
+
+	/**
+	 * Save post title based on Recipient Type value.
+	 *
+	 * @param int $post_id The ID of the currently displayed post.
+	 */
+	public function save_post_title( $post_id ) {
+		if ( ! isset( $_POST[ self::NONCE_FIELD ] ) || ! wp_verify_nonce( $_POST[ self::NONCE_FIELD ], self::NONCE_ACTION ) ) {
+			return;
+		}
+
+		$recipientType = get_post_meta( $post_id, 'recipientType', true );
+
+		if ( 'individual' === $recipientType ) {
+			$first_name = get_post_meta( $post_id, 'primeryRecipientFirstName', true ) ?: '';
+			$last_name  = get_post_meta( $post_id, 'primeryRecipientLastName', true ) ?: '';
+			$full_name  = $first_name . ' ' . $last_name;
+		} else {
+			$full_name = get_post_meta( $post_id, 'primeryRecipientName', true );
+		}
+
+		if ( ! empty( $full_name ) ) {
+			remove_action( 'save_post_' . GrantAwards::CPT_SLUG, array( $this, 'save_post' ) );
+			remove_action( 'save_post_' . GrantAwards::CPT_SLUG, array( $this, 'save_post_title' ), 11 );
+			wp_update_post(
+				[
+					'ID'         => $post_id,
+					'post_title' => $full_name,
+				]
+			);
 		}
 	}
 
