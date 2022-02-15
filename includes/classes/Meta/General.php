@@ -33,7 +33,7 @@ class General {
 	 * @return void
 	 */
 	public function render_metabox() {
-		wp_nonce_field( EditGrant::NONCE_ACTION, EditGrant::NONCE_FIELD );
+		wp_nonce_field( EditGrant::$nonce_action, EditGrant::$nonce_field );
 		if ( $this->description ) {
 			echo '<p class="grants-metabox-description">' . esc_html( $this->description ) . '</p>';
 		}
