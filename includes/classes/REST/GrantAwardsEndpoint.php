@@ -1,6 +1,6 @@
 <?php
 /**
- * Grants Endpoint
+ * Grant Awards Endpoint
  *
  * @package CaGov\Grants
  */
@@ -71,8 +71,9 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		$query_params['orderby'] = array(
 			'description' => __( 'Sort collection by post attribute.', 'ca-grants-plugin' ),
 			'type'        => 'string',
-			'default'     => 'name',
+			'default'     => 'date',
 			'enum'        => array(
+				'date', // Post date
 				'name', // Post Title
 				'project', // Project Title
 				'amount', // Total Award Amount
@@ -94,7 +95,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 	 *                                              WP_Error otherwise.
 	 */
 	public function grant_id_present_rest_request( $response, $handler, $request ) {
-		if ( 0 !== strpos( $request->get_route(), '/wp/v2/grant-awards' ) ) {
+		if ( 0 !== strpos( $request->get_route(), '/wp/v2/' . self::$rest_slug ) ) {
 			return $response;
 		}
 
@@ -126,7 +127,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 	}
 
 	/**
-	 * Ensure the Grants REST API returns all Grants
+	 * Ensure the Grant Awards REST API returns all Grants
 	 *
 	 * @param array           $args    The params used in the request.
 	 * @param WP_REST_Request $request The post type object.
@@ -138,7 +139,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		$fiscal_year   = sanitize_text_field( $request->get_param( 'fiscal_year' ) );
 		$orderby       = sanitize_text_field( $request->get_param( 'orderby' ) );
 		$override_args = array(
-			'orderby' => 'title',
+			'orderby' => 'date',
 		);
 
 		if ( ! empty( $grant_id ) ) {
@@ -189,11 +190,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 	 * @return \WP_REST_Response The modified response
 	 */
 	public function modify_grants_rest_response( $response, $post ) {
-		$new_response = wp_cache_get( 'grant_award_rest_response_' . $post->ID );
-
-		if ( false !== $new_response ) {
-			return $new_response;
-		}
+		// TODO: Add custom cache for grant award response, with respecting params like orderby.
 
 		// Fields that aren't needed in the REST response
 		$blacklisted_fields = array(
@@ -250,8 +247,6 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		}
 
 		$new_response->set_data( $new_data );
-
-		wp_cache_set( 'grant_award_rest_response_' . $post->ID, $new_response );
 
 		return $new_response;
 	}
