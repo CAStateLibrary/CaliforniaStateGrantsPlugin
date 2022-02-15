@@ -56,6 +56,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 
 	/**
 	 * Modify collection parameters for the grant awards post type REST controller.
+	 * TODO: Add fiscal_year collection params.
 	 *
 	 * @param array $query_params JSON Schema-formatted collection parameters.
 	 *
@@ -68,11 +69,6 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			'type'              => 'integer',
 			'sanitize_callback' => 'absint',
 			'required'          => true,
-		);
-
-		$query_params['fiscal_year'] = array(
-			'description' => __( 'Fiscal Year Taxonomy slug, to get all grant awards within provided fiscal year for the grant. i.e 2020-2021', 'ca-grants-plugin' ),
-			'type'        => 'string',
 		);
 
 		$query_params['orderby'] = array(
@@ -135,6 +131,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 
 	/**
 	 * Ensure the Grant Awards REST API returns all Grants
+	 * TODO: Add fiscal year param/query.
 	 *
 	 * @param array           $args    The params used in the request.
 	 * @param WP_REST_Request $request The post type object.
@@ -143,7 +140,6 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 	 */
 	public function modify_grants_rest_params( $args, $request ) {
 		$grant_id      = sanitize_text_field( $request->get_param( 'grant_id' ) );
-		$fiscal_year   = sanitize_text_field( $request->get_param( 'fiscal_year' ) );
 		$orderby       = sanitize_text_field( $request->get_param( 'orderby' ) );
 		$override_args = array(
 			'orderby' => 'date',
@@ -153,14 +149,6 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			$override_args['meta_query'][] = array(
 				'key'     => 'grantID',
 				'value'   => $grant_id,
-				'compare' => '=',
-			);
-		}
-
-		if ( ! empty( $fiscal_year ) ) {
-			$override_args['meta_query'][] = array(
-				'key'     => 'fiscalYear',
-				'value'   => $fiscal_year,
 				'compare' => '=',
 			);
 		}
