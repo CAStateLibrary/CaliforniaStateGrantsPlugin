@@ -113,23 +113,27 @@ class GrantAwards {
 			return;
 		}
 
-		$grant_id    = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
+		$grant_id    = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT ) ?: 0;
 		$grant_title = get_the_title( $grant_id );
+
+		if ( empty( $grant_id ) || empty( $grant_title ) ) {
+			return;
+		}
 
 		sprintf(
 			'<label class="screen-reader-text" for="ca-grants-filter">%s</label>',
 			esc_html__( 'Filter by Grant', 'ca-grants-plugin' )
 		);
-		echo '<select name="ca_grants_filter" id="ca-grants-filter">';
+		echo '<select name="grant_id" id="ca-grants-filter">';
 			printf(
 				'<option value="">%s</option>',
-				esc_html__( 'Any Grants', 'ca-grants-plugin' )
+				esc_html__( 'Any Grant', 'ca-grants-plugin' )
 			);
 		if ( ! empty( $grant_id ) && ! empty( $grant_title ) ) {
 			printf(
 				'<option value="%d" selected="selected">%s</option>',
-				$grant_id,
-				$grant_title
+				esc_attr( $grant_id ),
+				esc_html( $grant_title )
 			);
 		}
 		echo '</select>';
