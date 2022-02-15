@@ -93,6 +93,7 @@ function ca_grants_plugin_setup() {
 	$classes = array(
 		'CaGov\Grants\PostTypes\Grants',
 		'CaGov\Grants\PostTypes\GrantAwards',
+		'CaGov\Grants\PostTypes\AwardUploads',
 		'CaGov\Grants\PostTypes\EditGrant',
 		'CaGov\Grants\PostTypes\EditGrantAwards',
 		'CaGov\Grants\Admin\Settings',
