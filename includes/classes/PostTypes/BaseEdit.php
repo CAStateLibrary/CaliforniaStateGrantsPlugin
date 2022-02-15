@@ -7,6 +7,8 @@
 
 namespace CaGov\Grants\PostTypes;
 
+use CaGov\Grants\Admin\Settings;
+
 /**
  * Edit Base class.
  */
@@ -31,7 +33,7 @@ abstract class BaseEdit {
 	 *
 	 * @var string
 	 */
-	public static $cpt_slug;
+	public static $cpt_slug = '';
 
 	/**
 	 * Init
@@ -45,7 +47,14 @@ abstract class BaseEdit {
 	 *
 	 * @var array
 	 */
-	public $meta_groups;
+	public $meta_groups = array();
+
+	/**
+	 * Settings.
+	 *
+	 * @var Settings
+	 */
+	public $settings;
 
 	/**
 	 * Constructor.
@@ -64,14 +73,15 @@ abstract class BaseEdit {
 	 *
 	 * @return void
 	 */
-	public function setup( $cpt_slug ) {
+	public function setup( $cpt_slug = '' ) {
 
-		self::$cpt_slug     = $cpt_slug;
-		self::$nonce_field  = $cpt_slug . self::$nonce_field;
-		self::$nonce_action = $cpt_slug . self::$nonce_action;
+		static::$cpt_slug     = $cpt_slug;
+		static::$nonce_field  = '_' . $cpt_slug . static::$nonce_field;
+		static::$nonce_action = $cpt_slug . static::$nonce_action;
+		$this->settings       = new Settings();
 
-		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
-		add_action( 'save_post_' . self::$cpt_slug, array( $this, 'save_post' ) );
+		add_action( 'add_meta_boxes_' . $cpt_slug, array( $this, 'add_metaboxes' ) );
+		add_action( 'save_post_' . $cpt_slug, array( $this, 'save_post' ) );
 		add_action( 'admin_head', array( $this, 'maybe_hide_preview' ) );
 	}
 
@@ -81,13 +91,14 @@ abstract class BaseEdit {
 	 * @return void
 	 */
 	public function add_metaboxes() {
+
 		foreach ( $this->meta_groups as $group_key => $meta_group ) {
 			$class = new $meta_group['class']();
 			add_meta_box(
-				self::$cpt_slug . "-submission_{$group_key}",
+				static::$cpt_slug . "-submission_{$group_key}",
 				$meta_group['title'],
 				array( $class, 'render_metabox' ),
-				self::$cpt_slug,
+				static::$cpt_slug,
 				'normal',
 				'high'
 			);
@@ -105,7 +116,8 @@ abstract class BaseEdit {
 		}
 
 		$screen = get_current_screen();
-		if ( $screen && self::$cpt_slug === $screen->post_type && 'post' === $screen->base ) {
+
+		if ( $screen && static::$cpt_slug === $screen->post_type && 'post' === $screen->base ) {
 			return true;
 		}
 
@@ -118,7 +130,7 @@ abstract class BaseEdit {
 	 * @param integer $post_id The ID of the currently displayed post.
 	 */
 	public function save_post( $post_id ) {
-		if ( ! isset( $_POST[ self::$nonce_field ] ) || ! wp_verify_nonce( $_POST[ self::$nonce_field ], self::$nonce_action ) ) {
+		if ( ! isset( $_POST[ static::$nonce_field ] ) || ! wp_verify_nonce( $_POST[ static::$nonce_field ], static::$nonce_action ) ) {
 			return;
 		}
 
@@ -163,6 +175,80 @@ abstract class BaseEdit {
 					array_walk( $temp_value, 'sanitize_text_field' );
 					$value = $temp_value;
 					break;
+				case 'eligibility-matching-funds':
+					$value = array(
+						'checkbox'   => sanitize_text_field( $_POST[ $meta_field['id'] ] ),
+						'percentage' => absint( $_POST[ $meta_field['id'] . '-percentage' ] ),
+					);
+					break;
+				case 'estimated-number-awards':
+					$temp_value = $_POST[ $meta_field['id'] ];
+
+					if ( 'exact' === $temp_value['checkbox'] ) {
+						$temp_value['between']['low']  = '';
+						$temp_value['between']['high'] = '';
+					} elseif ( 'between' === $temp_value['checkbox'] ) {
+						$temp_value['exact'] = '';
+					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
+						$temp_value['between']['low']  = '';
+						$temp_value['between']['high'] = '';
+						$temp_value['exact']           = '';
+					}
+
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				case 'estimated-award-amounts':
+					$temp_value       = $_POST[ $meta_field['id'] ];
+					$temp['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
+
+					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
+					if ( 'same' === $temp_value['checkbox'] ) {
+						$temp_value['unknown']['first']    = '';
+						$temp_value['unknown']['second']   = '';
+						$temp_value['different']['first']  = '';
+						$temp_value['different']['second'] = '';
+						$temp_value['different']['third']  = '';
+					} elseif ( 'different' === $temp_value['checkbox'] ) {
+						$temp_value['unknown']['first']  = '';
+						$temp_value['unknown']['second'] = '';
+						$temp_value['same']['amount']    = '';
+					} elseif ( 'unknown' === $temp_value['checkbox'] ) {
+						$temp_value['different']['first']  = '';
+						$temp_value['different']['second'] = '';
+						$temp_value['different']['third']  = '';
+						$temp_value['same']['amount']      = '';
+					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
+						$temp_value['unknown']['first']    = '';
+						$temp_value['unknown']['second']   = '';
+						$temp_value['different']['first']  = '';
+						$temp_value['different']['second'] = '';
+						$temp_value['different']['third']  = '';
+						$temp_value['same']['amount']      = '';
+					}
+
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				case 'period-performance':
+					$temp_value           = $_POST[ $meta_field['id'] ];
+					$clean_value          = array();
+					$clean_value['num']   = ( isset( $temp_value['num'] ) ) ? absint( $temp_value['num'] ) : '';
+					$clean_value['units'] = ( isset( $temp_value['units'] ) ) ? sanitize_text_field( $temp_value['units'] ) : '';
+					$value                = $clean_value;
+					break;
+				case 'electronic-submission-method':
+					$temp_value           = $_POST[ $meta_field['id'] ];
+					$clean_value          = array();
+					$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
+					$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
+					$value                = $clean_value;
+					break;
+				case 'application-deadline':
+					$temp_value = $_POST[ $meta_field['id'] ];
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
 				default:
 					$value = sanitize_text_field( $_POST[ $meta_field['id'] ] );
 					break;
@@ -184,8 +270,8 @@ abstract class BaseEdit {
 			return;
 		}
 
-		$post_type = get_post_type_object( self::$cpt_slug );
-		if ( ! $post_type || $post_type->public ) {
+		$post_type = get_post_type_object( static::$cpt_slug );
+		if ( ! $post_type || $post_type->publicly_queryable ) {
 			return;
 		}
 

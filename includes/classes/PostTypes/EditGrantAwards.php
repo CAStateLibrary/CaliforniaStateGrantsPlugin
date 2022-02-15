@@ -26,12 +26,20 @@ class EditGrantAwards extends BaseEdit {
 	 *
 	 * @var array
 	 */
-	public $meta_groups;
+	public $meta_groups = array();
+
+	/**
+	 * CPT Slug for edit screen.
+	 *
+	 * @var string
+	 */
+	public static $cpt_slug = '';
 
 	/**
 	 * Constructor.
 	 */
 	public function __construct() {
+		parent::__construct();
 		$this->meta_groups = array(
 			'grantAwards' => array(
 				'class' => 'CaGov\\Grants\\Meta\\GrantAwards',
@@ -46,15 +54,15 @@ class EditGrantAwards extends BaseEdit {
 	 * @return void
 	 */
 	public function setup( $cpt_slug = GrantAwards::CPT_SLUG ) {
-		if ( self::$init ) {
+		if ( static::$init ) {
 			return;
 		}
 
 		parent::setup( $cpt_slug );
 
-		add_action( 'save_post_' . self::$cpt_slug, array( $this, 'save_post_title' ), 11 );
+		add_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
 
-		self::$init = true;
+		static::$init = true;
 	}
 
 	/**
@@ -63,7 +71,7 @@ class EditGrantAwards extends BaseEdit {
 	 * @param int $post_id The ID of the currently displayed post.
 	 */
 	public function save_post_title( $post_id ) {
-		if ( ! isset( $_POST[ self::$nonce_field ] ) || ! wp_verify_nonce( $_POST[ self::$nonce_field ], self::$nonce_action ) ) {
+		if ( ! isset( $_POST[ static::$nonce_field ] ) || ! wp_verify_nonce( $_POST[ static::$nonce_field ], static::$nonce_action ) ) {
 			return;
 		}
 
@@ -78,8 +86,8 @@ class EditGrantAwards extends BaseEdit {
 		}
 
 		if ( ! empty( $full_name ) ) {
-			remove_action( 'save_post_' . self::$cpt_slug, array( $this, 'save_post' ) );
-			remove_action( 'save_post_' . self::$cpt_slug, array( $this, 'save_post_title' ), 11 );
+			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post' ) );
+			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
 			wp_update_post(
 				[
 					'ID'         => $post_id,
