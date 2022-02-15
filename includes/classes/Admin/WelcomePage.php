@@ -76,7 +76,7 @@ class WelcomePage {
 		}
 
 		add_submenu_page(
-			'edit.php?post_type=' . GRANTS::CPT_SLUG,
+			'edit.php?post_type=' . GRANTS::get_cpt_slug(),
 			esc_html__( 'California State Grants Plugin', 'ca-grants-plugin' ),
 			esc_html__( 'Getting Started', 'ca-grants-plugin' ),
 			'manage_options',
@@ -106,7 +106,7 @@ class WelcomePage {
 				printf(
 					'%s <a href="%s">%s</a>',
 					esc_html__( 'Ready to', 'ca-grants-plugin' ),
-					esc_url( admin_url( 'post-new.php?post_type=' . Grants::CPT_SLUG ) ),
+					esc_url( admin_url( 'post-new.php?post_type=' . Grants::get_cpt_slug() ) ),
 					esc_html__( 'add your first grant?', 'ca-grants-plugin' )
 				);
 			?>
@@ -138,7 +138,7 @@ class WelcomePage {
 	public static function url() {
 		return add_query_arg(
 			array(
-				'post_type' => Grants::CPT_SLUG,
+				'post_type' => Grants::get_cpt_slug(),
 				'page'      => 'welcome',
 			),
 			admin_url( 'edit.php' )

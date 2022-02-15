@@ -72,7 +72,7 @@ class SettingsPage {
 		}
 
 		add_submenu_page(
-			'edit.php?post_type=' . GRANTS::CPT_SLUG,
+			'edit.php?post_type=' . GRANTS::get_cpt_slug(),
 			esc_html__( 'Settings', 'ca-grants-plugin' ),
 			esc_html__( 'Settings', 'ca-grants-plugin' ),
 			'manage_options',
@@ -270,7 +270,7 @@ class SettingsPage {
 	public static function url() {
 		return add_query_arg(
 			array(
-				'post_type' => Grants::CPT_SLUG,
+				'post_type' => Grants::get_cpt_slug(),
 				'page'      => 'settings',
 			),
 			admin_url( 'edit.php' )
