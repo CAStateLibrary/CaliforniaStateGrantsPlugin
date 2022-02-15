@@ -12,9 +12,7 @@ use CaGov\Grants\Meta;
 /**
  * Edit grant awards class.
  */
-class EditGrantAwards {
-	const NONCE_ACTION = 'grant-awards-submissions-metabox';
-	const NONCE_FIELD  = '_grant_awards_submission';
+class EditGrantAwards extends BaseEdit {
 
 	/**
 	 * Init
@@ -24,22 +22,7 @@ class EditGrantAwards {
 	public static $init = false;
 
 	/**
-	 * Settings.
-	 *
-	 * @var Settings
-	 */
-	public $settings;
-
-	/**
-	 * Endpoint.
-	 * TODO: Modify endpoint as part of E-3.5.1.
-	 *
-	 * @var GrantsAwardEndpoint
-	 */
-	public $endpoint;
-
-	/**
-	 * Meta groups
+	 * Meta groups.
 	 *
 	 * @var array
 	 */
@@ -62,116 +45,16 @@ class EditGrantAwards {
 	 *
 	 * @return void
 	 */
-	public function setup() {
+	public function setup( $cpt_slug = GrantAwards::CPT_SLUG ) {
 		if ( self::$init ) {
 			return;
 		}
 
-		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
-		add_action( 'save_post_' . GrantAwards::CPT_SLUG, array( $this, 'save_post' ) );
-		add_action( 'save_post_' . GrantAwards::CPT_SLUG, array( $this, 'save_post_title' ), 11 );
-		add_action( 'admin_head', array( $this, 'maybe_hide_preview' ) );
+		parent::setup( $cpt_slug );
+
+		add_action( 'save_post_' . self::$cpt_slug, array( $this, 'save_post_title' ), 11 );
 
 		self::$init = true;
-	}
-
-	/**
-	 * Add metaboxes.
-	 *
-	 * @return void
-	 */
-	public function add_metaboxes() {
-		foreach ( $this->meta_groups as $group_key => $meta_group ) {
-			$class = new $meta_group['class']();
-			add_meta_box(
-				"grants-awards-submission_{$group_key}",
-				$meta_group['title'],
-				array( $class, 'render_metabox' ),
-				GrantAwards::CPT_SLUG,
-				'normal',
-				'high'
-			);
-		}
-	}
-
-	/**
-	 * Viewing edit grant page.
-	 *
-	 * @return bool
-	 */
-	public function viewing() {
-		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
-			return false;
-		}
-
-		$screen = get_current_screen();
-		if ( $screen && GrantAwards::CPT_SLUG === $screen->post_type && 'post' === $screen->base ) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Handles the save post action.
-	 *
-	 * @param integer $post_id The ID of the currently displayed post.
-	 */
-	public function save_post( $post_id ) {
-		if ( ! isset( $_POST[ self::NONCE_FIELD ] ) || ! wp_verify_nonce( $_POST[ self::NONCE_FIELD ], self::NONCE_ACTION ) ) {
-			return;
-		}
-
-		$meta_fields = $this->get_all_meta_fields();
-
-		if ( empty( $meta_fields ) ) {
-			return;
-		}
-
-		foreach ( $meta_fields as $meta_field ) {
-			$value = array();
-
-			if ( empty( $_POST[ $meta_field['id'] ] ) ) {
-				delete_post_meta( $post_id, $meta_field['id'] );
-				continue;
-			}
-
-			switch ( $meta_field['type'] ) {
-				case 'checkbox':
-					$temp_value = $_POST[ $meta_field['id'] ];
-					array_walk( $temp_value, 'sanitize_text_field' );
-					$value = $temp_value;
-					break;
-				case 'email':
-					$value = sanitize_email( $_POST[ $meta_field['id'] ] );
-					break;
-				case 'url':
-					$value = esc_url_raw( $_POST[ $meta_field['id'] ] );
-					break;
-				case 'number':
-					$value = absint( $_POST[ $meta_field['id'] ] );
-					break;
-				case 'textarea':
-					$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
-					break;
-				case 'save_to_field':
-					$grant_id = absint( $_POST[ $meta_field['field_id'] ] );
-					update_post_meta( $grant_id, $meta_field['id'], sanitize_text_field( $_POST[ $meta_field['id'] ] ) );
-					break;
-				case 'point_of_contact':
-					$temp_value = $_POST[ $meta_field['id'] ];
-					array_walk( $temp_value, 'sanitize_text_field' );
-					$value = $temp_value;
-					break;
-				default:
-					$value = sanitize_text_field( $_POST[ $meta_field['id'] ] );
-					break;
-			}
-
-			if ( ! empty( $post_id ) ) {
-				update_post_meta( $post_id, $meta_field['id'], $value );
-			}
-		}
 	}
 
 	/**
@@ -180,7 +63,7 @@ class EditGrantAwards {
 	 * @param int $post_id The ID of the currently displayed post.
 	 */
 	public function save_post_title( $post_id ) {
-		if ( ! isset( $_POST[ self::NONCE_FIELD ] ) || ! wp_verify_nonce( $_POST[ self::NONCE_FIELD ], self::NONCE_ACTION ) ) {
+		if ( ! isset( $_POST[ self::$nonce_field ] ) || ! wp_verify_nonce( $_POST[ self::$nonce_field ], self::$nonce_action ) ) {
 			return;
 		}
 
@@ -195,8 +78,8 @@ class EditGrantAwards {
 		}
 
 		if ( ! empty( $full_name ) ) {
-			remove_action( 'save_post_' . GrantAwards::CPT_SLUG, array( $this, 'save_post' ) );
-			remove_action( 'save_post_' . GrantAwards::CPT_SLUG, array( $this, 'save_post_title' ), 11 );
+			remove_action( 'save_post_' . self::$cpt_slug, array( $this, 'save_post' ) );
+			remove_action( 'save_post_' . self::$cpt_slug, array( $this, 'save_post_title' ), 11 );
 			wp_update_post(
 				[
 					'ID'         => $post_id,
@@ -204,24 +87,6 @@ class EditGrantAwards {
 				]
 			);
 		}
-	}
-
-	/**
-	 * Maybe hide preview button.
-	 *
-	 * @return void
-	 */
-	public function maybe_hide_preview() {
-		if ( ! $this->viewing() ) {
-			return;
-		}
-
-		$post_type = get_post_type_object( GrantAwards::CPT_SLUG );
-		if ( ! $post_type || $post_type->public ) {
-			return;
-		}
-
-		echo '<style type="text/css">#post-preview, #view-post-btn{display: none;}</style>';
 	}
 
 	/**
@@ -234,5 +99,4 @@ class EditGrantAwards {
 			Meta\GrantAwards::get_fields(),
 		);
 	}
-
 }

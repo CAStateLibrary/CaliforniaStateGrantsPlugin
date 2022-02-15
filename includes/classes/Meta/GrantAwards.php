@@ -35,7 +35,7 @@ class GrantAwards {
 	 * @return void
 	 */
 	public function render_metabox() {
-		wp_nonce_field( EditGrantAwards::NONCE_ACTION, EditGrantAwards::NONCE_FIELD );
+		wp_nonce_field( EditGrantAwards::$nonce_action, EditGrantAwards::$nonce_field );
 		if ( $this->description ) {
 			echo '<p class="grants-metabox-description">' . esc_html( $this->description ) . '</p>';
 		}
