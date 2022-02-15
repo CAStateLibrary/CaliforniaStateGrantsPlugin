@@ -21,6 +21,13 @@ use WP_Http;
 class GrantAwardsEndpoint extends BaseEndpoint {
 
 	/**
+	 * Init
+	 *
+	 * @var boolean
+	 */
+	public static $init = false;
+
+	/**
 	 * Rest url Slug.
 	 *
 	 * @var string
@@ -221,6 +228,8 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			return $new_response;
 		}
 
+		$metadata = get_post_meta( $post->ID );
+
 		foreach ( $metafields as $metafield_data ) {
 			// Skip meta fields we don't want in the REST response
 			if ( in_array( $metafield_data['id'], $blacklisted_fields, true ) ) {
@@ -228,20 +237,20 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			}
 
 			// Get the metadata for this post
-			$metadata = get_post_meta( $post->ID, $metafield_data['id'], true );
+			$meta_value = empty( $metadata[ $metafield_data['id'] ][0] ) ? '' : $metadata[ $metafield_data['id'] ][0];
 
 			// Some fields need special handling
 			switch ( $metafield_data['type'] ) {
 
 				case 'post-finder':
 				case 'number':
-					$new_data[ $metafield_data['id'] ] = absint( $metadata );
+					$new_data[ $metafield_data['id'] ] = absint( $meta_value );
 					break;
 				case 'textarea':
-					$new_data[ $metafield_data['id'] ] = apply_filters( 'the_content', $metadata );
+					$new_data[ $metafield_data['id'] ] = apply_filters( 'the_content', $meta_value );
 					break;
 				default:
-					$new_data[ $metafield_data['id'] ] = $metadata;
+					$new_data[ $metafield_data['id'] ] = $meta_value;
 					break;
 			}
 		}

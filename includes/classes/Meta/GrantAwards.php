@@ -74,7 +74,7 @@ class GrantAwards {
 					'limit'          => 1,
 					'include_script' => true,
 					'args'           => array(
-						'post_type' => GrantsCPT::CPT_SLUG,
+						'post_type' => GrantsCPT::get_cpt_slug(),
 					),
 				),
 			),
