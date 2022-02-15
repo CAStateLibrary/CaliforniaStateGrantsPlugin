@@ -35,13 +35,13 @@ class Grants {
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
-		add_filter( 'manage_' . self::CPT_SLUG . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
-		add_action( 'manage_' . self::CPT_SLUG . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
+		add_filter( 'manage_' . self::get_cpt_slug() . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
+		add_action( 'manage_' . self::get_cpt_slug() . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
 
 		self::$init = true;
 	}
 
-	
+
 	/**
 	 * Add custom column to grant CPT.
 	 *
@@ -126,17 +126,17 @@ class Grants {
 			'menu_position'      => null,
 			'supports'           => array( 'title', 'author' ),
 		);
-		
+
 		/**
 		 * Filter the California Grants post type arguments.
 		 *
 		 * @param array $args The post type arguments.
 		 */
 		$args = apply_filters( 'ca_grants_post_type_args', $args );
-		
+
 		register_post_type( self::get_cpt_slug(), $args );
 	}
-	
+
 	/**
 	 * Returns the custom post-type slug used when registering
 	 * the grants post-type.
@@ -145,16 +145,16 @@ class Grants {
 	 */
 	public static function get_cpt_slug() {
 		$cpt_slug = 'ca_grants';
-		
+
 		/**
 		 * Filters the slug used in registration
 		 * of the grants post-type.
-		 * 
+		 *
 		 * @param $cpt_slug string The filtered post-type slug.
 		 */
 		return apply_filters( 'ca_grants_cpt_slug', $cpt_slug );
 	}
-	
+
 	/**
 	 * Get grant post type labels.
 	 *

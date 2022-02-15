@@ -112,7 +112,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 
 		$grant = get_post( $grant_id );
 
-		if ( empty( $grant ) || Grants::CPT_SLUG !== $grant->post_type ) {
+		if ( empty( $grant ) || Grants::get_cpt_slug() !== $grant->post_type ) {
 			return new WP_Error(
 				'invalid_grant_id',
 				__( 'Invalid grant id found.', 'ca-grants-plugin' ),
