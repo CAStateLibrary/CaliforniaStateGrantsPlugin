@@ -49,7 +49,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		add_filter( 'rest_' . GrantAwards::CPT_SLUG . '_collection_params', array( $this, 'modify_collection_params' ) );
 		add_filter( 'rest_request_before_callbacks', array( $this, 'grant_id_present_rest_request' ), 10, 3 );
 		add_filter( 'rest_prepare_' . GrantAwards::CPT_SLUG, array( $this, 'modify_grants_rest_response' ), 10, 2 );
-		add_filter( 'rest_' . GrantAwards::CPT_SLUG . '_query', array( $this, 'modify_grants_rest_params' ), 10, 2 );
+		add_filter( 'rest_' . GrantAwards::CPT_SLUG . '_query', array( $this, 'modify_grants_rest_params' ), 12, 2 );
 
 		self::$init = true;
 	}
@@ -155,6 +155,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 
 		if ( ! empty( $orderby ) ) {
 			$orderby_mappings = array(
+				'date'       => 'date', // Post Date
 				'name'       => 'title', // Post Title
 				'project'    => 'projectTitle', // Project Title
 				'amount'     => 'totalAwardAmount', // Total Award Amount
@@ -162,14 +163,14 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 				'end_date'   => 'grantFundedEndDate', // End Date of Grant-Funded Project
 			);
 
-			if ( 'name' === $orderby ) {
+			if ( 'name' === $orderby || 'date' === $orderby ) {
 				$override_args['orderby'] = $orderby_mappings[ $orderby ];
 			} elseif ( 'amount' === $orderby ) {
 				$override_args['orderby']  = 'meta_value_num';
 				$override_args['meta_key'] = $orderby_mappings[ $orderby ];
 			} else {
-				$override_args['orderby']  = 'meta_value';
-				$override_args['meta_key'] = $orderby_mappings[ $orderby ];
+				$override_args['orderby']   = 'meta_value';
+				$override_args['meta_key']  = $orderby_mappings[ $orderby ];
 			}
 		}
 
