@@ -26,7 +26,7 @@ class GrantAwards {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->description = __( 'Enter general grant information.', 'ca-grants-plugin' );
+		$this->description = __( 'Enter general grant award information.', 'ca-grants-plugin' );
 	}
 
 	/**
