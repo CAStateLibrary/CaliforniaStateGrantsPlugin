@@ -32,12 +32,19 @@ class AwardUploads {
 		}
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
+		add_action( 'init', array( $this, 'register_post_status' ) );
+
+		// Post edit screen.
+		add_action( 'admin_footer-post.php', array( $this, 'append_post_status_list' ) );
+
+		// Quick post edit screen.
+		add_action( 'admin_footer-edit.php', array( $this, 'append_post_status_list' ) );
 
 		self::$init = true;
 	}
 
 	/**
-	 * Register grant post type.
+	 * Register award uploads post type.
 	 *
 	 * @return void
 	 */
@@ -93,5 +100,53 @@ class AwardUploads {
 			'not_found'          => __( 'No grants found.', 'ca-grants-plugin' ),
 			'not_found_in_trash' => __( 'No grants found in Trash.', 'ca-grants-plugin' ),
 		);
+	}
+
+	/**
+	 * Register award uploads post status.
+	 *
+	 * @return void
+	 */
+	public function register_post_status() {
+
+		$args = array(
+			'label'                     => _x( 'Failed', 'post', 'ca-grants-plugin' ),
+			'public'                    => true,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop( 'Failed (%s)', 'Failed (%s)', 'ca-grants-plugin' ),
+		);
+
+		register_post_status( 'failed', $args );
+	}
+
+	/**
+	 * Add custom post status.
+	 *
+	 * @return void
+	 */
+	public function append_post_status_list() {
+		global $post;
+
+		if ( static::CPT_SLUG !== $post->post_type ) {
+			return;
+		}
+
+		$failed_option = sprintf(
+			'<option value=\"failed\" %s>Failed</option>',
+			selected( $post->post_status, 'failed', false )
+		);
+
+		echo '<script>';
+		echo 'jQuery(document).ready(function($){';
+			printf( '$("select#post_status").append("%s");', $failed_option );
+			// Inline edit status for quick edit screen.
+			printf( '$(".inline-edit-status select[name=\"_status\"]").append("%s");', $failed_option );
+		if ( 'failed' === $post->post_status ) {
+			printf( '$("#post-status-display").text("Failed");' );
+		}
+		echo '});';
+		echo '</script>';
 	}
 }

@@ -90,7 +90,7 @@ class AwardUploads {
 				'id'          => 'grantsAwarded',
 				'name'        => __( 'Number of Grants Awarded', 'ca-grants-plugin' ),
 				'type'        => 'save_to_field',
-				'field_id'    => 'grantID',
+				'field_id'    => 'csl_grant_id',
 				'description' => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'required'    => true,
 			),
