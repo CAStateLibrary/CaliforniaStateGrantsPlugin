@@ -93,12 +93,17 @@ function ca_grants_plugin_setup() {
 	$classes = array(
 		'CaGov\Grants\PostTypes\Grants',
 		'CaGov\Grants\PostTypes\EditGrant',
-		'CaGov\Grants\Admin\Settings',
-		'CaGov\Grants\Admin\SettingsPage',
-		'CaGov\Grants\Admin\WelcomePage',
 		'CaGov\Grants\Admin\Notices',
 		'CaGov\Grants\REST\GrantsEndpoint',
 	);
+
+	if ( true !== \CaGov\Grants\Core\is_portal() ) {
+		$classes = array_merge( $classes, [
+			'CaGov\Grants\Admin\Settings',
+			'CaGov\Grants\Admin\SettingsPage',
+			'CaGov\Grants\Admin\WelcomePage',
+		] );
+	}
 
 	return array_map(
 		function( $class ) {
