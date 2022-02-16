@@ -68,6 +68,7 @@ class AwardUploads {
 				'type'        => 'post-finder',
 				'description' => __( 'Select the grant to enter award data for.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'readonly'    => true,
 				'options'     => array(
 					'show_numbers'   => false,
 					'show_recent'    => false,
@@ -85,6 +86,7 @@ class AwardUploads {
 				'field_id'    => 'csl_grant_id',
 				'description' => __( 'Enter the total applications received for this funding opportunity.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'readonly'    => true,
 			),
 			array(
 				'id'          => 'grantsAwarded',
@@ -93,6 +95,7 @@ class AwardUploads {
 				'field_id'    => 'csl_grant_id',
 				'description' => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'readonly'    => true,
 			),
 			array(
 				'id'          => 'csl_fiscal_year',
@@ -101,6 +104,7 @@ class AwardUploads {
 				'source'      => 'api',
 				'description' => __( 'Select the Fiscal Year to import awards for.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'readonly'    => true,
 			),
 			array(
 				'id'          => 'csl_award_csv',
@@ -108,6 +112,7 @@ class AwardUploads {
 				'type'        => 'file',
 				'description' => __( 'Browse and select the CSV containing award data.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'readonly'    => true,
 			),
 		);
 	}
