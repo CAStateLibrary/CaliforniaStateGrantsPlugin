@@ -65,6 +65,9 @@ class Field {
 			case 'post-finder':
 				self::render_post_finder_field( $meta_field );
 				break;
+			case 'label':
+				self::render_label_field( $meta_field );
+				break;
 			default:
 				self::render_input_field( $meta_field );
 				break;
@@ -247,6 +250,62 @@ class Field {
 					}
 					?>
 				/>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
+	 * Show data for saved meta data.
+	 *
+	 * @param array $meta_field The meta field to render
+	 */
+	public static function render_label_field( $meta_field = array() ) {
+		if ( empty( $meta_field ) || ! is_array( $meta_field ) ) {
+			return;
+		}
+
+		$post_id = get_the_ID();
+
+		$type       = $meta_field['type'] ?? '';
+		$value_type = $meta_field['value_type'] ?? '';
+		$name       = $meta_field['name'] ?? '';
+		$id         = $meta_field['id'] ?? '';
+		$class      = $meta_field['class'] ?? '';
+		$value      = get_post_meta( $post_id, $id, true );
+
+		if ( ! empty( $value ) ) {
+			switch ( $value_type ) {
+				case 'post-title':
+					if ( is_numeric( $value ) ) {
+						$value = get_the_title( $value );
+					}
+					break;
+				case 'attachment-url':
+					if ( is_numeric( $value ) ) {
+						$value = wp_get_attachment_url( $value );
+					}
+					break;
+				case 'api':
+					$fields = self::get_api_fields_by_id( $id );
+					$field  = wp_filter_object_list( $fields, [ 'id' => $value ] );
+					$field  = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
+					$value  = empty( $field ) || empty( $field['name'] ) ? $value : $field['name'];
+					break;
+			}
+		}
+
+		?>
+		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
+			<th>
+				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
+			</th>
+			<td>
+				<label
+					id="<?php echo esc_attr( $id ); ?>"
+				>
+					<?php echo esc_html( $value ); ?>
+				</label>
 			</td>
 		</tr>
 		<?php
@@ -966,6 +1025,7 @@ class Field {
 					$api_url .= 'revenue_sources';
 					break;
 				case 'fiscalYear':
+				case 'csl_fiscal_year':
 					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=3';
 					break;
 				case 'recipientType':
