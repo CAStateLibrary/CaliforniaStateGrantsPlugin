@@ -87,7 +87,7 @@ class EditGrant {
 		}
 
 		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
-		add_action( 'save_post_' . Grants::CPT_SLUG, array( $this, 'save_post' ) );
+		add_action( 'save_post_' . Grants::get_cpt_slug(), array( $this, 'save_post' ) );
 		add_action( 'admin_notices', array( $this, 'validation_errors' ) );
 		add_action( 'admin_head', array( $this, 'maybe_hide_preview' ) );
 
@@ -106,7 +106,7 @@ class EditGrant {
 				"grants-submission_{$group_key}",
 				$meta_group['title'],
 				array( $class, 'render_metabox' ),
-				Grants::CPT_SLUG,
+				Grants::get_cpt_slug(),
 				'normal',
 				'high'
 			);
@@ -124,7 +124,7 @@ class EditGrant {
 		}
 
 		$screen = get_current_screen();
-		if ( $screen && Grants::CPT_SLUG === $screen->post_type && 'post' === $screen->base ) {
+		if ( $screen && Grants::get_cpt_slug() === $screen->post_type && 'post' === $screen->base ) {
 			return true;
 		}
 
@@ -374,7 +374,7 @@ class EditGrant {
 			return;
 		}
 
-		$post_type = get_post_type_object( Grants::CPT_SLUG );
+		$post_type = get_post_type_object( Grants::get_cpt_slug() );
 		if ( ! $post_type || $post_type->public ) {
 			return;
 		}
