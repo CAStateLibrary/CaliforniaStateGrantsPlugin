@@ -58,6 +58,34 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 	}
 
 	/**
+	 * CSV File header info.
+	 *
+	 * @return array List of csv header.
+	 */
+	public function get_csv_header() {
+
+		// TODO: Remove "*" if not needed.
+		return array(
+			'Project Title',
+			'Recipient Type *',
+			'Indivudal Recipient First Name*',
+			'Individual Recipient Last Name*',
+			'"Other" Recipient Type*',
+			'Primary Recipient Name*',
+			'Sub-recipients?',
+			'Total Award Amount*',
+			'Matching Funding Amount*',
+			'Award Amount Notes',
+			'Beginning Date of Grant-Funded Project*',
+			'End Date of Grant-Funded Project*',
+			'Project Abstract*',
+			'Geographic Location Served*',
+			'Counties Served*',
+			'Geographic Location Served Notes',
+		);
+	}
+
+	/**
 	 * Setup actions and filters with the WordPress API.
 	 *
 	 * @return void
@@ -374,6 +402,13 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 			}
 		}
 
+		// Validate file before uploading it.
+		$validate_file = $this->validate_csv_file( $file );
+
+		if ( is_wp_error( $validate_file ) ) {
+			return $validate_file;
+		}
+
 		// Pass off to WP to handle the actual upload.
 		$overrides = array(
 			'test_form' => false,
@@ -425,5 +460,42 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 		);
 
 		return wp_parse_args( $override_uploads, $uploads );
+	}
+
+	/**
+	 * Validate temp uploaded file.
+	 *
+	 * @param array $csv_file Temp uploaded file data.
+	 *
+	 * @return boolean|WP_Error Return WP_Error on empty or invalid file, else return true.
+	 */
+	public function validate_csv_file( $csv_file ) {
+		$csv_headers = $this->get_csv_header();
+		$file_handle = fopen( $csv_file['tmp_name'], 'r' );
+
+		if ( feof( $file_handle ) ) {
+			// 'File content not found'
+			return new WP_Error(
+				'rest_empty_csv_file',
+				__( 'File content not found.', 'ca-grants-plugin' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		$headers = fgetcsv( $file_handle, 4096 );
+		fclose( $file_handle );
+
+		$diff = array_diff( $csv_headers, $headers );
+
+		if ( ! empty( $diff ) ) {
+			// Header miss match.
+			return new WP_Error(
+				'rest_missmatch_csv_header',
+				__( 'Invalid CSV: File header miss-matached. Please use valid csv file.', 'ca-grants-plugin' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		return true;
 	}
 }
