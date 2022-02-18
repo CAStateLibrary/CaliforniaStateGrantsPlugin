@@ -7,6 +7,7 @@
 
 namespace CaGov\Grants\REST;
 
+use CaGov\Grants\PostTypes\Grants;
 use CaGov\Grants\PostTypes\AwardUploads;
 use WP_REST_Controller;
 use WP_REST_Server;
@@ -257,7 +258,7 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 
 		$grant = get_post( $required_params['grantID'] );
 
-		if ( empty( $grant ) ) {
+		if ( empty( $grant ) || $grant->post_type !== Grants::get_cpt_slug() ) {
 			return new WP_Error(
 				'rest_invalid_grant_id',
 				__( 'Invalid grantID found. Please provide valid data and try again.', 'ca-grants-plugin' ) . implode( ', ', $empty_params ),
