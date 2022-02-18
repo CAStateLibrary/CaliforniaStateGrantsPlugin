@@ -8,7 +8,6 @@
 namespace CaGov\Grants\Meta;
 
 use CaGov\Grants\PostTypes\EditAwardUploads;
-use CaGov\Grants\PostTypes\Grants as GrantsCPT;
 
 /**
  * General Grant Data Meta Class

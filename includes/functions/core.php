@@ -300,7 +300,7 @@ function tiny_mce_before_init( $mce_init ) {
 /**
  * Checks for definition of the `CSL_IS_PORTAL` constant,
  * which indicates whether the environment is the CSL portal site.
- * 
+ *
  * @note This function is used to enable/disable core CA Grants plugin behavior,
  * 		 and will not function on any other WordPress installation.
  *
@@ -311,4 +311,13 @@ function is_portal() {
 		return true;
 	}
 	return false;
+}
+
+/**
+ * Gets the REST namespace for the custom endpoints.
+ *
+ * @return string
+ */
+function get_rest_namespace() {
+	return 'ca-grants/v1';
 }
