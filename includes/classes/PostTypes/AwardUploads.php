@@ -7,6 +7,8 @@
 
 namespace CaGov\Grants\PostTypes;
 
+use CaGov\Grants\Admin\BulkUploadPage;
+
 /**
  * Award Uploads post type class.
  */
@@ -33,6 +35,8 @@ class AwardUploads {
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_post_status' ) );
+		add_action( 'admin_menu', array( $this, 'remove_add_new_menu' ) );
+		add_action( 'load-post-new.php', array( $this, 'redirect_add_new_to_bulk_upload' ) );
 
 		// Post edit screen.
 		add_action( 'admin_footer-post.php', array( $this, 'append_post_status_list' ) );
@@ -79,6 +83,43 @@ class AwardUploads {
 	}
 
 	/**
+	 * Remove add new sub menu from post type.
+	 *
+	 * @return void
+	 */
+	public function remove_add_new_menu() {
+		remove_submenu_page( 'edit.php?post_type=' . self::CPT_SLUG, 'post-new.php?post_type=' . self::CPT_SLUG );
+	}
+
+	/**
+	 * Redirect add new page to bulk upload.
+	 *
+	 * @return void
+	 */
+	public function redirect_add_new_to_bulk_upload() {
+		$current_screen = get_current_screen();
+
+		// Check if current page is add award upload page.
+		if (
+			empty( $current_screen )
+			|| 'add' !== $current_screen->action
+			|| self::CPT_SLUG !== $current_screen->post_type
+		) {
+			return;
+		}
+
+		$url = admin_url(
+			sprintf(
+				'edit.php?post_type=%s&page=%s',
+				self::CPT_SLUG,
+				BulkUploadPage::$page_slug
+			)
+		);
+		wp_redirect( $url );
+		exit;
+	}
+
+	/**
 	 * Get grant post type labels.
 	 *
 	 * @return array
@@ -89,7 +130,7 @@ class AwardUploads {
 			'singular_name'      => _x( 'Award Upload', 'post type singular name', 'ca-grants-plugin' ),
 			'menu_name'          => _x( 'Award Uploads', 'admin menu', 'ca-grants-plugin' ),
 			'name_admin_bar'     => _x( 'Award Upload', 'add new on admin bar', 'ca-grants-plugin' ),
-			'add_new'            => _x( 'Add New', 'Award Upload', 'ca-grants-plugin' ),
+			'add_new'            => _x( 'Bulk Upload', 'Award Upload', 'ca-grants-plugin' ),
 			'add_new_item'       => __( 'Add New Award Upload', 'ca-grants-plugin' ),
 			'new_item'           => __( 'New Award Upload', 'ca-grants-plugin' ),
 			'edit_item'          => __( 'Edit Award Upload', 'ca-grants-plugin' ),

@@ -19,6 +19,13 @@ use function CaGov\Grants\Core\wp_safe_remote_post_multipart;
 class BulkUploadPage {
 
 	/**
+	 * Page slug.
+	 *
+	 * @var string
+	 */
+	public static $page_slug = 'bulk-upload';
+
+	/**
 	 * Init.
 	 *
 	 * @var boolean
@@ -80,7 +87,7 @@ class BulkUploadPage {
 			esc_html__( 'Bulk Upload', 'ca-grants-plugin' ),
 			esc_html__( 'Bulk Upload', 'ca-grants-plugin' ),
 			'manage_options',
-			'bulk-upload',
+			self::$page_slug,
 			array( $this, 'render_page' )
 		);
 	}
@@ -299,7 +306,7 @@ class BulkUploadPage {
 		}
 
 		if ( ! empty( $this->notices['success'] ) ) :
-			$admin_url = admin_url( sprintf( 'wp-admin/post.php?post=%d&action=edit', esc_html( $this->notices['success'] ) ) );
+			$admin_url = admin_url( sprintf( 'post.php?post=%d&action=edit', esc_html( $this->notices['success'] ) ) );
 			?>
 		<div class="notice notice-success is-dismissible">
 			<p>
