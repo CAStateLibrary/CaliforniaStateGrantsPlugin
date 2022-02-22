@@ -71,6 +71,15 @@ class Eligibility {
 			);
 		}
 
+		if ( is_portal() ) {
+			$fields[] = array(
+					'id'   => 'applicantTypeSuggestion',
+					'name' => __( 'Applicant Type Suggestion(s)', 'ca-grants-plugin' ),
+					'type' => 'text',
+					'csv'  => 'ApplicantTypeOther',
+			);
+		}
+
 		$fields[] = array(
 				'id'          => 'applicantTypeNotes',
 				'name'        => __( 'Applicant Type Notes', 'ca-grants-plugin' ),

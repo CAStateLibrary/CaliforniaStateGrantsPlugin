@@ -67,22 +67,32 @@ class General {
 						'type'        => 'text',
 						'description' => __( 'The identifier (typically numbers, letters or a combination of letters or numbers) that the state department uses to identify the grant. If your department does not use a Grant ID system, leave this field blank.', 'ca-grants-plugin' ),
 				),
-				array(
-						'id'       => 'isForecasted',
-						'name'     => __( 'Grant Type', 'ca-grants-plugin' ),
-						'type'     => 'radio',
-						'fields'   => array(
-								array(
-										'id'   => 'forecasted',
-										'name' => __( 'Forecasted', 'ca-grants-plugin' ),
-								),
-								array(
-										'id'   => 'active',
-										'name' => __( 'Active', 'ca-grants-plugin' ),
-								),
+		);
+
+		if ( is_portal() ) {
+			$fields[] = array(
+					'id'   => 'uniqueID',
+					'name' => __( 'Unique ID', 'ca-grants-plugin' ),
+					'type' => 'text',
+					'csv'  => 'PortalID',
+			);
+		}
+
+		$fields[] = array(
+				'id'       => 'isForecasted',
+				'name'     => __( 'Grant Type', 'ca-grants-plugin' ),
+				'type'     => 'radio',
+				'fields'   => array(
+						array(
+								'id'   => 'forecasted',
+								'name' => __( 'Forecasted', 'ca-grants-plugin' ),
 						),
-						'required' => array( 'active', 'forecasted' ),
+						array(
+								'id'   => 'active',
+								'name' => __( 'Active', 'ca-grants-plugin' ),
+						),
 				),
+				'required' => array( 'active', 'forecasted' ),
 		);
 
 		if ( ! is_portal() ) {
