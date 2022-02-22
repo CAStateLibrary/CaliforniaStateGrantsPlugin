@@ -360,13 +360,13 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 		}
 
 		// Store "Number of Applications Submitted" to provided grant ID.
-		if ( ! empty( $meta['applicationsSubmitted'] ) ) {
-			update_post_meta( $meta['csl_grant_id'], 'applicationsSubmitted', $meta['applicationsSubmitted'] );
+		if ( ! empty( $request_params['applicationsSubmitted'] ) ) {
+			update_post_meta( $meta['csl_grant_id'], 'applicationsSubmitted', $request_params['applicationsSubmitted'] );
 		}
 
 		// Store "Number of Grants Awarded" to provided grant ID.
-		if ( ! empty( $meta['grantsAwarded'] ) ) {
-			update_post_meta( $meta['csl_grant_id'], 'grantsAwarded', $meta['grantsAwarded'] );
+		if ( ! empty( $request_params['grantsAwarded'] ) ) {
+			update_post_meta( $meta['csl_grant_id'], 'grantsAwarded', $request_params['grantsAwarded'] );
 		}
 
 		// Update attachment post parent.
