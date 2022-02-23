@@ -86,7 +86,6 @@ class EditGrantAwards extends BaseEdit {
 		}
 
 		if ( ! empty( $full_name ) ) {
-			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post' ) );
 			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
 			wp_update_post(
 				[
@@ -94,6 +93,7 @@ class EditGrantAwards extends BaseEdit {
 					'post_title' => $full_name,
 				]
 			);
+			add_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
 		}
 	}
 
