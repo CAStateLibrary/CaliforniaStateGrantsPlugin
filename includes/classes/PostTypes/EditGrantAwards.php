@@ -71,7 +71,12 @@ class EditGrantAwards extends BaseEdit {
 	 * @param int $post_id The ID of the currently displayed post.
 	 */
 	public function save_post_title( $post_id ) {
-		if ( ! isset( $_POST[ static::$nonce_field ] ) || ! wp_verify_nonce( $_POST[ static::$nonce_field ], static::$nonce_action ) ) {
+
+		if (
+			( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+			|| ( isset( $_POST[ static::$nonce_field ] )
+				 && ! wp_verify_nonce( $_POST[ static::$nonce_field ], static::$nonce_action ) )
+		) {
 			return;
 		}
 
