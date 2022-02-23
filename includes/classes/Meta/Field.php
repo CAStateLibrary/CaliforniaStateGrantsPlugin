@@ -1032,7 +1032,7 @@ class Field {
 					$api_url .= 'recipient-types';
 					break;
 				case 'countiesServed':
-					$api_url .= 'counties';
+					$api_url .= 'counties?per_page=100';
 					break;
 				default:
 					$api_url = null;

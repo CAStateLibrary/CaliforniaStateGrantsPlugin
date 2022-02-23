@@ -71,7 +71,12 @@ class EditGrantAwards extends BaseEdit {
 	 * @param int $post_id The ID of the currently displayed post.
 	 */
 	public function save_post_title( $post_id ) {
-		if ( ! isset( $_POST[ static::$nonce_field ] ) || ! wp_verify_nonce( $_POST[ static::$nonce_field ], static::$nonce_action ) ) {
+
+		if (
+			( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+			|| ( isset( $_POST[ static::$nonce_field ] )
+				 && ! wp_verify_nonce( $_POST[ static::$nonce_field ], static::$nonce_action ) )
+		) {
 			return;
 		}
 
@@ -86,7 +91,6 @@ class EditGrantAwards extends BaseEdit {
 		}
 
 		if ( ! empty( $full_name ) ) {
-			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post' ) );
 			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
 			wp_update_post(
 				[
@@ -94,6 +98,7 @@ class EditGrantAwards extends BaseEdit {
 					'post_title' => $full_name,
 				]
 			);
+			add_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
 		}
 	}
 
