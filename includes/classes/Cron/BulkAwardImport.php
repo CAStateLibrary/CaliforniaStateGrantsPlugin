@@ -191,7 +191,7 @@ class BulkAwardImport {
 	 *
 	 * @return array
 	 */
-	function read_csv( $csv_file ) {
+	public function read_csv( $csv_file ) {
 		$file_handle = fopen( $csv_file, 'r' );
 
 		$data = [];
