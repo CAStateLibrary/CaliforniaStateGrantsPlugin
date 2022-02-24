@@ -286,7 +286,7 @@ abstract class BaseEdit {
 	 *
 	 * @param array $data Field data to validated, key=value paired list.
 	 *
-	 * @return array List of errors if any data validation fails, else return data.
+	 * @return boolean|WP_Error WP_Error if any data validation fails, else return true for success.
 	 */
 	public function validate_fields( $data ) {
 		$errors = new WP_Error();
@@ -371,7 +371,7 @@ abstract class BaseEdit {
 						$is_invalid = ! in_array( $data[ $id ], $field_ids ) && ! in_array( sanitize_title( $data[ $id ] ), $field_ids );
 					} elseif ( isset( $field['fields'] ) ) {
 						$defined_values = wp_filter_object_list( $field['fields'], array(), 'and', 'id' );
-						$is_invalid     = ! in_array( $data[ $id ], $defined_values );
+						$is_invalid     = ! in_array( $data[ $id ], $defined_values ) && ! in_array( sanitize_title( $data[ $id ] ), $defined_values );
 					}
 					break;
 				case 'datetime-local':
@@ -398,7 +398,7 @@ abstract class BaseEdit {
 			}
 		}
 
-		return $errors->has_errors() ? $errors->get_error_messages() : $data;
+		return $errors->has_errors() ? $errors : true;
 	}
 
 	/**
