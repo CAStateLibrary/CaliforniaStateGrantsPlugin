@@ -267,6 +267,7 @@ class GrantAwards {
 				'source'      => 'api',
 				'description' => __( 'If "County" is selected in the Geographic Location Served field, select all relevant California counties.', 'ca-grants-plugin' ),
 				'required'    => array( 'county' ),
+				'compare_to'  => 'geoLocationServed',
 			),
 			array(
 				'id'          => 'geoServedNotes',

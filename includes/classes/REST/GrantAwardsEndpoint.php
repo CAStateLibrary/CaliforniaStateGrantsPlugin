@@ -194,9 +194,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			'grantsAwarded',
 		);
 
-		$metafields = array_merge(
-			Meta\GrantAwards::get_fields(),
-		);
+		$metafields = Meta\GrantAwards::get_fields();
 
 		$new_data     = array(
 			'grantAwardTitle' => get_the_title( $post->ID ),
@@ -239,7 +237,8 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 					$new_data[ $metafield_data['id'] ] = apply_filters( 'the_content', $meta_value );
 					break;
 				default:
-					$new_data[ $metafield_data['id'] ] = $meta_value;
+					$new_data[ $metafield_data['id'] ] = maybe_unserialize( $meta_value );
+					$new_data[ $metafield_data['id'] ] = is_array( $new_data[ $metafield_data['id'] ] ) ? array_filter( $new_data[ $metafield_data['id'] ] ) : $new_data[ $metafield_data['id'] ];
 					break;
 			}
 		}

@@ -108,8 +108,6 @@ class EditGrantAwards extends BaseEdit {
 	 * @return array
 	 */
 	protected function get_all_meta_fields() {
-		return array_merge(
-			Meta\GrantAwards::get_fields(),
-		);
+		return Meta\GrantAwards::get_fields();
 	}
 }
