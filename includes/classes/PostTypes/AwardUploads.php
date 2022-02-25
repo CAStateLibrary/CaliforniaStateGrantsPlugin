@@ -8,6 +8,7 @@
 namespace CaGov\Grants\PostTypes;
 
 use CaGov\Grants\Admin\BulkUploadPage;
+use WP_Error;
 
 /**
  * Award Uploads post type class.
@@ -22,6 +23,84 @@ class AwardUploads {
 	 * @var boolean
 	 */
 	public static $init = false;
+
+	/**
+	 * CSV File header info for award upload csv file.
+	 * Mapping: [ "CSV Header Title" => "Grant Award Meta Key" ]
+	 *
+	 * @return array List of csv header.
+	 */
+	public static function get_csv_header_mapping() {
+
+		// TODO: Remove "*" if not needed.
+		return array(
+			'Project Title'                           => 'projectTitle',
+			'Recipient Type *'                        => 'recipientType',
+			'Individual Recipient First Name*'        => 'primeryRecipientFirstName',
+			'Individual Recipient Last Name*'         => 'primeryRecipientLastName',
+			'Primary Recipient Name*'                 => 'primeryRecipientName',
+			'Sub-recipients?*'                        => 'secondaryRecipients',
+			'Total Award Amount*'                     => 'totalAwardAmount',
+			'Matching Funding Amount*'                => 'matchingFundingAmount',
+			'Award Amount Notes'                      => 'awardAmountNotes',
+			'Beginning Date of Grant-Funded Project*' => 'grantFundedStartDate',
+			'End Date of Grant-Funded Project*'       => 'grantFundedEndDate',
+			'Project Abstract*'                       => 'projectAbstract',
+			'Geographic Location Served*'             => 'geoLocationServed',
+			'Counties Served*'                        => 'countiesServed',
+			'Geographic Location Served Notes'        => 'geoServedNotes',
+		);
+	}
+
+	/**
+	 * Validate temp uploaded file.
+	 *
+	 * @param array|string $csv_file Temp uploaded file data OR file path.
+	 *
+	 * @return boolean|WP_Error Return WP_Error on empty or invalid file, else return true.
+	 */
+	public static function validate_csv_file( $csv_file ) {
+		$file_path = is_array( $csv_file ) ? $csv_file['tmp_name'] : $csv_file;
+
+		if ( ! file_exists( $file_path ) ) {
+			// 'File content not found'
+			return new WP_Error(
+				'validate_csv_file_not_found',
+				__( 'File not found.', 'ca-grants-plugin' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		$csv_headers = array_keys( self::get_csv_header_mapping() );
+		$file_handle = fopen( $file_path, 'r' );
+
+		if ( feof( $file_handle ) ) {
+			// 'File content not found'
+			return new WP_Error(
+				'validate_csv_empty_file',
+				__( 'File content not found.', 'ca-grants-plugin' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		$headers = fgetcsv( $file_handle, 4096 );
+		fclose( $file_handle );
+		// Trim whitespaces.
+		$headers = array_map( 'trim', $headers );
+
+		$diff = array_diff( $csv_headers, $headers );
+
+		if ( ! empty( $diff ) ) {
+			// Header miss match.
+			return new WP_Error(
+				'validate_csv_missmatch_header',
+				__( 'Invalid CSV: File header miss-matached. Please use valid csv file.', 'ca-grants-plugin' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		return true;
+	}
 
 	/**
 	 * Setup actions and filters with the WordPress API.
@@ -170,7 +249,7 @@ class AwardUploads {
 	public function append_post_status_list() {
 		global $post;
 
-		if ( static::CPT_SLUG !== $post->post_type ) {
+		if ( empty( $post ) || static::CPT_SLUG !== $post->post_type ) {
 			return;
 		}
 
