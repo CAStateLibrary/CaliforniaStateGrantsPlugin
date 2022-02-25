@@ -6,6 +6,7 @@ const conditionalVisibleElems = 'tr[data-visible-if]';
 const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select[name="recipientType"]' ) );
 const startDateElem = Array.from( document.querySelectorAll( 'input[data-min-date-id]' ) );
 const endDateElem = Array.from( document.querySelectorAll( 'input[data-max-date-id]' ) );
+const requiredPostFinderDiv = Array.from( document.querySelectorAll( 'tr.post_finder_field div[data-post-finder="required"]' ) );
 
 /**
  * Conditional requiring fields if grant is forecasted/active.
@@ -14,6 +15,7 @@ const main = () => {
 
 	if ( getVisableElems().length ) {
 		grantAwardsRecipientTypes.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 	}
 
 	if ( grantTypeInputs.length ) {
@@ -32,6 +34,16 @@ const main = () => {
 
 	if ( endDateElem.length ) {
 		endDateElem.forEach( input => input.addEventListener( 'change', refreshMinMaxDateAttributes ) );
+	}
+
+	// Add required attribute to post finder input field.
+	if ( requiredPostFinderDiv.length ) {
+		requiredPostFinderDiv.forEach( function( elem ) {
+			const inputElems = Array.from( elem.querySelectorAll( 'input[type="hidden"]' ) );
+			inputElems.forEach( input => {
+				input.setAttribute( 'required', 'true' );
+			} );
+		} );
 	}
 
 	// Kick things off.
@@ -136,13 +148,7 @@ const maybeSetRequired = input => {
  */
 const maybeSetRequiredClass = el => {
 	const { requiredIf } = el.dataset;
-	let current = '';
-
-	if ( geoLocationServedElem.length ) {
-		current = getCurrentGeoLocation();
-	} else if ( grantTypeInputs.length ) {
-		current = getCurrentGrantType();
-	}
+	const current = getCurrentGrantType();
 
 	if ( current ) {
 		if ( -1 !== requiredIf.split( ',' ).map( s => s.trim() ).indexOf( current ) ) {
@@ -167,14 +173,17 @@ const maybeSetRequiredClass = el => {
  */
 const maybeSetHiddenClass = el => {
 	const { visibleIf }  = el.dataset;
-	const current        = getCurrentRecipientType();
 	const visibleOptions = JSON.parse( visibleIf );
+	let current = '';
 
-	if (
-		! visibleOptions
-		|| 'recipientType' !== visibleOptions['fieldId']
-	) {
+	if ( ! visibleOptions ) {
 		return;
+	}
+
+	if ( 'geoLocationServed' === visibleOptions['fieldId'] && geoLocationServedElem.length ) {
+		current = getCurrentGeoLocation();
+	} else if ( 'recipientType' === visibleOptions['fieldId'] && grantAwardsRecipientTypes.length ) {
+		current = getCurrentRecipientType();
 	}
 
 	if (
@@ -184,13 +193,23 @@ const maybeSetHiddenClass = el => {
 		el.classList.add( 'hidden' );
 
 		if ( true === visibleOptions['required'] ) {
-			el.querySelector( 'input' ).removeAttribute( 'required' );
+			if ( el.querySelector( 'input[type="text"]' ) ) {
+				el.querySelector( 'input[type="text"]' ).removeAttribute( 'required' );
+			}
+			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
+				el.querySelector( 'td' ).classList.remove( 'fieldset--is-required' );
+			}
 		}
 	} else {
 		el.classList.remove( 'hidden' );
 
 		if ( true === visibleOptions['required'] ) {
-			el.querySelector( 'input' ).setAttribute( 'required', true );
+			if ( el.querySelector( 'input[type="text"]' ) ) {
+				el.querySelector( 'input[type="text"]' ).setAttribute( 'required', true );
+			}
+			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
+				el.querySelector( 'td' ).classList.add( 'fieldset--is-required' );
+			}
 		}
 	}
 };

@@ -41,6 +41,10 @@ class EditGrantAwards extends BaseEdit {
 	public function __construct() {
 		parent::__construct();
 		$this->meta_groups = array(
+			'award-stats' => array(
+				'class' => 'CaGov\\Grants\\Meta\\GrantAwardStats',
+				'title' => __( 'Grant Award Stats', 'ca-grants-plugin' ),
+			),
 			'grantAwards' => array(
 				'class' => 'CaGov\\Grants\\Meta\\GrantAwards',
 				'title' => __( 'Grant Awards', 'ca-grants-plugin' ),
@@ -60,17 +64,18 @@ class EditGrantAwards extends BaseEdit {
 
 		parent::setup( $cpt_slug );
 
-		add_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
+		add_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
 
 		static::$init = true;
 	}
 
 	/**
 	 * Save post title based on Recipient Type value.
+	 * Cleanup country data based on geoLocationServed value.
 	 *
 	 * @param int $post_id The ID of the currently displayed post.
 	 */
-	public function save_post_title( $post_id ) {
+	public function maybe_update_cleanup_data( $post_id ) {
 
 		if (
 			( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
@@ -86,8 +91,11 @@ class EditGrantAwards extends BaseEdit {
 			$first_name = get_post_meta( $post_id, 'primeryRecipientFirstName', true ) ?: '';
 			$last_name  = get_post_meta( $post_id, 'primeryRecipientLastName', true ) ?: '';
 			$full_name  = $first_name . ' ' . $last_name;
+			delete_post_meta( $post_id, 'primaryRecipientName' );
 		} else {
-			$full_name = get_post_meta( $post_id, 'primeryRecipientName', true );
+			$full_name = get_post_meta( $post_id, 'primaryRecipientName', true );
+			delete_post_meta( $post_id, 'primeryRecipientFirstName' );
+			delete_post_meta( $post_id, 'primeryRecipientLastName' );
 		}
 
 		if ( ! empty( $full_name ) ) {
@@ -100,6 +108,12 @@ class EditGrantAwards extends BaseEdit {
 			);
 			add_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
 		}
+
+		$geoLocationServed = get_post_meta( $post_id, 'geoLocationServed', true );
+
+		if ( 'county' !== $geoLocationServed ) {
+			delete_post_meta( $post_id, 'countiesServed' );
+		}
 	}
 
 	/**
@@ -109,6 +123,7 @@ class EditGrantAwards extends BaseEdit {
 	 */
 	protected function get_all_meta_fields() {
 		return array_merge(
+			Meta\GrantAwardStats::get_fields(),
 			Meta\GrantAwards::get_fields(),
 		);
 	}
