@@ -79,22 +79,6 @@ class GrantAwards {
 				),
 			),
 			array(
-				'id'          => 'applicationsSubmitted',
-				'name'        => __( 'Number of Applications Submitted', 'ca-grants-plugin' ),
-				'type'        => 'save_to_field',
-				'field_id'    => 'grantID',
-				'description' => __( 'Enter the total number of applications received for this grant.', 'ca-grants-plugin' ),
-				'required'    => true,
-			),
-			array(
-				'id'          => 'grantsAwarded',
-				'name'        => __( 'Number of Grants Awarded', 'ca-grants-plugin' ),
-				'type'        => 'save_to_field',
-				'field_id'    => 'grantID',
-				'description' => __( 'Enter the number of individual awardees for this grant. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
-				'required'    => true,
-			),
-			array(
 				'id'          => 'fiscalYear',
 				'name'        => __( 'Fiscal Year', 'ca-grants-plugin' ),
 				'type'        => 'select',
@@ -129,7 +113,7 @@ class GrantAwards {
 				'required'    => true,
 			),
 			array(
-				'id'          => 'primeryRecipientName',
+				'id'          => 'primaryRecipientName',
 				'name'        => __( 'Primary Recipient Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s name (legal name of the principal investigator, project lead, or institution name), or the name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
@@ -193,11 +177,11 @@ class GrantAwards {
 				'required'    => true,
 			),
 			array(
-				'id'          => 'matchingFundingAmount',
-				'name'        => __( 'Matching Funding Amount', 'ca-grants-plugin' ),
-				'type'        => 'number',
-				'description' => __( 'If partial or full matching is requested or required by the agreement, enter the matched funding dollar amount. If no matched funding is requested or required, enter "0".  Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
-				'required'    => true,
+				'id'            => 'matchingFundingAmount',
+				'name'          => __( 'Matching Funding Amount', 'ca-grants-plugin' ),
+				'type'          => 'number',
+				'default_value' => 0,
+				'description'   => __( 'If partial or full matching is requested or required by the agreement, enter the matched funding dollar amount. If no matched funding is requested or required, enter "0".  Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'          => 'awardAmountNotes',
@@ -266,8 +250,12 @@ class GrantAwards {
 				'type'        => 'checkbox',
 				'source'      => 'api',
 				'description' => __( 'If "County" is selected in the Geographic Location Served field, select all relevant California counties.', 'ca-grants-plugin' ),
-				'required'    => array( 'county' ),
-				'compare_to'  => 'geoLocationServed',
+				'visible'     => array(
+					'fieldId'  => 'geoLocationServed',
+					'value'    => 'county',
+					'compare'  => 'equal',
+					'required' => true,
+				),
 			),
 			array(
 				'id'          => 'geoServedNotes',

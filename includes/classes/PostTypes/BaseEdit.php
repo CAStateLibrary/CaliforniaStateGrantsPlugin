@@ -257,7 +257,7 @@ abstract class BaseEdit {
 					break;
 			}
 
-			if ( ! empty( $post_id ) ) {
+			if ( ! empty( $post_id ) && ! empty( $value ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );
 			}
 		}

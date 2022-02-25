@@ -30,3 +30,6 @@ Desktop.ini
 !/vendor/composer
 !/vendor/symfony
 !/vendor/myclabs
+!/vendor/10up
+/vendor/10up/phpcs-composer
+/vendor/10up/wp_mock
