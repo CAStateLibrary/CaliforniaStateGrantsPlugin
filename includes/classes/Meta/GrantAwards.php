@@ -129,7 +129,7 @@ class GrantAwards {
 				'required'    => true,
 			),
 			array(
-				'id'          => 'primeryRecipientName',
+				'id'          => 'primaryRecipientName',
 				'name'        => __( 'Primary Recipient Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s name (legal name of the principal investigator, project lead, or institution name), or the name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),

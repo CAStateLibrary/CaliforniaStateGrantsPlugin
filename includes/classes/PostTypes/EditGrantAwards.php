@@ -87,7 +87,7 @@ class EditGrantAwards extends BaseEdit {
 			$last_name  = get_post_meta( $post_id, 'primeryRecipientLastName', true ) ?: '';
 			$full_name  = $first_name . ' ' . $last_name;
 		} else {
-			$full_name = get_post_meta( $post_id, 'primeryRecipientName', true );
+			$full_name = get_post_meta( $post_id, 'primaryRecipientName', true );
 		}
 
 		if ( ! empty( $full_name ) ) {
