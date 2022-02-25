@@ -1,0 +1,173 @@
+.post-finder {
+
+	h4 {
+		font-size: 13px;
+		color: #444;
+	}
+
+	/*max-width: 600px;*/
+
+	.list {
+		background: #fbfbfb;
+		margin: 0 0 1em;
+		padding: 1em;
+		border: 1px solid #ccc;
+
+		.notice {
+			text-align: center;
+			margin: 0;
+			padding: 10px;
+		}
+
+		li {
+			background-color: #FFF;
+			border: 1px solid #ccc;
+			cursor: move;
+			margin-bottom: 1em;
+			list-style: none;
+			margin-left: 50px;
+			text-align: left;
+			position: relative;
+			height: 40px;
+			padding: 0.5em 12em 0.5em 0.5em;
+			box-sizing: border-box;
+
+			input[type=text] {
+				position: absolute;
+				margin-left: -60px;
+				text-align: center;
+				padding: 2px 3px;
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		span {
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			float: left;
+			width: 100%;
+			margin: 4px 0 0 4px;
+		}
+
+		nav {
+			position: absolute;
+			right: 0.5em;
+			top: 28%;
+			font-size: 13px;
+
+			a {
+				padding: 0 8px 1px 3px;
+				text-decoration: none;
+				border-right: 1px solid #999;
+
+				&.delete {
+					color: #a00;
+
+					&:hover {
+						color: #f00;
+					}
+				}
+
+				&:last-child {
+					border: none;
+				}
+			}
+		}
+	}
+
+	select {
+		max-width: 100%;
+	}
+
+	&.no-numbers {
+
+		.list li {
+			margin-left: 0;
+		}
+
+		.list li input[type=text] {
+			display: none;
+		}
+	}
+
+	.search {
+		background: none;
+		font-size: 14px;
+
+		.loader {
+			display: none;
+		}
+
+		input {
+			width: 100%;
+			max-width: calc(100% - 78px);
+			margin-right: 0.5em;
+			padding: 5px;
+		}
+
+		.button {
+			margin-top: 1px;
+		}
+	}
+
+	.loading {
+		.loader {
+			display: block;
+			width: 40px;
+			height: 40px;
+			margin: 20px auto;
+			background-color: #333;
+
+			border-radius: 100%;
+			-webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+			animation: sk-scaleout 1.0s infinite ease-in-out;
+		}
+
+		.results {
+			display: none;
+		}
+	}
+
+	.results {
+		> :nth-child(2n+1) {
+			background-color: #f9f9f9;
+		}
+
+		li {
+			padding: 10px 15px;
+
+			&.next {
+				background: none;
+				margin-bottom: 40px;
+			}
+		}
+
+		a {
+			float: right;
+			text-decoration: none;
+		}
+	}
+}
+
+@-webkit-keyframes sk-scaleout {
+	0% { -webkit-transform: scale(0) }
+	100% {
+		-webkit-transform: scale(1.0);
+		opacity: 0;
+	}
+}
+
+@keyframes sk-scaleout {
+	0% {
+		-webkit-transform: scale(0);
+		transform: scale(0);
+	} 100% {
+			-webkit-transform: scale(1.0);
+			transform: scale(1.0);
+			opacity: 0;
+		}
+}

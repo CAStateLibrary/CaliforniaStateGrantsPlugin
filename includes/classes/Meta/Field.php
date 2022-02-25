@@ -179,19 +179,24 @@ class Field {
 		$options     = wp_parse_args( $options, $default_options );
 		$class       = $meta_field['class'] ?? '';
 		$description = $meta_field['description'] ?? '';
+		$required    = empty( $meta_field['required'] ) ? '' : 'data-post-finder=required';
 
 		?>
-		<tr class="<?php echo esc_attr( $class ); ?>">
+		<tr class="post_finder_field <?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
-				<?php
-				if ( function_exists( 'pf_render' ) ) {
-					pf_render( $id, $value, $options );
-				}
-				?>
+				<div class="pf_render"
+					<?php echo esc_attr( $required ); ?>
+				>
+					<?php
+					if ( function_exists( 'pf_render' ) ) {
+						pf_render( $id, $value, $options );
+					}
+					?>
+				</div>
 			</td>
 		</tr>
 		<?php
@@ -214,16 +219,18 @@ class Field {
 			$meta_field['type'] = 'number';
 		}
 
-		$type        = $meta_field['type'] ?? '';
-		$name        = $meta_field['name'] ?? '';
-		$description = $meta_field['description'] ?? '';
-		$id          = $meta_field['id'] ?? '';
-		$class       = $meta_field['class'] ?? '';
-		$maxlength   = $meta_field['maxlength'] ?? '';
-		$value       = get_post_meta( $post_id, $id, true );
-		$minnumber   = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
-		$maxnumber   = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
-		$readonly    = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
+		$type          = $meta_field['type'] ?? '';
+		$name          = $meta_field['name'] ?? '';
+		$description   = $meta_field['description'] ?? '';
+		$id            = $meta_field['id'] ?? '';
+		$class         = $meta_field['class'] ?? '';
+		$maxlength     = $meta_field['maxlength'] ?? '';
+		$default_value = $meta_field['default_value'] ?? '';
+		$value         = get_post_meta( $post_id, $id, true );
+		$value         = empty( $value ) ? $default_value : $value;
+		$minnumber     = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
+		$maxnumber     = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
+		$readonly      = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
 		$accept_ext  = '';
 
 		if ( 'file' === $meta_field['type'] && ! empty( $meta_field['accepted-ext'] ) && is_array( $meta_field['accepted-ext'] ) ) {
@@ -352,7 +359,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr>
+		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -410,7 +417,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr>
+		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<?php echo esc_html( $name ); ?>
 				<?php self::tooltip( $description ); ?>
@@ -472,7 +479,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr>
+		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -517,7 +524,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr>
+		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label for="<?php esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -768,8 +775,8 @@ class Field {
 		$id          = $meta_field['id'] ?? '';
 		$class       = $meta_field['class'] ?? '';
 		$description = $meta_field['description'] ?? '';
-		$max_date    = $meta_field['max_date'] ? 'data-max-date-id=' . $meta_field['max_date'] : '';
-		$min_date    = $meta_field['min_date'] ? 'data-min-date-id=' . $meta_field['min_date'] : '';
+		$max_date    = empty( $meta_field['max_date'] ) ? '' : 'data-max-date-id=' . $meta_field['max_date'];
+		$min_date    = empty( $meta_field['min_date'] ) ? '' : 'data-min-date-id=' . $meta_field['min_date'];
 		$readonly    = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
 
 		if ( empty( $name ) || empty( $id ) ) {
@@ -779,7 +786,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr class="<?php echo esc_attr( $class ); ?>">
+		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -790,6 +797,7 @@ class Field {
 					id="<?php echo esc_attr( $id ); ?>"
 					name="<?php echo esc_attr( $id ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
+					onkeydown="return false"
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php echo esc_html( $max_date ); ?>
 					<?php echo esc_html( $min_date ); ?>
