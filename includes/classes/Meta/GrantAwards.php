@@ -193,11 +193,11 @@ class GrantAwards {
 				'required'    => true,
 			),
 			array(
-				'id'          => 'matchingFundingAmount',
-				'name'        => __( 'Matching Funding Amount', 'ca-grants-plugin' ),
-				'type'        => 'number',
-				'description' => __( 'If partial or full matching is requested or required by the agreement, enter the matched funding dollar amount. If no matched funding is requested or required, enter "0".  Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
-				'required'    => true,
+				'id'            => 'matchingFundingAmount',
+				'name'          => __( 'Matching Funding Amount', 'ca-grants-plugin' ),
+				'type'          => 'number',
+				'default_value' => 0,
+				'description'   => __( 'If partial or full matching is requested or required by the agreement, enter the matched funding dollar amount. If no matched funding is requested or required, enter "0".  Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'          => 'awardAmountNotes',

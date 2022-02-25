@@ -216,15 +216,17 @@ class Field {
 			$meta_field['type'] = 'number';
 		}
 
-		$type        = $meta_field['type'] ?? '';
-		$name        = $meta_field['name'] ?? '';
-		$description = $meta_field['description'] ?? '';
-		$id          = $meta_field['id'] ?? '';
-		$class       = $meta_field['class'] ?? '';
-		$maxlength   = $meta_field['maxlength'] ?? '';
-		$value       = get_post_meta( $post_id, $id, true );
-		$minnumber   = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
-		$maxnumber   = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
+		$type          = $meta_field['type'] ?? '';
+		$name          = $meta_field['name'] ?? '';
+		$description   = $meta_field['description'] ?? '';
+		$id            = $meta_field['id'] ?? '';
+		$class         = $meta_field['class'] ?? '';
+		$maxlength     = $meta_field['maxlength'] ?? '';
+		$default_value = $meta_field['default_value'] ?? '';
+		$value         = get_post_meta( $post_id, $id, true );
+		$value         = empty( $value ) ? $default_value : $value;
+		$minnumber     = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
+		$maxnumber     = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
 
 		// Used for telephone fields
 		$pattern = 'placeholder=1-555-555-5555 pattern=[0-9]{1}-[0-9]{3}-[0-9]{3}-[0-9]{4}';
