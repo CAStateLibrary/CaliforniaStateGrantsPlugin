@@ -697,8 +697,8 @@ class Field {
 		$id          = $meta_field['id'] ?? '';
 		$class       = $meta_field['class'] ?? '';
 		$description = $meta_field['description'] ?? '';
-		$max_date    = $meta_field['max_date'] ? 'data-max-date-id=' . $meta_field['max_date'] : '';
-		$min_date    = $meta_field['min_date'] ? 'data-min-date-id=' . $meta_field['min_date'] : '';
+		$max_date    = empty( $meta_field['max_date'] ) ? '' : 'data-max-date-id=' . $meta_field['max_date'];
+		$min_date    = empty( $meta_field['min_date'] ) ? '' : 'data-min-date-id=' . $meta_field['min_date'];
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
