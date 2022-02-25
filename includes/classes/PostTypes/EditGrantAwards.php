@@ -64,17 +64,18 @@ class EditGrantAwards extends BaseEdit {
 
 		parent::setup( $cpt_slug );
 
-		add_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
+		add_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
 
 		static::$init = true;
 	}
 
 	/**
 	 * Save post title based on Recipient Type value.
+	 * Cleanup country data based on geoLocationServed value.
 	 *
 	 * @param int $post_id The ID of the currently displayed post.
 	 */
-	public function save_post_title( $post_id ) {
+	public function maybe_update_cleanup_data( $post_id ) {
 
 		if (
 			( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
@@ -106,6 +107,12 @@ class EditGrantAwards extends BaseEdit {
 				]
 			);
 			add_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
+		}
+
+		$geoLocationServed = get_post_meta( $post_id, 'geoLocationServed', true );
+
+		if ( 'county' !== $geoLocationServed ) {
+			delete_post_meta( $post_id, 'countiesServed' );
 		}
 	}
 

@@ -179,7 +179,7 @@ class Field {
 		$required    = empty( $meta_field['required'] ) ? '' : 'data-post-finder=required';
 
 		?>
-		<tr class="post_finder_field <?php echo esc_attr( $class ); ?>">
+		<tr class="post_finder_field <?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -291,7 +291,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr>
+		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -348,7 +348,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr>
+		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<?php echo esc_html( $name ); ?>
 				<?php self::tooltip( $description ); ?>
@@ -408,7 +408,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr>
+		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -453,7 +453,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr>
+		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label for="<?php esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -714,7 +714,7 @@ class Field {
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
 		?>
-		<tr class="<?php echo esc_attr( $class ); ?>">
+		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>

@@ -15,6 +15,7 @@ const main = () => {
 
 	if ( getVisableElems().length ) {
 		grantAwardsRecipientTypes.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 	}
 
 	if ( grantTypeInputs.length ) {
@@ -147,13 +148,7 @@ const maybeSetRequired = input => {
  */
 const maybeSetRequiredClass = el => {
 	const { requiredIf } = el.dataset;
-	let current = '';
-
-	if ( geoLocationServedElem.length ) {
-		current = getCurrentGeoLocation();
-	} else if ( grantTypeInputs.length ) {
-		current = getCurrentGrantType();
-	}
+	const current = getCurrentGrantType();
 
 	if ( current ) {
 		if ( -1 !== requiredIf.split( ',' ).map( s => s.trim() ).indexOf( current ) ) {
@@ -178,14 +173,17 @@ const maybeSetRequiredClass = el => {
  */
 const maybeSetHiddenClass = el => {
 	const { visibleIf }  = el.dataset;
-	const current        = getCurrentRecipientType();
 	const visibleOptions = JSON.parse( visibleIf );
+	let current = '';
 
-	if (
-		! visibleOptions
-		|| 'recipientType' !== visibleOptions['fieldId']
-	) {
+	if ( ! visibleOptions ) {
 		return;
+	}
+
+	if ( 'geoLocationServed' === visibleOptions['fieldId'] && geoLocationServedElem.length ) {
+		current = getCurrentGeoLocation();
+	} else if ( 'recipientType' === visibleOptions['fieldId'] && grantAwardsRecipientTypes.length ) {
+		current = getCurrentRecipientType();
 	}
 
 	if (
@@ -195,13 +193,23 @@ const maybeSetHiddenClass = el => {
 		el.classList.add( 'hidden' );
 
 		if ( true === visibleOptions['required'] ) {
-			el.querySelector( 'input' ).removeAttribute( 'required' );
+			if ( el.querySelector( 'input[type="text"]' ) ) {
+				el.querySelector( 'input[type="text"]' ).removeAttribute( 'required' );
+			}
+			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
+				el.querySelector( 'td' ).classList.remove( 'fieldset--is-required' );
+			}
 		}
 	} else {
 		el.classList.remove( 'hidden' );
 
 		if ( true === visibleOptions['required'] ) {
-			el.querySelector( 'input' ).setAttribute( 'required', true );
+			if ( el.querySelector( 'input[type="text"]' ) ) {
+				el.querySelector( 'input[type="text"]' ).setAttribute( 'required', true );
+			}
+			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
+				el.querySelector( 'td' ).classList.add( 'fieldset--is-required' );
+			}
 		}
 	}
 };

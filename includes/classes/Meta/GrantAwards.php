@@ -250,7 +250,12 @@ class GrantAwards {
 				'type'        => 'checkbox',
 				'source'      => 'api',
 				'description' => __( 'If "County" is selected in the Geographic Location Served field, select all relevant California counties.', 'ca-grants-plugin' ),
-				'required'    => array( 'county' ),
+				'visible'     => array(
+					'fieldId'  => 'geoLocationServed',
+					'value'    => 'county',
+					'compare'  => 'equal',
+					'required' => true,
+				),
 			),
 			array(
 				'id'          => 'geoServedNotes',
