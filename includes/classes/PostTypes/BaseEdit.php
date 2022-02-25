@@ -304,20 +304,6 @@ abstract class BaseEdit {
 				continue;
 			}
 
-			if (
-				! empty( $field['required'] )
-				&& is_array( $field['required'] )
-				&& ! empty( $field['compare_to'] )
-				&& empty( $data[ $id ] )
-				&& in_array( $data[ $field['compare_to'] ], $field['required'] )
-			) {
-				$errors->add(
-					'validation_error',
-					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
-				);
-				continue;
-			}
-
 			// Check if conditional requierd field have value.
 			if (
 				! empty( $field['visible'] )
@@ -326,12 +312,12 @@ abstract class BaseEdit {
 				&& (
 					( // Case: field is required only when dependent field is not equal to specific value.
 						'not_equal' === $field['visible']['required']
-						&& $data[ $field['visible']['recipientType'] ] !== $field['visible']['value']
+						&& $data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
 					)
 					||
 					( // Case: field is required only when dependent field is equal to specific value.
 						'equal' === $field['visible']['required']
-						&& $data[ $field['visible']['recipientType'] ] === $field['visible']['value']
+						&& $data[ $field['visible']['fieldId'] ] === $field['visible']['value']
 					)
 				)
 			) {
