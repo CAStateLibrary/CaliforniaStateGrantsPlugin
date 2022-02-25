@@ -302,7 +302,7 @@ function tiny_mce_before_init( $mce_init ) {
  * which indicates whether the environment is the CSL portal site.
  *
  * @note This function is used to enable/disable core CA Grants plugin behavior,
- * 		 and will not function on any other WordPress installation.
+ *       and will not function on any other WordPress installation.
  *
  * @return boolean true if `CSL_IS_PORTAL` constant is defined, and has a boolean value of `true`.
  */
@@ -320,4 +320,69 @@ function is_portal() {
  */
 function get_rest_namespace() {
 	return 'ca-grants/v1';
+}
+
+/**
+ * Retrieve the raw response from a safe HTTP request using the POST method with multipart form submission.
+ * This one supports sending files in $_FILES data.
+ *
+ * Note: WP Core currently doesn't support direct file upload or multipart form submission from http request.
+ * Core ref links:
+ * https://github.com/WordPress/Requests/pull/313 ( Once this PR is merged we can update or remove this function )
+ * https://core.trac.wordpress.org/ticket/35388
+ *
+ * @param string $url  URL to retrieve.
+ * @param array  $args Body POST args to send in request.
+ * @param string $file_name Form submitted filename to access from global $_FILES data.
+ *
+ * @return array|WP_Error The response or WP_Error on failure.
+ */
+function wp_safe_remote_post_multipart( $url, $args, $file_name ) {
+
+	$file = $_FILES[ $file_name ] ?? array();
+
+	if ( empty( $file ) || empty( $file['tmp_name'] ) ) {
+		return new WP_Error(
+			'request_empty_filename',
+			__( 'Filename not found or invalid to access from $_FILES data.', 'ca-grants-plugin' )
+		);
+	}
+
+	$boundary = sha1( time() );
+	$payload  = '';
+
+	// First, add the standard POST fields:
+	foreach ( $args as $key => $value ) {
+		$payload .= '--' . $boundary;
+		$payload .= "\r\n";
+		$payload .= 'Content-Disposition: form-data; name="' . $key . '"' . "\r\n\r\n";
+		$payload .= $value;
+		$payload .= "\r\n";
+	}
+
+	$payload .= '--' . $boundary;
+	$payload .= "\r\n";
+	$payload .= 'Content-Disposition: form-data; name="' . $file_name . '"; filename="' . $file['name'] . '"' . "\r\n";
+	$payload .= 'Content-Type: ' . $file['type'] . "\r\n";
+	$payload .= 'Content-Transfer-Encoding: binary' . "\r\n";
+	$payload .= "\r\n";
+	$payload .= file_get_contents( $file['tmp_name'] );
+	$payload .= "\r\n";
+
+	$payload .= '--' . $boundary . '--';
+	$payload .= "\r\n\r\n";
+
+	$post_args = array(
+		'cookies'   => wp_unslash( $_COOKIE ),
+		'headers'   => array(
+			'Content-type'        => "multipart/form-data; boundary=$boundary",
+			'Content-Disposition' => 'form-data; filename="' . $file['name'] . '"',
+			'X-WP-Nonce'          => wp_create_nonce( 'wp_rest' ),
+			'Content-Length'      => strlen( $payload ),
+		),
+		'sslverify' => false,
+		'body'      => $payload,
+	);
+
+	return wp_safe_remote_post( $url, $post_args );
 }

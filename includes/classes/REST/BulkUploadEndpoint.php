@@ -59,6 +59,15 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get endpoint url.
+	 *
+	 * @return string
+	 */
+	public static function get_endpoint_url() {
+		return rest_url( get_rest_namespace() . '/bulk-uploads' );
+	}
+
+	/**
 	 * CSV File header info.
 	 *
 	 * @return array List of csv header.
