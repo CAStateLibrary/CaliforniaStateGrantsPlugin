@@ -41,6 +41,10 @@ class EditGrantAwards extends BaseEdit {
 	public function __construct() {
 		parent::__construct();
 		$this->meta_groups = array(
+			'award-stats' => array(
+				'class' => 'CaGov\\Grants\\Meta\\GrantAwardStats',
+				'title' => __( 'Grant Award Stats', 'ca-grants-plugin' ),
+			),
 			'grantAwards' => array(
 				'class' => 'CaGov\\Grants\\Meta\\GrantAwards',
 				'title' => __( 'Grant Awards', 'ca-grants-plugin' ),
@@ -112,6 +116,7 @@ class EditGrantAwards extends BaseEdit {
 	 */
 	protected function get_all_meta_fields() {
 		return array_merge(
+			Meta\GrantAwardStats::get_fields(),
 			Meta\GrantAwards::get_fields(),
 		);
 	}

@@ -79,22 +79,6 @@ class GrantAwards {
 				),
 			),
 			array(
-				'id'          => 'applicationsSubmitted',
-				'name'        => __( 'Number of Applications Submitted', 'ca-grants-plugin' ),
-				'type'        => 'save_to_field',
-				'field_id'    => 'grantID',
-				'description' => __( 'Enter the total number of applications received for this grant.', 'ca-grants-plugin' ),
-				'required'    => true,
-			),
-			array(
-				'id'          => 'grantsAwarded',
-				'name'        => __( 'Number of Grants Awarded', 'ca-grants-plugin' ),
-				'type'        => 'save_to_field',
-				'field_id'    => 'grantID',
-				'description' => __( 'Enter the number of individual awardees for this grant. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
-				'required'    => true,
-			),
-			array(
 				'id'          => 'fiscalYear',
 				'name'        => __( 'Fiscal Year', 'ca-grants-plugin' ),
 				'type'        => 'select',
