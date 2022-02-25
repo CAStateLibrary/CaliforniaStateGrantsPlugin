@@ -6,6 +6,7 @@ const conditionalVisibleElems = 'tr[data-visible-if]';
 const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select[name="recipientType"]' ) );
 const startDateElem = Array.from( document.querySelectorAll( 'input[data-min-date-id]' ) );
 const endDateElem = Array.from( document.querySelectorAll( 'input[data-max-date-id]' ) );
+const requiredPostFinderDiv = Array.from( document.querySelectorAll( 'tr.post_finder_field div[data-post-finder="required"]' ) );
 
 /**
  * Conditional requiring fields if grant is forecasted/active.
@@ -32,6 +33,16 @@ const main = () => {
 
 	if ( endDateElem.length ) {
 		endDateElem.forEach( input => input.addEventListener( 'change', refreshMinMaxDateAttributes ) );
+	}
+
+	// Add required attribute to post finder input field.
+	if ( requiredPostFinderDiv.length ) {
+		requiredPostFinderDiv.forEach( function( elem ) {
+			const inputElems = Array.from( elem.querySelectorAll( 'input[type="hidden"]' ) );
+			inputElems.forEach( input => {
+				input.setAttribute( 'required', 'true' );
+			} );
+		} );
 	}
 
 	// Kick things off.

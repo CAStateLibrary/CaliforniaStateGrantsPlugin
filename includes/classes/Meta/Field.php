@@ -176,19 +176,24 @@ class Field {
 		$options     = wp_parse_args( $options, $default_options );
 		$class       = $meta_field['class'] ?? '';
 		$description = $meta_field['description'] ?? '';
+		$required    = empty( $meta_field['required'] ) ? '' : 'data-post-finder=required';
 
 		?>
-		<tr class="<?php echo esc_attr( $class ); ?>">
+		<tr class="post_finder_field <?php echo esc_attr( $class ); ?>">
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
-				<?php
-				if ( function_exists( 'pf_render' ) ) {
-					pf_render( $id, $value, $options );
-				}
-				?>
+				<div class="pf_render"
+					<?php echo esc_attr( $required ); ?>
+				>
+					<?php
+					if ( function_exists( 'pf_render' ) ) {
+						pf_render( $id, $value, $options );
+					}
+					?>
+				</div>
 			</td>
 		</tr>
 		<?php
