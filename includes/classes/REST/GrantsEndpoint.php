@@ -76,6 +76,7 @@ class GrantsEndpoint extends BaseEndpoint {
 			);
 
 			$metafields = array_merge(
+				Meta\AwardStats::get_fields(),
 				Meta\General::get_fields(),
 				Meta\Eligibility::get_fields(),
 				Meta\Funding::get_fields(),
