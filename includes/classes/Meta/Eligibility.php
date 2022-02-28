@@ -60,16 +60,14 @@ class Eligibility {
 	public static function get_fields() {
 		$fields = [];
 
-		if ( ! is_portal() ) {
-			$fields[] = array(
-					'id'          => 'applicantType',
-					'name'        => __( 'Eligibility: Applicant Type', 'ca-grants-plugin' ),
-					'type'        => 'checkbox',
-					'source'      => 'api',
-					'description' => __( 'Please indicate the applicant type(s) eligible to apply for this grant opportunity.<br/><br/>Note: Non-profits do not need to have 501(c)(3) status; Public agency can be state, county, city, town, or special district, and can also be K-12, college or university affiliated; Tribal nation groups can be federally recognized and/or state recognised, or have no government recognition.<br/><br/>If you select "other", please elaborate in the applicant type notes field below.', 'ca-grants-plugin' ),
-					'required'    => array( 'active' ),
-			);
-		}
+		$fields[] = array(
+				'id'          => 'applicantType',
+				'name'        => __( 'Eligibility: Applicant Type', 'ca-grants-plugin' ),
+				'type'        => 'checkbox',
+				'source'      => is_portal() ? 'portal-api' : 'api',
+				'description' => __( 'Please indicate the applicant type(s) eligible to apply for this grant opportunity.<br/><br/>Note: Non-profits do not need to have 501(c)(3) status; Public agency can be state, county, city, town, or special district, and can also be K-12, college or university affiliated; Tribal nation groups can be federally recognized and/or state recognised, or have no government recognition.<br/><br/>If you select "other", please elaborate in the applicant type notes field below.', 'ca-grants-plugin' ),
+				'required'    => array( 'active' ),
+		);
 
 		$fields[] = array(
 				'id'          => 'applicantTypeNotes',

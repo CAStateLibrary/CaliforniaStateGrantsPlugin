@@ -60,16 +60,14 @@ class Funding {
 	public static function get_fields() {
 		$fields = [];
 
-		if ( ! is_portal() ) {
-			$fields[] = array(
-					'id'          => 'fundingSource',
-					'name'        => __( 'Funding Source', 'ca-grants-plugin' ),
-					'type'        => 'radio',
-					'source'      => 'api',
-					'description' => __( 'If you select "Other", please elaborate in the funding source notes field below.', 'ca-grants-plugin' ),
-					'required'    => array( 'active' ),
-			);
-		}
+		$fields[] = array(
+				'id'          => 'fundingSource',
+				'name'        => __( 'Funding Source', 'ca-grants-plugin' ),
+				'type'        => 'radio',
+				'source'      => is_portal() ? 'portal-api' : 'api',
+				'description' => __( 'If you select "Other", please elaborate in the funding source notes field below.', 'ca-grants-plugin' ),
+				'required'    => array( 'active' ),
+		);
 
 		$fields[] = array(
 				'id'          => 'revenueSourceNotes',

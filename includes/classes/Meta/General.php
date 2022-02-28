@@ -85,16 +85,13 @@ class General {
 				),
 		);
 
-		if ( ! is_portal() ) {
-			$fields[] = array(
-					'id'       => 'opportunityType',
-					'name'     => __( 'Opportunity Type', 'ca-grants-plugin' ),
-					'type'     => 'checkbox',
-					'source'   => 'api',
-					'required' => array( 'active', 'forecasted' ),
-
-			);
-		}
+		$fields[] = array(
+				'id'       => 'opportunityType',
+				'name'     => __( 'Opportunity Type', 'ca-grants-plugin' ),
+				'type'     => 'checkbox',
+				'source'   => is_portal() ? 'portal-api' : 'api',
+				'required' => array( 'active', 'forecasted' ),
+		);
 
 		$fields[] = array(
 				'id'       => 'loiRequired',
@@ -113,17 +110,15 @@ class General {
 				'required' => array( 'active' ),
 		);
 
-		if ( ! is_portal() ) {
-			$fields[] = array(
-					'id'          => 'grantCategories',
-					'name'        => __( 'Relevant Categories', 'ca-grants-plugin' ),
-					'type'        => 'checkbox',
-					'description' => __( 'Please indicate the category (or categories) this grant opportunity belongs in. Categorizing your grant will allow users to narrow their search to find grants covering specific topics or areas of focus relevant to their needs.<br/><br/>If your grant doesn’t fit into any of the categories presented, please select Uncategorized, and suggest a category in Category Suggestion(s) below.', 'ca-grants-plugin' ),
-					'source'      => 'api',
-					'multi'       => true,
-					'required'    => array( 'active' ),
-			);
-		}
+		$fields[] = array(
+				'id'          => 'grantCategories',
+				'name'        => __( 'Relevant Categories', 'ca-grants-plugin' ),
+				'type'        => 'checkbox',
+				'description' => __( 'Please indicate the category (or categories) this grant opportunity belongs in. Categorizing your grant will allow users to narrow their search to find grants covering specific topics or areas of focus relevant to their needs.<br/><br/>If your grant doesn’t fit into any of the categories presented, please select Uncategorized, and suggest a category in Category Suggestion(s) below.', 'ca-grants-plugin' ),
+				'source'      => is_portal() ? 'portal-api' : 'api',
+				'multi'       => true,
+				'required'    => array( 'active' ),
+		);
 
 		$fields[] = array(
 				'id'          => 'categorySuggestions',

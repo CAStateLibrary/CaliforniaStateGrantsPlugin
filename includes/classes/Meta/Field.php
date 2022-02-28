@@ -82,6 +82,15 @@ class Field {
 	}
 
 	/**
+	 * Get the current site's api url.
+	 *
+	 * @return string Current site api url.
+	 */
+	public static function get_current_site_api_url() {
+		return get_site_url( null, '/wp-json/' );
+	}
+
+	/**
 	 * Tooltip
 	 *
 	 * @param  string $content Content to display within the tooltip.
@@ -181,6 +190,8 @@ class Field {
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 			$fields = self::get_api_fields_by_id( $id );
+		} elseif ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$fields = self::get_api_fields_by_id( $id, true );
 		} elseif ( isset( $meta_field['fields'] ) ) {
 			$fields = $meta_field['fields'];
 		} else {
@@ -241,6 +252,8 @@ class Field {
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 			$fields = self::get_api_fields_by_id( $id );
+		} elseif ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$fields = self::get_api_fields_by_id( $id, true );
 		} elseif ( isset( $meta_field['fields'] ) ) {
 			$fields = $meta_field['fields'];
 		} else {
@@ -303,6 +316,8 @@ class Field {
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 			$fields = self::get_api_fields_by_id( $id );
+		} elseif ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$fields = self::get_api_fields_by_id( $id, true );
 		} elseif ( isset( $meta_field['fields'] ) ) {
 			$fields = $meta_field['fields'];
 		} else {
@@ -837,19 +852,28 @@ class Field {
 	/**
 	 * Get fields for an HTML element from the WP API
 	 *
-	 * @param string $id The identifier for the type of field data needed.
+	 * @param string $id         The identifier for the type of field data needed.
+	 * @param bool   $portal_api Whether to call the API from the portal server.
 	 *
 	 * @return array $fields The data from the WP API
 	 */
-	public static function get_api_fields_by_id( $id = '' ) {
+	public static function get_api_fields_by_id( $id = '', $portal_api = false ) {
 		if ( empty( $id ) ) {
 			return array();
 		}
 
-		$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
+		$fields_to_display = false;
+		if ( ! $portal_api ) {
+			// Retrieve from cache only if it is not portal api.
+			$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
+		}
 
 		if ( false === $fields_to_display ) {
-			$api_url = trailingslashit( self::get_api_url() ) . 'wp/v2/';
+			if ( $portal_api ) {
+				$api_url = trailingslashit( self::get_current_site_api_url() ) . 'wp/v2/';
+			} else {
+				$api_url = trailingslashit( self::get_api_url() ) . 'wp/v2/';
+			}
 
 			switch ( $id ) {
 				case 'grantCategories':
@@ -905,7 +929,9 @@ class Field {
 				);
 			}
 
-			wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 5 * HOUR_IN_SECONDS );
+			if ( ! $portal_api ) {
+				wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 5 * HOUR_IN_SECONDS );
+			}
 		}
 
 		return $fields_to_display;
