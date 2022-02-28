@@ -208,7 +208,11 @@ class Field {
 		}
 
 		// Get the saved data
-		$value = get_post_meta( get_the_ID(), $id, true );
+		if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$value = self::get_value_from_taxonomy( $id );
+		} else {
+			$value = get_post_meta( get_the_ID(), $id, true );
+		}
 		?>
 		<tr>
 			<th>
@@ -267,7 +271,11 @@ class Field {
 		$fields = self::maybe_sort_fields( $fields, $meta_field );
 
 		// Get the saved data
-		$value = get_post_meta( get_the_ID(), $id, true );
+		if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$value = self::get_value_from_taxonomy( $id, false );
+		} else {
+			$value = get_post_meta( get_the_ID(), $id, true );
+		}
 		?>
 		<tr>
 			<th>
@@ -329,7 +337,11 @@ class Field {
 		}
 
 		// Get the saved data
-		$value = get_post_meta( get_the_ID(), $id, true );
+		if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$value = self::get_value_from_taxonomy( $id, false );
+		} else {
+			$value = get_post_meta( get_the_ID(), $id, true );
+		}
 		?>
 		<tr>
 			<th>
@@ -1027,5 +1039,49 @@ class Field {
 			default:
 				return $fields;
 		}
+	}
+
+	/**
+	 * Get value from taxonomy.
+	 *
+	 * @param string $id    Field id.
+	 * @param bool   $multi Whether to return an array or string.
+	 *
+	 * @return array|string Value. Will be array if multi is set to true.
+	 */
+	protected static function get_value_from_taxonomy( $id, $multi = true ) {
+		$value = wp_get_post_terms( get_the_ID(), self::get_taxonmy_from_field_id( $id ), [ 'fields' => 'slugs' ] );
+		if ( empty( $value) || is_wp_error( $value ) ) {
+			if ( $multi ) {
+				return [];
+			}
+
+			return '';
+		}
+
+		if ( $multi ) {
+			return $value;
+		}
+
+		return $value[0];
+	}
+
+	/**
+	 * Get the taxonomy based on form id.
+	 *
+	 * @param string $id Field id.
+	 *
+	 * @return string Taxonomy name.
+	 */
+	protected static function get_taxonmy_from_field_id( $id ) {
+		$field_id_to_taxonomy_map = [
+				'grantCategories' => 'grant_categories',
+				'applicantType'   => 'applicant_type',
+				'fundingMethod'   => 'disbursement_method',
+				'opportunityType' => 'opportunity_types',
+				'fundingSource'   => 'revenue_sources',
+		];
+
+		return $field_id_to_taxonomy_map[ $id ] ?? '';
 	}
 }
