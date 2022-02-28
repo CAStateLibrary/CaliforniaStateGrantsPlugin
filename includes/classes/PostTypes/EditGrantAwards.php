@@ -99,7 +99,7 @@ class EditGrantAwards extends BaseEdit {
 		}
 
 		if ( ! empty( $full_name ) ) {
-			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
+			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
 			wp_update_post(
 				[
 					'ID'         => $post_id,
