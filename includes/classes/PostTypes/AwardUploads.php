@@ -40,6 +40,8 @@ class AwardUploads {
 		// Quick post edit screen.
 		add_action( 'admin_footer-edit.php', array( $this, 'append_post_status_list' ) );
 
+		add_filter( 'display_post_states', array( $this, 'display_failed_post_states' ), 10, 2 );
+
 		self::$init = true;
 	}
 
@@ -148,5 +150,28 @@ class AwardUploads {
 		}
 		echo '});';
 		echo '</script>';
+	}
+
+	/**
+	 * Add failed post status to display status list.
+	 *
+	 * @param string[] $post_states An array of post display states.
+	 * @param WP_Post  $post        The current post object.
+	 *
+	 * @return string[]
+	 */
+	public function display_failed_post_states( $post_states, $post ) {
+
+		if ( isset( $_REQUEST['post_status'] ) ) {
+			$post_status = $_REQUEST['post_status'];
+		} else {
+			$post_status = '';
+		}
+
+		if ( 'csl_failed' === $post->post_status && 'csl_failed' !== $post_status ) {
+			$post_states['csl_failed'] = _x( 'Failed', 'post status', 'ca-grants-plugin' );
+		}
+
+		return $post_states;
 	}
 }
