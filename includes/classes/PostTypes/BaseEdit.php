@@ -330,6 +330,28 @@ abstract class BaseEdit {
 				continue;
 			}
 
+			if ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && empty( $data['grantID'] ) ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Dependent grantID value not found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			} elseif ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && ! empty( $data['grantID'] ) ) {
+				$grant_id     = $data['grantID'];
+				$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
+				$is_active    = 'active' === $isForecasted;
+				$deadline     = get_post_meta( $grant_id, 'deadline', true );
+				$is_invalid   = ( $is_active && empty( $deadline ) );
+
+				if ( $is_active && empty( $deadline ) ) {
+					$errors->add(
+						'validation_error',
+						esc_html__( 'The associated grant is ongoing, Please add value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+					);
+					continue;
+				}
+			}
+
 			// If field is not required and have empty value it's valid data, skip other checks.
 			if ( empty( $data[ $id ] ) ) {
 				continue;
