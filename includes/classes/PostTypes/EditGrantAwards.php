@@ -106,7 +106,7 @@ class EditGrantAwards extends BaseEdit {
 					'post_title' => $full_name,
 				]
 			);
-			add_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
+			add_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
 		}
 
 		$geoLocationServed = get_post_meta( $post_id, 'geoLocationServed', true );
