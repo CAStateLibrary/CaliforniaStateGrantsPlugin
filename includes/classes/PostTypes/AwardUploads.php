@@ -118,7 +118,7 @@ class AwardUploads {
 			'label_count'               => _n_noop( 'Failed (%s)', 'Failed (%s)', 'ca-grants-plugin' ),
 		);
 
-		register_post_status( 'failed', $args );
+		register_post_status( 'csl_failed', $args );
 	}
 
 	/**
@@ -134,8 +134,8 @@ class AwardUploads {
 		}
 
 		$failed_option = sprintf(
-			'<option value=\"failed\" %s>Failed</option>',
-			selected( $post->post_status, 'failed', false )
+			'<option value=\"csl_failed\" %s>Failed</option>',
+			selected( $post->post_status, 'csl_failed', false )
 		);
 
 		echo '<script>';
@@ -143,7 +143,7 @@ class AwardUploads {
 			printf( '$("select#post_status").append("%s");', $failed_option );
 			// Inline edit status for quick edit screen.
 			printf( '$(".inline-edit-status select[name=\"_status\"]").append("%s");', $failed_option );
-		if ( 'failed' === $post->post_status ) {
+		if ( 'csl_failed' === $post->post_status ) {
 			printf( '$("#post-status-display").text("Failed");' );
 		}
 		echo '});';
