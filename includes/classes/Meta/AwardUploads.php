@@ -25,7 +25,7 @@ class AwardUploads {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->description = __( 'Enter award uploads information.', 'ca-grants-plugin' );
+		$this->description = __( 'Information about this upload:', 'ca-grants-plugin' );
 	}
 
 	/**
