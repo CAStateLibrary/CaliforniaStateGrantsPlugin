@@ -25,7 +25,7 @@ class AwardUploads {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->description = __( 'Enter award uploads information.', 'ca-grants-plugin' );
+		$this->description = __( 'Information about this upload:', 'ca-grants-plugin' );
 	}
 
 	/**
@@ -66,6 +66,7 @@ class AwardUploads {
 				'name'       => __( 'Associated Grant:', 'ca-grants-plugin' ),
 				'type'       => 'label',
 				'value_type' => 'post-title',
+				'link'       => 'post-link',
 			),
 			array(
 				'id'         => 'csl_award_csv',

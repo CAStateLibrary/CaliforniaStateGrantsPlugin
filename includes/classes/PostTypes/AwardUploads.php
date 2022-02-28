@@ -123,6 +123,8 @@ class AwardUploads {
 		// Quick post edit screen.
 		add_action( 'admin_footer-edit.php', array( $this, 'append_post_status_list' ) );
 
+		add_filter( 'display_post_states', array( $this, 'display_failed_post_states' ), 10, 2 );
+
 		self::$init = true;
 	}
 
@@ -139,7 +141,7 @@ class AwardUploads {
 			'publicly_queryable' => false,
 			'show_ui'            => true,
 			'show_in_menu'       => true,
-			'show_in_rest'       => true,
+			'show_in_rest'       => false,
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'award-uploads' ),
 			'rest_base'          => 'award-uploads',
@@ -238,7 +240,7 @@ class AwardUploads {
 			'label_count'               => _n_noop( 'Failed (%s)', 'Failed (%s)', 'ca-grants-plugin' ),
 		);
 
-		register_post_status( 'failed', $args );
+		register_post_status( 'csl_failed', $args );
 	}
 
 	/**
@@ -254,8 +256,8 @@ class AwardUploads {
 		}
 
 		$failed_option = sprintf(
-			'<option value=\"failed\" %s>Failed</option>',
-			selected( $post->post_status, 'failed', false )
+			'<option value=\"csl_failed\" %s>Failed</option>',
+			selected( $post->post_status, 'csl_failed', false )
 		);
 
 		echo '<script>';
@@ -263,10 +265,33 @@ class AwardUploads {
 			printf( '$("select#post_status").append("%s");', $failed_option );
 			// Inline edit status for quick edit screen.
 			printf( '$(".inline-edit-status select[name=\"_status\"]").append("%s");', $failed_option );
-		if ( 'failed' === $post->post_status ) {
+		if ( 'csl_failed' === $post->post_status ) {
 			printf( '$("#post-status-display").text("Failed");' );
 		}
 		echo '});';
 		echo '</script>';
+	}
+
+	/**
+	 * Add failed post status to display status list.
+	 *
+	 * @param string[] $post_states An array of post display states.
+	 * @param WP_Post  $post        The current post object.
+	 *
+	 * @return string[]
+	 */
+	public function display_failed_post_states( $post_states, $post ) {
+
+		if ( isset( $_REQUEST['post_status'] ) ) {
+			$post_status = $_REQUEST['post_status'];
+		} else {
+			$post_status = '';
+		}
+
+		if ( 'csl_failed' === $post->post_status && 'csl_failed' !== $post_status ) {
+			$post_states['csl_failed'] = _x( 'Failed', 'post status', 'ca-grants-plugin' );
+		}
+
+		return $post_states;
 	}
 }
