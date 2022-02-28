@@ -58,7 +58,7 @@ class AwardUploads {
 			'publicly_queryable' => false,
 			'show_ui'            => true,
 			'show_in_menu'       => true,
-			'show_in_rest'       => true,
+			'show_in_rest'       => false,
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'award-uploads' ),
 			'rest_base'          => 'award-uploads',
