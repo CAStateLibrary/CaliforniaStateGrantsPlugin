@@ -310,6 +310,8 @@ abstract class BaseEdit {
 				&& ! empty( $field['visible']['required'] )
 				&& empty( $data[ $id ] )
 				&& (
+					empty( $data[ $field['visible']['fieldId'] ] )
+					||
 					( // Case: field is required only when dependent field is not equal to specific value.
 						'not_equal' === $field['visible']['required']
 						&& $data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
@@ -341,7 +343,7 @@ abstract class BaseEdit {
 					break;
 				case 'number':
 				case 'save_to_field':
-					$is_invalid = is_int( $data[ $id ] ) ? ( $data[ $id ] < 0 ) : true;
+					$is_invalid = is_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
 					break;
 				case 'text':
 				case 'textarea':

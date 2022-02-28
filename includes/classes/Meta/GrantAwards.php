@@ -84,7 +84,6 @@ class GrantAwards {
 				'type'        => 'select',
 				'source'      => 'api',
 				'description' => __( 'Select the fiscal year in which this grant opportunity closed for applications.', 'ca-grants-plugin' ),
-				'required'    => true,
 			),
 			array(
 				'id'          => 'projectTitle',
