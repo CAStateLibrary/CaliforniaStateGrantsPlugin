@@ -223,7 +223,11 @@ class GrantsEndpoint extends BaseEndpoint {
 						case 'disbursementMethodNotes':
 							break;
 						default:
-							$new_data[ $metafield_data['id'] ] = $metadata;
+							if ( 'number' === $metafield_data['type'] ) {
+								$new_data[ $metafield_data['id'] ] = absint( $metadata );
+							} else {
+								$new_data[ $metafield_data['id'] ] = $metadata;
+							}
 							break;
 					}
 				}
