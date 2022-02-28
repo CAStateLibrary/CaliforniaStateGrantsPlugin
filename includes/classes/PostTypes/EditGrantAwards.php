@@ -88,25 +88,25 @@ class EditGrantAwards extends BaseEdit {
 		$recipientType = get_post_meta( $post_id, 'recipientType', true );
 
 		if ( 'individual' === $recipientType ) {
-			$first_name = get_post_meta( $post_id, 'primeryRecipientFirstName', true ) ?: '';
-			$last_name  = get_post_meta( $post_id, 'primeryRecipientLastName', true ) ?: '';
+			$first_name = get_post_meta( $post_id, 'primaryRecipientFirstName', true ) ?: '';
+			$last_name  = get_post_meta( $post_id, 'primaryRecipientLastName', true ) ?: '';
 			$full_name  = $first_name . ' ' . $last_name;
 			delete_post_meta( $post_id, 'primaryRecipientName' );
 		} else {
 			$full_name = get_post_meta( $post_id, 'primaryRecipientName', true );
-			delete_post_meta( $post_id, 'primeryRecipientFirstName' );
-			delete_post_meta( $post_id, 'primeryRecipientLastName' );
+			delete_post_meta( $post_id, 'primaryRecipientFirstName' );
+			delete_post_meta( $post_id, 'primaryRecipientLastName' );
 		}
 
 		if ( ! empty( $full_name ) ) {
-			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
+			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
 			wp_update_post(
 				[
 					'ID'         => $post_id,
 					'post_title' => $full_name,
 				]
 			);
-			add_action( 'save_post_' . static::$cpt_slug, array( $this, 'save_post_title' ), 11 );
+			add_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
 		}
 
 		$geoLocationServed = get_post_meta( $post_id, 'geoLocationServed', true );
