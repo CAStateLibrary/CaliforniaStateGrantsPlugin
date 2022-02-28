@@ -67,6 +67,7 @@ class AwardUploads {
 				'name'       => __( 'Associated Grant:', 'ca-grants-plugin' ),
 				'type'       => 'label',
 				'value_type' => 'post-title',
+				'link'       => 'post-link',
 			),
 			array(
 				'id'         => 'csl_award_csv',

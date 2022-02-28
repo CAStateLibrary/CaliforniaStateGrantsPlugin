@@ -274,12 +274,12 @@ class Field {
 
 		$post_id = get_the_ID();
 
-		$type       = $meta_field['type'] ?? '';
 		$value_type = $meta_field['value_type'] ?? '';
 		$name       = $meta_field['name'] ?? '';
 		$id         = $meta_field['id'] ?? '';
 		$class      = $meta_field['class'] ?? '';
 		$value      = get_post_meta( $post_id, $id, true );
+		$link       = ( 'post-link' === $meta_field['link'] ) ? get_edit_post_link( $value ) : false;
 
 		if ( ! empty( $value ) ) {
 			switch ( $value_type ) {
@@ -308,11 +308,21 @@ class Field {
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 			</th>
 			<td>
-				<label
+				<span
 					id="<?php echo esc_attr( $id ); ?>"
 				>
+					<?php
+					 if ( ! empty( $link ) ) {
+						 printf( '<a href=%s target="_blank">', esc_url( $link) );
+					 }
+					?>
 					<?php echo esc_html( $value ); ?>
-				</label>
+					<?php
+					 if ( ! empty( $link ) ) {
+						 echo '</a>';
+					 }
+					?>
+				</span>
 			</td>
 		</tr>
 		<?php
