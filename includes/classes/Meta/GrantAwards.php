@@ -126,7 +126,7 @@ class GrantAwards {
 				),
 			),
 			array(
-				'id'          => 'primeryRecipientFirstName',
+				'id'          => 'primaryRecipientFirstName',
 				'name'        => __( 'Primary Recipient’s First Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s first name, or the first name of the primary awardee if multiple recipients. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
@@ -139,7 +139,7 @@ class GrantAwards {
 				),
 			),
 			array(
-				'id'          => 'primeryRecipientLastName',
+				'id'          => 'primaryRecipientLastName',
 				'name'        => __( 'Primary Recipient’s Last Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
 				'description' => __( 'Provide the award recipient’s last name, or the last name of the primary awardee if multiple recipients. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
