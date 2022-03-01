@@ -1,4 +1,7 @@
 <?php
+
+use CaGov\Grants\Admin\Taxonomies;
+
 /**
  * Plugin Name: California State Grants
  * Plugin URI:  https://github.com/CAStateLibrary/CaliforniaStateGrantsPlugin
@@ -103,6 +106,15 @@ function ca_grants_plugin_setup() {
 			'CaGov\Grants\Admin\SettingsPage',
 			'CaGov\Grants\Admin\WelcomePage',
 		] );
+	}
+
+	if ( \CaGov\Grants\Core\is_portal() ) {
+		$classes = array_merge(
+			$classes,
+			[
+				Taxonomies::class,
+			]
+		);
 	}
 
 	return array_map(
