@@ -95,6 +95,7 @@ function ca_grants_enable_updates() {
 function ca_grants_plugin_setup() {
 	$classes = array(
 		'CaGov\Grants\PostTypes\Grants',
+		'CaGov\Grants\PostTypes\GrantAwards',
 		'CaGov\Grants\PostTypes\EditGrant',
 		'CaGov\Grants\Admin\Notices',
 		'CaGov\Grants\REST\GrantsEndpoint',
