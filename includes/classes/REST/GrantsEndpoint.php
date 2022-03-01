@@ -76,6 +76,7 @@ class GrantsEndpoint extends BaseEndpoint {
 			);
 
 			$metafields = array_merge(
+				Meta\AwardStats::get_fields(),
 				Meta\General::get_fields(),
 				Meta\Eligibility::get_fields(),
 				Meta\Funding::get_fields(),
@@ -222,7 +223,11 @@ class GrantsEndpoint extends BaseEndpoint {
 						case 'disbursementMethodNotes':
 							break;
 						default:
-							$new_data[ $metafield_data['id'] ] = $metadata;
+							if ( 'number' === $metafield_data['type'] ) {
+								$new_data[ $metafield_data['id'] ] = absint( $metadata );
+							} else {
+								$new_data[ $metafield_data['id'] ] = $metadata;
+							}
 							break;
 					}
 				}
