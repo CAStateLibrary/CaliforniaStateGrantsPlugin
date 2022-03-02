@@ -1,20 +1,54 @@
 const grantTypeInputs = Array.from( document.querySelectorAll( 'input[name="isForecasted"]' ) );
+const geoLocationServedElem = Array.from( document.querySelectorAll( 'select[name="geoLocationServed"]' ) );
 const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if],input[required]';
 const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
+const conditionalVisibleElems = 'tr[data-visible-if]';
+const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select[name="recipientType"]' ) );
+const startDateElem = Array.from( document.querySelectorAll( 'input[data-min-date-id]' ) );
+const endDateElem = Array.from( document.querySelectorAll( 'input[data-max-date-id]' ) );
+const requiredPostFinderDiv = Array.from( document.querySelectorAll( 'tr.post_finder_field div[data-post-finder="required"]' ) );
 
 /**
  * Conditional requiring fields if grant is forecasted/active.
  */
 const main = () => {
-	if ( ! grantTypeInputs.length || ( ! getInputs().length && ! getOthers().length ) ) {
-		return;
+
+	if ( getVisableElems().length ) {
+		grantAwardsRecipientTypes.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 	}
 
-	// Update required attributes when the input changes.
-	grantTypeInputs.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+	if ( grantTypeInputs.length ) {
+		// Update required attributes when the input changes.
+		grantTypeInputs.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+	}
+
+	if ( geoLocationServedElem.length ) {
+		// Update required attributes when the input changes.
+		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+	}
+
+	if ( startDateElem.length ) {
+		startDateElem.forEach( input => input.addEventListener( 'change', refreshMinMaxDateAttributes ) );
+	}
+
+	if ( endDateElem.length ) {
+		endDateElem.forEach( input => input.addEventListener( 'change', refreshMinMaxDateAttributes ) );
+	}
+
+	// Add required attribute to post finder input field.
+	if ( requiredPostFinderDiv.length ) {
+		requiredPostFinderDiv.forEach( function( elem ) {
+			const inputElems = Array.from( elem.querySelectorAll( 'input[type="hidden"]' ) );
+			inputElems.forEach( input => {
+				input.setAttribute( 'required', 'true' );
+			} );
+		} );
+	}
 
 	// Kick things off.
 	refreshRequiredAttributes();
+	refreshMinMaxDateAttributes();
 };
 
 /**
@@ -27,11 +61,65 @@ const getCurrentGrantType = () => {
 };
 
 /**
+ * Get current geo location.
+ */
+const getCurrentGeoLocation = () => {
+
+	if ( ! geoLocationServedElem.length ) {
+		return '';
+	}
+
+	const [current] = geoLocationServedElem.filter( input => input.value );
+
+	return current ? current.value : '';
+};
+
+/**
+ * Get current Recipient type.
+ */
+const getCurrentRecipientType = () => {
+	const [current] = grantAwardsRecipientTypes.filter( input => input.selectedIndex );
+
+	return current ? current.value : '';
+};
+
+/**
  * Refresh all the inputs with conditional required attributes.
  */
 const refreshRequiredAttributes = () => {
-	getInputs().forEach( input => maybeSetRequired( input ) );
-	getOthers().forEach( el => maybeSetRequiredClass( el ) );
+	if ( getInputs().length ) {
+		getInputs().forEach( input => maybeSetRequired( input ) );
+	}
+
+	if ( getOthers().length ) {
+		getOthers().forEach( el => maybeSetRequiredClass( el ) );
+	}
+
+	if ( getVisableElems().length ) {
+		getVisableElems().forEach( el => maybeSetHiddenClass( el ) );
+	}
+};
+
+/**
+ * Refresh min and max date for grant funded dates.
+ */
+const refreshMinMaxDateAttributes = () => {
+
+	if ( ! startDateElem.length && ! endDateElem.length ) {
+		return;
+	}
+
+	startDateElem.forEach( input => {
+		const { minDateId } = input.dataset;
+		const minDateElem =  document.getElementById( minDateId );
+		input.setAttribute( 'min', minDateElem.value );
+	} );
+
+	endDateElem.forEach( input => {
+		const { maxDateId } = input.dataset;
+		const maxDateElem =  document.getElementById( maxDateId );
+		input.setAttribute( 'max', maxDateElem.value );
+	} );
 };
 
 /**
@@ -60,7 +148,7 @@ const maybeSetRequired = input => {
  */
 const maybeSetRequiredClass = el => {
 	const { requiredIf } = el.dataset;
-	const current        = getCurrentGrantType();
+	const current = getCurrentGrantType();
 
 	if ( current ) {
 		if ( -1 !== requiredIf.split( ',' ).map( s => s.trim() ).indexOf( current ) ) {
@@ -79,6 +167,54 @@ const maybeSetRequiredClass = el => {
 };
 
 /**
+ * Maybe set hidden class.
+ *
+ * @param {HTMLElement} el
+ */
+const maybeSetHiddenClass = el => {
+	const { visibleIf }  = el.dataset;
+	const visibleOptions = JSON.parse( visibleIf );
+	let current = '';
+
+	if ( ! visibleOptions ) {
+		return;
+	}
+
+	if ( 'geoLocationServed' === visibleOptions['fieldId'] && geoLocationServedElem.length ) {
+		current = getCurrentGeoLocation();
+	} else if ( 'recipientType' === visibleOptions['fieldId'] && grantAwardsRecipientTypes.length ) {
+		current = getCurrentRecipientType();
+	}
+
+	if (
+		'not_equal' === visibleOptions['compare'] && current === visibleOptions['value']
+		|| 'equal' === visibleOptions['compare'] && current !== visibleOptions['value']
+	) {
+		el.classList.add( 'hidden' );
+
+		if ( true === visibleOptions['required'] ) {
+			if ( el.querySelector( 'input[type="text"]' ) ) {
+				el.querySelector( 'input[type="text"]' ).removeAttribute( 'required' );
+			}
+			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
+				el.querySelector( 'td' ).classList.remove( 'fieldset--is-required' );
+			}
+		}
+	} else {
+		el.classList.remove( 'hidden' );
+
+		if ( true === visibleOptions['required'] ) {
+			if ( el.querySelector( 'input[type="text"]' ) ) {
+				el.querySelector( 'input[type="text"]' ).setAttribute( 'required', true );
+			}
+			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
+				el.querySelector( 'td' ).classList.add( 'fieldset--is-required' );
+			}
+		}
+	}
+};
+
+/**
  * Get inputs that require validation.
  */
 const getInputs = () => Array.from( document.querySelectorAll( conditionalValidationInputs ) );
@@ -88,5 +224,9 @@ const getInputs = () => Array.from( document.querySelectorAll( conditionalValida
  */
 const getOthers = () => Array.from( document.querySelectorAll( conditionalValidationOther ) );
 
+/**
+ * Get data-visable-if elements.
+ */
+const getVisableElems = () => Array.from( document.querySelectorAll( conditionalVisibleElems ) );
 
 export default main;

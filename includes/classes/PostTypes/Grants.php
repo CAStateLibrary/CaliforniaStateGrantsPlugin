@@ -11,8 +11,6 @@ namespace CaGov\Grants\PostTypes;
  * Grants post type class.
  */
 class Grants {
-	const CPT_SLUG = 'ca_grants';
-
 	/**
 	 * Init
 	 *
@@ -37,11 +35,12 @@ class Grants {
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
-		add_filter( 'manage_' . self::CPT_SLUG . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
-		add_action( 'manage_' . self::CPT_SLUG . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
+		add_filter( 'manage_' . self::get_cpt_slug() . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
+		add_action( 'manage_' . self::get_cpt_slug() . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
 
 		self::$init = true;
 	}
+
 
 	/**
 	 * Add custom column to grant CPT.
@@ -112,8 +111,8 @@ class Grants {
 		$args = array(
 			'labels'             => $this->get_labels(),
 			'description'        => __( 'California State Grants.', 'ca-grants-plugin' ),
-			'public'             => false,
-			'publicly_queryable' => true,
+			'public'             => true,
+			'publicly_queryable' => false, // Hide single page.
 			'show_ui'            => true,
 			'show_in_menu'       => true,
 			'show_in_rest'       => true,
@@ -121,7 +120,7 @@ class Grants {
 			'rewrite'            => array( 'slug' => 'grants' ),
 			'rest_base'          => 'grants',
 			'capability_type'    => 'post',
-			'has_archive'        => true,
+			'has_archive'        => false, // Hide archive page.
 			'hierarchical'       => false,
 			'menu_icon'          => 'dashicons-awards',
 			'menu_position'      => null,
@@ -135,7 +134,25 @@ class Grants {
 		 */
 		$args = apply_filters( 'ca_grants_post_type_args', $args );
 
-		register_post_type( self::CPT_SLUG, $args );
+		register_post_type( self::get_cpt_slug(), $args );
+	}
+
+	/**
+	 * Returns the custom post-type slug used when registering
+	 * the grants post-type.
+	 *
+	 * @return string The post-type slug.
+	 */
+	public static function get_cpt_slug() {
+		$cpt_slug = 'ca_grants';
+
+		/**
+		 * Filters the slug used in registration
+		 * of the grants post-type.
+		 *
+		 * @param $cpt_slug string The filtered post-type slug.
+		 */
+		return apply_filters( 'ca_grants_cpt_slug', $cpt_slug );
 	}
 
 	/**
@@ -171,7 +188,7 @@ class Grants {
 	 * @return bool
 	 */
 	public function disable_block_editor( $use, $post_type ) {
-		if ( self::CPT_SLUG === $post_type ) {
+		if ( self::get_cpt_slug() === $post_type ) {
 			return false;
 		}
 
@@ -185,6 +202,6 @@ class Grants {
 	 * @return int
 	 */
 	public static function get_published_count() {
-		return absint( wp_count_posts( self::CPT_SLUG )->publish );
+		return absint( wp_count_posts( self::get_cpt_slug() )->publish );
 	}
 }
