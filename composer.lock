@@ -4,8 +4,56 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "774cbbb8d3e742f6a344030f22e48ac5",
+    "content-hash": "ee59155bb85de5f86a91821ccfc343e3",
     "packages": [
+        {
+            "name": "10up/post-finder",
+            "version": "0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/10up/post-finder.git",
+                "reference": "f236d99e4c4e7dce634abbc50bbe5c64316da416"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/10up/post-finder/zipball/f236d99e4c4e7dce634abbc50bbe5c64316da416",
+                "reference": "f236d99e4c4e7dce634abbc50bbe5c64316da416",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "wordpress-plugin",
+            "autoload": {
+                "files": [
+                    "post-finder.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "10up",
+                    "homepage": "http://10up.com/"
+                },
+                {
+                    "name": "Micah Ernst",
+                    "homepage": "https://github.com/micahwave/"
+                }
+            ],
+            "description": "Adds a UI for curating and ordering posts",
+            "homepage": "https://github.com/10up/post-finder",
+            "keywords": [
+                "wordpress"
+            ],
+            "support": {
+                "issues": "https://github.com/10up/post-finder/issues",
+                "source": "https://github.com/10up/post-finder"
+            },
+            "time": "2020-08-06T23:28:15+00:00"
+        },
         {
             "name": "composer/installers",
             "version": "v1.10.0",
@@ -2538,5 +2586,5 @@
         "php": ">=7.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.2.0"
 }

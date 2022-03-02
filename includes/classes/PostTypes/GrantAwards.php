@@ -52,8 +52,8 @@ class GrantAwards {
 		$args = array(
 			'labels'             => $this->get_labels(),
 			'description'        => __( 'California State Grant Awards.', 'ca-grants-plugin' ),
-			'public'             => false,
-			'publicly_queryable' => true,
+			'public'             => true,
+			'publicly_queryable' => false,
 			'show_ui'            => true,
 			'show_in_menu'       => true,
 			'show_in_rest'       => true,
@@ -61,7 +61,7 @@ class GrantAwards {
 			'rewrite'            => array( 'slug' => 'grant-awards' ),
 			'rest_base'          => 'grant-awards',
 			'capability_type'    => 'post',
-			'has_archive'        => true,
+			'has_archive'        => false,
 			'hierarchical'       => false,
 			'menu_icon'          => 'dashicons-awards',
 			'menu_position'      => null,
@@ -145,6 +145,19 @@ class GrantAwards {
 	 * @param WP_Query $wp_query WP_Query object.
 	 */
 	public function filter_query( $wp_query ) {
+
+		// This meta query should only run in admin post list screen.
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+			return;
+		}
+
+		$screen = get_current_screen();
+
+		// Check if current page is from grant award cpt and it's a list page.
+		if ( $screen && static::CPT_SLUG === $screen->post_type && 'edit' === $screen->base ) {
+			return;
+		}
+
 		$grant_id = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
 
 		if ( empty( $grant_id ) ) {

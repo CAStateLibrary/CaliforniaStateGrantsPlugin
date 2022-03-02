@@ -96,9 +96,13 @@ function ca_grants_plugin_setup() {
 	$classes = array(
 		'CaGov\Grants\PostTypes\Grants',
 		'CaGov\Grants\PostTypes\GrantAwards',
+		'CaGov\Grants\PostTypes\AwardUploads',
 		'CaGov\Grants\PostTypes\EditGrant',
+		'CaGov\Grants\PostTypes\EditGrantAwards',
+		'CaGov\Grants\PostTypes\EditAwardUploads',
 		'CaGov\Grants\Admin\Notices',
 		'CaGov\Grants\REST\GrantsEndpoint',
+		'CaGov\Grants\REST\GrantAwardsEndpoint',
 	);
 
 	if ( true !== \CaGov\Grants\Core\is_portal() ) {
@@ -128,8 +132,11 @@ function ca_grants_plugin_setup() {
 	);
 }
 
-// Setup the plugin.
-ca_grants_plugin_setup();
+// Set up the plugin after the theme to mae sure hooks in the theme are set up first.
+add_action( 'after_setup_theme', function() {
+	// Setup the plugin.
+	ca_grants_plugin_setup();
 
-// Enable updates.
-ca_grants_enable_updates();
+	// Enable updates.
+	ca_grants_enable_updates();
+} );

@@ -41,7 +41,7 @@ class Grants {
 		self::$init = true;
 	}
 
-	
+
 	/**
 	 * Add custom column to grant CPT.
 	 *
@@ -111,8 +111,8 @@ class Grants {
 		$args = array(
 			'labels'             => $this->get_labels(),
 			'description'        => __( 'California State Grants.', 'ca-grants-plugin' ),
-			'public'             => false,
-			'publicly_queryable' => true,
+			'public'             => true,
+			'publicly_queryable' => false, // Hide single page.
 			'show_ui'            => true,
 			'show_in_menu'       => true,
 			'show_in_rest'       => true,
@@ -120,23 +120,23 @@ class Grants {
 			'rewrite'            => array( 'slug' => 'grants' ),
 			'rest_base'          => 'grants',
 			'capability_type'    => 'post',
-			'has_archive'        => true,
+			'has_archive'        => false, // Hide archive page.
 			'hierarchical'       => false,
 			'menu_icon'          => 'dashicons-awards',
 			'menu_position'      => null,
 			'supports'           => array( 'title', 'author' ),
 		);
-		
+
 		/**
 		 * Filter the California Grants post type arguments.
 		 *
 		 * @param array $args The post type arguments.
 		 */
 		$args = apply_filters( 'ca_grants_post_type_args', $args );
-		
+
 		register_post_type( self::get_cpt_slug(), $args );
 	}
-	
+
 	/**
 	 * Returns the custom post-type slug used when registering
 	 * the grants post-type.
@@ -145,16 +145,16 @@ class Grants {
 	 */
 	public static function get_cpt_slug() {
 		$cpt_slug = 'ca_grants';
-		
+
 		/**
 		 * Filters the slug used in registration
 		 * of the grants post-type.
-		 * 
+		 *
 		 * @param $cpt_slug string The filtered post-type slug.
 		 */
 		return apply_filters( 'ca_grants_cpt_slug', $cpt_slug );
 	}
-	
+
 	/**
 	 * Get grant post type labels.
 	 *
