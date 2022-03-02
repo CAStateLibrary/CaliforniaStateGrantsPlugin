@@ -310,14 +310,22 @@ abstract class BaseEdit {
 				&& ! empty( $field['visible']['required'] )
 				&& empty( $data[ $id ] )
 				&& (
+					empty( $data[ $field['visible']['fieldId'] ] )
+					||
 					( // Case: field is required only when dependent field is not equal to specific value.
-						'not_equal' === $field['visible']['required']
-						&& $data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
+						'not_equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== $field['visible']['value']
+						)
 					)
 					||
 					( // Case: field is required only when dependent field is equal to specific value.
-						'equal' === $field['visible']['required']
-						&& $data[ $field['visible']['fieldId'] ] === $field['visible']['value']
+						'equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] === $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === $field['visible']['value']
+						)
 					)
 				)
 			) {
@@ -326,6 +334,28 @@ abstract class BaseEdit {
 					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
 				);
 				continue;
+			}
+
+			if ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && empty( $data['grantID'] ) ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Dependent grantID value not found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			} elseif ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && ! empty( $data['grantID'] ) ) {
+				$grant_id     = $data['grantID'];
+				$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
+				$is_active    = 'active' === $isForecasted;
+				$deadline     = get_post_meta( $grant_id, 'deadline', true );
+				$is_invalid   = ( $is_active && empty( $deadline ) );
+
+				if ( $is_active && empty( $deadline ) ) {
+					$errors->add(
+						'validation_error',
+						esc_html__( 'The associated grant is ongoing, Please add value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+					);
+					continue;
+				}
 			}
 
 			// If field is not required and have empty value it's valid data, skip other checks.
@@ -341,7 +371,7 @@ abstract class BaseEdit {
 					break;
 				case 'number':
 				case 'save_to_field':
-					$is_invalid = is_int( $data[ $id ] ) ? ( $data[ $id ] < 0 ) : true;
+					$is_invalid = is_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
 					break;
 				case 'text':
 				case 'textarea':
@@ -354,7 +384,9 @@ abstract class BaseEdit {
 					if ( isset( $field['source'] ) && 'api' === $field['source'] ) {
 						$api_values = Field::get_api_fields_by_id( $id );
 						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
-						$is_invalid = ! in_array( $data[ $id ], $field_ids ) && ! in_array( sanitize_title( $data[ $id ] ), $field_ids );
+						$values     = explode( ',', $data[ $id ] );
+						$values     = array_map( 'sanitize_title', $values );
+						$is_invalid = ! empty( array_diff( $values, $field_ids ) );
 					} elseif ( isset( $field['fields'] ) ) {
 						$defined_values = wp_filter_object_list( $field['fields'], array(), 'and', 'id' );
 						$is_invalid     = ! in_array( $data[ $id ], $defined_values ) && ! in_array( sanitize_title( $data[ $id ] ), $defined_values );
