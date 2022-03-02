@@ -313,13 +313,19 @@ abstract class BaseEdit {
 					empty( $data[ $field['visible']['fieldId'] ] )
 					||
 					( // Case: field is required only when dependent field is not equal to specific value.
-						'not_equal' === $field['visible']['required']
-						&& $data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
+						'not_equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== $field['visible']['value']
+						)
 					)
 					||
 					( // Case: field is required only when dependent field is equal to specific value.
-						'equal' === $field['visible']['required']
-						&& $data[ $field['visible']['fieldId'] ] === $field['visible']['value']
+						'equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] === $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === $field['visible']['value']
+						)
 					)
 				)
 			) {
@@ -378,7 +384,9 @@ abstract class BaseEdit {
 					if ( isset( $field['source'] ) && 'api' === $field['source'] ) {
 						$api_values = Field::get_api_fields_by_id( $id );
 						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
-						$is_invalid = ! in_array( $data[ $id ], $field_ids ) && ! in_array( sanitize_title( $data[ $id ] ), $field_ids );
+						$values     = explode( ',', $data[ $id ] );
+						$values     = array_map( 'sanitize_title', $values );
+						$is_invalid = ! empty( array_diff( $values, $field_ids ) );
 					} elseif ( isset( $field['fields'] ) ) {
 						$defined_values = wp_filter_object_list( $field['fields'], array(), 'and', 'id' );
 						$is_invalid     = ! in_array( $data[ $id ], $defined_values ) && ! in_array( sanitize_title( $data[ $id ] ), $defined_values );
