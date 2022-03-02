@@ -36,9 +36,9 @@ class AwardUploads {
 		return array(
 			'Project Title'                           => 'projectTitle',
 			'Recipient Type *'                        => 'recipientType',
-			'Individual Recipient First Name*'        => 'primeryRecipientFirstName',
-			'Individual Recipient Last Name*'         => 'primeryRecipientLastName',
-			'Primary Recipient Name*'                 => 'primeryRecipientName',
+			'Individual Recipient First Name*'        => 'primaryRecipientFirstName',
+			'Individual Recipient Last Name*'         => 'primaryRecipientLastName',
+			'Primary Recipient Name*'                 => 'primaryRecipientName',
 			'Sub-recipients?*'                        => 'secondaryRecipients',
 			'Total Award Amount*'                     => 'totalAwardAmount',
 			'Matching Funding Amount*'                => 'matchingFundingAmount',
