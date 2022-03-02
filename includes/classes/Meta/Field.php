@@ -312,15 +312,15 @@ class Field {
 					id="<?php echo esc_attr( $id ); ?>"
 				>
 					<?php
-					 if ( ! empty( $link ) ) {
-						 printf( '<a href=%s target="_blank">', esc_url( $link) );
-					 }
+					if ( ! empty( $link ) ) {
+						 printf( '<a href="%s" target="_blank">', esc_url( $link ) );
+					}
 					?>
 					<?php echo esc_html( $value ); ?>
 					<?php
-					 if ( ! empty( $link ) ) {
+					if ( ! empty( $link ) ) {
 						 echo '</a>';
-					 }
+					}
 					?>
 				</span>
 			</td>
