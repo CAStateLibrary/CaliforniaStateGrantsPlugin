@@ -65,6 +65,9 @@ class Field {
 			case 'post-finder':
 				self::render_post_finder_field( $meta_field );
 				break;
+			case 'label':
+				self::render_label_field( $meta_field );
+				break;
 			default:
 				self::render_input_field( $meta_field );
 				break;
@@ -227,6 +230,7 @@ class Field {
 		$value         = empty( $value ) ? $default_value : $value;
 		$minnumber     = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
 		$maxnumber     = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
+		$readonly      = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
 
 		// Used for telephone fields
 		$pattern = 'placeholder=1-555-555-5555 pattern=[0-9]{1}-[0-9]{3}-[0-9]{3}-[0-9]{4}';
@@ -245,6 +249,7 @@ class Field {
 					maxlength="<?php echo esc_attr( $maxlength ); ?>"
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
+					<?php echo esc_html( $readonly ); ?>
 					<?php
 					if ( 'number' === $type ) {
 						  echo esc_html( $minnumber );
@@ -252,6 +257,72 @@ class Field {
 					}
 					?>
 				/>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
+	 * Show data for saved meta data.
+	 *
+	 * @param array $meta_field The meta field to render
+	 */
+	public static function render_label_field( $meta_field = array() ) {
+		if ( empty( $meta_field ) || ! is_array( $meta_field ) ) {
+			return;
+		}
+
+		$post_id = get_the_ID();
+
+		$value_type = $meta_field['value_type'] ?? '';
+		$name       = $meta_field['name'] ?? '';
+		$id         = $meta_field['id'] ?? '';
+		$class      = $meta_field['class'] ?? '';
+		$value      = get_post_meta( $post_id, $id, true );
+		$link       = ( 'post-link' === $meta_field['link'] ) ? get_edit_post_link( $value ) : false;
+
+		if ( ! empty( $value ) ) {
+			switch ( $value_type ) {
+				case 'post-title':
+					if ( is_numeric( $value ) ) {
+						$value = get_the_title( $value );
+					}
+					break;
+				case 'attachment-url':
+					if ( is_numeric( $value ) ) {
+						$value = wp_get_attachment_url( $value );
+					}
+					break;
+				case 'api':
+					$fields = self::get_api_fields_by_id( $id );
+					$field  = wp_filter_object_list( $fields, [ 'id' => $value ] );
+					$field  = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
+					$value  = empty( $field ) || empty( $field['name'] ) ? $value : $field['name'];
+					break;
+			}
+		}
+
+		?>
+		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
+			<th>
+				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
+			</th>
+			<td>
+				<span
+					id="<?php echo esc_attr( $id ); ?>"
+				>
+					<?php
+					if ( ! empty( $link ) ) {
+						 printf( '<a href="%s" target="_blank">', esc_url( $link ) );
+					}
+					?>
+					<?php echo esc_html( $value ); ?>
+					<?php
+					if ( ! empty( $link ) ) {
+						 echo '</a>';
+					}
+					?>
+				</span>
 			</td>
 		</tr>
 		<?php
@@ -270,6 +341,7 @@ class Field {
 		$name        = $meta_field['name'] ?? '';
 		$description = $meta_field['description'] ?? '';
 		$id          = $meta_field['id'] ?? '';
+		$readonly    = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'disabled';
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 			$fields = self::get_api_fields_by_id( $id );
@@ -299,7 +371,7 @@ class Field {
 			<td <?php self::conditional_required( $meta_field, false ); ?>>
 			<?php foreach ( $fields as $field ) : ?>
 				<?php $checked = ( in_array( $field['id'], (array) $value, true ) ) ? 'checked' : ''; ?>
-				<input <?php echo esc_attr( $checked ); ?> type="checkbox" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $id ); ?>[]" value="<?php echo esc_attr( $field['id'] ); ?>"/>
+				<input <?php echo esc_attr( $checked ); ?> type="checkbox" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $id ); ?>[]" value="<?php echo esc_attr( $field['id'] ); ?>" <?php echo esc_html( $readonly ); ?> />
 				<label for="<?php echo esc_attr( $field['id'] ); ?>"><?php echo esc_html( $field['name'] ); ?></label>
 				<br>
 			<?php endforeach; ?>
@@ -326,6 +398,7 @@ class Field {
 		$name        = $meta_field['name'] ?? '';
 		$description = $meta_field['description'] ?? '';
 		$id          = $meta_field['id'] ?? '';
+		$readonly    = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'disabled';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -365,6 +438,7 @@ class Field {
 								value="<?php echo esc_attr( $field['id'] ); ?>"
 								<?php checked( $field['id'], $value ); ?>
 								<?php self::conditional_required( $meta_field ); ?>
+								<?php echo esc_html( $readonly ); ?>
 							/>
 							<span><?php echo esc_html( $field['name'] ); ?></span>
 						</label><br>
@@ -388,6 +462,7 @@ class Field {
 		$name        = $meta_field['name'] ?? '';
 		$description = $meta_field['description'] ?? '';
 		$id          = $meta_field['id'] ?? '';
+		$readonly    = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'disabled';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -414,7 +489,7 @@ class Field {
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
-				<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>" <?php self::conditional_required( $meta_field ); ?>>
+				<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>" <?php self::conditional_required( $meta_field ); ?> <?php echo esc_html( $readonly ); ?>>
 					<option <?php selected( '', $value ); ?> value=""><?php esc_html_e( 'Select One', 'ca-grants-plugin' ); ?></option>
 					<?php foreach ( $fields as $field ) : ?>
 
@@ -706,6 +781,7 @@ class Field {
 		$description = $meta_field['description'] ?? '';
 		$max_date    = empty( $meta_field['max_date'] ) ? '' : 'data-max-date-id=' . $meta_field['max_date'];
 		$min_date    = empty( $meta_field['min_date'] ) ? '' : 'data-min-date-id=' . $meta_field['min_date'];
+		$readonly    = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -729,6 +805,7 @@ class Field {
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php echo esc_html( $max_date ); ?>
 					<?php echo esc_html( $min_date ); ?>
+					<?php echo esc_html( $readonly ); ?>
 				>
 			</td>
 		</tr>
@@ -966,6 +1043,7 @@ class Field {
 					$api_url .= 'revenue_sources';
 					break;
 				case 'fiscalYear':
+				case 'csl_fiscal_year':
 					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=3';
 					break;
 				case 'recipientType':
