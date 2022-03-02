@@ -7,6 +7,7 @@
 
 namespace CaGov\Grants\REST;
 
+use CaGov\Grants\Core;
 use CaGov\Grants\Meta;
 use WP_REST_Response;
 use WP_Rest_Request;
@@ -76,6 +77,7 @@ class GrantsEndpoint extends BaseEndpoint {
 			);
 
 			$metafields = array_merge(
+				Meta\AwardStats::get_fields(),
 				Meta\General::get_fields(),
 				Meta\Eligibility::get_fields(),
 				Meta\Funding::get_fields(),
@@ -222,11 +224,22 @@ class GrantsEndpoint extends BaseEndpoint {
 						case 'disbursementMethodNotes':
 							break;
 						default:
-							$new_data[ $metafield_data['id'] ] = $metadata;
+							if ( 'number' === $metafield_data['type'] ) {
+								$new_data[ $metafield_data['id'] ] = absint( $metadata );
+							} else {
+								$new_data[ $metafield_data['id'] ] = $metadata;
+							}
 							break;
 					}
 				}
 			}
+
+			$grant_awards_url = add_query_arg(
+				array(
+					'grant_id' => $post->ID,
+				),
+				rest_url( 'wp/v2/grant-awards' )
+			);
 
 			// Set up a custom api response
 			$new_response = new WP_REST_Response();
@@ -239,6 +252,10 @@ class GrantsEndpoint extends BaseEndpoint {
 					'Cache-Control' => 'max-age=' . WEEK_IN_SECONDS,
 				)
 			);
+
+			if ( Core\has_grant_awards( $post->ID ) ) {
+				$new_response->add_link( 'award', $grant_awards_url );
+			}
 
 			wp_cache_set( 'grants_rest_response_' . $post->ID, $new_response );
 		}

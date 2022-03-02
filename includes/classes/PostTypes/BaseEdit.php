@@ -7,7 +7,10 @@
 
 namespace CaGov\Grants\PostTypes;
 
+use CaGov\Grants\Meta\Field;
 use CaGov\Grants\Admin\Settings;
+use DateTime;
+use WP_Error;
 
 /**
  * Edit Base class.
@@ -276,5 +279,177 @@ abstract class BaseEdit {
 		}
 
 		echo '<style type="text/css">#post-preview, #view-post-btn{display: none;}</style>';
+	}
+
+	/**
+	 * Validate data with defined fields.
+	 *
+	 * @param array $data Field data to validated, key=value paired list.
+	 *
+	 * @return boolean|WP_Error WP_Error if any data validation fails, else return true for success.
+	 */
+	public function validate_fields( $data ) {
+		$errors = new WP_Error();
+		$fields = $this->get_all_meta_fields();
+
+		foreach ( $fields as $field ) {
+			$id = $field['id'];
+
+			// Check if data has value for required fields.
+			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && empty( $data[ $id ] ) ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			}
+
+			// Check if conditional requierd field have value.
+			if (
+				! empty( $field['visible'] )
+				&& ! empty( $field['visible']['required'] )
+				&& empty( $data[ $id ] )
+				&& (
+					empty( $data[ $field['visible']['fieldId'] ] )
+					||
+					( // Case: field is required only when dependent field is not equal to specific value.
+						'not_equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== $field['visible']['value']
+						)
+					)
+					||
+					( // Case: field is required only when dependent field is equal to specific value.
+						'equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] === $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === $field['visible']['value']
+						)
+					)
+				)
+			) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			}
+
+			if ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && empty( $data['grantID'] ) ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Dependent grantID value not found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			} elseif ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && ! empty( $data['grantID'] ) ) {
+				$grant_id     = $data['grantID'];
+				$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
+				$is_active    = 'active' === $isForecasted;
+				$deadline     = get_post_meta( $grant_id, 'deadline', true );
+				$is_invalid   = ( $is_active && empty( $deadline ) );
+
+				if ( $is_active && empty( $deadline ) ) {
+					$errors->add(
+						'validation_error',
+						esc_html__( 'The associated grant is ongoing, Please add value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+					);
+					continue;
+				}
+			}
+
+			// If field is not required and have empty value it's valid data, skip other checks.
+			if ( empty( $data[ $id ] ) ) {
+				continue;
+			}
+
+			$is_invalid = false;
+
+			switch ( $field['type'] ) {
+				case 'post-finder':
+					$is_invalid = $this->validate_post_finder_field( $field, $data[ $id ] );
+					break;
+				case 'number':
+				case 'save_to_field':
+					$is_invalid = is_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
+					break;
+				case 'text':
+				case 'textarea':
+					$max_chars  = $field['maxlength'] ?: strlen( $data[ $id ] );
+					$max_chars  = $field['text_limit'] ?: $max_chars;
+					$is_invalid = is_string( $data[ $id ] ) ? strlen( $data[ $id ] ) > $max_chars : true;
+					break;
+				case 'checkbox':
+				case 'select':
+					if ( isset( $field['source'] ) && 'api' === $field['source'] ) {
+						$api_values = Field::get_api_fields_by_id( $id );
+						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
+						$values     = explode( ',', $data[ $id ] );
+						$values     = array_map( 'sanitize_title', $values );
+						$is_invalid = ! empty( array_diff( $values, $field_ids ) );
+					} elseif ( isset( $field['fields'] ) ) {
+						$defined_values = wp_filter_object_list( $field['fields'], array(), 'and', 'id' );
+						$is_invalid     = ! in_array( $data[ $id ], $defined_values ) && ! in_array( sanitize_title( $data[ $id ] ), $defined_values );
+					}
+					break;
+				case 'datetime-local':
+					$date          = new DateTime( $data[ $id ] );
+					$is_valid_date = ( $date && $date->format( 'c' ) );
+
+					if ( $is_valid_date ) {
+						$max_date   = $field['max_date'] ? new DateTime( $data[ $field['max_date'] ] ) : false;
+						$min_date   = $field['min_date'] ? new DateTime( $data[ $field['min_date'] ] ) : false;
+						$is_invalid = $max_date ? ( $date > $max_date ) : false;
+						$is_invalid = ( ! $is_invalid && $min_date ) ? ( $date < $min_date ) : false;
+					} else {
+						$is_invalid = true;
+					}
+					break;
+			}
+
+			if ( $is_invalid ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Invalid value found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			}
+		}
+
+		return $errors->has_errors() ? $errors : true;
+	}
+
+	/**
+	 * Validate post finder field value agaist defined field params.
+	 *
+	 * @param array        $field Defined field args.
+	 * @param string|array $value Post finder field value.
+	 *
+	 * @return boolean Return true if data is invalid else false.
+	 */
+	public function validate_post_finder_field( $field, $value ) {
+		$is_invalid = false;
+		$post_type  = empty( $field['options']['args']['post_type'] ) ? 'post' : $field['options']['args']['post_type'];
+
+		if ( is_array( $value ) ) {
+			$limit      = empty( $field['options']['limit'] ) ? 10 : (int) $field['options']['limit'];
+			$is_invalid = count( $value ) > $limit;
+
+			if ( ! $is_invalid ) {
+				$valid_posts = array_filter(
+					$value,
+					function( $id ) use ( $post_type ) {
+						$post = is_int( $id ) ? get_post( $id ) : false;
+						return empty( $post ) ? false : ( $post->post_type === $post_type );
+					}
+				);
+				$is_invalid  = count( $valid_posts ) !== count( $value );
+			}
+		} else {
+			$post       = is_int( $value ) ? get_post( $value ) : false;
+			$is_invalid = empty( $post ) ? true : ( $post->post_type !== $post_type );
+		}
+
+		return $is_invalid;
 	}
 }
