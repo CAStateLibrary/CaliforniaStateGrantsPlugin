@@ -9,6 +9,8 @@ namespace CaGov\Grants\Core;
 
 use CaGov\Grants\Admin\Settings;
 
+use CaGov\Grants\PostTypes\GrantAwards;
+use WP_Query;
 use \WP_Error as WP_Error;
 
 /**
@@ -385,4 +387,30 @@ function wp_safe_remote_post_multipart( $url, $args, $file_name ) {
 	);
 
 	return wp_safe_remote_post( $url, $post_args );
+}
+
+/**
+ * Helper function to check if grant have atleast one award data.
+ *
+ * @param int $grant_id Grant ID.
+ *
+ * @return boolean
+ */
+function has_grant_awards( $grant_id ) {
+
+	$query_args = array(
+		'post_type'              => GrantAwards::CPT_SLUG,
+		'post_status'            => 'publish',
+		'posts_per_page'         => 1,
+		'no_found_rows'          => true,
+		'orderby'                => 'date',
+		'order'                  => 'order',
+		'update_post_term_cache' => false,
+		'meta_key'               => 'grantID',
+		'meta_value'             => $grant_id,
+	);
+
+	$posts = new WP_Query( $query_args );
+
+	return ! empty( $posts->posts );
 }

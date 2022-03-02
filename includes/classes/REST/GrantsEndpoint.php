@@ -7,6 +7,7 @@
 
 namespace CaGov\Grants\REST;
 
+use CaGov\Grants\Core;
 use CaGov\Grants\Meta;
 use WP_REST_Response;
 use WP_Rest_Request;
@@ -233,6 +234,13 @@ class GrantsEndpoint extends BaseEndpoint {
 				}
 			}
 
+			$grant_awards_url = add_query_arg(
+				array(
+					'grant_id' => $post->ID,
+				),
+				rest_url( 'wp/v2/grant-awards' )
+			);
+
 			// Set up a custom api response
 			$new_response = new WP_REST_Response();
 			$new_response->set_data( $new_data );
@@ -244,6 +252,10 @@ class GrantsEndpoint extends BaseEndpoint {
 					'Cache-Control' => 'max-age=' . WEEK_IN_SECONDS,
 				)
 			);
+
+			if ( Core\has_grant_awards( $post->ID ) ) {
+				$new_response->add_link( 'award', $grant_awards_url );
+			}
 
 			wp_cache_set( 'grants_rest_response_' . $post->ID, $new_response );
 		}
