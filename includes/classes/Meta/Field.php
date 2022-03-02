@@ -233,7 +233,7 @@ class Field {
 		$minnumber     = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
 		$maxnumber     = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
 		$readonly      = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
-		$accept_ext  = '';
+		$accept_ext    = '';
 
 		if ( 'file' === $meta_field['type'] && ! empty( $meta_field['accepted-ext'] ) && is_array( $meta_field['accepted-ext'] ) ) {
 			$accept_ext = sprintf( 'accept=%s', implode( ',', $meta_field['accepted-ext'] ) );
@@ -320,15 +320,15 @@ class Field {
 					id="<?php echo esc_attr( $id ); ?>"
 				>
 					<?php
-					 if ( ! empty( $link ) ) {
-						 printf( '<a href=%s target="_blank">', esc_url( $link) );
-					 }
+					if ( ! empty( $link ) ) {
+						 printf( '<a href="%s" target="_blank">', esc_url( $link ) );
+					}
 					?>
 					<?php echo esc_html( $value ); ?>
 					<?php
-					 if ( ! empty( $link ) ) {
+					if ( ! empty( $link ) ) {
 						 echo '</a>';
-					 }
+					}
 					?>
 				</span>
 			</td>
@@ -1327,7 +1327,7 @@ class Field {
 		}
 	}
 
-/**
+	/**
 	 * Validate fields and maybe get errors for validation.
 	 *
 	 * @param array $fields Meta fields.
@@ -1356,14 +1356,22 @@ class Field {
 				&& ! empty( $field['visible']['required'] )
 				&& empty( $data[ $id ] )
 				&& (
+					empty( $data[ $field['visible']['fieldId'] ] )
+					||
 					( // Case: field is required only when dependent field is not equal to specific value.
-						'not_equal' === $field['visible']['required']
-						&& $data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
+						'not_equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== $field['visible']['value']
+						)
 					)
 					||
 					( // Case: field is required only when dependent field is equal to specific value.
-						'equal' === $field['visible']['required']
-						&& $data[ $field['visible']['fieldId'] ] === $field['visible']['value']
+						'equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] === $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === $field['visible']['value']
+						)
 					)
 				)
 			) {
@@ -1398,9 +1406,11 @@ class Field {
 				case 'checkbox':
 				case 'select':
 					if ( isset( $field['source'] ) && 'api' === $field['source'] ) {
-						$api_values = self::get_api_fields_by_id( $id );
+						$api_values = Field::get_api_fields_by_id( $id );
 						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
-						$is_invalid = ! in_array( $data[ $id ], $field_ids ) && ! in_array( sanitize_title( $data[ $id ] ), $field_ids );
+						$values     = explode( ',', $data[ $id ] );
+						$values     = array_map( 'sanitize_title', $values );
+						$is_invalid = ! empty( array_diff( $values, $field_ids ) );
 					} elseif ( isset( $field['fields'] ) ) {
 						$defined_values = wp_filter_object_list( $field['fields'], array(), 'and', 'id' );
 						$is_invalid     = ! in_array( $data[ $id ], $defined_values ) && ! in_array( sanitize_title( $data[ $id ] ), $defined_values );
