@@ -9,6 +9,7 @@ namespace CaGov\Grants\PostTypes;
 
 use CaGov\Grants\REST\GrantsEndpoint;
 use CaGov\Grants\Meta;
+use function CaGov\Grants\Core\is_portal;
 
 /**
  * Edit grant class.
@@ -94,7 +95,10 @@ class EditGrant extends BaseEdit {
 
 		add_action( 'admin_notices', array( $this, 'validation_errors' ) );
 
-		$this->endpoint = new GrantsEndpoint();
+		if ( ! is_portal() ) {
+			$this->endpoint = new GrantsEndpoint();
+		}
+
 		static::$init     = true;
 	}
 

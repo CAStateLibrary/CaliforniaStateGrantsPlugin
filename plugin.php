@@ -103,7 +103,6 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\PostTypes\EditGrantAwards',
 		'CaGov\Grants\PostTypes\EditAwardUploads',
 		'CaGov\Grants\Admin\Notices',
-		'CaGov\Grants\REST\GrantsEndpoint',
 		'CaGov\Grants\REST\GrantAwardsEndpoint',
 	);
 
@@ -112,6 +111,7 @@ function ca_grants_plugin_setup() {
 			'CaGov\Grants\Admin\Settings',
 			'CaGov\Grants\Admin\SettingsPage',
 			'CaGov\Grants\Admin\WelcomePage',
+			'CaGov\Grants\REST\GrantsEndpoint',
 		] );
 	}
 
