@@ -52,7 +52,7 @@ const setupForms = () => {
 				const deadlineInput = document.querySelector( '[name="deadline"]' );
 
 				// Bail if either the values are missing.
-				if ( ! openDateInput.value || ! deadlineInput.value ) {
+				if ( !openDateInput || ! openDateInput.value || ! deadlineInput || ! deadlineInput.value ) {
 					return false;
 				}
 
@@ -405,9 +405,6 @@ const handleFormClick = ( event ) => {
 	}
 
 	const form = target.closest( '.form--validate' );
-	if ( target.matches( '#save-post' ) ) {
-		form.submit();
-	}
 
 	const invalidFields = bouncer.validateAll( form );
 
@@ -467,7 +464,6 @@ const setupWysiwygs = () => {
  * Init
  */
 const init = () => {
-
 	// Bail early.
 	if ( ! forms.length ) {
 		return;
