@@ -61,7 +61,7 @@ class Dates {
 		$fields = [];
 
 		if ( ! is_portal() ) {
-			$fields = [
+			$fields[] = [
 					'id'          => 'openDate',
 					'name'        => __( 'Publish Date', 'ca-grants-plugin' ),
 					'type'        => 'datetime-local',
