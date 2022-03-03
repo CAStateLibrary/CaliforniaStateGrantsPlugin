@@ -27,11 +27,18 @@ function validate_field( $key, $value, $post_data ) {
 		case 'agencyURL':
 		case 'subscribe':
 		case 'events':
+		case 'applicantTypeSuggestion':
+		case 'anticipatedOpenDate':
 			return Validators\validate_string( $value );
 		case 'isForecasted':
 			return Validators\validate_string_in( $value, array( 'active', 'forecasted' ) );
+		case 'revenueSourceNotes':
+			return Validators\validate_string( $value, 200 );
 		case 'purpose':
 		case 'geoLimitations':
+		case 'matchingFundsNotes':
+		case 'disbursementMethodNotes':
+		case 'applicantTypeNotes':
 			return Validators\validate_string( $value, 450 );
 		case 'description':
 			return Validators\validate_string( $value, 3200 );
