@@ -33,6 +33,8 @@ if ( ! defined( 'CA_GRANTS_PORTAL_JSON_URL' ) ) {
 
 // Include files.
 require_once CA_GRANTS_INC . 'functions/core.php';
+require_once CA_GRANTS_INC . 'functions/helpers/validators.php';
+require_once CA_GRANTS_INC . 'functions/helpers/validation-helpers.php';
 
 // Require Composer autoloader if it exists.
 if ( file_exists( CA_GRANTS_PATH . '/vendor/autoload.php' ) ) {
