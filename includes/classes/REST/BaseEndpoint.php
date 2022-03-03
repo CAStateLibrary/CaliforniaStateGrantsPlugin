@@ -12,6 +12,8 @@ use WP_Rest_Request;
 use WP_Error;
 use WP_Http;
 
+use function CaGov\Grants\Core\is_portal;
+
 /**
  * BaseEndpoint Class.
  */
@@ -44,7 +46,10 @@ class BaseEndpoint {
 	 * @return void
 	 */
 	public function setup() {
-		add_filter( 'rest_request_before_callbacks', array( $this, 'authenticate_rest_request' ), 10, 3 );
+		// Add request validation if the plugin is installed on an external site.
+		if ( true !== is_portal() ) {
+			add_filter( 'rest_request_before_callbacks', array( $this, 'authenticate_rest_request' ), 10, 3 );
+		}
 	}
 
 	/**

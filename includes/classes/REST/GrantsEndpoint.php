@@ -33,9 +33,10 @@ class GrantsEndpoint extends BaseEndpoint {
 			return;
 		}
 
+		parent::setup();
+
 		add_filter( 'rest_prepare_ca_grants', array( $this, 'modify_grants_rest_response' ), 10, 3 );
 		add_filter( 'rest_ca_grants_query', array( $this, 'modify_grants_rest_params' ), 10, 2 );
-		add_filter( 'rest_request_before_callbacks', array( $this, 'authenticate_rest_request' ), 10, 3 );
 
 		self::$init = true;
 	}
