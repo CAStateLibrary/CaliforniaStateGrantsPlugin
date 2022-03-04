@@ -1079,7 +1079,7 @@ class Field {
 				case 'applicantType':
 					$api_url .= 'applicant_type';
 					break;
-				case 'fundingMethod':
+				case 'disbursementMethod':
 					$api_url .= 'disbursement_method';
 					break;
 				case 'opportunityType':
@@ -1270,11 +1270,12 @@ class Field {
 	 */
 	protected static function get_taxonmy_from_field_id( $id ) {
 		$field_id_to_taxonomy_map = [
-				'grantCategories' => 'grant_categories',
-				'applicantType'   => 'applicant_type',
-				'fundingMethod'   => 'disbursement_method',
-				'opportunityType' => 'opportunity_types',
-				'fundingSource'   => 'revenue_sources',
+				'grantCategories'    => 'grant_categories',
+				'applicantType'      => 'applicant_type',
+				'disbursementMethod' => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
+				'fundingMethod'      => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
+				'opportunityType'    => 'opportunity_types',
+				'fundingSource'      => 'revenue_sources',
 		];
 
 		return $field_id_to_taxonomy_map[ $id ] ?? '';
