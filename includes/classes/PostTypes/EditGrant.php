@@ -24,13 +24,6 @@ class EditGrant extends BaseEdit {
 	public static $init = false;
 
 	/**
-	 * Endpoint.
-	 *
-	 * @var GrantsEndpoint
-	 */
-	public $endpoint;
-
-	/**
 	 * Meta groups
 	 *
 	 * @var array
@@ -95,10 +88,6 @@ class EditGrant extends BaseEdit {
 
 		add_action( 'admin_notices', array( $this, 'validation_errors' ) );
 
-		if ( ! is_portal() ) {
-			$this->endpoint = new GrantsEndpoint();
-		}
-
 		static::$init     = true;
 	}
 
@@ -111,49 +100,7 @@ class EditGrant extends BaseEdit {
 
 		parent::save_post( $post_id );
 
-		// Remote validate if set.
-		if ( $this->settings->get_setting( 'remote_validation' ) ) {
-			$this->remote_validate( $post_id );
-		}
-
 		wp_cache_delete( 'grants_rest_response_' . $post_id );
-	}
-
-	/**
-	 * Remote validate.
-	 *
-	 * @param  int $post_id The grant ID to validate.
-	 * @return void
-	 */
-	public function remote_validate( $post_id ) {
-		$shimmed_response = $this->endpoint->modify_grants_rest_response(
-			new \WP_REST_Response(),
-			get_post( $post_id ),
-			new \WP_REST_Request()
-		);
-
-		if ( $shimmed_response instanceof \WP_REST_Response ) {
-			$data = $shimmed_response->data;
-
-			if ( is_array( $data ) ) {
-				$validator = \wp_remote_post(
-					CA_GRANTS_PORTAL_JSON_URL . 'grantsportal/v1/remote_validation',
-					array(
-						'body' => array(
-							'data' => (array) $data,
-						),
-					)
-				);
-			}
-		}
-		$body   = \wp_remote_retrieve_body( $validator );
-		$errors = json_decode( $body );
-
-		if ( is_array( $errors ) && ! empty( $errors ) ) {
-			update_post_meta( $post_id, 'validation_errors', $errors );
-		} else {
-			delete_post_meta( $post_id, 'validation_errors' );
-		}
 	}
 
 	/**
