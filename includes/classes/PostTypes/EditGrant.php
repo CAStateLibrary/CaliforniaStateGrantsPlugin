@@ -7,9 +7,7 @@
 
 namespace CaGov\Grants\PostTypes;
 
-use CaGov\Grants\REST\GrantsEndpoint;
 use CaGov\Grants\Meta;
-use function CaGov\Grants\Core\is_portal;
 
 /**
  * Edit grant class.
@@ -86,8 +84,6 @@ class EditGrant extends BaseEdit {
 
 		parent::setup( $cpt_slug );
 
-		add_action( 'admin_notices', array( $this, 'validation_errors' ) );
-
 		static::$init     = true;
 	}
 
@@ -104,41 +100,6 @@ class EditGrant extends BaseEdit {
 	}
 
 	/**
-	 * Validation errors
-	 *
-	 * @return void
-	 */
-	public function validation_errors() {
-		if ( ! $this->viewing() || ! $this->settings->get_setting( 'remote_validation' ) ) {
-			return;
-		}
-
-		$errors = get_post_meta( get_post()->ID, 'validation_errors', true );
-
-		if ( empty( $errors ) ) {
-			return;
-		}
-
-		$meta_fields = $this->get_all_meta_fields();
-		?>
-		<div class="notice notice-error">
-			<p>
-				<?php esc_html_e( 'The following fields will fail to validate when submitting this grant:', 'ca-grants-plugin' ); ?>
-				<ul>
-				<?php foreach ( $errors as $error ) : ?>
-					<li>
-						<code>
-							<?php echo esc_html( $this->get_meta_field_display_name( $error ) ); ?>
-						</code>
-					</li>
-				<?php endforeach; ?>
-				</ul>
-			</p>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Get all meta fields.
 	 *
 	 * @return array
@@ -152,28 +113,5 @@ class EditGrant extends BaseEdit {
 			Meta\Dates::get_fields(),
 			Meta\Contact::get_fields()
 		);
-	}
-
-	/**
-	 * Get meta field display name.
-	 *
-	 * @param  string $field_id The field id.
-	 * @return string
-	 */
-	protected function get_meta_field_display_name( $field_id ) {
-		$meta_field = array_filter(
-			$this->get_all_meta_fields(),
-			function( $field ) use ( $field_id ) {
-				return $field['id'] === $field_id;
-			}
-		);
-
-		$meta_field = ! empty( $meta_field ) ? array_shift( $meta_field ) : false;
-
-		if ( $meta_field && isset( $meta_field['name'] ) ) {
-			return $meta_field['name'];
-		}
-
-		return (string) $field_id;
 	}
 }
