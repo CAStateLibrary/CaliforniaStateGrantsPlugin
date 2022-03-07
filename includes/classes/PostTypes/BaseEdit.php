@@ -166,6 +166,9 @@ abstract class BaseEdit {
 				case 'number':
 					$value = absint( $_POST[ $meta_field['id'] ] );
 					break;
+				case 'datetime-local':
+					$value = strtotime( $_POST[ $meta_field['id'] ] );
+					break;
 				case 'textarea':
 					$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
 					break;
@@ -187,6 +190,8 @@ abstract class BaseEdit {
 				case 'estimated-number-awards':
 					$temp_value = $_POST[ $meta_field['id'] ];
 
+					$temp_value['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
+
 					if ( 'exact' === $temp_value['checkbox'] ) {
 						$temp_value['between']['low']  = '';
 						$temp_value['between']['high'] = '';
@@ -202,8 +207,9 @@ abstract class BaseEdit {
 					$value = $temp_value;
 					break;
 				case 'estimated-award-amounts':
-					$temp_value       = $_POST[ $meta_field['id'] ];
-					$temp['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
+					$temp_value = $_POST[ $meta_field['id'] ];
+
+					$temp_value['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
 
 					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
 					if ( 'same' === $temp_value['checkbox'] ) {
@@ -256,6 +262,32 @@ abstract class BaseEdit {
 					$value = sanitize_text_field( $_POST[ $meta_field['id'] ] );
 					break;
 			}
+
+			/**
+			 * Filters the post-meta value, targeted by meta-field type.
+			 *
+			 * The filter name is `ca_grants_post_meta_`,
+			 * followed by the meta-field type.
+			 *
+			 * For example, using the `period-performance` meta-field:
+			 * `ca_grants_post_meta_period-performance`
+			 *
+			 * @param mixed $value The value to filter.
+			 */
+			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['type'], $value );
+
+			/**
+			 * Filters the post-meta value, targeted by meta-field ID.
+			 *
+			 * The filter name is `ca_grants_post_meta_`,
+			 * followed by the meta-field ID.
+			 *
+			 * For example, assuming a field ID of 1234:
+			 * `ca_grants_post_meta_1234`
+			 *
+			 * @param mixed $value The value to filter.
+			 */
+			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
 
 			if ( ! empty( $post_id ) && ! empty( $value ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );

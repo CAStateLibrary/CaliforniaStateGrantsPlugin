@@ -1,4 +1,7 @@
 <?php
+
+use CaGov\Grants\Admin\Taxonomies;
+
 /**
  * Plugin Name: California State Grants
  * Plugin URI:  https://github.com/CAStateLibrary/CaliforniaStateGrantsPlugin
@@ -30,6 +33,8 @@ if ( ! defined( 'CA_GRANTS_PORTAL_JSON_URL' ) ) {
 
 // Include files.
 require_once CA_GRANTS_INC . 'functions/core.php';
+require_once CA_GRANTS_INC . 'functions/helpers/validators.php';
+require_once CA_GRANTS_INC . 'functions/helpers/validation-helpers.php';
 
 // Require Composer autoloader if it exists.
 if ( file_exists( CA_GRANTS_PATH . '/vendor/autoload.php' ) ) {
@@ -97,17 +102,31 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\PostTypes\EditGrant',
 		'CaGov\Grants\PostTypes\EditGrantAwards',
 		'CaGov\Grants\PostTypes\EditAwardUploads',
-		'CaGov\Grants\Admin\Settings',
-		'CaGov\Grants\Admin\SettingsPage',
-		'CaGov\Grants\Admin\WelcomePage',
-		'CaGov\Grants\Admin\Notices',
 		'CaGov\Grants\Admin\BulkUploadPage',
 		'CaGov\Grants\Cron\BulkAwardImport',
-		'CaGov\Grants\REST\GrantsEndpoint',
 		'CaGov\Grants\REST\GrantAwardsEndpoint',
 		'CaGov\Grants\REST\BulkUploadEndpoint',
 		'CaGov\Grants\REST\GrantAwardsValidation',
 	);
+
+	if ( true !== \CaGov\Grants\Core\is_portal() ) {
+		$classes = array_merge( $classes, [
+			'CaGov\Grants\Admin\Settings',
+			'CaGov\Grants\Admin\SettingsPage',
+			'CaGov\Grants\Admin\WelcomePage',
+			'CaGov\Grants\REST\GrantsEndpoint',
+			'CaGov\Grants\Admin\Notices',
+		] );
+	}
+
+	if ( \CaGov\Grants\Core\is_portal() ) {
+		$classes = array_merge(
+			$classes,
+			[
+				Taxonomies::class,
+			]
+		);
+	}
 
 	return array_map(
 		function( $class ) {
@@ -119,8 +138,11 @@ function ca_grants_plugin_setup() {
 	);
 }
 
-// Setup the plugin.
-ca_grants_plugin_setup();
+// Set up the plugin after the theme to mae sure hooks in the theme are set up first.
+add_action( 'after_setup_theme', function() {
+	// Setup the plugin.
+	ca_grants_plugin_setup();
 
-// Enable updates.
-ca_grants_enable_updates();
+	// Enable updates.
+	ca_grants_enable_updates();
+} );
