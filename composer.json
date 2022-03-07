@@ -27,10 +27,13 @@
     "lint": "phpcs .",
     "lint-fix": "phpcbf ."
   },
+  "extra": {
+    "installer-disable": true
+  },
   "config": {
     "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": false,
-      "composer/installers": false
+      "composer/installers": false,
+      "dealerdirect/phpcodesniffer-composer-installer": true
     }
   }
 }
