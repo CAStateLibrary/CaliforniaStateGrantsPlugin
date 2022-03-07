@@ -10,6 +10,8 @@ namespace CaGov\Grants\Meta;
 use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\PostTypes\Grants as GrantsCPT;
 
+use function CaGov\Grants\Core\is_portal;
+
 /**
  * General Grant Data Meta Class
  */
@@ -82,9 +84,8 @@ class GrantAwards {
 				'id'          => 'fiscalYear',
 				'name'        => __( 'Fiscal Year', 'ca-grants-plugin' ),
 				'type'        => 'select',
-				'source'      => 'api',
+				'source'      => is_portal() ? 'portal-api' : 'api',
 				'description' => __( 'Select the fiscal year in which this grant opportunity closed for applications.', 'ca-grants-plugin' ),
-				'required'    => true,
 			),
 			array(
 				'id'          => 'projectTitle',
@@ -98,7 +99,7 @@ class GrantAwards {
 				'id'          => 'recipientType',
 				'name'        => __( 'Recipient Type', 'ca-grants-plugin' ),
 				'type'        => 'select',
-				'source'      => 'api',
+				'source'      => is_portal() ? 'portal-api' : 'api',
 				'description' => __(
 					'Indicate the recipient type, or the recipient type of the primary awardee if multiple awardees.<br/>
 				<ol>
@@ -248,7 +249,7 @@ class GrantAwards {
 				'id'          => 'countiesServed',
 				'name'        => __( 'Counties Served', 'ca-grants-plugin' ),
 				'type'        => 'checkbox',
-				'source'      => 'api',
+				'source'      => is_portal() ? 'portal-api' : 'api',
 				'description' => __( 'If "County" is selected in the Geographic Location Served field, select all relevant California counties.', 'ca-grants-plugin' ),
 				'visible'     => array(
 					'fieldId'  => 'geoLocationServed',
