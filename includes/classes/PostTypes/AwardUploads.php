@@ -7,6 +7,9 @@
 
 namespace CaGov\Grants\PostTypes;
 
+use CaGov\Grants\Admin\BulkUploadPage;
+use WP_Error;
+
 /**
  * Award Uploads post type class.
  */
@@ -22,6 +25,84 @@ class AwardUploads {
 	public static $init = false;
 
 	/**
+	 * CSV File header info for award upload csv file.
+	 * Mapping: [ "CSV Header Title" => "Grant Award Meta Key" ]
+	 *
+	 * @return array List of csv header.
+	 */
+	public static function get_csv_header_mapping() {
+
+		// TODO: Remove "*" if not needed.
+		return array(
+			'Project Title'                           => 'projectTitle',
+			'Recipient Type *'                        => 'recipientType',
+			'Individual Recipient First Name*'        => 'primaryRecipientFirstName',
+			'Individual Recipient Last Name*'         => 'primaryRecipientLastName',
+			'Primary Recipient Name*'                 => 'primaryRecipientName',
+			'Sub-recipients?*'                        => 'secondaryRecipients',
+			'Total Award Amount*'                     => 'totalAwardAmount',
+			'Matching Funding Amount*'                => 'matchingFundingAmount',
+			'Award Amount Notes'                      => 'awardAmountNotes',
+			'Beginning Date of Grant-Funded Project*' => 'grantFundedStartDate',
+			'End Date of Grant-Funded Project*'       => 'grantFundedEndDate',
+			'Project Abstract*'                       => 'projectAbstract',
+			'Geographic Location Served*'             => 'geoLocationServed',
+			'Counties Served*'                        => 'countiesServed',
+			'Geographic Location Served Notes'        => 'geoServedNotes',
+		);
+	}
+
+	/**
+	 * Validate temp uploaded file.
+	 *
+	 * @param array|string $csv_file Temp uploaded file data OR file path.
+	 *
+	 * @return boolean|WP_Error Return WP_Error on empty or invalid file, else return true.
+	 */
+	public static function validate_csv_file( $csv_file ) {
+		$file_path = is_array( $csv_file ) ? $csv_file['tmp_name'] : $csv_file;
+
+		if ( ! file_exists( $file_path ) ) {
+			// 'File content not found'
+			return new WP_Error(
+				'validate_csv_file_not_found',
+				__( 'File not found.', 'ca-grants-plugin' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		$csv_headers = array_keys( self::get_csv_header_mapping() );
+		$file_handle = fopen( $file_path, 'r' );
+
+		if ( feof( $file_handle ) ) {
+			// 'File content not found'
+			return new WP_Error(
+				'validate_csv_empty_file',
+				__( 'File content not found.', 'ca-grants-plugin' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		$headers = fgetcsv( $file_handle, 4096 );
+		fclose( $file_handle );
+		// Trim whitespaces.
+		$headers = array_map( 'trim', $headers );
+
+		$diff = array_diff( $csv_headers, $headers );
+
+		if ( ! empty( $diff ) ) {
+			// Header miss match.
+			return new WP_Error(
+				'validate_csv_missmatch_header',
+				__( 'Invalid CSV: File header miss-matached. Please use valid csv file.', 'ca-grants-plugin' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Setup actions and filters with the WordPress API.
 	 *
 	 * @return void
@@ -33,6 +114,8 @@ class AwardUploads {
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_post_status' ) );
+		add_action( 'admin_menu', array( $this, 'remove_add_new_menu' ) );
+		add_action( 'load-post-new.php', array( $this, 'redirect_add_new_to_bulk_upload' ) );
 
 		// Post edit screen.
 		add_action( 'admin_footer-post.php', array( $this, 'append_post_status_list' ) );
@@ -81,6 +164,43 @@ class AwardUploads {
 	}
 
 	/**
+	 * Remove add new sub menu from post type.
+	 *
+	 * @return void
+	 */
+	public function remove_add_new_menu() {
+		remove_submenu_page( 'edit.php?post_type=' . self::CPT_SLUG, 'post-new.php?post_type=' . self::CPT_SLUG );
+	}
+
+	/**
+	 * Redirect add new page to bulk upload.
+	 *
+	 * @return void
+	 */
+	public function redirect_add_new_to_bulk_upload() {
+		$current_screen = get_current_screen();
+
+		// Check if current page is add award upload page.
+		if (
+			empty( $current_screen )
+			|| 'add' !== $current_screen->action
+			|| self::CPT_SLUG !== $current_screen->post_type
+		) {
+			return;
+		}
+
+		$url = admin_url(
+			sprintf(
+				'edit.php?post_type=%s&page=%s',
+				self::CPT_SLUG,
+				BulkUploadPage::$page_slug
+			)
+		);
+		wp_redirect( $url );
+		exit;
+	}
+
+	/**
 	 * Get grant post type labels.
 	 *
 	 * @return array
@@ -91,7 +211,7 @@ class AwardUploads {
 			'singular_name'      => _x( 'Award Upload', 'post type singular name', 'ca-grants-plugin' ),
 			'menu_name'          => _x( 'Award Uploads', 'admin menu', 'ca-grants-plugin' ),
 			'name_admin_bar'     => _x( 'Award Upload', 'add new on admin bar', 'ca-grants-plugin' ),
-			'add_new'            => _x( 'Add New', 'Award Upload', 'ca-grants-plugin' ),
+			'add_new'            => _x( 'Bulk Upload', 'Award Upload', 'ca-grants-plugin' ),
 			'add_new_item'       => __( 'Add New Award Upload', 'ca-grants-plugin' ),
 			'new_item'           => __( 'New Award Upload', 'ca-grants-plugin' ),
 			'edit_item'          => __( 'Edit Award Upload', 'ca-grants-plugin' ),
@@ -131,7 +251,7 @@ class AwardUploads {
 	public function append_post_status_list() {
 		global $post;
 
-		if ( static::CPT_SLUG !== $post->post_type ) {
+		if ( empty( $post ) || static::CPT_SLUG !== $post->post_type ) {
 			return;
 		}
 
