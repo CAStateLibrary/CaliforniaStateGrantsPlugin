@@ -839,7 +839,6 @@ class Field {
 					id="<?php echo esc_attr( $id ); ?>"
 					name="<?php echo esc_attr( $id ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
-					onkeydown="return false"
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php echo esc_html( $max_date ); ?>
 					<?php echo esc_html( $min_date ); ?>
