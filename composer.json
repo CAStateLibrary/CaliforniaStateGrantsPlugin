@@ -10,7 +10,8 @@
   ],
   "require": {
     "php": ">=7.0",
-    "composer/installers": "~1.0"
+    "composer/installers": "~1.0",
+    "10up/post-finder": "^0.4.0"
   },
   "autoload": {
     "psr-4": {
@@ -25,5 +26,14 @@
   "scripts": {
     "lint": "phpcs .",
     "lint-fix": "phpcbf ."
+  },
+  "extra": {
+    "installer-disable": true
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": false,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }
