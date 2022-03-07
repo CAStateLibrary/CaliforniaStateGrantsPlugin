@@ -163,6 +163,9 @@ abstract class BaseEdit {
 				case 'number':
 					$value = absint( $_POST[ $meta_field['id'] ] );
 					break;
+				case 'datetime-local':
+					$value = strtotime( $_POST[ $meta_field['id'] ] );
+					break;
 				case 'textarea':
 					$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
 					break;
@@ -184,6 +187,8 @@ abstract class BaseEdit {
 				case 'estimated-number-awards':
 					$temp_value = $_POST[ $meta_field['id'] ];
 
+					$temp_value['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
+
 					if ( 'exact' === $temp_value['checkbox'] ) {
 						$temp_value['between']['low']  = '';
 						$temp_value['between']['high'] = '';
@@ -199,8 +204,9 @@ abstract class BaseEdit {
 					$value = $temp_value;
 					break;
 				case 'estimated-award-amounts':
-					$temp_value       = $_POST[ $meta_field['id'] ];
-					$temp['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
+					$temp_value = $_POST[ $meta_field['id'] ];
+
+					$temp_value['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
 
 					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
 					if ( 'same' === $temp_value['checkbox'] ) {
