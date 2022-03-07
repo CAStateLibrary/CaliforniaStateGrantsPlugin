@@ -195,7 +195,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		);
 
 		$metafields = array_merge(
-			Meta\GrantAwards::get_fields(),
+			Meta\GrantAwards::get_fields()
 		);
 
 		$new_data     = array(
