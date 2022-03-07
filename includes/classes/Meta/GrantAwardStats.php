@@ -64,7 +64,6 @@ class GrantAwardStats {
 				'type'        => 'save_to_field',
 				'field_id'    => 'grantID',
 				'description' => __( 'Enter the total applications received for this funding opportunity.', 'ca-grants-plugin' ),
-				'required'    => true,
 			),
 			array(
 				'id'          => 'grantsAwarded',
@@ -72,7 +71,6 @@ class GrantAwardStats {
 				'type'        => 'save_to_field',
 				'field_id'    => 'grantID',
 				'description' => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
-				'required'    => true,
 			),
 		);
 	}

@@ -240,6 +240,11 @@ class Field {
 		$minnumber     = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
 		$maxnumber     = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
 		$readonly      = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
+		$accept_ext  = '';
+
+		if ( 'file' === $meta_field['type'] && ! empty( $meta_field['accepted-ext'] ) && is_array( $meta_field['accepted-ext'] ) ) {
+			$accept_ext = sprintf( 'accept=%s', implode( ',', $meta_field['accepted-ext'] ) );
+		}
 
 		// Used for telephone fields
 		$pattern = 'placeholder=1-555-555-5555 pattern=[0-9]{1}-[0-9]{3}-[0-9]{3}-[0-9]{4}';
@@ -259,6 +264,7 @@ class Field {
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php echo esc_html( $readonly ); ?>
+					<?php echo esc_html( $accept_ext ); ?>
 					<?php
 					if ( 'number' === $type ) {
 						  echo esc_html( $minnumber );

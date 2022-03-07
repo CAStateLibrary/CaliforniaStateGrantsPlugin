@@ -30,11 +30,13 @@ class ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1
     );
 
     public static $classMap = array (
+        'CaGov\\Grants\\Admin\\BulkUploadPage' => __DIR__ . '/../..' . '/includes/classes/Admin/BulkUploadPage.php',
         'CaGov\\Grants\\Admin\\Notices' => __DIR__ . '/../..' . '/includes/classes/Admin/Notices.php',
         'CaGov\\Grants\\Admin\\Settings' => __DIR__ . '/../..' . '/includes/classes/Admin/Settings.php',
         'CaGov\\Grants\\Admin\\SettingsPage' => __DIR__ . '/../..' . '/includes/classes/Admin/SettingsPage.php',
         'CaGov\\Grants\\Admin\\Taxonomies' => __DIR__ . '/../..' . '/includes/classes/Admin/Taxonomies.php',
         'CaGov\\Grants\\Admin\\WelcomePage' => __DIR__ . '/../..' . '/includes/classes/Admin/WelcomePage.php',
+        'CaGov\\Grants\\Cron\\BulkAwardImport' => __DIR__ . '/../..' . '/includes/classes/Cron/BulkAwardImport.php',
         'CaGov\\Grants\\Meta\\AwardStats' => __DIR__ . '/../..' . '/includes/classes/Meta/AwardStats.php',
         'CaGov\\Grants\\Meta\\AwardUploads' => __DIR__ . '/../..' . '/includes/classes/Meta/AwardUploads.php',
         'CaGov\\Grants\\Meta\\Contact' => __DIR__ . '/../..' . '/includes/classes/Meta/Contact.php',
@@ -53,7 +55,9 @@ class ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1
         'CaGov\\Grants\\PostTypes\\GrantAwards' => __DIR__ . '/../..' . '/includes/classes/PostTypes/GrantAwards.php',
         'CaGov\\Grants\\PostTypes\\Grants' => __DIR__ . '/../..' . '/includes/classes/PostTypes/Grants.php',
         'CaGov\\Grants\\REST\\BaseEndpoint' => __DIR__ . '/../..' . '/includes/classes/REST/BaseEndpoint.php',
+        'CaGov\\Grants\\REST\\BulkUploadEndpoint' => __DIR__ . '/../..' . '/includes/classes/REST/BulkUploadEndpoint.php',
         'CaGov\\Grants\\REST\\GrantAwardsEndpoint' => __DIR__ . '/../..' . '/includes/classes/REST/GrantAwardsEndpoint.php',
+        'CaGov\\Grants\\REST\\GrantAwardsValidation' => __DIR__ . '/../..' . '/includes/classes/REST/GrantAwardsValidation.php',
         'CaGov\\Grants\\REST\\GrantsEndpoint' => __DIR__ . '/../..' . '/includes/classes/REST/GrantsEndpoint.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Composer\\Installers\\AglInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AglInstaller.php',

@@ -102,7 +102,11 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\PostTypes\EditGrant',
 		'CaGov\Grants\PostTypes\EditGrantAwards',
 		'CaGov\Grants\PostTypes\EditAwardUploads',
+		'CaGov\Grants\Admin\BulkUploadPage',
+		'CaGov\Grants\Cron\BulkAwardImport',
 		'CaGov\Grants\REST\GrantAwardsEndpoint',
+		'CaGov\Grants\REST\BulkUploadEndpoint',
+		'CaGov\Grants\REST\GrantAwardsValidation',
 	);
 
 	if ( true !== \CaGov\Grants\Core\is_portal() ) {

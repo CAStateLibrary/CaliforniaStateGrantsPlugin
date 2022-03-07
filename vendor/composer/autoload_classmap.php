@@ -6,11 +6,13 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'CaGov\\Grants\\Admin\\BulkUploadPage' => $baseDir . '/includes/classes/Admin/BulkUploadPage.php',
     'CaGov\\Grants\\Admin\\Notices' => $baseDir . '/includes/classes/Admin/Notices.php',
     'CaGov\\Grants\\Admin\\Settings' => $baseDir . '/includes/classes/Admin/Settings.php',
     'CaGov\\Grants\\Admin\\SettingsPage' => $baseDir . '/includes/classes/Admin/SettingsPage.php',
     'CaGov\\Grants\\Admin\\Taxonomies' => $baseDir . '/includes/classes/Admin/Taxonomies.php',
     'CaGov\\Grants\\Admin\\WelcomePage' => $baseDir . '/includes/classes/Admin/WelcomePage.php',
+    'CaGov\\Grants\\Cron\\BulkAwardImport' => $baseDir . '/includes/classes/Cron/BulkAwardImport.php',
     'CaGov\\Grants\\Meta\\AwardStats' => $baseDir . '/includes/classes/Meta/AwardStats.php',
     'CaGov\\Grants\\Meta\\AwardUploads' => $baseDir . '/includes/classes/Meta/AwardUploads.php',
     'CaGov\\Grants\\Meta\\Contact' => $baseDir . '/includes/classes/Meta/Contact.php',
@@ -29,7 +31,9 @@ return array(
     'CaGov\\Grants\\PostTypes\\GrantAwards' => $baseDir . '/includes/classes/PostTypes/GrantAwards.php',
     'CaGov\\Grants\\PostTypes\\Grants' => $baseDir . '/includes/classes/PostTypes/Grants.php',
     'CaGov\\Grants\\REST\\BaseEndpoint' => $baseDir . '/includes/classes/REST/BaseEndpoint.php',
+    'CaGov\\Grants\\REST\\BulkUploadEndpoint' => $baseDir . '/includes/classes/REST/BulkUploadEndpoint.php',
     'CaGov\\Grants\\REST\\GrantAwardsEndpoint' => $baseDir . '/includes/classes/REST/GrantAwardsEndpoint.php',
+    'CaGov\\Grants\\REST\\GrantAwardsValidation' => $baseDir . '/includes/classes/REST/GrantAwardsValidation.php',
     'CaGov\\Grants\\REST\\GrantsEndpoint' => $baseDir . '/includes/classes/REST/GrantsEndpoint.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Composer\\Installers\\AglInstaller' => $vendorDir . '/composer/installers/src/Composer/Installers/AglInstaller.php',
