@@ -163,6 +163,9 @@ abstract class BaseEdit {
 				case 'number':
 					$value = absint( $_POST[ $meta_field['id'] ] );
 					break;
+				case 'datetime-local':
+					$value = strtotime( $_POST[ $meta_field['id'] ] );
+					break;
 				case 'textarea':
 					$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
 					break;

@@ -235,6 +235,9 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 				case 'number':
 					$new_data[ $metafield_data['id'] ] = absint( $meta_value );
 					break;
+				case 'datetime-local':
+					$new_data[ $metafield_data['id'] ] = $meta_value ? gmdate( 'Y-m-d\TH:m', $meta_value ) : $meta_value;
+					break;
 				case 'textarea':
 					$new_data[ $metafield_data['id'] ] = apply_filters( 'the_content', $meta_value );
 					break;

@@ -826,6 +826,7 @@ class Field {
 
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
+		$value = $value ? gmdate( 'Y-m-d\TH:m', $value ) : $value;
 		?>
 		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
