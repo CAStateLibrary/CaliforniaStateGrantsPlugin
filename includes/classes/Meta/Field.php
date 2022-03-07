@@ -1278,6 +1278,9 @@ class Field {
 				case 'number':
 					$value = absint( $data[ $meta_field['id'] ] );
 					break;
+				case 'datetime-local':
+					$value = strtotime( $data[ $meta_field['id'] ] );
+					break;
 				case 'textarea':
 					$value = wp_kses_post( $data[ $meta_field['id'] ] );
 					break;
