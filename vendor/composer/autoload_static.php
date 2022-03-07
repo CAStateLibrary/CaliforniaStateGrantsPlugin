@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit33bdccf37a39166ec4e213506bd8a520
+class ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -47,8 +47,8 @@ class ComposerStaticInit33bdccf37a39166ec4e213506bd8a520
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
         'Webmozart\\Assert\\' => 
         array (
@@ -99,6 +99,7 @@ class ComposerStaticInit33bdccf37a39166ec4e213506bd8a520
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Hamcrest\\Arrays\\IsArray' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Arrays/IsArray.php',
         'Hamcrest\\Arrays\\IsArrayContaining' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Arrays/IsArrayContaining.php',
         'Hamcrest\\Arrays\\IsArrayContainingInAnyOrder' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Arrays/IsArrayContainingInAnyOrder.php',
@@ -759,10 +760,10 @@ class ComposerStaticInit33bdccf37a39166ec4e213506bd8a520
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit33bdccf37a39166ec4e213506bd8a520::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit33bdccf37a39166ec4e213506bd8a520::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit33bdccf37a39166ec4e213506bd8a520::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit33bdccf37a39166ec4e213506bd8a520::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1::$classMap;
 
         }, null, ClassLoader::class);
     }

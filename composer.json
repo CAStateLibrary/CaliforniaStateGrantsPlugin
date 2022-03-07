@@ -29,5 +29,11 @@
   },
   "extra": {
     "installer-disable": true
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": false,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }
