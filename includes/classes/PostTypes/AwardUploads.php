@@ -131,6 +131,10 @@ class AwardUploads {
 	public function append_post_status_list() {
 		global $post;
 
+		if ( ! is_a( $post, \WP_Post::class ) ) {
+			return;
+		}
+
 		if ( static::CPT_SLUG !== $post->post_type ) {
 			return;
 		}
