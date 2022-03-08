@@ -7,6 +7,7 @@
 
 namespace CaGov\Grants\REST;
 
+use CaGov\Grants\PostTypes\Grants;
 use CaGov\Grants\Core;
 use CaGov\Grants\Meta;
 use WP_REST_Response;
@@ -36,8 +37,9 @@ class GrantsEndpoint extends BaseEndpoint {
 
 		parent::setup();
 
-		add_filter( 'rest_prepare_ca_grants', array( $this, 'modify_grants_rest_response' ), 10, 3 );
-		add_filter( 'rest_ca_grants_query', array( $this, 'modify_grants_rest_params' ), 10, 2 );
+		add_filter( 'rest_prepare_' . Grants::get_cpt_slug(), array( $this, 'modify_grants_rest_response' ), 10, 3 );
+		add_filter( 'rest_' . Grants::get_cpt_slug() . '_query', array( $this, 'modify_grants_rest_params' ), 10, 2 );
+		add_action( 'rest_api_init', array( $this, 'register_rest_additional_fields' ) );
 
 		self::$init = true;
 	}
@@ -262,5 +264,53 @@ class GrantsEndpoint extends BaseEndpoint {
 		}
 
 		return $new_response;
+	}
+
+	/**
+	 * Register additional meta fields for endpoint.
+	 *
+	 * @return void
+	 */
+	public function register_rest_additional_fields() {
+
+		$additional_meta = Meta\AwardStats::get_fields();
+
+		foreach ( $additional_meta as $meta ) {
+			register_rest_field(
+				Grants::get_cpt_slug(),
+				$meta['id'],
+				[
+					'schema'          => [
+						'description' => $meta['name'],
+						'type'        => ( 'number' === $meta['type'] ) ? 'integer' : 'string',
+						'context'     => [ 'edit' ],
+					],
+					'update_callback' => array( $this, 'rest_fields_update_callback' ),
+				]
+			);
+		}
+	}
+
+	/**
+	 * Update callback for requested data/fields.
+	 *
+	 * @param mixed   $value Value provided from API to update.
+	 * @param WP_Post $post Post object for which data is updated.
+	 * @param string  $field_name Field name to update data.
+	 *
+	 * @return WP_Error|Boolean Return WP_Error if validation fail else return true.
+	 */
+	public function rest_fields_update_callback( $value, $post, $field_name ) {
+		$additional_meta = Meta\AwardStats::get_fields();
+		$current_field   = wp_filter_object_list( $additional_meta, array( 'id' => $field_name ) );
+		$validate_field  = Meta\Field::maybe_get_field_errors( $current_field, array( $field_name => $value ) );
+
+		if ( is_wp_error( $validate_field ) && $validate_field->has_errors() ) {
+			return $validate_field;
+		}
+
+		Meta\Field::sanitize_and_save_fields( $current_field, $post->ID, array( $field_name => $value ) );
+
+		return true;
 	}
 }

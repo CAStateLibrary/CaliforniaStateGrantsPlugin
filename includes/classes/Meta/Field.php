@@ -7,6 +7,8 @@
 
 namespace CaGov\Grants\Meta;
 
+use DateTime;
+use WP_Error;
 /**
  * Meta Field Class.
  */
@@ -240,7 +242,7 @@ class Field {
 		$minnumber     = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
 		$maxnumber     = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
 		$readonly      = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
-		$accept_ext  = '';
+		$accept_ext    = '';
 
 		if ( 'file' === $meta_field['type'] && ! empty( $meta_field['accepted-ext'] ) && is_array( $meta_field['accepted-ext'] ) ) {
 			$accept_ext = sprintf( 'accept=%s', implode( ',', $meta_field['accepted-ext'] ) );
@@ -1240,6 +1242,335 @@ class Field {
 			default:
 				return $fields;
 		}
+	}
+
+	/**
+	 * Sanitize meta data based on field attributes and save it to respective post.
+	 *
+	 * @param array $meta_fields Meta fields to save in post.
+	 * @param int   $post_id Post id to store meta data.
+	 * @param array $data Meta values for fields.
+	 *
+	 * @return void
+	 */
+	public static function sanitize_and_save_fields( $meta_fields, $post_id, $data ) {
+
+		foreach ( $meta_fields as $meta_field ) {
+			$value = array();
+
+			if ( empty( $data[ $meta_field['id'] ] ) ) {
+				delete_post_meta( $post_id, $meta_field['id'] );
+				continue;
+			}
+
+			switch ( $meta_field['type'] ) {
+				case 'checkbox':
+					$temp_value = $data[ $meta_field['id'] ];
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				case 'email':
+					$value = sanitize_email( $data[ $meta_field['id'] ] );
+					break;
+				case 'url':
+					$value = esc_url_raw( $data[ $meta_field['id'] ] );
+					break;
+				case 'number':
+					$value = absint( $data[ $meta_field['id'] ] );
+					break;
+				case 'textarea':
+					$value = wp_kses_post( $data[ $meta_field['id'] ] );
+					break;
+				case 'save_to_field':
+					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
+					update_post_meta( $field_post_id, $meta_field['id'], sanitize_text_field( $data[ $meta_field['id'] ] ) );
+					break;
+				case 'point_of_contact':
+					$temp_value = $data[ $meta_field['id'] ];
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				case 'eligibility-matching-funds':
+					$value = array(
+						'checkbox'   => sanitize_text_field( $data[ $meta_field['id'] ] ),
+						'percentage' => absint( $data[ $meta_field['id'] . '-percentage' ] ),
+					);
+					break;
+				case 'estimated-number-awards':
+					$temp_value = $data[ $meta_field['id'] ];
+
+					if ( 'exact' === $temp_value['checkbox'] ) {
+						$temp_value['between']['low']  = '';
+						$temp_value['between']['high'] = '';
+					} elseif ( 'between' === $temp_value['checkbox'] ) {
+						$temp_value['exact'] = '';
+					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
+						$temp_value['between']['low']  = '';
+						$temp_value['between']['high'] = '';
+						$temp_value['exact']           = '';
+					}
+
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				case 'estimated-award-amounts':
+					$temp_value       = $data[ $meta_field['id'] ];
+					$temp['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
+
+					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
+					if ( 'same' === $temp_value['checkbox'] ) {
+						$temp_value['unknown']['first']    = '';
+						$temp_value['unknown']['second']   = '';
+						$temp_value['different']['first']  = '';
+						$temp_value['different']['second'] = '';
+						$temp_value['different']['third']  = '';
+					} elseif ( 'different' === $temp_value['checkbox'] ) {
+						$temp_value['unknown']['first']  = '';
+						$temp_value['unknown']['second'] = '';
+						$temp_value['same']['amount']    = '';
+					} elseif ( 'unknown' === $temp_value['checkbox'] ) {
+						$temp_value['different']['first']  = '';
+						$temp_value['different']['second'] = '';
+						$temp_value['different']['third']  = '';
+						$temp_value['same']['amount']      = '';
+					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
+						$temp_value['unknown']['first']    = '';
+						$temp_value['unknown']['second']   = '';
+						$temp_value['different']['first']  = '';
+						$temp_value['different']['second'] = '';
+						$temp_value['different']['third']  = '';
+						$temp_value['same']['amount']      = '';
+					}
+
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				case 'period-performance':
+					$temp_value           = $data[ $meta_field['id'] ];
+					$clean_value          = array();
+					$clean_value['num']   = ( isset( $temp_value['num'] ) ) ? absint( $temp_value['num'] ) : '';
+					$clean_value['units'] = ( isset( $temp_value['units'] ) ) ? sanitize_text_field( $temp_value['units'] ) : '';
+					$value                = $clean_value;
+					break;
+				case 'electronic-submission-method':
+					$temp_value           = $data[ $meta_field['id'] ];
+					$clean_value          = array();
+					$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
+					$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
+					$value                = $clean_value;
+					break;
+				case 'application-deadline':
+					$temp_value = $data[ $meta_field['id'] ];
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				default:
+					$value = sanitize_text_field( $data[ $meta_field['id'] ] );
+					break;
+			}
+
+			/**
+			 * Filters the post-meta value, targeted by meta-field type.
+			 *
+			 * The filter name is `ca_grants_post_meta_`,
+			 * followed by the meta-field type.
+			 *
+			 * For example, using the `period-performance` meta-field:
+			 * `ca_grants_post_meta_period-performance`
+			 *
+			 * @param mixed $value The value to filter.
+			 */
+			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['type'], $value );
+
+			/**
+			 * Filters the post-meta value, targeted by meta-field ID.
+			 *
+			 * The filter name is `ca_grants_post_meta_`,
+			 * followed by the meta-field ID.
+			 *
+			 * For example, assuming a field ID of 1234:
+			 * `ca_grants_post_meta_1234`
+			 *
+			 * @param mixed $value The value to filter.
+			 */
+			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
+
+			if ( ! empty( $post_id ) && ! empty( $value ) ) {
+				update_post_meta( $post_id, $meta_field['id'], $value );
+			}
+		}
+	}
+
+	/**
+	 * Validate fields and maybe get errors for validation.
+	 *
+	 * @param array $fields Meta fields.
+	 * @param array $data Meta field values.
+	 *
+	 * @return WP_Error
+	 */
+	public static function maybe_get_field_errors( $fields, $data ) {
+		$errors = new WP_Error();
+
+		foreach ( $fields as $field ) {
+			$id = $field['id'];
+
+			// Check if data has value for required fields.
+			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && empty( $data[ $id ] ) ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			}
+
+			// Check if conditional requierd field have value.
+			if (
+				! empty( $field['visible'] )
+				&& ! empty( $field['visible']['required'] )
+				&& empty( $data[ $id ] )
+				&& (
+					empty( $data[ $field['visible']['fieldId'] ] )
+					||
+					( // Case: field is required only when dependent field is not equal to specific value.
+						'not_equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== $field['visible']['value']
+						)
+					)
+					||
+					( // Case: field is required only when dependent field is equal to specific value.
+						'equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] === $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === $field['visible']['value']
+						)
+					)
+				)
+			) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			}
+
+			if ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && empty( $data['grantID'] ) ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Dependent grantID value not found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			} elseif ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && ! empty( $data['grantID'] ) ) {
+				$grant_id     = $data['grantID'];
+				$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
+				$is_active    = 'active' === $isForecasted;
+				$deadline     = get_post_meta( $grant_id, 'deadline', true );
+				$is_invalid   = ( $is_active && empty( $deadline ) );
+
+				if ( $is_active && empty( $deadline ) ) {
+					$errors->add(
+						'validation_error',
+						esc_html__( 'The associated grant is ongoing, Please add value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+					);
+					continue;
+				}
+			}
+
+			// If field is not required and have empty value it's valid data, skip other checks.
+			if ( empty( $data[ $id ] ) ) {
+				continue;
+			}
+
+			$is_invalid = false;
+
+			switch ( $field['type'] ) {
+				case 'post-finder':
+					$is_invalid = self::validate_post_finder_field( $field, $data[ $id ] );
+					break;
+				case 'number':
+				case 'save_to_field':
+					$is_invalid = is_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
+					break;
+				case 'text':
+				case 'textarea':
+					$max_chars  = $field['maxlength'] ?: strlen( $data[ $id ] );
+					$max_chars  = $field['text_limit'] ?: $max_chars;
+					$is_invalid = is_string( $data[ $id ] ) ? strlen( $data[ $id ] ) > $max_chars : true;
+					break;
+				case 'checkbox':
+				case 'select':
+					if ( isset( $field['source'] ) && 'api' === $field['source'] ) {
+						$api_values = Field::get_api_fields_by_id( $id );
+						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
+						$values     = explode( ',', $data[ $id ] );
+						$values     = array_map( 'sanitize_title', $values );
+						$is_invalid = ! empty( array_diff( $values, $field_ids ) );
+					} elseif ( isset( $field['fields'] ) ) {
+						$defined_values = wp_filter_object_list( $field['fields'], array(), 'and', 'id' );
+						$is_invalid     = ! in_array( $data[ $id ], $defined_values ) && ! in_array( sanitize_title( $data[ $id ] ), $defined_values );
+					}
+					break;
+				case 'datetime-local':
+					$date          = new DateTime( $data[ $id ] );
+					$is_valid_date = ( $date && $date->format( 'c' ) );
+
+					if ( $is_valid_date ) {
+						$max_date   = $field['max_date'] ? new DateTime( $data[ $field['max_date'] ] ) : false;
+						$min_date   = $field['min_date'] ? new DateTime( $data[ $field['min_date'] ] ) : false;
+						$is_invalid = $max_date ? ( $date > $max_date ) : false;
+						$is_invalid = ( ! $is_invalid && $min_date ) ? ( $date < $min_date ) : false;
+					} else {
+						$is_invalid = true;
+					}
+					break;
+			}
+
+			if ( $is_invalid ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Invalid value found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			}
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * Validate post finder field value agaist defined field params.
+	 *
+	 * @param array        $field Defined field args.
+	 * @param string|array $value Post finder field value.
+	 *
+	 * @return boolean Return true if data is invalid else false.
+	 */
+	public static function validate_post_finder_field( $field, $value ) {
+		$is_invalid = false;
+		$post_type  = empty( $field['options']['args']['post_type'] ) ? 'post' : $field['options']['args']['post_type'];
+
+		if ( is_array( $value ) ) {
+			$limit      = empty( $field['options']['limit'] ) ? 10 : (int) $field['options']['limit'];
+			$is_invalid = count( $value ) > $limit;
+
+			if ( ! $is_invalid ) {
+				$valid_posts = array_filter(
+					$value,
+					function( $id ) use ( $post_type ) {
+						$post = is_int( $id ) ? get_post( $id ) : false;
+						return empty( $post ) ? false : ( $post->post_type === $post_type );
+					}
+				);
+				$is_invalid  = count( $valid_posts ) !== count( $value );
+			}
+		} else {
+			$post       = is_int( $value ) ? get_post( $value ) : false;
+			$is_invalid = empty( $post ) ? true : ( $post->post_type !== $post_type );
+		}
+
+		return $is_invalid;
 	}
 
 	/**
