@@ -1116,7 +1116,7 @@ class Field {
 			}
 
 			$request = wp_remote_get( $api_url );
-
+			ini_set( 'xdebug.overload_var_dump', 'off'); echo '<pre>'; var_dump( $api_url, $request ); echo '</pre>';
 			if ( is_wp_error( $request ) ) {
 				return array();
 			}
