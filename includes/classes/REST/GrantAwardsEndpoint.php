@@ -194,7 +194,9 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			'grantsAwarded',
 		);
 
-		$metafields = Meta\GrantAwards::get_fields();
+		$metafields = array_merge(
+			Meta\GrantAwards::get_fields()
+		);
 
 		$new_data     = array(
 			'grantAwardTitle' => get_the_title( $post->ID ),
@@ -232,6 +234,9 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 				case 'post-finder':
 				case 'number':
 					$new_data[ $metafield_data['id'] ] = absint( $meta_value );
+					break;
+				case 'datetime-local':
+					$new_data[ $metafield_data['id'] ] = $meta_value ? gmdate( 'Y-m-d\TH:m', $meta_value ) : $meta_value;
 					break;
 				case 'textarea':
 					$new_data[ $metafield_data['id'] ] = apply_filters( 'the_content', $meta_value );

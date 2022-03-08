@@ -90,6 +90,15 @@ class Field {
 	}
 
 	/**
+	 * Get the current site's api url.
+	 *
+	 * @return string Current site api url.
+	 */
+	public static function get_current_site_api_url() {
+		return get_site_url( null, '/wp-json/' );
+	}
+
+	/**
 	 * Tooltip
 	 *
 	 * @param  string $content Content to display within the tooltip.
@@ -353,6 +362,8 @@ class Field {
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 			$fields = self::get_api_fields_by_id( $id );
+		} elseif ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$fields = self::get_api_fields_by_id( $id, true );
 		} elseif ( isset( $meta_field['fields'] ) ) {
 			$fields = $meta_field['fields'];
 		} else {
@@ -369,7 +380,11 @@ class Field {
 		}
 
 		// Get the saved data
-		$value = get_post_meta( get_the_ID(), $id, true );
+		if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$value = self::get_value_from_taxonomy( $id );
+		} else {
+			$value = get_post_meta( get_the_ID(), $id, true );
+		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
@@ -414,6 +429,8 @@ class Field {
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 			$fields = self::get_api_fields_by_id( $id );
+		} elseif ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$fields = self::get_api_fields_by_id( $id, true );
 		} elseif ( isset( $meta_field['fields'] ) ) {
 			$fields = $meta_field['fields'];
 		} else {
@@ -427,7 +444,11 @@ class Field {
 		$fields = self::maybe_sort_fields( $fields, $meta_field );
 
 		// Get the saved data
-		$value = get_post_meta( get_the_ID(), $id, true );
+		if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$value = self::get_value_from_taxonomy( $id, false );
+		} else {
+			$value = get_post_meta( get_the_ID(), $id, true );
+		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
@@ -478,6 +499,8 @@ class Field {
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 			$fields = self::get_api_fields_by_id( $id );
+		} elseif ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$fields = self::get_api_fields_by_id( $id, true );
 		} elseif ( isset( $meta_field['fields'] ) ) {
 			$fields = $meta_field['fields'];
 		} else {
@@ -489,7 +512,11 @@ class Field {
 		}
 
 		// Get the saved data
-		$value = get_post_meta( get_the_ID(), $id, true );
+		if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+			$value = self::get_value_from_taxonomy( $id, false );
+		} else {
+			$value = get_post_meta( get_the_ID(), $id, true );
+		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
@@ -649,6 +676,16 @@ class Field {
 				<input type="number" id="<?php echo esc_attr( $id ); ?>-same-amount" name="<?php echo esc_attr( $id ); ?>[same][amount]" value="<?php echo esc_attr( $value['same']['amount'] ); ?>"/>
 				<br><br>
 
+				<input <?php checked( $value['checkbox'], 'different' ); ?> type="radio" id="<?php echo esc_attr( $id . '-different' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="different" <?php self::conditional_required( $meta_field ); ?>>
+				<label for="<?php echo esc_attr( $id . '-different' ); ?>"><?php esc_html_e( 'Different amount each award:', 'ca-grants-plugin' ); ?></label>
+				<?php esc_html_e( ' First ', 'ca-grants-plugin' ); ?>
+				<input type="number" id="<?php echo esc_attr( $id ); ?>-different-first" name="<?php echo esc_attr( $id ); ?>[different][first]" value="<?php echo esc_attr( $value['different']['first'] ); ?>"/>
+				<?php esc_html_e( ' Second ', 'ca-grants-plugin' ); ?>
+				<input type="number" id="<?php echo esc_attr( $id ); ?>-different-second" name="<?php echo esc_attr( $id ); ?>[different][second]" value="<?php echo esc_attr( $value['different']['second'] ); ?>"/>
+				<?php esc_html_e( ' Third ', 'ca-grants-plugin' ); ?>
+				<input type="number" id="<?php echo esc_attr( $id ); ?>-different-third" name="<?php echo esc_attr( $id ); ?>[different][third]" value="<?php echo esc_attr( $value['different']['third'] ); ?>"/>
+				<br><br>
+
 				<input <?php checked( $value['checkbox'], 'unknown' ); ?> type="radio" id="<?php echo esc_attr( $id . '-unknown' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="unknown" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-unknown' ); ?>"><?php esc_html_e( 'Amount per award may range  between:', 'ca-grants-plugin' ); ?></label>
 				<input type="number" id="<?php echo esc_attr( $id ); ?>-unknown-first" name="<?php echo esc_attr( $id ); ?>[unknown][first]" value="<?php echo esc_attr( $value['unknown']['first'] ); ?>"/>
@@ -797,6 +834,7 @@ class Field {
 
 		// Get the saved data
 		$value = get_post_meta( get_the_ID(), $id, true );
+		$value = $value ? gmdate( 'Y-m-d\TH:m', $value ) : $value;
 		?>
 		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
@@ -809,7 +847,6 @@ class Field {
 					id="<?php echo esc_attr( $id ); ?>"
 					name="<?php echo esc_attr( $id ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
-					onkeydown="return false"
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php echo esc_html( $max_date ); ?>
 					<?php echo esc_html( $min_date ); ?>
@@ -1020,19 +1057,28 @@ class Field {
 	/**
 	 * Get fields for an HTML element from the WP API
 	 *
-	 * @param string $id The identifier for the type of field data needed.
+	 * @param string $id         The identifier for the type of field data needed.
+	 * @param bool   $portal_api Whether to call the API from the portal server.
 	 *
 	 * @return array $fields The data from the WP API
 	 */
-	public static function get_api_fields_by_id( $id = '' ) {
+	public static function get_api_fields_by_id( $id = '', $portal_api = false ) {
 		if ( empty( $id ) ) {
 			return array();
 		}
 
-		$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
+		$fields_to_display = false;
+		if ( ! $portal_api ) {
+			// Retrieve from cache only if it is not portal api.
+			$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
+		}
 
 		if ( false === $fields_to_display ) {
-			$api_url = trailingslashit( self::get_api_url() ) . 'wp/v2/';
+			if ( $portal_api ) {
+				$api_url = trailingslashit( self::get_current_site_api_url() ) . 'wp/v2/';
+			} else {
+				$api_url = trailingslashit( self::get_api_url() ) . 'wp/v2/';
+			}
 
 			switch ( $id ) {
 				case 'grantCategories':
@@ -1041,7 +1087,7 @@ class Field {
 				case 'applicantType':
 					$api_url .= 'applicant_type';
 					break;
-				case 'fundingMethod':
+				case 'disbursementMethod':
 					$api_url .= 'disbursement_method';
 					break;
 				case 'opportunityType':
@@ -1098,7 +1144,9 @@ class Field {
 				);
 			}
 
-			wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 5 * HOUR_IN_SECONDS );
+			if ( ! $portal_api ) {
+				wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 5 * HOUR_IN_SECONDS );
+			}
 		}
 
 		return $fields_to_display;
@@ -1321,6 +1369,32 @@ class Field {
 					break;
 			}
 
+			/**
+			 * Filters the post-meta value, targeted by meta-field type.
+			 *
+			 * The filter name is `ca_grants_post_meta_`,
+			 * followed by the meta-field type.
+			 *
+			 * For example, using the `period-performance` meta-field:
+			 * `ca_grants_post_meta_period-performance`
+			 *
+			 * @param mixed $value The value to filter.
+			 */
+			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['type'], $value );
+
+			/**
+			 * Filters the post-meta value, targeted by meta-field ID.
+			 *
+			 * The filter name is `ca_grants_post_meta_`,
+			 * followed by the meta-field ID.
+			 *
+			 * For example, assuming a field ID of 1234:
+			 * `ca_grants_post_meta_1234`
+			 *
+			 * @param mixed $value The value to filter.
+			 */
+			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
+
 			if ( ! empty( $post_id ) && ! empty( $value ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );
 			}
@@ -1380,6 +1454,28 @@ class Field {
 					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
 				);
 				continue;
+			}
+
+			if ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && empty( $data['grantID'] ) ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Dependent grantID value not found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			} elseif ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && ! empty( $data['grantID'] ) ) {
+				$grant_id     = $data['grantID'];
+				$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
+				$is_active    = 'active' === $isForecasted;
+				$deadline     = get_post_meta( $grant_id, 'deadline', true );
+				$is_invalid   = ( $is_active && empty( $deadline ) );
+
+				if ( $is_active && empty( $deadline ) ) {
+					$errors->add(
+						'validation_error',
+						esc_html__( 'The associated grant is ongoing, Please add value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+					);
+					continue;
+				}
 			}
 
 			// If field is not required and have empty value it's valid data, skip other checks.
@@ -1475,5 +1571,50 @@ class Field {
 		}
 
 		return $is_invalid;
+	}
+
+	/**
+	 * Get value from taxonomy.
+	 *
+	 * @param string $id    Field id.
+	 * @param bool   $multi Whether to return an array or string.
+	 *
+	 * @return array|string Value. Will be array if multi is set to true.
+	 */
+	protected static function get_value_from_taxonomy( $id, $multi = true ) {
+		$value = wp_get_post_terms( get_the_ID(), self::get_taxonmy_from_field_id( $id ), [ 'fields' => 'slugs' ] );
+		if ( empty( $value) || is_wp_error( $value ) ) {
+			if ( $multi ) {
+				return [];
+			}
+
+			return '';
+		}
+
+		if ( $multi ) {
+			return $value;
+		}
+
+		return $value[0];
+	}
+
+	/**
+	 * Get the taxonomy based on form id.
+	 *
+	 * @param string $id Field id.
+	 *
+	 * @return string Taxonomy name.
+	 */
+	protected static function get_taxonmy_from_field_id( $id ) {
+		$field_id_to_taxonomy_map = [
+				'grantCategories'    => 'grant_categories',
+				'applicantType'      => 'applicant_type',
+				'disbursementMethod' => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
+				'fundingMethod'      => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
+				'opportunityType'    => 'opportunity_types',
+				'fundingSource'      => 'revenue_sources',
+		];
+
+		return $field_id_to_taxonomy_map[ $id ] ?? '';
 	}
 }

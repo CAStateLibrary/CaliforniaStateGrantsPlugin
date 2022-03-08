@@ -143,7 +143,7 @@ class GrantsEndpoint extends BaseEndpoint {
 
 							break;
 
-						case 'fundingMethod':
+						case 'disbursementMethod':
 							$notes = get_post_meta( $post->ID, 'disbursementMethodNotes', true );
 
 							$new_data['fundingMethod'] = array(
