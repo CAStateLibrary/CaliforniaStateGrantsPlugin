@@ -91,10 +91,9 @@ class SettingsPage {
 			return;
 		}
 
-		$nonce    = filter_input( INPUT_POST, 'ca_grants_nonce', FILTER_SANITIZE_STRING );
-		$reset    = filter_input( INPUT_POST, 'ca_grants_settings_submit', FILTER_SANITIZE_STRING );
-		$validate = filter_input( INPUT_POST, 'ca_grants_remote_validation', FILTER_SANITIZE_STRING );
-		$updater  = filter_input( INPUT_POST, 'ca_grants_update_token', FILTER_SANITIZE_STRING );
+		$nonce   = filter_input( INPUT_POST, 'ca_grants_nonce', FILTER_SANITIZE_STRING );
+		$reset   = filter_input( INPUT_POST, 'ca_grants_settings_submit', FILTER_SANITIZE_STRING );
+		$updater = filter_input( INPUT_POST, 'ca_grants_update_token', FILTER_SANITIZE_STRING );
 
 		if ( ! wp_verify_nonce( $nonce, 'ca_grants_settings' ) ) {
 			return;
@@ -106,13 +105,6 @@ class SettingsPage {
 
 		if ( 'Reset Settings' === $reset ) {
 			$this->settings->purge_settings( true );
-			return;
-		}
-
-		if ( 'on' === $validate ) {
-			$this->settings->update_setting( 'remote_validation', true );
-		} else {
-			$this->settings->update_setting( 'remote_validation', false );
 		}
 	}
 
@@ -190,15 +182,6 @@ class SettingsPage {
 					<td>
 						<input name="ca_grants_auth_token" id="ca_grants_auth_token" type="text" value="<?php echo esc_attr( $this->settings->get_auth_token() ); ?>" class="regular-text code" disabled>
 						<a href="javascript:void(0)" class="copy-clipboard" data-input-target="ca_grants_auth_token"><?php esc_html_e( 'Copy' ); ?></a>
-					</td>
-				</tr>
-				<tr>
-					<th><?php esc_html_e( 'Grant Validation', 'ca-grants-plugin' ); ?></th>
-					<td>
-						<label for="ca_grants_remote_validation">
-							<input type="checkbox" name="ca_grants_remote_validation" id="ca_grants_remote_validation" <?php checked( ! ! $remote_validation ); ?>/>
-							<?php esc_html_e( 'Enable grants to be validated by the Grants Portal on save.', 'ca-grants-plugin' ); ?>
-						</label>
 					</td>
 				</tr>
 			</tbody>
