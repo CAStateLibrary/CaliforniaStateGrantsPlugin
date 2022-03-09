@@ -7,7 +7,9 @@
 
 namespace CaGov\Grants\PostTypes;
 
+use CaGov\Grants\Meta\Field;
 use CaGov\Grants\Admin\Settings;
+use WP_Error;
 
 /**
  * Edit Base class.
@@ -140,153 +142,7 @@ abstract class BaseEdit {
 			return;
 		}
 
-		foreach ( $meta_fields as $meta_field ) {
-			$value = array();
-
-			if ( empty( $_POST[ $meta_field['id'] ] ) ) {
-				delete_post_meta( $post_id, $meta_field['id'] );
-				continue;
-			}
-
-			switch ( $meta_field['type'] ) {
-				case 'checkbox':
-					$temp_value = $_POST[ $meta_field['id'] ];
-					array_walk( $temp_value, 'sanitize_text_field' );
-					$value = $temp_value;
-					break;
-				case 'email':
-					$value = sanitize_email( $_POST[ $meta_field['id'] ] );
-					break;
-				case 'url':
-					$value = esc_url_raw( $_POST[ $meta_field['id'] ] );
-					break;
-				case 'number':
-					$value = absint( $_POST[ $meta_field['id'] ] );
-					break;
-				case 'textarea':
-					$value = wp_kses_post( $_POST[ $meta_field['id'] ] );
-					break;
-				case 'save_to_field':
-					$field_post_id = absint( $_POST[ $meta_field['field_id'] ] );
-					update_post_meta( $field_post_id, $meta_field['id'], sanitize_text_field( $_POST[ $meta_field['id'] ] ) );
-					break;
-				case 'point_of_contact':
-					$temp_value = $_POST[ $meta_field['id'] ];
-					array_walk( $temp_value, 'sanitize_text_field' );
-					$value = $temp_value;
-					break;
-				case 'eligibility-matching-funds':
-					$value = array(
-						'checkbox'   => sanitize_text_field( $_POST[ $meta_field['id'] ] ),
-						'percentage' => absint( $_POST[ $meta_field['id'] . '-percentage' ] ),
-					);
-					break;
-				case 'estimated-number-awards':
-					$temp_value = $_POST[ $meta_field['id'] ];
-
-					$temp_value['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
-
-					if ( 'exact' === $temp_value['checkbox'] ) {
-						$temp_value['between']['low']  = '';
-						$temp_value['between']['high'] = '';
-					} elseif ( 'between' === $temp_value['checkbox'] ) {
-						$temp_value['exact'] = '';
-					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
-						$temp_value['between']['low']  = '';
-						$temp_value['between']['high'] = '';
-						$temp_value['exact']           = '';
-					}
-
-					array_walk( $temp_value, 'sanitize_text_field' );
-					$value = $temp_value;
-					break;
-				case 'estimated-award-amounts':
-					$temp_value = $_POST[ $meta_field['id'] ];
-
-					$temp_value['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
-
-					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
-					if ( 'same' === $temp_value['checkbox'] ) {
-						$temp_value['unknown']['first']    = '';
-						$temp_value['unknown']['second']   = '';
-						$temp_value['different']['first']  = '';
-						$temp_value['different']['second'] = '';
-						$temp_value['different']['third']  = '';
-					} elseif ( 'different' === $temp_value['checkbox'] ) {
-						$temp_value['unknown']['first']  = '';
-						$temp_value['unknown']['second'] = '';
-						$temp_value['same']['amount']    = '';
-					} elseif ( 'unknown' === $temp_value['checkbox'] ) {
-						$temp_value['different']['first']  = '';
-						$temp_value['different']['second'] = '';
-						$temp_value['different']['third']  = '';
-						$temp_value['same']['amount']      = '';
-					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
-						$temp_value['unknown']['first']    = '';
-						$temp_value['unknown']['second']   = '';
-						$temp_value['different']['first']  = '';
-						$temp_value['different']['second'] = '';
-						$temp_value['different']['third']  = '';
-						$temp_value['same']['amount']      = '';
-					}
-
-					array_walk( $temp_value, 'sanitize_text_field' );
-					$value = $temp_value;
-					break;
-				case 'period-performance':
-					$temp_value           = $_POST[ $meta_field['id'] ];
-					$clean_value          = array();
-					$clean_value['num']   = ( isset( $temp_value['num'] ) ) ? absint( $temp_value['num'] ) : '';
-					$clean_value['units'] = ( isset( $temp_value['units'] ) ) ? sanitize_text_field( $temp_value['units'] ) : '';
-					$value                = $clean_value;
-					break;
-				case 'electronic-submission-method':
-					$temp_value           = $_POST[ $meta_field['id'] ];
-					$clean_value          = array();
-					$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
-					$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
-					$value                = $clean_value;
-					break;
-				case 'application-deadline':
-					$temp_value = $_POST[ $meta_field['id'] ];
-					array_walk( $temp_value, 'sanitize_text_field' );
-					$value = $temp_value;
-					break;
-				default:
-					$value = sanitize_text_field( $_POST[ $meta_field['id'] ] );
-					break;
-			}
-
-			/**
-			 * Filters the post-meta value, targeted by meta-field type.
-			 *
-			 * The filter name is `ca_grants_post_meta_`,
-			 * followed by the meta-field type.
-			 *
-			 * For example, using the `period-performance` meta-field:
-			 * `ca_grants_post_meta_period-performance`
-			 *
-			 * @param mixed $value The value to filter.
-			 */
-			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['type'], $value );
-
-			/**
-			 * Filters the post-meta value, targeted by meta-field ID.
-			 *
-			 * The filter name is `ca_grants_post_meta_`,
-			 * followed by the meta-field ID.
-			 *
-			 * For example, assuming a field ID of 1234:
-			 * `ca_grants_post_meta_1234`
-			 *
-			 * @param mixed $value The value to filter.
-			 */
-			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
-
-			if ( ! empty( $post_id ) && ! empty( $value ) ) {
-				update_post_meta( $post_id, $meta_field['id'], $value );
-			}
-		}
+		Field::sanitize_and_save_fields( $meta_fields, $post_id, $_POST );
 	}
 
 	/**
@@ -305,5 +161,20 @@ abstract class BaseEdit {
 		}
 
 		echo '<style type="text/css">#post-preview, #view-post-btn{display: none;}</style>';
+	}
+
+	/**
+	 * Validate data with defined fields.
+	 *
+	 * @param array $data Field data to validated, key=value paired list.
+	 *
+	 * @return boolean|WP_Error WP_Error if any data validation fails, else return true for success.
+	 */
+	public function validate_fields( $data ) {
+
+		$fields = $this->get_all_meta_fields();
+		$errors = Field::maybe_get_field_errors( $fields, $data );
+
+		return $errors->has_errors() ? $errors : true;
 	}
 }

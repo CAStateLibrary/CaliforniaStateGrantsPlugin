@@ -52,7 +52,7 @@ const setupForms = () => {
 				const deadlineInput = document.querySelector( '[name="deadline"]' );
 
 				// Bail if either the values are missing.
-				if ( !openDateInput || ! openDateInput.value || ! deadlineInput || ! deadlineInput.value ) {
+				if ( ! openDateInput || ! openDateInput.value || ! deadlineInput || ! deadlineInput.value ) {
 					return false;
 				}
 

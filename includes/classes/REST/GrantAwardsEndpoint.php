@@ -195,7 +195,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		);
 
 		$metafields = array_merge(
-			Meta\GrantAwards::get_fields(),
+			Meta\GrantAwards::get_fields()
 		);
 
 		$new_data     = array(
@@ -235,11 +235,15 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 				case 'number':
 					$new_data[ $metafield_data['id'] ] = absint( $meta_value );
 					break;
+				case 'datetime-local':
+					$new_data[ $metafield_data['id'] ] = $meta_value ? gmdate( 'Y-m-d\TH:m', $meta_value ) : $meta_value;
+					break;
 				case 'textarea':
 					$new_data[ $metafield_data['id'] ] = apply_filters( 'the_content', $meta_value );
 					break;
 				default:
-					$new_data[ $metafield_data['id'] ] = $meta_value;
+					$new_data[ $metafield_data['id'] ] = maybe_unserialize( $meta_value );
+					$new_data[ $metafield_data['id'] ] = is_array( $new_data[ $metafield_data['id'] ] ) ? array_filter( $new_data[ $metafield_data['id'] ] ) : $new_data[ $metafield_data['id'] ];
 					break;
 			}
 		}
