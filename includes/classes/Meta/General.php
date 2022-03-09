@@ -110,7 +110,7 @@ class General {
 				'id'          => 'grantCategories',
 				'name'        => __( 'Relevant Categories', 'ca-grants-plugin' ),
 				'type'        => 'checkbox',
-				'description' => __( 'Please indicate the category (or categories) this grant opportunity belongs in. Categorizing your grant will allow users to narrow their search to find grants covering specific topics or areas of focus relevant to their needs.<br/><br/>If your grant doesn’t fit into any of the categories presented, please select Uncategorized, and suggest a category in Category Suggestion(s) below.', 'ca-grants-plugin' ),
+				'description' => __( "Please indicate the category (or categories) this grant opportunity belongs in.<br><br> Categorizing your grant will allow users to narrow their search to find grants covering specific topics or areas of focus relevant to their needs.<br><br>If you’re not sure which category your grant falls under, contact the Grants Portal team at <a href='mailto:CAGrantsPortal@Library.ca.gov'>CAGrantsPortal@Library.ca.gov</a><br><br>To select a category or categories, click on a term at left and move it to the right box using the arrow buttons. Note that the stock imaged associated with your grant is determined by the first category selected.", 'ca-grants-plugin' ),
 				'source'      => 'api',
 				'multi'       => true,
 				'required'    => array( 'active' ),
@@ -119,7 +119,7 @@ class General {
 				'id'          => 'categorySuggestions',
 				'name'        => __( 'Category Suggestion(s)', 'ca-grants-plugin' ),
 				'type'        => 'text',
-				'description' => __( 'If you selected Uncategorized from the categories list above (or just have a suggestion for a category addition), please tell us the category you would like to see added to the list. (CA Grants Portal will add categories at its discretion; there is no guarantee a suggestion will be added.)', 'ca-grants-plugin' ),
+				'description' => __( 'If you have a suggestion for a category addition, please tell us here. CA Grants Portal will add categories at its discretion; there is no guarantee a suggestion will be added.', 'ca-grants-plugin' ),
 			),
 			array(
 				'id'          => 'purpose',

@@ -1,6 +1,6 @@
 /**
  * Checkbox select all
-*/
+ */
 
 const SELECTOR = '.checkbox--select-all';
 
@@ -17,13 +17,13 @@ const main = () => {
 
 /**
  * Toggle Checked.
-*/
+ */
 const toggleAllChecked = e => {
 	e.preventDefault();
 	const boxes = Array.from( e.target.parentNode.parentNode.querySelectorAll( 'input[type=checkbox]' ) );
 
 	boxes
-		.filter( box => ( 'uncategorized' !== box.value && 'other' !== box.value ) )
+		.filter( box => ( 'other' !== box.value ) )
 		.forEach( box => box.checked = true );
 };
 
