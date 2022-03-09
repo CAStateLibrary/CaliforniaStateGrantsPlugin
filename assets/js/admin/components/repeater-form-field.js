@@ -16,7 +16,7 @@ const main = () => {
  */
 const incrementIndexElem = elem => {
 	const elemIndex = elem.dataset.index ? elem.dataset.index : 0;
-	const nextIndex = parseInt( elemIndex ) + 1;
+	const nextIndex = parseInt( elemIndex, 10 ) + 1;
 
 	elem.setAttribute( 'data-index', nextIndex );
 
