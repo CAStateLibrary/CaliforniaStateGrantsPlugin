@@ -7,7 +7,7 @@
 
 namespace CaGov\Grants\Meta;
 
-use CaGov\Grants\PostTypes\EditGrant;
+use CaGov\Grants\Core;
 
 /**
  * General Grant Data Meta Class
@@ -33,6 +33,14 @@ class AwardStats {
 	 * @return void
 	 */
 	public function render_metabox() {
+		$post_id      = get_the_ID();
+		$isForecasted = get_post_meta( $post_id, 'isForecasted', true );
+
+		// Do not show this metabox if grant data is not saved.
+		if ( empty( $isForecasted ) ) {
+			return;
+		}
+
 		if ( $this->description ) {
 			echo '<p class="grants-metabox-description">' . esc_html( $this->description ) . '</p>';
 		}
@@ -58,13 +66,36 @@ class AwardStats {
 	 * @return array
 	 */
 	public static function get_fields() {
-		return array(
+		$post_id          = get_the_ID();
+		$isForecasted     = get_post_meta( $post_id, 'isForecasted', true );
+
+		if ( empty( $isForecasted ) ) {
+			return array();
+		}
+
+		$is_ongoing_grant = Core\is_ongoing_grant( $post_id );
+		$deadline         = get_post_meta( $post_id, 'deadline', true );
+		$fiscal_year      = '';
+
+		if ( ! $is_ongoing_grant && ! empty( $deadline ) ) {
+			$fiscal_year = Core\get_fiscal_year( gmdate( 'Y-m-d H:m:s', $deadline ) );
+		}
+
+		$fields = array(
+			array(
+				'id'            => 'fiscalYear',
+				'name'          => __( 'Fiscal Year', 'ca-grants-plugin' ),
+				'type'          => $fiscal_year ? 'text' : 'select',
+				'source'        => 'api',
+				'description'   => __( 'Select the fiscal year in which this grant opportunity closed for applications.', 'ca-grants-plugin' ),
+				'default_value' => $fiscal_year,
+				'readonly'      => ( ! $is_ongoing_grant ),
+			),
 			array(
 				'id'          => 'applicationsSubmitted',
 				'name'        => __( 'Number of Applications Submitted', 'ca-grants-plugin' ),
 				'type'        => 'number',
 				'description' => __( 'Enter the total applications received for this funding opportunity.', 'ca-grants-plugin' ),
-				'required'    => array( 'active', 'forecasted' ),
 				'min'         => 0,
 			),
 			array(
@@ -72,9 +103,24 @@ class AwardStats {
 				'name'        => __( 'Number of Grants Awarded', 'ca-grants-plugin' ),
 				'type'        => 'number',
 				'description' => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
-				'required'    => array( 'active', 'forecasted' ),
 				'min'         => 0,
 			),
 		);
+
+		$group_fields = array(
+			array(
+				'id'            => 'awardStats',
+				'name'          => __( 'Grant award stats data:', 'ca-grants-plugin' ),
+				'type'          => 'group',
+				'description'   => __( 'Grant award stats data:', 'ca-grants-plugin' ),
+				'required'      => array( 'active' ),
+				'serialize'     => true,
+				'add_new_label' => __( 'Add Fiscal Year', 'ca-grants-plugin' ),
+				'is_multiple'   => Core\is_ongoing_grant( $post_id ),
+				'fields'        => $fields,
+			),
+		);
+
+		return $group_fields;
 	}
 }

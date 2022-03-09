@@ -8,8 +8,9 @@
 namespace CaGov\Grants\Core;
 
 use CaGov\Grants\Admin\Settings;
-
+use CaGov\Grants\Helpers\Validators;
 use CaGov\Grants\PostTypes\GrantAwards;
+use DateTime;
 use WP_Query;
 use \WP_Error as WP_Error;
 
@@ -413,4 +414,56 @@ function has_grant_awards( $grant_id ) {
 	$posts = new WP_Query( $query_args );
 
 	return ! empty( $posts->posts );
+}
+
+/**
+ * Check if given grant id is ongoing or closed grant.
+ *
+ * @param int $grant_id Grant ID
+ *
+ * @return boolean Return true for ongoing grant and false if its closed.
+ */
+function is_ongoing_grant( $grant_id ) {
+
+	$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
+	if ( 'active' !== $isForecasted ) {
+		return false;
+	}
+
+	$deadline = get_post_meta( $grant_id, 'deadline', true );
+
+	if ( empty( $deadline ) ) {
+		return true;
+	}
+
+	return Validators\validate_date_after( gmdate( 'Y-m-d H:m:s', $deadline ), current_time( 'mysql' ) );
+}
+
+/**
+ * Get fiscal year for given datetime. ( default return current date fiscal year )
+ *
+ * Identify fiscal year based on given date and return value.
+ * i.e if given date is 10th Feb 2022 the fiscal year
+ * would be 2021-2022 since the date is < 1st July 2022 and > 30th July 2021
+ * if date would have been > 1st July 2022 we would check next year 30th July date as end date.
+ *
+ * @return string Fiscal year. i.e `2021-2022`
+ */
+function get_fiscal_year( $datetime = 'now' ) {
+	$current_date = new DateTime( $datetime, wp_timezone() );
+	$current_year = $current_date->format( 'Y' );
+
+	$fiscal_start_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $current_year . '-07-01 00:00:00' );
+
+	// Check if previous fiscal year is yet to be ended. i.e current date is 10th-Feb-2022 so fiscal start year would be 2021 as it's < 1st-July-2022.
+	if ( $current_date < $fiscal_start_date ) {
+		$prev_year         = ( $current_year - 1 );
+		$fiscal_end_date   = $fiscal_start_date;
+		$fiscal_start_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $prev_year . '-07-01 00:00:00' );
+	} else {
+		$next_year       = ( $current_year + 1 );
+		$fiscal_end_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $next_year . '-06-30 00:00:00' );
+	}
+
+	return $fiscal_start_date->format( 'Y' ) . '-' . $fiscal_end_date->format( 'Y' );
 }

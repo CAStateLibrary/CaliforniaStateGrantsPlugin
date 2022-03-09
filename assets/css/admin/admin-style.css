@@ -22,3 +22,8 @@ a.a11y-tip__trigger {
 th.required::before {
 	content: "*";
 }
+
+.form-field-group-wrapper > td {
+	border: 1px solid;
+	display: block;
+}
