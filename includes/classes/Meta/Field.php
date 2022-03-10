@@ -1288,14 +1288,11 @@ class Field {
 					$temp_value = $data[ $meta_field['id'] ];
 
 					if ( 'exact' === $temp_value['checkbox'] ) {
-						$temp_value['between']['low']  = '';
-						$temp_value['between']['high'] = '';
+						unset( $temp_value['between'] );
 					} elseif ( 'between' === $temp_value['checkbox'] ) {
-						$temp_value['exact'] = '';
+						unset( $temp_value['exact'] );
 					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
-						$temp_value['between']['low']  = '';
-						$temp_value['between']['high'] = '';
-						$temp_value['exact']           = '';
+						unset( $temp_value['between'], $temp_value['exact'] );
 					}
 
 					array_walk( $temp_value, 'sanitize_text_field' );
