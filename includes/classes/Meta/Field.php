@@ -1000,15 +1000,6 @@ class Field {
 					}
 				);
 				return $fields;
-			case 'applicantType':
-				// Move 'other' to the bottom of the list.
-				foreach ( $fields as $index => $field ) {
-					if ( isset( $field['id'] ) && 'other' === $field['id'] ) {
-						unset( $fields[ $index ] );
-						array_push( $fields, $field );
-					}
-				}
-				return $fields;
 			default:
 				return $fields;
 		}

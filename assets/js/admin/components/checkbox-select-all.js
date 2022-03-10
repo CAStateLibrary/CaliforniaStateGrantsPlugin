@@ -22,9 +22,7 @@ const toggleAllChecked = e => {
 	e.preventDefault();
 	const boxes = Array.from( e.target.parentNode.parentNode.querySelectorAll( 'input[type=checkbox]' ) );
 
-	boxes
-		.filter( box => ( 'other' !== box.value ) )
-		.forEach( box => box.checked = true );
+	boxes.forEach( box => box.checked = true );
 };
 
 export default main;
