@@ -1267,8 +1267,11 @@ class Field {
 				case 'checkbox':
 					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
 						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
-					} elseif ( ! empty( $data[ $meta_field['id'] ] ) ) {
-						$value = is_array( $data[ $meta_field['id'] ] ) ? array_walk( $data[ $meta_field['id'] ], 'sanitize_text_field' ) : sanitize_text_field( $data[ $meta_field['id'] ] );
+					} elseif ( ! empty( $data[ $meta_field['id'] ] ) && is_array( $data[ $meta_field['id'] ] ) ) {
+						$value = $data[ $meta_field['id'] ];
+						array_walk( $value, 'sanitize_text_field' );
+					} else {
+						$value = sanitize_text_field( $data[ $meta_field['id'] ] );
 					}
 					break;
 				case 'select':
