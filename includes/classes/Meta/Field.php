@@ -95,7 +95,7 @@ class Field {
 	 * @return string Current site api url.
 	 */
 	public static function get_current_site_api_url() {
-		return get_site_url( null, '/wp-json/' );
+		return rest_url();
 	}
 
 	/**
@@ -1265,9 +1265,18 @@ class Field {
 
 			switch ( $meta_field['type'] ) {
 				case 'checkbox':
-					$temp_value = $data[ $meta_field['id'] ];
-					array_walk( $temp_value, 'sanitize_text_field' );
-					$value = $temp_value;
+					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+					} elseif ( ! empty( $data[ $meta_field['id'] ] ) ) {
+						$value = is_array( $data[ $meta_field['id'] ] ) ? array_walk( $data[ $meta_field['id'] ], 'sanitize_text_field' ) : sanitize_text_field( $data[ $meta_field['id'] ] );
+					}
+					break;
+				case 'select':
+					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+					} else {
+						$value = sanitize_text_field( $data[ $meta_field['id'] ] );
+					}
 					break;
 				case 'email':
 					$value = sanitize_email( $data[ $meta_field['id'] ] );
@@ -1504,8 +1513,8 @@ class Field {
 					break;
 				case 'checkbox':
 				case 'select':
-					if ( isset( $field['source'] ) && 'api' === $field['source'] ) {
-						$api_values = Field::get_api_fields_by_id( $id );
+					if ( isset( $field['source'] ) && in_array( $field['source'], [ 'api', 'portal-api' ], true ) ) {
+						$api_values = self::get_api_fields_by_id( $id, 'portal-api' === $field['source'] );
 						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
 						$values     = explode( ',', $data[ $id ] );
 						$values     = array_map( 'sanitize_title', $values );
@@ -1586,7 +1595,7 @@ class Field {
 	 */
 	protected static function get_value_from_taxonomy( $id, $multi = true ) {
 		$value = wp_get_post_terms( get_the_ID(), self::get_taxonmy_from_field_id( $id ), [ 'fields' => 'slugs' ] );
-		if ( empty( $value) || is_wp_error( $value ) ) {
+		if ( empty( $value ) || is_wp_error( $value ) ) {
 			if ( $multi ) {
 				return [];
 			}
@@ -1602,6 +1611,32 @@ class Field {
 	}
 
 	/**
+	 * Set taxonomy terms to post.
+	 *
+	 * @param string|array $value Taxonomy term slug or list of slug.
+	 * @param string       $id Field id to identify taxonomy.
+	 *
+	 * @return boolean Return true for sucess term assignd else fail.
+	 */
+	protected static function set_taxonomy_terms( $value, $id ) {
+
+		if ( empty( $value ) ) {
+			return false;
+		}
+
+		if ( is_array( $value ) ) {
+			array_walk( $value, 'sanitize_text_field' );
+		} else {
+			$value = sanitize_text_field( $value );
+		}
+
+		$taxonomy = self::get_taxonmy_from_field_id( $id );
+		$terms    = wp_set_object_terms( get_the_ID(), $value, $taxonomy );
+
+		return is_wp_error( $terms ) ? false : true;
+	}
+
+	/**
 	 * Get the taxonomy based on form id.
 	 *
 	 * @param string $id Field id.
@@ -1610,12 +1645,14 @@ class Field {
 	 */
 	protected static function get_taxonmy_from_field_id( $id ) {
 		$field_id_to_taxonomy_map = [
-				'grantCategories'    => 'grant_categories',
-				'applicantType'      => 'applicant_type',
-				'disbursementMethod' => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
-				'fundingMethod'      => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
-				'opportunityType'    => 'opportunity_types',
-				'fundingSource'      => 'revenue_sources',
+			'grantCategories'    => 'grant_categories',
+			'applicantType'      => 'applicant_type',
+			'disbursementMethod' => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
+			'fundingMethod'      => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
+			'opportunityType'    => 'opportunity_types',
+			'fundingSource'      => 'revenue_sources',
+			'fiscalYear'         => 'fiscal-year',
+			'recipientType'      => 'recipient-types',
 		];
 
 		return $field_id_to_taxonomy_map[ $id ] ?? '';
