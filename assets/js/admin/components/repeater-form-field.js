@@ -62,6 +62,8 @@ const enableFormFields = elem => {
  * @returns
  */
 const addNewGroupInRepeaterField = event => {
+	event.preventDefault();
+
 	const fieldTable = event.target.closest( 'table' );
 	if ( ! fieldTable ) {
 		return;
@@ -90,6 +92,8 @@ const addNewGroupInRepeaterField = event => {
  * @param object event
  */
 const removeRepeaterFieldGroup = event => {
+	event.preventDefault();
+
 	const fieldRow = event.target.closest( 'tr' );
 	if ( ! fieldRow ) {
 		return;

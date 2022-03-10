@@ -417,26 +417,16 @@ function has_grant_awards( $grant_id ) {
 }
 
 /**
- * Check if given grant id is ongoing or closed grant.
+ * Check if given grant is ongoing grant or not.
  *
  * @param int $grant_id Grant ID
  *
  * @return boolean Return true for ongoing grant and false if its closed.
  */
 function is_ongoing_grant( $grant_id ) {
-
 	$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
-	if ( 'active' !== $isForecasted ) {
-		return false;
-	}
 
-	$deadline = get_post_meta( $grant_id, 'deadline', true );
-
-	if ( empty( $deadline ) ) {
-		return true;
-	}
-
-	return Validators\validate_date_after( gmdate( 'Y-m-d H:m:s', $deadline ), current_time( 'mysql' ) );
+	return ! empty( empty( $isForecasted ) ) && 'active' === $isForecasted;
 }
 
 /**

@@ -7,6 +7,7 @@
 
 namespace CaGov\Grants\Meta;
 
+use function CaGov\Grants\Core\is_portal;
 use CaGov\Grants\Core;
 use WP_Error;
 
@@ -29,19 +30,25 @@ class AwardStats {
 	}
 
 	/**
+	 * Function to handle logic for showing metabox.
+	 *
+	 * @return boolean
+	 */
+	public static function is_visible() {
+		$grant_id = get_the_ID();
+		if ( empty( $grant_id ) ) {
+			return false;
+		}
+
+		return Core\is_ongoing_grant( $grant_id );
+	}
+
+	/**
 	 * Render metabox.
 	 *
 	 * @return void
 	 */
 	public function render_metabox() {
-		$post_id      = get_the_ID();
-		$isForecasted = get_post_meta( $post_id, 'isForecasted', true );
-
-		// Do not show this metabox if grant data is not saved.
-		if ( empty( $isForecasted ) ) {
-			return;
-		}
-
 		if ( $this->description ) {
 			echo '<p class="grants-metabox-description">' . esc_html( $this->description ) . '</p>';
 		}
@@ -67,34 +74,31 @@ class AwardStats {
 	 * @return array
 	 */
 	public static function get_fields() {
-		$fiscal_year      = '';
-		$is_ongoing_grant = true;
+		$fiscal_year = '';
 
 		if ( is_admin() ) {
-			$post_id      = get_the_ID();
-			$isForecasted = get_post_meta( $post_id, 'isForecasted', true );
-
-			if ( empty( $isForecasted ) ) {
+			if ( ! self::is_visible() ) {
 				return array();
 			}
 
-			$is_ongoing_grant = Core\is_ongoing_grant( $post_id );
-			$deadline         = get_post_meta( $post_id, 'deadline', true );
+			$post_id  = get_the_ID();
+			$deadline = get_post_meta( $post_id, 'deadline', true );
 
-			if ( ! $is_ongoing_grant && ! empty( $deadline ) ) {
+			if ( ! empty( $deadline ) ) {
 				$fiscal_year = Core\get_fiscal_year( gmdate( 'Y-m-d H:m:s', $deadline ) );
 			}
 		}
 
 		$fields = array(
 			array(
-				'id'            => 'fiscalYear',
-				'name'          => __( 'Fiscal Year', 'ca-grants-plugin' ),
-				'type'          => $fiscal_year ? 'text' : 'select',
-				'source'        => 'api',
-				'description'   => __( 'Select the fiscal year in which this grant opportunity closed for applications.', 'ca-grants-plugin' ),
-				'default_value' => $fiscal_year,
-				'readonly'      => ( ! $is_ongoing_grant ),
+				'id'               => 'fiscalYear',
+				'name'             => __( 'Fiscal Year', 'ca-grants-plugin' ),
+				'type'             => $fiscal_year ? 'text' : 'select',
+				'source'           => is_portal() ? 'portal-api' : 'api',
+				'description'      => __( 'Select the fiscal year to save the number of applications and grants awarded for.', 'ca-grants-plugin' ),
+				'hide_description' => true,
+				'meta_value'       => $fiscal_year,
+				'readonly'         => ( ! empty( $fiscal_year ) ),
 			),
 			array(
 				'id'          => 'applicationsSubmitted',
@@ -120,7 +124,7 @@ class AwardStats {
 				'description'   => __( 'Grant award stats data:', 'ca-grants-plugin' ),
 				'serialize'     => true,
 				'add_new_label' => __( 'Add Fiscal Year', 'ca-grants-plugin' ),
-				'is_multiple'   => Core\is_ongoing_grant( $post_id ),
+				'is_multiple'   => empty( $fiscal_year ),
 				'fields'        => $fields,
 			),
 		);

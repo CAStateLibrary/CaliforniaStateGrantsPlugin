@@ -337,7 +337,7 @@ class Field {
 			?>
 			<tr>
 				<td>
-					<button class="form-field-add-new-group-button button button-secondary button-large">
+					<button class="form-field-add-new-group-button button-secondary button-large">
 						<?php echo esc_html( $add_new_label ); ?>
 					</button>
 				</td>
@@ -372,7 +372,7 @@ class Field {
 					<tbody>
 						<?php
 						foreach ( $fields as $field ) {
-							if ( ! empty( $field_values ) ) {
+							if ( ! empty( $field_values ) && empty( $field['meta_value'] ) ) {
 								$field['meta_value'] = $field_values[ $field['id'] ] ?? '';
 							}
 							if ( $is_copy_field ) {
@@ -386,8 +386,7 @@ class Field {
 						?>
 					</tbody>
 				</table>
-				<hr/>
-				<button class="form-field-remove-group-button button button-secondary button-large">
+				<button class="form-field-remove-group-button button-secondary button-large">
 					<?php echo esc_html__( 'Remove', 'ca-grants-plugin' ); ?>
 				</button>
 			</td>
@@ -661,7 +660,9 @@ class Field {
 					<?php endforeach; ?>
 				</select>
 				<br/>
-				<span><?php echo wp_kses_post( $description ); ?></span>
+				<?php if ( empty( $meta_field['hide_description'] ) ) : ?>
+					<span><?php echo wp_kses_post( $description ); ?></span>
+				<?php endif; ?>
 			</td>
 		</tr>
 		<?php
