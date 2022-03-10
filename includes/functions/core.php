@@ -426,7 +426,7 @@ function has_grant_awards( $grant_id ) {
 function is_ongoing_grant( $grant_id ) {
 	$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
 
-	return ! empty( empty( $isForecasted ) ) && 'active' === $isForecasted;
+	return ! empty( $isForecasted ) && 'active' === $isForecasted;
 }
 
 /**

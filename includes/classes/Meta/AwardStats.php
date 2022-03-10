@@ -119,9 +119,7 @@ class AwardStats {
 		$group_fields = array(
 			array(
 				'id'            => 'awardStats',
-				'name'          => __( 'Grant award stats data:', 'ca-grants-plugin' ),
 				'type'          => 'group',
-				'description'   => __( 'Grant award stats data:', 'ca-grants-plugin' ),
 				'serialize'     => true,
 				'add_new_label' => __( 'Add Fiscal Year', 'ca-grants-plugin' ),
 				'is_multiple'   => empty( $fiscal_year ),

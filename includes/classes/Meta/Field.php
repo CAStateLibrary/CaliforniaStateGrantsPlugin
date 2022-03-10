@@ -313,14 +313,21 @@ class Field {
 		$add_new_label = $meta_field['add_new_label'] ?? __( 'Add new', 'ca-grants-plugin' );
 		$is_multiple   = isset( $meta_field['is_multiple'] ) ? false !== $meta_field['is_multiple'] : true;
 
+		if ( ! empty( $name ) ) :
 		?>
-		<tr class="form-field-group-header <?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
+		<tr class="form-field-group-header <?php echo esc_attr( $class ); ?>">
 			<th>
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
-				<?php self::tooltip( $description ); ?>
+				<?php
+				if ( ! empty( $description ) ) {
+					self::tooltip( $description );
+				}
+				?>
 			</th>
 		</tr>
 		<?php
+		endif;
+
 		$index = 0;
 		if ( empty( $value ) ) {
 			self::render_repeater_group_fields( $index, $meta_field['fields'], $id );
