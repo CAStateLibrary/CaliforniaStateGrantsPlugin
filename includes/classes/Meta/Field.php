@@ -1299,32 +1299,15 @@ class Field {
 					$value = $temp_value;
 					break;
 				case 'estimated-award-amounts':
-					$temp_value       = $data[ $meta_field['id'] ];
-					$temp['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
+					$temp_value = $data[ $meta_field['id'] ];
 
 					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
 					if ( 'same' === $temp_value['checkbox'] ) {
-						$temp_value['unknown']['first']    = '';
-						$temp_value['unknown']['second']   = '';
-						$temp_value['different']['first']  = '';
-						$temp_value['different']['second'] = '';
-						$temp_value['different']['third']  = '';
-					} elseif ( 'different' === $temp_value['checkbox'] ) {
-						$temp_value['unknown']['first']  = '';
-						$temp_value['unknown']['second'] = '';
-						$temp_value['same']['amount']    = '';
+						unset( $temp_value['unknown'] );
 					} elseif ( 'unknown' === $temp_value['checkbox'] ) {
-						$temp_value['different']['first']  = '';
-						$temp_value['different']['second'] = '';
-						$temp_value['different']['third']  = '';
-						$temp_value['same']['amount']      = '';
+						unset( $temp_value['same'] );
 					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
-						$temp_value['unknown']['first']    = '';
-						$temp_value['unknown']['second']   = '';
-						$temp_value['different']['first']  = '';
-						$temp_value['different']['second'] = '';
-						$temp_value['different']['third']  = '';
-						$temp_value['same']['amount']      = '';
+						unset( $temp_value['same'], $temp_value['unknown'] );
 					}
 
 					array_walk( $temp_value, 'sanitize_text_field' );
