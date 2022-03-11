@@ -96,6 +96,11 @@ abstract class BaseEdit {
 
 		foreach ( $this->meta_groups as $group_key => $meta_group ) {
 			$class = new $meta_group['class']();
+
+			if ( method_exists( $class, 'is_visible' ) && ! $class->is_visible() ) {
+				continue;
+			}
+
 			add_meta_box(
 				static::$cpt_slug . "-submission_{$group_key}",
 				$meta_group['title'],
