@@ -1274,6 +1274,7 @@ class Field {
 						$value = sanitize_text_field( $data[ $meta_field['id'] ] );
 					}
 					break;
+				case 'radio':
 				case 'select':
 					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
 						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
@@ -1656,6 +1657,7 @@ class Field {
 			'fundingSource'      => 'revenue_sources',
 			'fiscalYear'         => 'fiscal-year',
 			'recipientType'      => 'recipient-types',
+			'countiesServed'     => 'counties',
 		];
 
 		return $field_id_to_taxonomy_map[ $id ] ?? '';
