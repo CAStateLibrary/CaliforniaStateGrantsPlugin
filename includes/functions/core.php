@@ -421,12 +421,69 @@ function has_grant_awards( $grant_id ) {
  *
  * @param int $grant_id Grant ID
  *
- * @return boolean Return true for ongoing grant and false if its closed.
+ * @return boolean Return true for ongoing grant and false if its not.
  */
 function is_ongoing_grant( $grant_id ) {
-	$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
+	$type = get_grant_type( $grant_id );
 
-	return ! empty( $isForecasted ) && 'active' === $isForecasted;
+	return ! empty( $type ) && 'ongoing' === $type;
+}
+
+/**
+ * Check if given grant is closed grant or not.
+ *
+ * @param int $grant_id Grant ID
+ *
+ * @return boolean Return true for closed grant and false if its not.
+ */
+function is_closed_grant( $grant_id ) {
+	$type = get_grant_type( $grant_id );
+
+	return ! empty( $type ) && 'closed' === $type;
+}
+
+/**
+ * Get grant type for given grant id.
+ *
+ * @param int $grant_id Grant status name.
+ *
+ * @return string
+ */
+function get_grant_type( $grant_id ) {
+	$grant_status  = '';
+	$is_forecasted = get_post_meta( $grant_id, 'isForecasted', true );
+
+	if ( empty( $is_forecasted ) || 'forecasted' === $is_forecasted ) {
+		return $grant_status;
+	}
+
+	if ( 'active' === $is_forecasted ) {
+		$grant_status = 'ongoing';
+	}
+
+	$deadline = get_post_meta( $grant_id, 'deadline', true );
+
+	if (
+		! empty( $deadline )
+		&& ! Validators\validate_date_after( gmdate( 'Y-m-d H:m:s', $deadline ), current_time( 'mysql' ) )
+	) {
+		$grant_status = 'closed';
+	}
+
+	return $grant_status;
+}
+
+/**
+ * Get fiscal year basd on deadline.
+ *
+ * @param int $grant_id Grant id to get deadline.
+ *
+ * @return string
+ */
+function get_deadline_fiscal_year( $grant_id ) {
+	$deadline = get_post_meta( $grant_id, 'deadline', true );
+
+	return empty( $deadline ) ? '' : get_fiscal_year( gmdate( 'Y-m-d H:m:s', $deadline ) );
 }
 
 /**

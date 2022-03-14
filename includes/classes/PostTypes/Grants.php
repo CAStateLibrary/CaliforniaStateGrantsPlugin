@@ -7,6 +7,8 @@
 
 namespace CaGov\Grants\PostTypes;
 
+use CaGov\Grants\Core;
+
 /**
  * Grants post type class.
  */
@@ -93,13 +95,22 @@ class Grants {
 
 		echo '<br/>';
 
-		// TODO: Add link once E-3.6 is done.
-		printf(
-			'<a href="%s">%s</a>',
-			'#',
-			esc_html__( 'Bulk Upload Award Data', 'ca-grants-plugin' )
-		);
+		$grant_type = Core\get_grant_type( $grant_id );
 
+		if ( ! empty( $grant_type ) && in_array( $grant_type, [ 'ongoing', 'closed' ] ) ) {
+			printf(
+				'<a href="%s">%s</a>',
+				esc_url(
+					add_query_arg(
+						[
+							'grant_id' => $grant_id,
+						],
+						admin_url( 'edit.php?post_type=csl_award_uploads&page=bulk-upload' )
+					)
+				),
+				esc_html__( 'Bulk Upload Award Data', 'ca-grants-plugin' )
+			);
+		}
 	}
 
 	/**
