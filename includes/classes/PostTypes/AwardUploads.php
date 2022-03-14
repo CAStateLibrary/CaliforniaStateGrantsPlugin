@@ -114,7 +114,7 @@ class AwardUploads {
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_post_status' ) );
-		add_action( 'admin_menu', array( $this, 'remove_add_new_menu' ) );
+		add_action( 'admin_menu', array( $this, 'remove_submenu_pages' ), 11 );
 		add_action( 'load-post-new.php', array( $this, 'redirect_add_new_to_bulk_upload' ) );
 
 		// Post edit screen.
@@ -151,6 +151,10 @@ class AwardUploads {
 			'menu_icon'          => 'dashicons-upload',
 			'menu_position'      => null,
 			'supports'           => array( 'title', 'author' ),
+			'capabilities'       => array(
+				'create_posts' => 'do_not_allow',
+			),
+			'map_meta_cap'       => true,
 		);
 
 		/**
@@ -168,8 +172,9 @@ class AwardUploads {
 	 *
 	 * @return void
 	 */
-	public function remove_add_new_menu() {
+	public function remove_submenu_pages() {
 		remove_submenu_page( 'edit.php?post_type=' . self::CPT_SLUG, 'post-new.php?post_type=' . self::CPT_SLUG );
+		remove_submenu_page( 'edit.php?post_type=' . self::CPT_SLUG, BulkUploadPage::$page_slug );
 	}
 
 	/**

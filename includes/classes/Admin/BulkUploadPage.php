@@ -181,7 +181,6 @@ class BulkUploadPage {
 			</div>
 
 			<?php
-			// TODO: Handle empty grant data use case properly, Tried the redirect to grants post list page but didn't work. Currently just showing a notice to manually go to grants list page and select bulk upload.
 			if ( empty( $grant_id ) ) {
 				$grant_list_link = add_query_arg(
 					[
