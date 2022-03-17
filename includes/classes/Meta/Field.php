@@ -330,17 +330,17 @@ class Field {
 
 		$index = 0;
 		if ( empty( $value ) ) {
-			self::render_repeater_group_fields( $index, $meta_field['fields'], $id );
+			self::render_repeater_group_fields( $index, $meta_field['fields'], $id, $is_multiple );
 			$index++;
 		} else {
 			foreach ( $value as $field_values ) {
-				self::render_repeater_group_fields( $index, $meta_field['fields'], $id, $field_values );
+				self::render_repeater_group_fields( $index, $meta_field['fields'], $id, $is_multiple, $field_values );
 				$index++;
 			}
 		}
 
 		if ( $is_multiple ) :
-			self::render_repeater_group_fields( $index, $meta_field['fields'], $id, [], true );
+			self::render_repeater_group_fields( $index, $meta_field['fields'], $id, $is_multiple, [], true );
 			?>
 			<tr>
 				<td>
@@ -359,12 +359,13 @@ class Field {
 	 * @param int     $index Index for using unique id attributes for field.
 	 * @param array   $fields Group fields for repeater group to render.
 	 * @param int     $group_id Repater field group id to store data in.
+	 * @param boolean $is_multiple Flag to check if this renderer is part of repetable group field or not.
 	 * @param array   $field_values Field value stored in meta.
 	 * @param boolean $is_copy_field Flag to get markup for copy field or regular field.
 	 *
 	 * @return void
 	 */
-	public static function render_repeater_group_fields( $index, $fields, $group_id, $field_values = [], $is_copy_field = false ) {
+	public static function render_repeater_group_fields( $index, $fields, $group_id, $is_multiple = false, $field_values = [], $is_copy_field = false ) {
 
 		if ( $is_copy_field ) {
 			$class = 'form-field-group-wrapper-copy hidden';
@@ -393,9 +394,11 @@ class Field {
 						?>
 					</tbody>
 				</table>
+				<?php if ( $is_multiple ) : ?>
 				<button class="form-field-remove-group-button button-secondary button-large">
 					<?php echo esc_html__( 'Remove', 'ca-grants-plugin' ); ?>
 				</button>
+				<?php endif; ?>
 			</td>
 		</tr>
 		<?php
