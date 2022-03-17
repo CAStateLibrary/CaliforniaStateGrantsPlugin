@@ -7,6 +7,7 @@
 
 namespace CaGov\Grants\Meta;
 
+use CaGov\Grants\Helpers\Validators;
 use DateTime;
 use WP_Error;
 /**
@@ -1670,13 +1671,13 @@ class Field {
 					break;
 				case 'number':
 				case 'save_to_field':
-					$is_invalid = is_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
+					$is_invalid = Validators\validate_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
 					break;
 				case 'text':
 				case 'textarea':
 					$max_chars  = $field['maxlength'] ?: strlen( $data[ $id ] );
 					$max_chars  = $field['text_limit'] ?: $max_chars;
-					$is_invalid = is_string( $data[ $id ] ) ? strlen( $data[ $id ] ) > $max_chars : true;
+					$is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
 					break;
 				case 'checkbox':
 				case 'select':
