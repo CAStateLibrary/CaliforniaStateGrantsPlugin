@@ -7,11 +7,11 @@
 
 namespace CaGov\Grants\Admin;
 
+use CaGov\Grants\Core;
 use CaGov\Grants\REST\BulkUploadEndpoint;
 use CaGov\Grants\Meta\Field;
 use CaGov\Grants\PostTypes\AwardUploads;
 use CaGov\Grants\PostTypes\Grants as GrantsCPT;
-use function CaGov\Grants\Core\wp_safe_remote_post_multipart;
 
 /**
  * BulkUploadPage Class
@@ -138,7 +138,7 @@ class BulkUploadPage {
 			'fiscalYear'            => $fiscal_year,
 		);
 
-		$request = wp_safe_remote_post_multipart( BulkUploadEndpoint::get_endpoint_url(), $params, 'awardCSV' );
+		$request = Core\wp_safe_remote_post_multipart( BulkUploadEndpoint::get_endpoint_url(), $params, 'awardCSV' );
 
 		if ( is_wp_error( $request ) ) {
 			$this->notices['fail'] = $request->get_error_message();
@@ -172,19 +172,38 @@ class BulkUploadPage {
 	 * @return void
 	 */
 	public function render_page() {
+		$grant_id = filter_input( INPUT_GET, 'grant_id', FILTER_SANITIZE_NUMBER_INT );
+
 		?>
 		<div class="wrap bulk-upload-page">
 			<div class="bulk-upload-page--header">
 				<h1><?php esc_html_e( 'Bulk Upload', 'ca-grants-plugin' ); ?></h1>
 			</div>
 
-			<form class="bulk-upload-page--content" method="post" enctype="multipart/form-data">
 			<?php
-				wp_nonce_field( 'ca_bulk_upload_field', 'ca_bulk_upload_nonce' );
-				$this->render_fields();
-				$this->submit_button();
+			if ( empty( $grant_id ) ) {
+				$grant_list_link = add_query_arg(
+					[
+						'post_type' => GrantsCPT::get_cpt_slug(),
+					],
+					admin_url( 'edit.php' )
+				);
+				$error_notice    = sprintf(
+					__( 'Grant data not found, please go to <a href="%s">grants list page</a> and select "Bulk Upload Award Data" for grant.', 'ca-grants-plugin' ),
+					esc_url( $grant_list_link )
+				);
+				printf(
+					'<div class="notice notice-error"><p>%s</p></div>',
+					wp_kses_post( $error_notice )
+				);
+			} else {
+				echo '<form class="bulk-upload-page--content" method="post" enctype="multipart/form-data">';
+					wp_nonce_field( 'ca_bulk_upload_field', 'ca_bulk_upload_nonce' );
+					$this->render_fields( $grant_id );
+					$this->submit_button();
+				echo '</form>';
+			}
 			?>
-			</form>
 		</div>
 			<?php
 	}
@@ -192,14 +211,17 @@ class BulkUploadPage {
 	/**
 	 * Render bulk upload fields.
 	 *
+	 * @param int $grant_id Grant post id.
+	 *
 	 * @return void
 	 */
-	public function render_fields() {
+	public function render_fields( $grant_id ) {
+
 		?>
 		<table class="form-table" role="presentation">
 			<tbody>
 		<?php
-		foreach ( self::get_fields() as $field ) {
+		foreach ( self::get_fields( $grant_id ) as $field ) {
 			Field::factory( $field );
 		}
 		?>
@@ -211,26 +233,28 @@ class BulkUploadPage {
 	/**
 	 * Get fields for bulk upload form.
 	 *
+	 * @param int $grant_id Grant post id.
+	 *
 	 * @return array
 	 */
-	public static function get_fields() {
+	public static function get_fields( $grant_id ) {
+
+		$is_closed_grant    = Core\is_closed_grant( $grant_id );
+		$closed_fiscal_year = '';
+		if ( $is_closed_grant ) {
+			$closed_fiscal_year = Core\get_deadline_fiscal_year( $grant_id );
+		}
 
 		return array(
 			array(
-				'id'          => 'grantID',
-				'name'        => __( 'Associated Grant', 'ca-grants-plugin' ),
-				'type'        => 'post-finder',
-				'description' => __( 'Select the grant to enter award data for.', 'ca-grants-plugin' ),
-				'required'    => true,
-				'options'     => array(
-					'show_numbers'   => false,
-					'show_recent'    => false,
-					'limit'          => 1,
-					'include_script' => true,
-					'args'           => array(
-						'post_type' => GrantsCPT::get_cpt_slug(),
-					),
-				),
+				'id'           => 'grantID',
+				'name'         => __( 'Associated Grant', 'ca-grants-plugin' ),
+				'description'  => __( 'Select the grant to enter award data for.', 'ca-grants-plugin' ),
+				'type'         => 'label',
+				'value_type'   => 'post-title',
+				'link'         => 'post-link',
+				'meta_value'   => $grant_id,
+				'hidden_field' => true,
 			),
 			array(
 				'id'          => 'applicationsSubmitted',
@@ -247,11 +271,13 @@ class BulkUploadPage {
 				'description' => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 			),
 			array(
-				'id'          => 'fiscalYear',
-				'name'        => __( 'Fiscal Year', 'ca-grants-plugin' ),
-				'type'        => 'select',
-				'source'      => 'api',
-				'description' => __( 'Select the Fiscal Year to import awards for.', 'ca-grants-plugin' ),
+				'id'           => 'fiscalYear',
+				'name'         => __( 'Fiscal Year', 'ca-grants-plugin' ),
+				'type'         => $closed_fiscal_year ? 'label' : 'select',
+				'source'       => 'api',
+				'description'  => __( 'Select the Fiscal Year to import awards for.', 'ca-grants-plugin' ),
+				'meta_value'   => $closed_fiscal_year,
+				'hidden_field' => ! empty( $closed_fiscal_year ),
 			),
 			array(
 				'id'           => 'awardCSV',
