@@ -151,11 +151,15 @@ class AwardUploads {
 			'menu_icon'          => 'dashicons-upload',
 			'menu_position'      => null,
 			'supports'           => array( 'title', 'author' ),
-			'capabilities'       => array(
-				'create_posts' => 'do_not_allow',
-			),
-			'map_meta_cap'       => true,
 		);
+
+		// Do not create any post from UI/Admin, but should be able to create from REST API.
+		if ( is_admin() ) {
+			$args['capabilities'] = array(
+				'create_posts' => 'do_not_allow',
+			);
+			$args['map_meta_cap'] = true;
+		}
 
 		/**
 		 * Filter the California Grants Awards post type arguments.
