@@ -7,6 +7,7 @@
 
 namespace CaGov\Grants\Meta;
 
+use CaGov\Grants\Helpers\Validators;
 use DateTime;
 use WP_Error;
 /**
@@ -416,31 +417,33 @@ class Field {
 
 		$post_id = get_the_ID();
 
-		$value_type = $meta_field['value_type'] ?? '';
-		$name       = $meta_field['name'] ?? '';
-		$id         = $meta_field['id'] ?? '';
-		$class      = $meta_field['class'] ?? '';
-		$value      = $meta_field['meta_value'] ?? '';
-		$value      = $value ?: get_post_meta( $post_id, $id, true );
-		$link       = ( 'post-link' === $meta_field['link'] ) ? get_edit_post_link( $value ) : false;
+		$value_type   = $meta_field['value_type'] ?? '';
+		$name         = $meta_field['name'] ?? '';
+		$id           = $meta_field['id'] ?? '';
+		$class        = $meta_field['class'] ?? '';
+		$hidden_field = $meta_field['hidden_field'] ?? false;
+		$value        = $meta_field['meta_value'] ?? '';
+		$value        = $value ?: get_post_meta( $post_id, $id, true );
+		$link         = ( 'post-link' === $meta_field['link'] ) ? get_edit_post_link( $value ) : false;
+		$label_value  = $value;
 
-		if ( ! empty( $value ) ) {
+		if ( ! empty( $label_value ) ) {
 			switch ( $value_type ) {
 				case 'post-title':
-					if ( is_numeric( $value ) ) {
-						$value = get_the_title( $value );
+					if ( is_numeric( $label_value ) ) {
+						$label_value = get_the_title( $value );
 					}
 					break;
 				case 'attachment-url':
-					if ( is_numeric( $value ) ) {
-						$value = wp_get_attachment_url( $value );
+					if ( is_numeric( $label_value ) ) {
+						$label_value = wp_get_attachment_url( $label_value );
 					}
 					break;
 				case 'api':
 					$fields = self::get_api_fields_by_id( $id );
-					$field  = wp_filter_object_list( $fields, [ 'id' => $value ] );
+					$field  = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
 					$field  = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
-					$value  = empty( $field ) || empty( $field['name'] ) ? $value : $field['name'];
+					$label_value  = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
 					break;
 			}
 		}
@@ -451,6 +454,13 @@ class Field {
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 			</th>
 			<td>
+				<?php if ( $hidden_field ) : ?>
+					<input
+						type="hidden"
+						name="<?php echo esc_attr( $id ); ?>"
+						value="<?php echo esc_attr( $value ); ?>"
+					/>
+				<?php endif; ?>
 				<span
 					id="<?php echo esc_attr( $id ); ?>"
 				>
@@ -459,7 +469,7 @@ class Field {
 						 printf( '<a href="%s" target="_blank">', esc_url( $link ) );
 					}
 					?>
-					<?php echo esc_html( $value ); ?>
+					<?php echo esc_html( $label_value ); ?>
 					<?php
 					if ( ! empty( $link ) ) {
 						 echo '</a>';
@@ -1661,13 +1671,13 @@ class Field {
 					break;
 				case 'number':
 				case 'save_to_field':
-					$is_invalid = is_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
+					$is_invalid = Validators\validate_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
 					break;
 				case 'text':
 				case 'textarea':
 					$max_chars  = $field['maxlength'] ?: strlen( $data[ $id ] );
 					$max_chars  = $field['text_limit'] ?: $max_chars;
-					$is_invalid = is_string( $data[ $id ] ) ? strlen( $data[ $id ] ) > $max_chars : true;
+					$is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
 					break;
 				case 'checkbox':
 				case 'select':

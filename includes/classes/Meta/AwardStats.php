@@ -40,7 +40,7 @@ class AwardStats {
 			return false;
 		}
 
-		return Core\is_ongoing_grant( $grant_id );
+		return Core\is_ongoing_grant( $grant_id ) || Core\is_closed_grant( $grant_id );
 	}
 
 	/**
