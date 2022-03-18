@@ -514,3 +514,20 @@ function get_fiscal_year( $datetime = 'now' ) {
 
 	return $fiscal_start_date->format( 'Y' ) . '-' . $fiscal_end_date->format( 'Y' );
 }
+
+/**
+ * Get latest award stats for the grant.
+ *
+ * @param [type] $grant_id
+ *
+ * @return array
+ */
+function get_award_stats( $grant_id ) {
+	$award_stats = get_post_meta( $grant_id, 'awardStats', true );
+
+	if ( empty( $award_stats ) || ! is_array( $award_stats ) ) {
+		return [];
+	}
+
+	return end( $award_stats );
+}
