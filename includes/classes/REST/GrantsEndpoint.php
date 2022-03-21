@@ -326,7 +326,9 @@ class GrantsEndpoint extends BaseEndpoint {
 		$current_field   = wp_filter_object_list( $additional_meta, array( 'id' => $field_name ) );
 
 		if ( 'awardStats' === $field_name ) {
-			$validate_field = Meta\AwardStats::get_validation_errors( $value, $post->ID );
+			$validate_field  = Meta\AwardStats::get_validation_errors( $value, $post->ID );
+			$existing_values = Core\is_ongoing_grant( $post->ID ) ? get_post_meta( $post->ID, 'awardStats', true ) : [];
+			$value           = empty( $existing_values ) ? $value : array_merge( $existing_values, $value );
 		} else {
 			$validate_field = Meta\Field::maybe_get_field_errors( $current_field, array( $field_name => $value ) );
 		}
