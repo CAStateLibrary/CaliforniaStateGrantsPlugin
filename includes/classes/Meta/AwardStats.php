@@ -118,16 +118,37 @@ class AwardStats {
 
 		$group_fields = array(
 			array(
-				'id'            => 'awardStats',
-				'type'          => 'group',
-				'serialize'     => true,
-				'add_new_label' => __( 'Add Fiscal Year', 'ca-grants-plugin' ),
-				'is_multiple'   => empty( $fiscal_year ),
-				'fields'        => $fields,
+				'id'                => 'awardStats',
+				'type'              => 'group',
+				'serialize'         => true,
+				'add_new_label'     => __( 'Add Fiscal Year', 'ca-grants-plugin' ),
+				'is_multiple'       => empty( $fiscal_year ),
+				'fields'            => $fields,
+				'sanitize_callback' => [ __CLASS__, 'sanitize_award_stats_data' ],
 			),
 		);
 
 		return $group_fields;
+	}
+
+	/**
+	 * Sanitize award stats data for grant.
+	 *
+	 * @param array $value Award stats data.
+	 *
+	 * @return array Sanitized award stats data.
+	 */
+	public static function sanitize_award_stats_data( $value ) {
+
+		// Remove any empty data.
+		$value       = array_filter( $value, 'array_filter' );
+		$unique_data = [];
+
+		foreach ( $value as $award_stats ) {
+			$unique_data[ $award_stats['fiscalYear'] ] = $award_stats;
+		}
+
+		return $unique_data;
 	}
 
 	/**

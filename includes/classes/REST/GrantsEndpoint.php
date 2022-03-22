@@ -329,6 +329,7 @@ class GrantsEndpoint extends BaseEndpoint {
 			$validate_field  = Meta\AwardStats::get_validation_errors( $value, $post->ID );
 			$existing_values = Core\is_ongoing_grant( $post->ID ) ? get_post_meta( $post->ID, 'awardStats', true ) : [];
 			$value           = empty( $existing_values ) ? $value : array_merge( $existing_values, $value );
+			$value           = Meta\AwardStats::sanitize_award_stats_data( $value );
 		} else {
 			$validate_field = Meta\Field::maybe_get_field_errors( $current_field, array( $field_name => $value ) );
 		}

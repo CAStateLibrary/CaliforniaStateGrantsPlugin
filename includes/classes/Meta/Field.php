@@ -1459,7 +1459,11 @@ class Field {
 					$value = wp_kses_post( $data[ $meta_field['id'] ] );
 					break;
 				case 'group':
-					$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					if ( ! empty( $meta_field['sanitize_callback'] ) ) {
+						$value = call_user_func( $meta_field['sanitize_callback'], $data[ $meta_field['id'] ] );
+					} else {
+						$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					}
 					break;
 				case 'save_to_field':
 					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
