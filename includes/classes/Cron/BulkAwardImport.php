@@ -143,12 +143,16 @@ class BulkAwardImport {
 	 */
 	public function schedule_csv_chunk_import( $file_id, $award_upload, $award_upload_data ) {
 		$csv_file_path = get_attached_file( $file_id );
+		$data          = [
+			'grantID'    => $award_upload_data['csl_grant_id'] ?: 0,
+			'fiscalYear' => $award_upload_data['csl_fiscal_year'] ?: '',
+		];
 
-		if ( empty( $csv_file_path ) || is_wp_error( AwardUploads::validate_csv_file( $csv_file_path ) ) ) {
+		if ( empty( $csv_file_path ) || is_wp_error( AwardUploads::validate_csv_file( $csv_file_path, $data ) ) ) {
 			return false;
 		}
 
-		$csv_data = $this->read_csv( $csv_file_path );
+		$csv_data = AwardUploads::read_csv( $csv_file_path );
 
 		if ( empty( $csv_data ) ) {
 			return false;
@@ -182,69 +186,6 @@ class BulkAwardImport {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Read csv file and return data as an array.
-	 *
-	 * @param string $csv_file csv file name.
-	 *
-	 * @return array
-	 */
-	public function read_csv( $csv_file ) {
-		$file_handle = fopen( $csv_file, 'r' );
-
-		$data = [];
-
-		if ( feof( $file_handle ) ) {
-			return [];
-		}
-
-		$csv_header_mapping = AwardUploads::get_csv_header_mapping();
-		$headers            = fgetcsv( $file_handle, 4096 );
-		$headers            = array_map(
-			function( $header ) use ( $csv_header_mapping ) {
-				$header = trim( $header );
-				return isset( $csv_header_mapping[ $header ] ) ? $csv_header_mapping[ $header ] : $header;
-			},
-			$headers
-		);
-
-		while ( ! feof( $file_handle ) ) {
-			$row_data       = fgetcsv( $file_handle, 4096 );
-			$row_assoc_data = [];
-
-			foreach ( $row_data as $key => $value ) {
-
-				switch ( $headers[ $key ] ) {
-					case 'recipientType':
-					case 'secondaryRecipients':
-					case 'geoLocationServed':
-						$value = sanitize_title( $value );
-						break;
-					case 'totalAwardAmount':
-					case 'matchingFundingAmount':
-						$value = (int) preg_replace( '/[^0-9-.]+/', '', $value );
-						break;
-					case 'grantFundedStartDate':
-					case 'grantFundedEndDate':
-						$value = $value ? date_format( date_create( $value ), 'Y-m-d\TH:i:s' ) : $value;
-						break;
-					case 'countiesServed':
-						$value = explode( ',', $value );
-						$value = array_map( 'sanitize_title', $value );
-						break;
-				}
-
-				$row_assoc_data[ $headers[ $key ] ] = $value;
-			}
-
-			$data[] = $row_assoc_data;
-		}
-
-		fclose( $file_handle );
-
-		return $data;
 	}
 
 	/**
