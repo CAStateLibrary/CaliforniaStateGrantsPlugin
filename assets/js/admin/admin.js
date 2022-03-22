@@ -5,6 +5,7 @@ import ConditionalRequired from './components/conditional-required';
 import FormValidation from './components/form-validation';
 import Wysiwyg from './components/wysiwyg';
 import ConditionalFormFields from './components/conditional-form-fields';
+import RepeaterFormFormFields from './components/repeater-form-field';
 
 // polyfill closest.
 if ( !Element.prototype.closest ) {
@@ -27,4 +28,5 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	ConditionalRequired();
 	FormValidation();
 	ConditionalFormFields();
+	RepeaterFormFormFields();
 } );
