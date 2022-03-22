@@ -1675,9 +1675,13 @@ class Field {
 					break;
 				case 'text':
 				case 'textarea':
-					$max_chars  = $field['maxlength'] ?: strlen( $data[ $id ] );
-					$max_chars  = $field['text_limit'] ?: $max_chars;
-					$is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
+					 $max_chars = $field['maxlength'] ?: strlen( $data[ $id ] );
+
+					 if ( isset( $field['text_limit'] ) && ! empty( $field['text_limit'] ) ) {
+						  $max_chars = $field['text_limit'];
+					 }
+
+					 $is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
 					break;
 				case 'checkbox':
 				case 'select':
