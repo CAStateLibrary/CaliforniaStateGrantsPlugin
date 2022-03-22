@@ -8,8 +8,9 @@
 namespace CaGov\Grants\Core;
 
 use CaGov\Grants\Admin\Settings;
-
+use CaGov\Grants\Helpers\Validators;
 use CaGov\Grants\PostTypes\GrantAwards;
+use DateTime;
 use WP_Query;
 use \WP_Error as WP_Error;
 
@@ -413,4 +414,120 @@ function has_grant_awards( $grant_id ) {
 	$posts = new WP_Query( $query_args );
 
 	return ! empty( $posts->posts );
+}
+
+/**
+ * Check if given grant is ongoing grant or not.
+ *
+ * @param int $grant_id Grant ID
+ *
+ * @return boolean Return true for ongoing grant and false if its not.
+ */
+function is_ongoing_grant( $grant_id ) {
+	$type = get_grant_type( $grant_id );
+
+	return ! empty( $type ) && 'ongoing' === $type;
+}
+
+/**
+ * Check if given grant is closed grant or not.
+ *
+ * @param int $grant_id Grant ID
+ *
+ * @return boolean Return true for closed grant and false if its not.
+ */
+function is_closed_grant( $grant_id ) {
+	$type = get_grant_type( $grant_id );
+
+	return ! empty( $type ) && 'closed' === $type;
+}
+
+/**
+ * Get grant type for given grant id.
+ *
+ * @param int $grant_id Grant status name.
+ *
+ * @return string
+ */
+function get_grant_type( $grant_id ) {
+	$grant_status  = '';
+	$is_forecasted = get_post_meta( $grant_id, 'isForecasted', true );
+
+	if ( empty( $is_forecasted ) || 'forecasted' === $is_forecasted ) {
+		return $grant_status;
+	}
+
+	if ( 'active' === $is_forecasted ) {
+		$grant_status = 'ongoing';
+	}
+
+	$deadline = get_post_meta( $grant_id, 'deadline', true );
+
+	if (
+		! empty( $deadline )
+		&& ! Validators\validate_date_after( gmdate( 'Y-m-d H:m:s', $deadline ), current_time( 'mysql' ) )
+	) {
+		$grant_status = 'closed';
+	}
+
+	return $grant_status;
+}
+
+/**
+ * Get fiscal year basd on deadline.
+ *
+ * @param int $grant_id Grant id to get deadline.
+ *
+ * @return string
+ */
+function get_deadline_fiscal_year( $grant_id ) {
+	$deadline = get_post_meta( $grant_id, 'deadline', true );
+
+	return empty( $deadline ) ? '' : get_fiscal_year( gmdate( 'Y-m-d H:m:s', $deadline ) );
+}
+
+/**
+ * Get fiscal year for given datetime. ( default return current date fiscal year )
+ *
+ * Identify fiscal year based on given date and return value.
+ * i.e if given date is 10th Feb 2022 the fiscal year
+ * would be 2021-2022 since the date is < 1st July 2022 and > 30th July 2021
+ * if date would have been > 1st July 2022 we would check next year 30th July date as end date.
+ *
+ * @return string Fiscal year. i.e `2021-2022`
+ */
+function get_fiscal_year( $datetime = 'now' ) {
+	$current_date = new DateTime( $datetime, wp_timezone() );
+	$current_year = $current_date->format( 'Y' );
+
+	$fiscal_start_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $current_year . '-07-01 00:00:00' );
+
+	// Check if previous fiscal year is yet to be ended. i.e current date is 10th-Feb-2022 so fiscal start year would be 2021 as it's < 1st-July-2022.
+	if ( $current_date < $fiscal_start_date ) {
+		$prev_year         = ( $current_year - 1 );
+		$fiscal_end_date   = $fiscal_start_date;
+		$fiscal_start_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $prev_year . '-07-01 00:00:00' );
+	} else {
+		$next_year       = ( $current_year + 1 );
+		$fiscal_end_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $next_year . '-06-30 00:00:00' );
+	}
+
+	return $fiscal_start_date->format( 'Y' ) . '-' . $fiscal_end_date->format( 'Y' );
+}
+
+/**
+ * Get latest award stats for the grant.
+ *
+ * @param [type] $grant_id
+ *
+ * @return array
+ */
+function get_award_stats( $grant_id ) {
+	$award_stats = get_post_meta( $grant_id, 'awardStats', true );
+
+	if ( empty( $award_stats ) || ! is_array( $award_stats ) ) {
+		return [];
+	}
+
+	return end( $award_stats );
 }

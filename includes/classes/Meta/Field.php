@@ -7,6 +7,9 @@
 
 namespace CaGov\Grants\Meta;
 
+use CaGov\Grants\Helpers\Validators;
+use DateTime;
+use WP_Error;
 /**
  * Meta Field Class.
  */
@@ -68,6 +71,9 @@ class Field {
 			case 'label':
 				self::render_label_field( $meta_field );
 				break;
+			case 'group':
+				self::render_field_group( $meta_field );
+				break;
 			default:
 				self::render_input_field( $meta_field );
 				break;
@@ -93,7 +99,7 @@ class Field {
 	 * @return string Current site api url.
 	 */
 	public static function get_current_site_api_url() {
-		return get_site_url( null, '/wp-json/' );
+		return rest_url();
 	}
 
 	/**
@@ -232,15 +238,19 @@ class Field {
 		$name          = $meta_field['name'] ?? '';
 		$description   = $meta_field['description'] ?? '';
 		$id            = $meta_field['id'] ?? '';
+		$field_name    = $meta_field['field_name'] ?? '';
+		$field_name    = $field_name ?: $id;
 		$class         = $meta_field['class'] ?? '';
 		$maxlength     = $meta_field['maxlength'] ?? '';
 		$default_value = $meta_field['default_value'] ?? '';
-		$value         = get_post_meta( $post_id, $id, true );
+		$value         = $meta_field['meta_value'] ?? '';
+		$value         = $value ?: get_post_meta( $post_id, $id, true );
 		$value         = empty( $value ) ? $default_value : $value;
 		$minnumber     = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
 		$maxnumber     = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
+		$disabled      = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled="disabled"';
 		$readonly      = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
-		$accept_ext  = '';
+		$accept_ext    = '';
 
 		if ( 'file' === $meta_field['type'] && ! empty( $meta_field['accepted-ext'] ) && is_array( $meta_field['accepted-ext'] ) ) {
 			$accept_ext = sprintf( 'accept=%s', implode( ',', $meta_field['accepted-ext'] ) );
@@ -257,12 +267,13 @@ class Field {
 			<td>
 				<input
 					type="<?php echo esc_attr( $type ); ?>"
-					name="<?php echo esc_attr( $id ); ?>"
+					name="<?php echo esc_attr( $field_name ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
 					id="<?php echo esc_attr( $id ); ?>"
 					maxlength="<?php echo esc_attr( $maxlength ); ?>"
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
+					<?php echo esc_html( $disabled ); ?>
 					<?php echo esc_html( $readonly ); ?>
 					<?php echo esc_html( $accept_ext ); ?>
 					<?php
@@ -272,6 +283,123 @@ class Field {
 					}
 					?>
 				/>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
+	 * Render an group field set.
+	 *
+	 * @param array $meta_field The meta field group to render.
+	 */
+	public static function render_field_group( $meta_field = array() ) {
+
+		if (
+			empty( $meta_field )
+			|| ! is_array( $meta_field )
+			|| empty( $meta_field['fields'] )
+		) {
+			return;
+		}
+
+		$post_id       = get_the_ID();
+		$class         = $meta_field['class'] ?? '';
+		$id            = $meta_field['id'] ?? '';
+		$name          = $meta_field['name'] ?? '';
+		$description   = $meta_field['description'] ?? '';
+		$default_value = $meta_field['default_value'] ?? '';
+		$value         = get_post_meta( $post_id, $id, true );
+		$value         = empty( $value ) ? $default_value : $value;
+		$add_new_label = $meta_field['add_new_label'] ?? __( 'Add new', 'ca-grants-plugin' );
+		$is_multiple   = isset( $meta_field['is_multiple'] ) ? false !== $meta_field['is_multiple'] : true;
+
+		if ( ! empty( $name ) ) :
+			?>
+		<tr class="form-field-group-header <?php echo esc_attr( $class ); ?>">
+			<th>
+				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
+				<?php
+				if ( ! empty( $description ) ) {
+					self::tooltip( $description );
+				}
+				?>
+			</th>
+		</tr>
+			<?php
+		endif;
+
+		$index = 0;
+		if ( empty( $value ) ) {
+			self::render_repeater_group_fields( $index, $meta_field['fields'], $id, $is_multiple );
+			$index++;
+		} else {
+			foreach ( $value as $field_values ) {
+				self::render_repeater_group_fields( $index, $meta_field['fields'], $id, $is_multiple, $field_values );
+				$index++;
+			}
+		}
+
+		if ( $is_multiple ) :
+			self::render_repeater_group_fields( $index, $meta_field['fields'], $id, $is_multiple, [], true );
+			?>
+			<tr>
+				<td>
+					<button class="form-field-add-new-group-button button-secondary button-large">
+						<?php echo esc_html( $add_new_label ); ?>
+					</button>
+				</td>
+			</tr>
+			<?php
+		endif;
+	}
+
+	/**
+	 * Render repeater group fields.
+	 *
+	 * @param int     $index Index for using unique id attributes for field.
+	 * @param array   $fields Group fields for repeater group to render.
+	 * @param int     $group_id Repater field group id to store data in.
+	 * @param boolean $is_multiple Flag to check if this renderer is part of repetable group field or not.
+	 * @param array   $field_values Field value stored in meta.
+	 * @param boolean $is_copy_field Flag to get markup for copy field or regular field.
+	 *
+	 * @return void
+	 */
+	public static function render_repeater_group_fields( $index, $fields, $group_id, $is_multiple = false, $field_values = [], $is_copy_field = false ) {
+
+		if ( $is_copy_field ) {
+			$class = 'form-field-group-wrapper-copy hidden';
+		} else {
+			$class = 'form-field-group-wrapper';
+		}
+
+		?>
+		<tr class="<?php echo esc_attr( $class ); ?>" data-index="<?php echo esc_attr( $index ); ?>">
+			<td>
+				<table class="form-table field-group" role="presentation">
+					<tbody>
+						<?php
+						foreach ( $fields as $field ) {
+							if ( ! empty( $field_values ) && empty( $field['meta_value'] ) ) {
+								$field['meta_value'] = $field_values[ $field['id'] ] ?? '';
+							}
+							if ( $is_copy_field ) {
+								$field['disabled'] = true;
+							}
+
+							$field['field_name'] = $group_id . '[' . $index . '][' . $field['id'] . ']';
+							$field['id']         = $field['id'] . '-' . $index;
+							self::factory( $field );
+						}
+						?>
+					</tbody>
+				</table>
+				<?php if ( $is_multiple ) : ?>
+				<button class="form-field-remove-group-button button-secondary button-large">
+					<?php echo esc_html__( 'Remove', 'ca-grants-plugin' ); ?>
+				</button>
+				<?php endif; ?>
 			</td>
 		</tr>
 		<?php
@@ -289,30 +417,33 @@ class Field {
 
 		$post_id = get_the_ID();
 
-		$value_type = $meta_field['value_type'] ?? '';
-		$name       = $meta_field['name'] ?? '';
-		$id         = $meta_field['id'] ?? '';
-		$class      = $meta_field['class'] ?? '';
-		$value      = get_post_meta( $post_id, $id, true );
-		$link       = ( 'post-link' === $meta_field['link'] ) ? get_edit_post_link( $value ) : false;
+		$value_type   = $meta_field['value_type'] ?? '';
+		$name         = $meta_field['name'] ?? '';
+		$id           = $meta_field['id'] ?? '';
+		$class        = $meta_field['class'] ?? '';
+		$hidden_field = $meta_field['hidden_field'] ?? false;
+		$value        = $meta_field['meta_value'] ?? '';
+		$value        = $value ?: get_post_meta( $post_id, $id, true );
+		$link         = ( 'post-link' === $meta_field['link'] ) ? get_edit_post_link( $value ) : false;
+		$label_value  = $value;
 
-		if ( ! empty( $value ) ) {
+		if ( ! empty( $label_value ) ) {
 			switch ( $value_type ) {
 				case 'post-title':
-					if ( is_numeric( $value ) ) {
-						$value = get_the_title( $value );
+					if ( is_numeric( $label_value ) ) {
+						$label_value = get_the_title( $value );
 					}
 					break;
 				case 'attachment-url':
-					if ( is_numeric( $value ) ) {
-						$value = wp_get_attachment_url( $value );
+					if ( is_numeric( $label_value ) ) {
+						$label_value = wp_get_attachment_url( $label_value );
 					}
 					break;
 				case 'api':
 					$fields = self::get_api_fields_by_id( $id );
-					$field  = wp_filter_object_list( $fields, [ 'id' => $value ] );
+					$field  = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
 					$field  = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
-					$value  = empty( $field ) || empty( $field['name'] ) ? $value : $field['name'];
+					$label_value  = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
 					break;
 			}
 		}
@@ -323,6 +454,13 @@ class Field {
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 			</th>
 			<td>
+				<?php if ( $hidden_field ) : ?>
+					<input
+						type="hidden"
+						name="<?php echo esc_attr( $id ); ?>"
+						value="<?php echo esc_attr( $value ); ?>"
+					/>
+				<?php endif; ?>
 				<span
 					id="<?php echo esc_attr( $id ); ?>"
 				>
@@ -331,7 +469,7 @@ class Field {
 						 printf( '<a href="%s" target="_blank">', esc_url( $link ) );
 					}
 					?>
-					<?php echo esc_html( $value ); ?>
+					<?php echo esc_html( $label_value ); ?>
 					<?php
 					if ( ! empty( $link ) ) {
 						 echo '</a>';
@@ -356,7 +494,10 @@ class Field {
 		$name        = $meta_field['name'] ?? '';
 		$description = $meta_field['description'] ?? '';
 		$id          = $meta_field['id'] ?? '';
-		$readonly    = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'disabled';
+		$field_name  = $meta_field['field_name'] ?? '';
+		$field_name  = $field_name ?: $id;
+		$value       = $meta_field['meta_value'] ?? '';
+		$disabled    = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled';
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
 			$fields = self::get_api_fields_by_id( $id );
@@ -380,9 +521,9 @@ class Field {
 		$fields = self::maybe_sort_fields( $fields, $meta_field );
 
 		// Get the saved data
-		if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+		if ( empty( $value ) && isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
 			$value = self::get_value_from_taxonomy( $id );
-		} else {
+		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
 		?>
@@ -394,7 +535,7 @@ class Field {
 			<td <?php self::conditional_required( $meta_field, false ); ?>>
 			<?php foreach ( $fields as $field ) : ?>
 				<?php $checked = ( in_array( $field['id'], (array) $value, true ) ) ? 'checked' : ''; ?>
-				<input <?php echo esc_attr( $checked ); ?> type="checkbox" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $id ); ?>[]" value="<?php echo esc_attr( $field['id'] ); ?>" <?php echo esc_html( $readonly ); ?> />
+				<input <?php echo esc_attr( $checked ); ?> type="checkbox" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field_name ); ?>[]" value="<?php echo esc_attr( $field['id'] ); ?>" <?php echo esc_html( $disabled ); ?> />
 				<label for="<?php echo esc_attr( $field['id'] ); ?>"><?php echo esc_html( $field['name'] ); ?></label>
 				<br>
 			<?php endforeach; ?>
@@ -421,7 +562,10 @@ class Field {
 		$name        = $meta_field['name'] ?? '';
 		$description = $meta_field['description'] ?? '';
 		$id          = $meta_field['id'] ?? '';
-		$readonly    = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'disabled';
+		$field_name  = $meta_field['field_name'] ?? '';
+		$field_name  = $field_name ?: $id;
+		$value       = $meta_field['meta_value'] ?? '';
+		$disabled    = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -444,9 +588,9 @@ class Field {
 		$fields = self::maybe_sort_fields( $fields, $meta_field );
 
 		// Get the saved data
-		if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+		if ( empty( $value ) && isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
 			$value = self::get_value_from_taxonomy( $id, false );
-		} else {
+		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
 		?>
@@ -463,11 +607,11 @@ class Field {
 							<input
 								type="radio"
 								id="<?php echo esc_attr( $field['id'] ); ?>"
-								name="<?php echo esc_attr( $id ); ?>"
+								name="<?php echo esc_attr( $field_name ); ?>"
 								value="<?php echo esc_attr( $field['id'] ); ?>"
 								<?php checked( $field['id'], $value ); ?>
 								<?php self::conditional_required( $meta_field ); ?>
-								<?php echo esc_html( $readonly ); ?>
+								<?php echo esc_html( $disabled ); ?>
 							/>
 							<span><?php echo esc_html( $field['name'] ); ?></span>
 						</label><br>
@@ -488,10 +632,15 @@ class Field {
 			return;
 		}
 
-		$name        = $meta_field['name'] ?? '';
-		$description = $meta_field['description'] ?? '';
-		$id          = $meta_field['id'] ?? '';
-		$readonly    = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'disabled';
+		$name          = $meta_field['name'] ?? '';
+		$description   = $meta_field['description'] ?? '';
+		$id            = $meta_field['id'] ?? '';
+		$field_name    = $meta_field['field_name'] ?? '';
+		$field_name    = $field_name ?: $id;
+		$value         = $meta_field['meta_value'] ?? '';
+		$default_value = $meta_field['default_value'] ?? '';
+		$value         = empty( $value ) ? $default_value : $value;
+		$disabled      = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
@@ -512,9 +661,9 @@ class Field {
 		}
 
 		// Get the saved data
-		if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+		if ( empty( $value ) && isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
 			$value = self::get_value_from_taxonomy( $id, false );
-		} else {
+		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
 		?>
@@ -524,7 +673,7 @@ class Field {
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
-				<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>" <?php self::conditional_required( $meta_field ); ?> <?php echo esc_html( $readonly ); ?>>
+				<select name="<?php echo esc_attr( $field_name ); ?>" id="<?php echo esc_attr( $id ); ?>" <?php self::conditional_required( $meta_field ); ?> <?php echo esc_html( $disabled ); ?>>
 					<option <?php selected( '', $value ); ?> value=""><?php esc_html_e( 'Select One', 'ca-grants-plugin' ); ?></option>
 					<?php foreach ( $fields as $field ) : ?>
 
@@ -533,7 +682,9 @@ class Field {
 					<?php endforeach; ?>
 				</select>
 				<br/>
-				<span><?php echo wp_kses_post( $description ); ?></span>
+				<?php if ( empty( $meta_field['hide_description'] ) ) : ?>
+					<span><?php echo wp_kses_post( $description ); ?></span>
+				<?php endif; ?>
 			</td>
 		</tr>
 		<?php
@@ -551,6 +702,8 @@ class Field {
 
 		$name        = $meta_field['name'] ?? '';
 		$id          = $meta_field['id'] ?? '';
+		$field_name  = $meta_field['field_name'] ?? '';
+		$field_name  = $field_name ?: $id;
 		$limit       = $meta_field['text_limit'] ?? '';
 		$description = $meta_field['description'] ?? '';
 
@@ -561,7 +714,8 @@ class Field {
 		$limit = absint( $limit );
 
 		// Get the saved data
-		$value = get_post_meta( get_the_ID(), $id, true );
+		$value = $meta_field['meta_value'] ?? '';
+		$value = $value ?: get_post_meta( get_the_ID(), $id, true );
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th>
@@ -569,7 +723,7 @@ class Field {
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
-				<?php self::do_editor( $value, $id, $meta_field ); ?>
+				<?php self::do_editor( $value, $field_name, $meta_field ); ?>
 			</td>
 		</tr>
 		<?php
@@ -822,18 +976,21 @@ class Field {
 
 		$name        = $meta_field['name'] ?? '';
 		$id          = $meta_field['id'] ?? '';
+		$field_name  = $meta_field['field_name'] ?? '';
+		$field_name  = $field_name ?: $id;
 		$class       = $meta_field['class'] ?? '';
 		$description = $meta_field['description'] ?? '';
 		$max_date    = empty( $meta_field['max_date'] ) ? '' : 'data-max-date-id=' . $meta_field['max_date'];
 		$min_date    = empty( $meta_field['min_date'] ) ? '' : 'data-min-date-id=' . $meta_field['min_date'];
-		$readonly    = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
+		$disabled    = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled="true"';
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
 		}
 
 		// Get the saved data
-		$value = get_post_meta( get_the_ID(), $id, true );
+		$value = $meta_field['meta_value'] ?? '';
+		$value = $value ?: get_post_meta( get_the_ID(), $id, true );
 		$value = $value ? gmdate( 'Y-m-d\TH:m', $value ) : $value;
 		?>
 		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
@@ -845,12 +1002,12 @@ class Field {
 				<input
 					type="datetime-local"
 					id="<?php echo esc_attr( $id ); ?>"
-					name="<?php echo esc_attr( $id ); ?>"
+					name="<?php echo esc_attr( $field_name ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php echo esc_html( $max_date ); ?>
 					<?php echo esc_html( $min_date ); ?>
-					<?php echo esc_html( $readonly ); ?>
+					<?php echo esc_html( $disabled ); ?>
 				>
 			</td>
 		</tr>
@@ -1080,6 +1237,12 @@ class Field {
 				$api_url = trailingslashit( self::get_api_url() ) . 'wp/v2/';
 			}
 
+			// Check if it's a serialised data field, with incremental suffix ids.
+			preg_match( '/[-]\d+$/', $id, $matches );
+			if ( ! empty( $matches ) ) {
+				$id = preg_replace( '/[-]\d+$/', '', $id, 1 );
+			}
+
 			switch ( $id ) {
 				case 'grantCategories':
 					$api_url .= 'grant_categories?per_page=100';
@@ -1254,6 +1417,354 @@ class Field {
 	}
 
 	/**
+	 * Sanitize meta data based on field attributes and save it to respective post.
+	 *
+	 * @param array $meta_fields Meta fields to save in post.
+	 * @param int   $post_id Post id to store meta data.
+	 * @param array $data Meta values for fields.
+	 *
+	 * @return void
+	 */
+	public static function sanitize_and_save_fields( $meta_fields, $post_id, $data ) {
+
+		foreach ( $meta_fields as $meta_field ) {
+			$value = array();
+
+			if ( empty( $data[ $meta_field['id'] ] ) ) {
+				delete_post_meta( $post_id, $meta_field['id'] );
+				continue;
+			}
+
+			switch ( $meta_field['type'] ) {
+				case 'checkbox':
+					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+					} elseif ( ! empty( $data[ $meta_field['id'] ] ) && is_array( $data[ $meta_field['id'] ] ) ) {
+						$value = $data[ $meta_field['id'] ];
+						array_walk( $value, 'sanitize_text_field' );
+					} else {
+						$value = sanitize_text_field( $data[ $meta_field['id'] ] );
+					}
+					break;
+				case 'radio':
+				case 'select':
+					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+					} else {
+						$value = sanitize_text_field( $data[ $meta_field['id'] ] );
+					}
+					break;
+				case 'email':
+					$value = sanitize_email( $data[ $meta_field['id'] ] );
+					break;
+				case 'url':
+					$value = esc_url_raw( $data[ $meta_field['id'] ] );
+					break;
+				case 'number':
+					$value = absint( $data[ $meta_field['id'] ] );
+					break;
+				case 'datetime-local':
+					$value = strtotime( $data[ $meta_field['id'] ] );
+					break;
+				case 'textarea':
+					$value = wp_kses_post( $data[ $meta_field['id'] ] );
+					break;
+				case 'group':
+					$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					break;
+				case 'save_to_field':
+					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
+					update_post_meta( $field_post_id, $meta_field['id'], sanitize_text_field( $data[ $meta_field['id'] ] ) );
+					break;
+				case 'point_of_contact':
+					$temp_value = $data[ $meta_field['id'] ];
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				case 'eligibility-matching-funds':
+					$value = array(
+						'checkbox'   => sanitize_text_field( $data[ $meta_field['id'] ] ),
+						'percentage' => absint( $data[ $meta_field['id'] . '-percentage' ] ),
+					);
+					break;
+				case 'estimated-number-awards':
+					$temp_value = $data[ $meta_field['id'] ];
+
+					if ( 'exact' === $temp_value['checkbox'] ) {
+						$temp_value['between']['low']  = '';
+						$temp_value['between']['high'] = '';
+					} elseif ( 'between' === $temp_value['checkbox'] ) {
+						$temp_value['exact'] = '';
+					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
+						$temp_value['between']['low']  = '';
+						$temp_value['between']['high'] = '';
+						$temp_value['exact']           = '';
+					}
+
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				case 'estimated-award-amounts':
+					$temp_value       = $data[ $meta_field['id'] ];
+					$temp['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
+
+					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
+					if ( 'same' === $temp_value['checkbox'] ) {
+						$temp_value['unknown']['first']    = '';
+						$temp_value['unknown']['second']   = '';
+						$temp_value['different']['first']  = '';
+						$temp_value['different']['second'] = '';
+						$temp_value['different']['third']  = '';
+					} elseif ( 'different' === $temp_value['checkbox'] ) {
+						$temp_value['unknown']['first']  = '';
+						$temp_value['unknown']['second'] = '';
+						$temp_value['same']['amount']    = '';
+					} elseif ( 'unknown' === $temp_value['checkbox'] ) {
+						$temp_value['different']['first']  = '';
+						$temp_value['different']['second'] = '';
+						$temp_value['different']['third']  = '';
+						$temp_value['same']['amount']      = '';
+					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
+						$temp_value['unknown']['first']    = '';
+						$temp_value['unknown']['second']   = '';
+						$temp_value['different']['first']  = '';
+						$temp_value['different']['second'] = '';
+						$temp_value['different']['third']  = '';
+						$temp_value['same']['amount']      = '';
+					}
+
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				case 'period-performance':
+					$temp_value           = $data[ $meta_field['id'] ];
+					$clean_value          = array();
+					$clean_value['num']   = ( isset( $temp_value['num'] ) ) ? absint( $temp_value['num'] ) : '';
+					$clean_value['units'] = ( isset( $temp_value['units'] ) ) ? sanitize_text_field( $temp_value['units'] ) : '';
+					$value                = $clean_value;
+					break;
+				case 'electronic-submission-method':
+					$temp_value           = $data[ $meta_field['id'] ];
+					$clean_value          = array();
+					$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
+					$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
+					$value                = $clean_value;
+					break;
+				case 'application-deadline':
+					$temp_value = $data[ $meta_field['id'] ];
+					array_walk( $temp_value, 'sanitize_text_field' );
+					$value = $temp_value;
+					break;
+				default:
+					$value = sanitize_text_field( $data[ $meta_field['id'] ] );
+					break;
+			}
+
+			/**
+			 * Filters the post-meta value, targeted by meta-field type.
+			 *
+			 * The filter name is `ca_grants_post_meta_`,
+			 * followed by the meta-field type.
+			 *
+			 * For example, using the `period-performance` meta-field:
+			 * `ca_grants_post_meta_period-performance`
+			 *
+			 * @param mixed $value The value to filter.
+			 */
+			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['type'], $value );
+
+			/**
+			 * Filters the post-meta value, targeted by meta-field ID.
+			 *
+			 * The filter name is `ca_grants_post_meta_`,
+			 * followed by the meta-field ID.
+			 *
+			 * For example, assuming a field ID of 1234:
+			 * `ca_grants_post_meta_1234`
+			 *
+			 * @param mixed $value The value to filter.
+			 */
+			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
+
+			if ( ! empty( $post_id ) && ! empty( $value ) ) {
+				update_post_meta( $post_id, $meta_field['id'], $value );
+			}
+		}
+	}
+
+	/**
+	 * Validate fields and maybe get errors for validation.
+	 *
+	 * @param array $fields Meta fields.
+	 * @param array $data Meta field values.
+	 *
+	 * @return WP_Error
+	 */
+	public static function maybe_get_field_errors( $fields, $data ) {
+		$errors = new WP_Error();
+
+		foreach ( $fields as $field ) {
+			$id = $field['id'];
+
+			// Check if data has value for required fields.
+			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && empty( $data[ $id ] ) ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			}
+
+			// Check if conditional requierd field have value.
+			if (
+				! empty( $field['visible'] )
+				&& ! empty( $field['visible']['required'] )
+				&& empty( $data[ $id ] )
+				&& (
+					empty( $data[ $field['visible']['fieldId'] ] )
+					||
+					( // Case: field is required only when dependent field is not equal to specific value.
+						'not_equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== $field['visible']['value']
+						)
+					)
+					||
+					( // Case: field is required only when dependent field is equal to specific value.
+						'equal' === $field['visible']['compare']
+						&& (
+							$data[ $field['visible']['fieldId'] ] === $field['visible']['value']
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === $field['visible']['value']
+						)
+					)
+				)
+			) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			}
+
+			if ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && empty( $data['grantID'] ) ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Dependent grantID value not found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			} elseif ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && ! empty( $data['grantID'] ) ) {
+				$grant_id     = $data['grantID'];
+				$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
+				$is_active    = 'active' === $isForecasted;
+				$deadline     = get_post_meta( $grant_id, 'deadline', true );
+				$is_invalid   = ( $is_active && empty( $deadline ) );
+
+				if ( $is_active && empty( $deadline ) ) {
+					$errors->add(
+						'validation_error',
+						esc_html__( 'The associated grant is ongoing, Please add value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+					);
+					continue;
+				}
+			}
+
+			// If field is not required and have empty value it's valid data, skip other checks.
+			if ( empty( $data[ $id ] ) ) {
+				continue;
+			}
+
+			$is_invalid = false;
+
+			switch ( $field['type'] ) {
+				case 'post-finder':
+					$is_invalid = self::validate_post_finder_field( $field, $data[ $id ] );
+					break;
+				case 'number':
+				case 'save_to_field':
+					$is_invalid = Validators\validate_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
+					break;
+				case 'text':
+				case 'textarea':
+					$max_chars  = $field['maxlength'] ?: strlen( $data[ $id ] );
+					$max_chars  = $field['text_limit'] ?: $max_chars;
+					$is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
+					break;
+				case 'checkbox':
+				case 'select':
+					if ( isset( $field['source'] ) && in_array( $field['source'], [ 'api', 'portal-api' ], true ) ) {
+						$api_values = self::get_api_fields_by_id( $id, 'portal-api' === $field['source'] );
+						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
+						$values     = explode( ',', $data[ $id ] );
+						$values     = array_map( 'sanitize_title', $values );
+						$is_invalid = ! empty( array_diff( $values, $field_ids ) );
+					} elseif ( isset( $field['fields'] ) ) {
+						$defined_values = wp_filter_object_list( $field['fields'], array(), 'and', 'id' );
+						$is_invalid     = ! in_array( $data[ $id ], $defined_values ) && ! in_array( sanitize_title( $data[ $id ] ), $defined_values );
+					}
+					break;
+				case 'datetime-local':
+					$date          = new DateTime( $data[ $id ] );
+					$is_valid_date = ( $date && $date->format( 'c' ) );
+
+					if ( $is_valid_date ) {
+						$max_date   = $field['max_date'] ? new DateTime( $data[ $field['max_date'] ] ) : false;
+						$min_date   = $field['min_date'] ? new DateTime( $data[ $field['min_date'] ] ) : false;
+						$is_invalid = $max_date ? ( $date > $max_date ) : false;
+						$is_invalid = ( ! $is_invalid && $min_date ) ? ( $date < $min_date ) : false;
+					} else {
+						$is_invalid = true;
+					}
+					break;
+			}
+
+			if ( $is_invalid ) {
+				$errors->add(
+					'validation_error',
+					esc_html__( 'Invalid value found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+				);
+				continue;
+			}
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * Validate post finder field value agaist defined field params.
+	 *
+	 * @param array        $field Defined field args.
+	 * @param string|array $value Post finder field value.
+	 *
+	 * @return boolean Return true if data is invalid else false.
+	 */
+	public static function validate_post_finder_field( $field, $value ) {
+		$is_invalid = false;
+		$post_type  = empty( $field['options']['args']['post_type'] ) ? 'post' : $field['options']['args']['post_type'];
+
+		if ( is_array( $value ) ) {
+			$limit      = empty( $field['options']['limit'] ) ? 10 : (int) $field['options']['limit'];
+			$is_invalid = count( $value ) > $limit;
+
+			if ( ! $is_invalid ) {
+				$valid_posts = array_filter(
+					$value,
+					function( $id ) use ( $post_type ) {
+						$post = is_int( $id ) ? get_post( $id ) : false;
+						return empty( $post ) ? false : ( $post->post_type === $post_type );
+					}
+				);
+				$is_invalid  = count( $valid_posts ) !== count( $value );
+			}
+		} else {
+			$post       = is_int( $value ) ? get_post( $value ) : false;
+			$is_invalid = empty( $post ) ? true : ( $post->post_type !== $post_type );
+		}
+
+		return $is_invalid;
+	}
+
+	/**
 	 * Get value from taxonomy.
 	 *
 	 * @param string $id    Field id.
@@ -1263,7 +1774,7 @@ class Field {
 	 */
 	protected static function get_value_from_taxonomy( $id, $multi = true ) {
 		$value = wp_get_post_terms( get_the_ID(), self::get_taxonmy_from_field_id( $id ), [ 'fields' => 'slugs' ] );
-		if ( empty( $value) || is_wp_error( $value ) ) {
+		if ( empty( $value ) || is_wp_error( $value ) ) {
 			if ( $multi ) {
 				return [];
 			}
@@ -1279,6 +1790,32 @@ class Field {
 	}
 
 	/**
+	 * Set taxonomy terms to post.
+	 *
+	 * @param string|array $value Taxonomy term slug or list of slug.
+	 * @param string       $id Field id to identify taxonomy.
+	 *
+	 * @return boolean Return true for sucess term assignd else fail.
+	 */
+	protected static function set_taxonomy_terms( $value, $id ) {
+
+		if ( empty( $value ) ) {
+			return false;
+		}
+
+		if ( is_array( $value ) ) {
+			array_walk( $value, 'sanitize_text_field' );
+		} else {
+			$value = sanitize_text_field( $value );
+		}
+
+		$taxonomy = self::get_taxonmy_from_field_id( $id );
+		$terms    = wp_set_object_terms( get_the_ID(), $value, $taxonomy );
+
+		return is_wp_error( $terms ) ? false : true;
+	}
+
+	/**
 	 * Get the taxonomy based on form id.
 	 *
 	 * @param string $id Field id.
@@ -1287,12 +1824,15 @@ class Field {
 	 */
 	protected static function get_taxonmy_from_field_id( $id ) {
 		$field_id_to_taxonomy_map = [
-				'grantCategories'    => 'grant_categories',
-				'applicantType'      => 'applicant_type',
-				'disbursementMethod' => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
-				'fundingMethod'      => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
-				'opportunityType'    => 'opportunity_types',
-				'fundingSource'      => 'revenue_sources',
+			'grantCategories'    => 'grant_categories',
+			'applicantType'      => 'applicant_type',
+			'disbursementMethod' => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
+			'fundingMethod'      => 'disbursement_method', // Keep both disbursementMethod and fundingMethod for now due to differences between the portal and plugin.
+			'opportunityType'    => 'opportunity_types',
+			'fundingSource'      => 'revenue_sources',
+			'fiscalYear'         => 'fiscal-year',
+			'recipientType'      => 'recipient-types',
+			'countiesServed'     => 'counties',
 		];
 
 		return $field_id_to_taxonomy_map[ $id ] ?? '';

@@ -93,7 +93,6 @@ class EditGrant extends BaseEdit {
 	 * @param integer $post_id The ID of the currently displayed post.
 	 */
 	public function save_post( $post_id ) {
-
 		parent::save_post( $post_id );
 
 		wp_cache_delete( 'grants_rest_response_' . $post_id );
