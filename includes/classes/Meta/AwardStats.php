@@ -148,7 +148,7 @@ class AwardStats {
 			$unique_data[ $award_stats['fiscalYear'] ] = $award_stats;
 		}
 
-		return $unique_data;
+		return array_values( $unique_data );
 	}
 
 	/**
