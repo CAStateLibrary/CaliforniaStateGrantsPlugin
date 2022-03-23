@@ -105,13 +105,11 @@ class BulkUploadPage {
 			return;
 		}
 
-		$nonce              = filter_input( INPUT_POST, 'ca_bulk_upload_nonce', FILTER_SANITIZE_STRING );
-		$submit             = filter_input( INPUT_POST, 'ca_award_upload_submit', FILTER_SANITIZE_STRING );
-		$grant_id           = filter_input( INPUT_POST, 'grantID', FILTER_SANITIZE_NUMBER_INT );
-		$total_applications = filter_input( INPUT_POST, 'applicationsSubmitted', FILTER_SANITIZE_NUMBER_INT );
-		$total_awarded      = filter_input( INPUT_POST, 'grantsAwarded', FILTER_SANITIZE_NUMBER_INT );
-		$fiscal_year        = filter_input( INPUT_POST, 'fiscalYear', FILTER_SANITIZE_STRING );
-		$award_csv          = ( ! empty( $_FILES['awardCSV'] ) && ! empty( $_FILES['awardCSV']['name'] ) ) ? $_FILES['awardCSV'] : array();
+		$nonce       = filter_input( INPUT_POST, 'ca_bulk_upload_nonce', FILTER_SANITIZE_STRING );
+		$submit      = filter_input( INPUT_POST, 'ca_award_upload_submit', FILTER_SANITIZE_STRING );
+		$grant_id    = filter_input( INPUT_POST, 'grantID', FILTER_SANITIZE_NUMBER_INT );
+		$fiscal_year = filter_input( INPUT_POST, 'fiscalYear', FILTER_SANITIZE_STRING );
+		$award_csv   = ( ! empty( $_FILES['awardCSV'] ) && ! empty( $_FILES['awardCSV']['name'] ) ) ? $_FILES['awardCSV'] : array();
 
 		if (
 		! wp_verify_nonce( $nonce, 'ca_bulk_upload_field' )
@@ -132,10 +130,8 @@ class BulkUploadPage {
 		}
 
 		$params = array(
-			'grantID'               => $grant_id,
-			'applicationsSubmitted' => $total_applications,
-			'grantsAwarded'         => $total_awarded,
-			'fiscalYear'            => $fiscal_year,
+			'grantID'    => $grant_id,
+			'fiscalYear' => $fiscal_year,
 		);
 
 		$request = Core\wp_safe_remote_post_multipart( BulkUploadEndpoint::get_endpoint_url(), $params, 'awardCSV' );
@@ -150,9 +146,11 @@ class BulkUploadPage {
 		$data          = (array) json_decode( $body );
 
 		if ( 200 !== $response_code ) {
-			// Add message to error log to help identify api response errors.
-			error_log( 'Award Bulk Upload Request Failed: ' . $data['message'] );
-			$this->notices['fail'] = esc_html__( 'Invalid data submitted.', 'ca-grants-plugin' );
+			$fail_data = empty( $data['data'] ) ? '' : $data['data'];
+			$fail_data = ( empty( $fail_data ) && ! empty( $data['message'] ) ) ? $data['message'] : $fail_data;
+			$fail_data = empty( $fail_data ) ? esc_html__( 'Invalid data submitted.', 'ca-grants-plugin' ) : $fail_data;
+
+			$this->notices['fail'] = $fail_data;
 			return;
 		}
 
@@ -257,20 +255,6 @@ class BulkUploadPage {
 				'hidden_field' => true,
 			),
 			array(
-				'id'          => 'applicationsSubmitted',
-				'name'        => __( 'Number of Applications Submitted', 'ca-grants-plugin' ),
-				'type'        => 'save_to_field',
-				'field_id'    => 'csl_grant_id',
-				'description' => __( 'Enter the total applications received for this funding opportunity.', 'ca-grants-plugin' ),
-			),
-			array(
-				'id'          => 'grantsAwarded',
-				'name'        => __( 'Number of Grants Awarded', 'ca-grants-plugin' ),
-				'type'        => 'save_to_field',
-				'field_id'    => 'csl_grant_id',
-				'description' => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
-			),
-			array(
 				'id'           => 'fiscalYear',
 				'name'         => __( 'Fiscal Year', 'ca-grants-plugin' ),
 				'type'         => $closed_fiscal_year ? 'label' : 'select',
@@ -344,10 +328,26 @@ class BulkUploadPage {
 		elseif ( ! empty( $this->notices['fail'] ) ) :
 			?>
 		<div class="notice notice-error is-dismissible">
-			<p>
-				<?php esc_html_e( 'Award Uploads Failed: ', 'ca-grants-plugin' ); ?>
-				<?php echo esc_html( $this->notices['fail'] ); ?>
-			</p>
+			<?php
+			if ( ! empty( $this->notices['fail'] ) && is_array( $this->notices['fail'] ) ) {
+				echo '<p>';
+					esc_html_e( 'Award Uploads Failed: ', 'ca-grants-plugin' );
+				echo '</p>';
+				echo '<p>';
+					esc_html_e( 'Please correct the errors below and re-upload your file.', 'ca-grants-plugin' );
+				echo '</p>';
+				echo '<ul class="ul-disc">';
+				foreach ( $this->notices['fail'] as $message ) {
+					echo '<li>' . esc_html( $message ) . '</li>';
+				}
+				echo '</ul>';
+			} else {
+				echo '<p>';
+					esc_html_e( 'Award Uploads Failed: ', 'ca-grants-plugin' );
+					echo esc_html( $this->notices['fail'] );
+				echo '</p>';
+			}
+			?>
 		</div>
 				<?php
 		endif;

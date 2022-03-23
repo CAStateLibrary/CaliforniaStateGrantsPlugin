@@ -7,6 +7,8 @@
 
 namespace CaGov\Grants\Cron;
 
+use CaGov\Grants\Meta\Field;
+use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\PostTypes\GrantAwards;
 use CaGov\Grants\PostTypes\AwardUploads;
 use WP_Query;
@@ -210,20 +212,20 @@ class BulkAwardImport {
 		$total_count    = $total_count ? (int) $total_count : 0;
 
 		foreach ( $csv_chunk as $grant_award ) {
-			$meta_args = wp_parse_args(
+			$meta_args  = wp_parse_args(
 				array(
 					'grantID'    => $grant_id,
 					'fiscalYear' => $fiscal_year,
 				),
 				$grant_award
 			);
+			$award_data = array_filter( $meta_args );
 
 			$args = array(
 				'post_author' => $award_upload->author,
 				'post_title'  => $award_upload->post_title,
 				'post_type'   => GrantAwards::CPT_SLUG,
 				'post_status' => 'publish',
-				'meta_input'  => array_filter( $meta_args ),
 			);
 
 			$grant_award_id = wp_insert_post( $args );
@@ -236,6 +238,13 @@ class BulkAwardImport {
 					)
 				);
 				continue;
+			}
+
+			$meta_fields = EditGrantAwards::get_all_meta_fields();
+
+			if ( ! empty( $meta_fields ) ) {
+				Field::sanitize_and_save_fields( $meta_fields, $grant_award_id, $award_data );
+				EditGrantAwards::update_grant_award_data( $grant_award_id );
 			}
 
 			$total_imported = $total_imported + 1;

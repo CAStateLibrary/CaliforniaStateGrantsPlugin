@@ -1427,7 +1427,7 @@ class Field {
 			switch ( $meta_field['type'] ) {
 				case 'checkbox':
 					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'], $post_id );
 					} elseif ( ! empty( $data[ $meta_field['id'] ] ) && is_array( $data[ $meta_field['id'] ] ) ) {
 						$value = $data[ $meta_field['id'] ];
 						array_walk( $value, 'sanitize_text_field' );
@@ -1438,7 +1438,7 @@ class Field {
 				case 'radio':
 				case 'select':
 					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'], $post_id );
 					} else {
 						$value = sanitize_text_field( $data[ $meta_field['id'] ] );
 					}
@@ -1787,10 +1787,11 @@ class Field {
 	 *
 	 * @param string|array $value Taxonomy term slug or list of slug.
 	 * @param string       $id Field id to identify taxonomy.
+	 * @param int          $post_id Post id to assign the taxonomy term.
 	 *
 	 * @return boolean Return true for sucess term assignd else fail.
 	 */
-	protected static function set_taxonomy_terms( $value, $id ) {
+	protected static function set_taxonomy_terms( $value, $id, $post_id ) {
 
 		if ( empty( $value ) ) {
 			return false;
@@ -1803,7 +1804,7 @@ class Field {
 		}
 
 		$taxonomy = self::get_taxonmy_from_field_id( $id );
-		$terms    = wp_set_object_terms( get_the_ID(), $value, $taxonomy );
+		$terms    = wp_set_object_terms( $post_id, $value, $taxonomy );
 
 		return is_wp_error( $terms ) ? false : true;
 	}
