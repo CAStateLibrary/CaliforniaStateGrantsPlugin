@@ -107,7 +107,7 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\REST\GrantAwardsEndpoint',
 		'CaGov\Grants\REST\BulkUploadEndpoint',
 		'CaGov\Grants\REST\GrantAwardsValidation',
-		'CaGov\Grants\REST\GrantsEndpoint',
+		'CaGov\Grants\REST\AwardeeStatsEndpoint',
 	);
 
 	if ( true !== \CaGov\Grants\Core\is_portal() ) {
@@ -116,6 +116,7 @@ function ca_grants_plugin_setup() {
 			'CaGov\Grants\Admin\SettingsPage',
 			'CaGov\Grants\Admin\WelcomePage',
 			'CaGov\Grants\Admin\Notices',
+			'CaGov\Grants\REST\GrantsEndpoint',
 		] );
 	}
 
