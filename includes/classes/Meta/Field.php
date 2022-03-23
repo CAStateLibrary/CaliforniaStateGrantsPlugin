@@ -795,16 +795,11 @@ class Field {
 
 		// default values
 		$defaults = array(
-			'checkbox'  => '',
-			'same'      => array(
+			'checkbox' => '',
+			'same'     => array(
 				'amount' => '',
 			),
-			'different' => array(
-				'first'  => '',
-				'second' => '',
-				'third'  => '',
-			),
-			'unknown'   => array(
+			'unknown'  => array(
 				'first'  => '',
 				'second' => '',
 			),
@@ -826,16 +821,6 @@ class Field {
 				<input <?php checked( $value['checkbox'], 'same' ); ?> type="radio" id="<?php echo esc_attr( $id . '-same' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="same" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-same' ); ?>"><?php esc_html_e( 'Same amount each award: ', 'ca-grants-plugin' ); ?></label>
 				<input type="number" id="<?php echo esc_attr( $id ); ?>-same-amount" name="<?php echo esc_attr( $id ); ?>[same][amount]" value="<?php echo esc_attr( $value['same']['amount'] ); ?>"/>
-				<br><br>
-
-				<input <?php checked( $value['checkbox'], 'different' ); ?> type="radio" id="<?php echo esc_attr( $id . '-different' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="different" <?php self::conditional_required( $meta_field ); ?>>
-				<label for="<?php echo esc_attr( $id . '-different' ); ?>"><?php esc_html_e( 'Different amount each award:', 'ca-grants-plugin' ); ?></label>
-				<?php esc_html_e( ' First ', 'ca-grants-plugin' ); ?>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-different-first" name="<?php echo esc_attr( $id ); ?>[different][first]" value="<?php echo esc_attr( $value['different']['first'] ); ?>"/>
-				<?php esc_html_e( ' Second ', 'ca-grants-plugin' ); ?>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-different-second" name="<?php echo esc_attr( $id ); ?>[different][second]" value="<?php echo esc_attr( $value['different']['second'] ); ?>"/>
-				<?php esc_html_e( ' Third ', 'ca-grants-plugin' ); ?>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-different-third" name="<?php echo esc_attr( $id ); ?>[different][third]" value="<?php echo esc_attr( $value['different']['third'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'unknown' ); ?> type="radio" id="<?php echo esc_attr( $id . '-unknown' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="unknown" <?php self::conditional_required( $meta_field ); ?>>
@@ -1480,46 +1465,26 @@ class Field {
 					$temp_value = $data[ $meta_field['id'] ];
 
 					if ( 'exact' === $temp_value['checkbox'] ) {
-						$temp_value['between']['low']  = '';
-						$temp_value['between']['high'] = '';
+						unset( $temp_value['between'] );
 					} elseif ( 'between' === $temp_value['checkbox'] ) {
-						$temp_value['exact'] = '';
+						unset( $temp_value['exact'] );
 					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
-						$temp_value['between']['low']  = '';
-						$temp_value['between']['high'] = '';
-						$temp_value['exact']           = '';
+						unset( $temp_value['between'], $temp_value['exact'] );
 					}
 
 					array_walk( $temp_value, 'sanitize_text_field' );
 					$value = $temp_value;
 					break;
 				case 'estimated-award-amounts':
-					$temp_value       = $data[ $meta_field['id'] ];
-					$temp['checkbox'] = ( isset( $temp_value['checkbox'] ) ) ? sanitize_text_field( $temp_value['checkbox'] ) : '';
+					$temp_value = $data[ $meta_field['id'] ];
 
 					// Make sure the text boxes for the options not selected are empty, to avoid confusion.
 					if ( 'same' === $temp_value['checkbox'] ) {
-						$temp_value['unknown']['first']    = '';
-						$temp_value['unknown']['second']   = '';
-						$temp_value['different']['first']  = '';
-						$temp_value['different']['second'] = '';
-						$temp_value['different']['third']  = '';
-					} elseif ( 'different' === $temp_value['checkbox'] ) {
-						$temp_value['unknown']['first']  = '';
-						$temp_value['unknown']['second'] = '';
-						$temp_value['same']['amount']    = '';
+						unset( $temp_value['unknown'] );
 					} elseif ( 'unknown' === $temp_value['checkbox'] ) {
-						$temp_value['different']['first']  = '';
-						$temp_value['different']['second'] = '';
-						$temp_value['different']['third']  = '';
-						$temp_value['same']['amount']      = '';
+						unset( $temp_value['same'] );
 					} elseif ( 'dependant' === $temp_value['checkbox'] ) {
-						$temp_value['unknown']['first']    = '';
-						$temp_value['unknown']['second']   = '';
-						$temp_value['different']['first']  = '';
-						$temp_value['different']['second'] = '';
-						$temp_value['different']['third']  = '';
-						$temp_value['same']['amount']      = '';
+						unset( $temp_value['same'], $temp_value['unknown'] );
 					}
 
 					array_walk( $temp_value, 'sanitize_text_field' );
