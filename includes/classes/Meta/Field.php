@@ -1636,7 +1636,8 @@ class Field {
 					break;
 				case 'number':
 				case 'save_to_field':
-					$is_invalid = ( ( absint( $data[ $id ] ) === $data[ $id ] ) );
+					$save_to_value = is_numeric( $data[ $id ] ) ? (int) $data[ $id ] : 0;
+					$is_invalid    = Validators\validate_int( $save_to_value ) ? ( $save_to_value <= 0 ) : true;
 					break;
 				case 'text':
 				case 'textarea':
