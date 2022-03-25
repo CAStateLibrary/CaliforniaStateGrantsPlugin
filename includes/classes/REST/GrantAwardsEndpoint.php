@@ -86,10 +86,6 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			),
 		);
 
-		if ( ! is_portal() ) {
-			return $query_params;
-		}
-
 		// Applicable only on the portal.
 		$query_params['fiscal_year'] = array(
 			'description'       => __( 'Filter collection by fiscal year.', 'ca-grants-plugin' ),
