@@ -86,6 +86,11 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			),
 		);
 
+		// If not on portal, allow orderby fiscal_year.
+		if ( ! is_portal() ) {
+			$query_params['orderby']['enum'][] = 'fiscal_year';
+		}
+
 		$query_params['fiscal_year'] = array(
 			'description'       => __( 'Filter collection by fiscal year.', 'ca-grants-plugin' ),
 			'type'              => 'string',
@@ -165,8 +170,9 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 	 * @return array The modified query params
 	 */
 	public function modify_grants_rest_params( $args, $request ) {
-		$grant_id = sanitize_text_field( $request->get_param( 'grant_id' ) );
-		$orderby  = sanitize_text_field( $request->get_param( 'orderby' ) );
+		$grant_id    = sanitize_text_field( $request->get_param( 'grant_id' ) );
+		$orderby     = sanitize_text_field( $request->get_param( 'orderby' ) );
+		$fiscal_year = sanitize_text_field( $request->get_param( 'fiscal_year' ) );
 
 		$override_args = array(
 			'orderby' => 'date',
@@ -180,11 +186,9 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			);
 		}
 
-		if ( is_portal() ) {
-			$fiscal_year = sanitize_text_field( $request->get_param( 'fiscal_year' ) );
-
+		if ( ! empty( $fiscal_year ) ) {
 			// If this is the portal and a fiscal year is provided, get the term by name and filter by that.
-			if ( ! empty( $fiscal_year ) ) {
+			if ( is_portal() ) {
 				$term = get_term_by( 'name', $fiscal_year, 'fiscal-year' );
 
 				if ( ! empty( $term ) ) {
@@ -194,6 +198,13 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 						'terms'    => $term->term_id,
 					);
 				}
+			} else {
+				// If not on the portal, fiscal years are stored in meta, so filter by that.
+				$override_args['meta_query'][] = array(
+					'key'     => 'fiscalYear',
+					'value'   => $fiscal_year,
+					'compare' => '=',
+				);
 			}
 		}
 
@@ -204,8 +215,13 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 				'project'    => 'projectTitle', // Project Title
 				'amount'     => 'totalAwardAmount', // Total Award Amount
 				'start_date' => 'grantFundedStartDate', // Beginning Date of Grant-Funded Project
-				'end_date'   => 'grantFundedEndDate', // End Date of Grant-Funded Project
+				'end_date'   => 'grantFundedEndDate', // End Date of Grant-Funded Project,
 			);
+
+			// If not portal, allow ordering by fiscalYear meta.
+			if ( ! is_portal() ) {
+				$orderby_mappings['fiscal_year'] = 'fiscalYear';
+			}
 
 			if ( 'name' === $orderby || 'date' === $orderby ) {
 				$override_args['orderby'] = $orderby_mappings[ $orderby ];
