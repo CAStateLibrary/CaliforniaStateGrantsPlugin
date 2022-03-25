@@ -15,6 +15,8 @@ use WP_Rest_Request;
 use WP_Error;
 use WP_Http;
 
+use function CaGov\Grants\Core\is_portal;
+
 /**
  * GrantsEndpoint Class.
  */
@@ -163,9 +165,8 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 	 * @return array The modified query params
 	 */
 	public function modify_grants_rest_params( $args, $request ) {
-		$grant_id    = sanitize_text_field( $request->get_param( 'grant_id' ) );
-		$orderby     = sanitize_text_field( $request->get_param( 'orderby' ) );
-		$fiscal_year = sanitize_text_field( $request->get_param( 'fiscal_year' ) );
+		$grant_id = sanitize_text_field( $request->get_param( 'grant_id' ) );
+		$orderby  = sanitize_text_field( $request->get_param( 'orderby' ) );
 
 		$override_args = array(
 			'orderby' => 'date',
@@ -179,16 +180,20 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			);
 		}
 
-		// If a fiscal year is provided, get the term by name and filter by that.
-		if ( ! empty( $fiscal_year ) ) {
-			$term = get_term_by( 'name', $fiscal_year, 'fiscal-year' );
+		if ( is_portal() ) {
+			$fiscal_year = sanitize_text_field( $request->get_param( 'fiscal_year' ) );
 
-			if ( ! empty( $term ) ) {
-				$override_args['tax_query'][] = array(
-					'taxonomy' => 'fiscal-year',
-					'field'    => 'term_id',
-					'terms'    => $term->term_id,
-				);
+			// If this is the portal and a fiscal year is provided, get the term by name and filter by that.
+			if ( ! empty( $fiscal_year ) ) {
+				$term = get_term_by( 'name', $fiscal_year, 'fiscal-year' );
+
+				if ( ! empty( $term ) ) {
+					$override_args['tax_query'][] = array(
+						'taxonomy' => 'fiscal-year',
+						'field'    => 'term_id',
+						'terms'    => $term->term_id,
+					);
+				}
 			}
 		}
 
