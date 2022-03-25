@@ -201,7 +201,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			} else {
 				// If not on the portal, fiscal years are stored in meta, so filter by that.
 				$override_args['meta_query'][] = array(
-					'key'     => 'fiscalYear',
+					'key'     => 'csl_fiscal_year',
 					'value'   => $fiscal_year,
 					'compare' => '=',
 				);
