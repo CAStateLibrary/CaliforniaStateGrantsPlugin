@@ -220,7 +220,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 
 			// If not portal, allow ordering by fiscalYear meta.
 			if ( ! is_portal() ) {
-				$orderby_mappings['fiscal_year'] = 'fiscalYear';
+				$orderby_mappings['fiscal_year'] = 'csl_fiscal_year';
 			}
 
 			if ( 'name' === $orderby || 'date' === $orderby ) {
