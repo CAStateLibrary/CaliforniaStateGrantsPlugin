@@ -86,11 +86,6 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			),
 		);
 
-		// If not on portal, allow orderby fiscal_year.
-		if ( ! is_portal() ) {
-			$query_params['orderby']['enum'][] = 'fiscal_year';
-		}
-
 		$query_params['fiscal_year'] = array(
 			'description'       => __( 'Filter collection by fiscal year.', 'ca-grants-plugin' ),
 			'type'              => 'string',
@@ -217,11 +212,6 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 				'start_date' => 'grantFundedStartDate', // Beginning Date of Grant-Funded Project
 				'end_date'   => 'grantFundedEndDate', // End Date of Grant-Funded Project,
 			);
-
-			// If not portal, allow ordering by fiscalYear meta.
-			if ( ! is_portal() ) {
-				$orderby_mappings['fiscal_year'] = 'csl_fiscal_year';
-			}
 
 			if ( 'name' === $orderby || 'date' === $orderby ) {
 				$override_args['orderby'] = $orderby_mappings[ $orderby ];
