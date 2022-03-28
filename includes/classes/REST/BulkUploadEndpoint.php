@@ -15,6 +15,7 @@ use WP_REST_Response;
 use WP_Rest_Request;
 use WP_Error;
 use function CaGov\Grants\Core\get_rest_namespace;
+use function CaGov\Grants\Core\is_portal;
 
 /**
  * Class BulkUploadEndpoint
@@ -121,9 +122,17 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 			);
 		}
 
-		$post_type = get_post_type_object( $this->post_type );
+		$grant = get_post( $request->get_param( 'grantID' ) );
 
-		if ( ! current_user_can( $post_type->cap->edit_others_posts ) ) {
+		if ( empty( $grant ) || $grant->post_type !== Grants::get_cpt_slug() ) {
+			return new WP_Error(
+				'rest_invalid_grant_id',
+				__( 'Invalid grantID found. Please provide valid data and try again.', 'ca-grants-plugin' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		if ( ! current_user_can( 'edit_grant', $grant->ID ) ) {
 			return new WP_Error(
 				'rest_cannot_edit_others',
 				__( 'Sorry, you are not allowed to create upload award as this user.', 'ca-grants-plugin' ),
@@ -131,15 +140,7 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( $post_type->cap->create_posts ) ) {
-			return new WP_Error(
-				'rest_cannot_create',
-				__( 'Sorry, you are not allowed to create posts as this user.', 'ca-grants-plugin' ),
-				array( 'status' => rest_authorization_required_code() )
-			);
-		}
-
-		if ( ! current_user_can( 'upload_files' ) ) {
+		if ( ! is_portal() && ! current_user_can( 'upload_files' ) ) {
 			return new WP_Error(
 				'rest_cannot_create',
 				__( 'Sorry, you are not allowed to upload media on this site.', 'ca-grants-plugin' ),
@@ -233,16 +234,6 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 			return new WP_Error(
 				'rest_missing_param',
 				__( 'Missing parameter(s): ', 'ca-grants-plugin' ) . implode( ', ', $empty_params ),
-				array( 'status' => 400 )
-			);
-		}
-
-		$grant = get_post( $required_params['grantID'] );
-
-		if ( empty( $grant ) || $grant->post_type !== Grants::get_cpt_slug() ) {
-			return new WP_Error(
-				'rest_invalid_grant_id',
-				__( 'Invalid grantID found. Please provide valid data and try again.', 'ca-grants-plugin' ) . implode( ', ', $empty_params ),
 				array( 'status' => 400 )
 			);
 		}
@@ -346,6 +337,9 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 			array(
 				'ID'          => $attachment_id,
 				'post_parent' => $award_upload_id,
+				'meta_input'  => [
+					'bulkUploadAttachment' => true, // Keeping a flag to identify attachment is from bulk upload.
+				]
 			)
 		);
 
