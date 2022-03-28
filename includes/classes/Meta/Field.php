@@ -440,10 +440,10 @@ class Field {
 					}
 					break;
 				case 'api':
-					$fields = self::get_api_fields_by_id( $id );
-					$field  = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
-					$field  = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
-					$label_value  = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
+					$fields      = self::get_api_fields_by_id( $id );
+					$field       = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
+					$field       = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
+					$label_value = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
 					break;
 			}
 		}
