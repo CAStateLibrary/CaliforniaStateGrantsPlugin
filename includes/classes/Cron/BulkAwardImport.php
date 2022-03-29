@@ -264,6 +264,11 @@ class BulkAwardImport {
 	 * @return void
 	 */
 	public function cleanup_award_upload( $award_upload_id ) {
+		/**
+		 * Bulk Award Import was successful.
+		 */
+		do_action( 'csl_grants_bulk_award_import_success', $award_upload_id );
+
 		$csv_file_id = get_post_meta( $award_upload_id, 'csl_award_csv', true );
 
 		if ( ! empty( $csv_file_id ) ) {
