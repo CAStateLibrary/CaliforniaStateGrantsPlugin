@@ -104,7 +104,7 @@ class BulkAwardImport {
 			wp_update_post(
 				array(
 					'ID'          => $award_upload->ID,
-					'post_status' => 'failed',
+					'post_status' => 'csl_failed',
 				)
 			);
 		}
@@ -202,7 +202,7 @@ class BulkAwardImport {
 	 */
 	public function import_award_upload_chunk( $csv_chunk, $award_upload, $grant_id, $fiscal_year = null ) {
 
-		if ( 'failed' === get_post_status( $award_upload ) ) {
+		if ( 'csl_failed' === get_post_status( $award_upload ) ) {
 			return;
 		}
 
@@ -234,7 +234,7 @@ class BulkAwardImport {
 				wp_update_post(
 					array(
 						'ID'          => $award_upload->ID,
-						'post_status' => 'failed',
+						'post_status' => 'csl_failed',
 					)
 				);
 				continue;
