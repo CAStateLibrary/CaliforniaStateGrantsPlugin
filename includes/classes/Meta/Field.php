@@ -72,6 +72,7 @@ class Field {
 				self::render_label_field( $meta_field );
 				break;
 			case 'group':
+			case 'save_to_field_group':
 				self::render_field_group( $meta_field );
 				break;
 			default:
@@ -303,7 +304,12 @@ class Field {
 			return;
 		}
 
-		$post_id       = get_the_ID();
+		$post_id = get_the_ID();
+
+		if ( 'save_to_field_group' === $meta_field['type'] && ! empty( $meta_field['field_id'] ) ) {
+			$post_id = get_post_meta( $post_id, $meta_field['field_id'], true ) ?: $post_id;
+		}
+
 		$class         = $meta_field['class'] ?? '';
 		$id            = $meta_field['id'] ?? '';
 		$name          = $meta_field['name'] ?? '';
@@ -440,10 +446,10 @@ class Field {
 					}
 					break;
 				case 'api':
-					$fields = self::get_api_fields_by_id( $id );
-					$field  = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
-					$field  = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
-					$label_value  = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
+					$fields      = self::get_api_fields_by_id( $id );
+					$field       = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
+					$field       = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
+					$label_value = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
 					break;
 			}
 		}
@@ -1423,7 +1429,7 @@ class Field {
 			switch ( $meta_field['type'] ) {
 				case 'checkbox':
 					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'], $post_id );
 					} elseif ( ! empty( $data[ $meta_field['id'] ] ) && is_array( $data[ $meta_field['id'] ] ) ) {
 						$value = $data[ $meta_field['id'] ];
 						array_walk( $value, 'sanitize_text_field' );
@@ -1434,7 +1440,7 @@ class Field {
 				case 'radio':
 				case 'select':
 					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'], $post_id );
 					} else {
 						$value = sanitize_text_field( $data[ $meta_field['id'] ] );
 					}
@@ -1455,7 +1461,20 @@ class Field {
 					$value = wp_kses_post( $data[ $meta_field['id'] ] );
 					break;
 				case 'group':
-					$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					if ( ! empty( $meta_field['sanitize_callback'] ) ) {
+						$value = call_user_func( $meta_field['sanitize_callback'], $data[ $meta_field['id'] ] );
+					} else {
+						$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					}
+					break;
+				case 'save_to_field_group':
+					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
+					if ( ! empty( $meta_field['sanitize_callback'] ) ) {
+						$group_data = call_user_func( $meta_field['sanitize_callback'], $data[ $meta_field['id'] ] );
+					} else {
+						$group_data = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					}
+					update_post_meta( $field_post_id, $meta_field['id'], $group_data );
 					break;
 				case 'save_to_field':
 					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
@@ -1759,10 +1778,11 @@ class Field {
 	 *
 	 * @param string|array $value Taxonomy term slug or list of slug.
 	 * @param string       $id Field id to identify taxonomy.
+	 * @param int          $post_id Post id to assign the taxonomy term.
 	 *
 	 * @return boolean Return true for sucess term assignd else fail.
 	 */
-	protected static function set_taxonomy_terms( $value, $id ) {
+	protected static function set_taxonomy_terms( $value, $id, $post_id ) {
 
 		if ( empty( $value ) ) {
 			return false;
@@ -1775,7 +1795,7 @@ class Field {
 		}
 
 		$taxonomy = self::get_taxonmy_from_field_id( $id );
-		$terms    = wp_set_object_terms( get_the_ID(), $value, $taxonomy );
+		$terms    = wp_set_object_terms( $post_id, $value, $taxonomy );
 
 		return is_wp_error( $terms ) ? false : true;
 	}

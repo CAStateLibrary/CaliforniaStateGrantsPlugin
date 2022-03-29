@@ -7,6 +7,8 @@
 
 namespace CaGov\Grants\Cron;
 
+use CaGov\Grants\Meta\Field;
+use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\PostTypes\GrantAwards;
 use CaGov\Grants\PostTypes\AwardUploads;
 use WP_Query;
@@ -143,12 +145,16 @@ class BulkAwardImport {
 	 */
 	public function schedule_csv_chunk_import( $file_id, $award_upload, $award_upload_data ) {
 		$csv_file_path = get_attached_file( $file_id );
+		$data          = [
+			'grantID'    => $award_upload_data['csl_grant_id'] ?: 0,
+			'fiscalYear' => $award_upload_data['csl_fiscal_year'] ?: '',
+		];
 
-		if ( empty( $csv_file_path ) || is_wp_error( AwardUploads::validate_csv_file( $csv_file_path ) ) ) {
+		if ( empty( $csv_file_path ) || is_wp_error( AwardUploads::validate_csv_file( $csv_file_path, $data ) ) ) {
 			return false;
 		}
 
-		$csv_data = $this->read_csv( $csv_file_path );
+		$csv_data = AwardUploads::read_csv( $csv_file_path );
 
 		if ( empty( $csv_data ) ) {
 			return false;
@@ -185,69 +191,6 @@ class BulkAwardImport {
 	}
 
 	/**
-	 * Read csv file and return data as an array.
-	 *
-	 * @param string $csv_file csv file name.
-	 *
-	 * @return array
-	 */
-	public function read_csv( $csv_file ) {
-		$file_handle = fopen( $csv_file, 'r' );
-
-		$data = [];
-
-		if ( feof( $file_handle ) ) {
-			return [];
-		}
-
-		$csv_header_mapping = AwardUploads::get_csv_header_mapping();
-		$headers            = fgetcsv( $file_handle, 4096 );
-		$headers            = array_map(
-			function( $header ) use ( $csv_header_mapping ) {
-				$header = trim( $header );
-				return isset( $csv_header_mapping[ $header ] ) ? $csv_header_mapping[ $header ] : $header;
-			},
-			$headers
-		);
-
-		while ( ! feof( $file_handle ) ) {
-			$row_data       = fgetcsv( $file_handle, 4096 );
-			$row_assoc_data = [];
-
-			foreach ( $row_data as $key => $value ) {
-
-				switch ( $headers[ $key ] ) {
-					case 'recipientType':
-					case 'secondaryRecipients':
-					case 'geoLocationServed':
-						$value = sanitize_title( $value );
-						break;
-					case 'totalAwardAmount':
-					case 'matchingFundingAmount':
-						$value = (int) preg_replace( '/[^0-9-.]+/', '', $value );
-						break;
-					case 'grantFundedStartDate':
-					case 'grantFundedEndDate':
-						$value = $value ? date_format( date_create( $value ), 'Y-m-d\TH:i:s' ) : $value;
-						break;
-					case 'countiesServed':
-						$value = explode( ',', $value );
-						$value = array_map( 'sanitize_title', $value );
-						break;
-				}
-
-				$row_assoc_data[ $headers[ $key ] ] = $value;
-			}
-
-			$data[] = $row_assoc_data;
-		}
-
-		fclose( $file_handle );
-
-		return $data;
-	}
-
-	/**
 	 * Import award upload chunk to Grant Award CPT.
 	 *
 	 * @param array   $csv_chunk CSV Data.
@@ -269,20 +212,20 @@ class BulkAwardImport {
 		$total_count    = $total_count ? (int) $total_count : 0;
 
 		foreach ( $csv_chunk as $grant_award ) {
-			$meta_args = wp_parse_args(
+			$meta_args  = wp_parse_args(
 				array(
 					'grantID'    => $grant_id,
 					'fiscalYear' => $fiscal_year,
 				),
 				$grant_award
 			);
+			$award_data = array_filter( $meta_args );
 
 			$args = array(
 				'post_author' => $award_upload->author,
 				'post_title'  => $award_upload->post_title,
 				'post_type'   => GrantAwards::CPT_SLUG,
 				'post_status' => 'publish',
-				'meta_input'  => array_filter( $meta_args ),
 			);
 
 			$grant_award_id = wp_insert_post( $args );
@@ -295,6 +238,13 @@ class BulkAwardImport {
 					)
 				);
 				continue;
+			}
+
+			$meta_fields = EditGrantAwards::get_all_meta_fields();
+
+			if ( ! empty( $meta_fields ) ) {
+				Field::sanitize_and_save_fields( $meta_fields, $grant_award_id, $award_data );
+				EditGrantAwards::update_grant_award_data( $grant_award_id );
 			}
 
 			$total_imported = $total_imported + 1;

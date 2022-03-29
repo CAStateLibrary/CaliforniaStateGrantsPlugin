@@ -126,7 +126,7 @@ class Grants {
 			'publicly_queryable' => false, // Hide single page.
 			'show_ui'            => true,
 			'show_in_menu'       => true,
-			'show_in_rest'       => true,
+			'show_in_rest'       => ( ! \CaGov\Grants\Core\is_portal() ),
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'grants' ),
 			'rest_base'          => 'grants',

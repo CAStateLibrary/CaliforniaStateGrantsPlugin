@@ -118,16 +118,37 @@ class AwardStats {
 
 		$group_fields = array(
 			array(
-				'id'            => 'awardStats',
-				'type'          => 'group',
-				'serialize'     => true,
-				'add_new_label' => __( 'Add Fiscal Year', 'ca-grants-plugin' ),
-				'is_multiple'   => empty( $fiscal_year ),
-				'fields'        => $fields,
+				'id'                => 'awardStats',
+				'type'              => 'group',
+				'serialize'         => true,
+				'add_new_label'     => __( 'Add Fiscal Year', 'ca-grants-plugin' ),
+				'is_multiple'       => empty( $fiscal_year ),
+				'fields'            => $fields,
+				'sanitize_callback' => [ __CLASS__, 'sanitize_award_stats_data' ],
 			),
 		);
 
 		return $group_fields;
+	}
+
+	/**
+	 * Sanitize award stats data for grant.
+	 *
+	 * @param array $value Award stats data.
+	 *
+	 * @return array Sanitized award stats data.
+	 */
+	public static function sanitize_award_stats_data( $value ) {
+
+		// Remove any empty data.
+		$value       = array_filter( $value, 'array_filter' );
+		$unique_data = [];
+
+		foreach ( $value as $award_stats ) {
+			$unique_data[ $award_stats['fiscalYear'] ] = $award_stats;
+		}
+
+		return array_values( $unique_data );
 	}
 
 	/**
@@ -160,24 +181,14 @@ class AwardStats {
 		}
 
 		$is_ongoing_grant = Core\is_ongoing_grant( $grant_id );
-
-		// We only need one fiscal year data for closed grants.
-		if ( ! $is_ongoing_grant && count( $award_stats ) > 1 ) {
-			$errors->add(
-				'validation_error',
-				esc_html__( 'Invalid awardStats data: grant is closed and can have only one fiscal year data. Multiple entry found.', 'ca-grants-plugin' )
-			);
-			return $errors;
-		}
-
-		$deadline    = get_post_meta( $grant_id, 'deadline', true );
-		$fiscal_year = empty( $deadline ) ? '' : Core\get_fiscal_year( gmdate( 'Y-m-d H:m:s', $deadline ) );
+		$deadline         = get_post_meta( $grant_id, 'deadline', true );
+		$fiscal_year      = empty( $deadline ) ? '' : Core\get_fiscal_year( gmdate( 'Y-m-d H:m:s', $deadline ) );
 
 		if (
 			! $is_ongoing_grant
 			&& ! empty( $fiscal_year )
-			&& ! empty( $award_stats[0]['fiscalYear'] )
-			&& $fiscal_year !== $award_stats[0]['fiscalYear']
+			&& ! empty( $award_stats['fiscalYear'] )
+			&& $fiscal_year !== $award_stats['fiscalYear']
 		) {
 			$errors->add(
 				'validation_error',
