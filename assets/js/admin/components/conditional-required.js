@@ -1,6 +1,6 @@
 const grantTypeInputs = Array.from( document.querySelectorAll( 'input[name="isForecasted"]' ) );
 const geoLocationServedElem = Array.from( document.querySelectorAll( 'select[name="geoLocationServed"]' ) );
-const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if],input[required]';
+const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if],input[required],textarea[required]';
 const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
 const conditionalVisibleElems = 'tr[data-visible-if]';
 const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select[name="recipientType"]' ) );
