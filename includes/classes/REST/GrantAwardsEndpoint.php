@@ -14,6 +14,10 @@ use WP_REST_Response;
 use WP_Rest_Request;
 use WP_Error;
 use WP_Http;
+use function CaGov\Grants\Core\is_portal;
+use const Grantsportal\Taxonomies\Counties\TAXONOMY_SLUG as COUNTIES_TAXONOMY_SLUG;
+use const Grantsportal\Taxonomies\FiscalYear\TAXONOMY_SLUG as FISCAL_YEAR_TAXONOMY_SLUG;
+use const Grantsportal\Taxonomies\RecipientTypes\TAXONOMY_SLUG as RECIPIENT_TYPE_TAXONOMY_SLUG;
 
 /**
  * GrantsEndpoint Class.
@@ -192,6 +196,9 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		$blacklisted_fields = array(
 			'applicationsSubmitted',
 			'grantsAwarded',
+			'fiscalYear',
+			'recipientType',
+			'countiesServed',
 		);
 
 		$metafields = array_merge(
@@ -246,6 +253,27 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 					$new_data[ $metafield_data['id'] ] = is_array( $new_data[ $metafield_data['id'] ] ) ? array_filter( $new_data[ $metafield_data['id'] ] ) : $new_data[ $metafield_data['id'] ];
 					break;
 			}
+		}
+
+		$fiscal_years = wp_get_post_terms( $post->ID, FISCAL_YEAR_TAXONOMY_SLUG );
+		if ( ! empty( $fiscal_years ) && ! is_wp_error( $fiscal_years ) ) {
+			$new_data['fiscal_year'] = implode( ',', wp_list_pluck( $fiscal_years, is_portal() ? 'name' : 'slug' ) );
+		} else {
+			$new_data['fiscal_year'] = '';
+		}
+
+		$recipient_types = wp_get_post_terms( $post->ID, RECIPIENT_TYPE_TAXONOMY_SLUG );
+		if ( ! empty( $recipient_types ) && ! is_wp_error( $recipient_types ) ) {
+			$new_data['recipient_type'] = implode( ',', wp_list_pluck( $recipient_types, is_portal() ? 'name' : 'slug' ) );
+		} else {
+			$new_data['recipient_type'] = '';
+		}
+
+		$counties = wp_get_post_terms( $post->ID, COUNTIES_TAXONOMY_SLUG );
+		if ( ! empty( $counties ) && ! is_wp_error( $counties ) ) {
+			$new_data['$counties'] = implode( ',', wp_list_pluck( $counties, is_portal() ? 'name' : 'slug' ) );
+		} else {
+			$new_data['$counties'] = '';
 		}
 
 		$new_response->set_data( $new_data );
