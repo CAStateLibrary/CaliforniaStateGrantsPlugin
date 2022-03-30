@@ -257,23 +257,23 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 
 		$fiscal_years = wp_get_post_terms( $post->ID, FISCAL_YEAR_TAXONOMY_SLUG );
 		if ( ! empty( $fiscal_years ) && ! is_wp_error( $fiscal_years ) ) {
-			$new_data['fiscal_year'] = implode( ',', wp_list_pluck( $fiscal_years, is_portal() ? 'name' : 'slug' ) );
+			$new_data['fiscalYear'] = implode( ',', wp_list_pluck( $fiscal_years, is_portal() ? 'name' : 'slug' ) );
 		} else {
-			$new_data['fiscal_year'] = '';
+			$new_data['fiscalYear'] = '';
 		}
 
 		$recipient_types = wp_get_post_terms( $post->ID, RECIPIENT_TYPE_TAXONOMY_SLUG );
 		if ( ! empty( $recipient_types ) && ! is_wp_error( $recipient_types ) ) {
-			$new_data['recipient_type'] = implode( ',', wp_list_pluck( $recipient_types, is_portal() ? 'name' : 'slug' ) );
+			$new_data['recipientType'] = implode( ',', wp_list_pluck( $recipient_types, is_portal() ? 'name' : 'slug' ) );
 		} else {
-			$new_data['recipient_type'] = '';
+			$new_data['recipientType'] = '';
 		}
 
 		$counties = wp_get_post_terms( $post->ID, COUNTIES_TAXONOMY_SLUG );
 		if ( ! empty( $counties ) && ! is_wp_error( $counties ) ) {
-			$new_data['$counties'] = wp_list_pluck( $counties, is_portal() ? 'name' : 'slug' );
+			$new_data['countiesServed'] = wp_list_pluck( $counties, is_portal() ? 'name' : 'slug' );
 		} else {
-			$new_data['$counties'] = [];
+			$new_data['countiesServed'] = [];
 		}
 
 		if ( is_portal() ) {
