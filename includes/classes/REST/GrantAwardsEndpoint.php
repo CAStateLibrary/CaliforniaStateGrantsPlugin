@@ -319,9 +319,9 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 
 		$counties = wp_get_post_terms( $post->ID, COUNTIES_TAXONOMY_SLUG );
 		if ( ! empty( $counties ) && ! is_wp_error( $counties ) ) {
-			$new_data['$counties'] = implode( ',', wp_list_pluck( $counties, is_portal() ? 'name' : 'slug' ) );
+			$new_data['$counties'] = wp_list_pluck( $counties, is_portal() ? 'name' : 'slug' );
 		} else {
-			$new_data['$counties'] = '';
+			$new_data['$counties'] = [];
 		}
 
 		if ( is_portal() ) {
