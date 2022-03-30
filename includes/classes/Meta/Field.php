@@ -10,6 +10,9 @@ namespace CaGov\Grants\Meta;
 use CaGov\Grants\Helpers\Validators;
 use DateTime;
 use WP_Error;
+
+use function CaGov\Grants\Core\is_portal;
+
 /**
  * Meta Field Class.
  */
@@ -1216,10 +1219,8 @@ class Field {
 		}
 
 		$fields_to_display = false;
-		if ( ! $portal_api ) {
-			// Retrieve from cache only if it is not portal api.
-			$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
-		}
+		$cache_key         = sprintf( '%s-%s-api-field-values', $id, is_portal() ? 'portal' : 'external' );
+		$fields_to_display = wp_cache_get( $cache_key, 'ca-grants-plugin-api-field-values' );
 
 		if ( false === $fields_to_display ) {
 			if ( $portal_api ) {
@@ -1298,9 +1299,7 @@ class Field {
 				);
 			}
 
-			if ( ! $portal_api ) {
-				wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 5 * HOUR_IN_SECONDS );
-			}
+			wp_cache_set( $cache_key, $fields_to_display, 'ca-grants-plugin-api-field-values', 60 );
 		}
 
 		return $fields_to_display;
