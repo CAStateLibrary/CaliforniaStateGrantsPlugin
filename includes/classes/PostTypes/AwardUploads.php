@@ -7,6 +7,7 @@
 
 namespace CaGov\Grants\PostTypes;
 
+use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\Admin\BulkUploadPage;
 use WP_Error;
 
@@ -32,7 +33,6 @@ class AwardUploads {
 	 */
 	public static function get_csv_header_mapping() {
 
-		// TODO: Remove "*" if not needed.
 		return array(
 			'Project Title'                           => 'projectTitle',
 			'Recipient Type *'                        => 'recipientType',
@@ -53,13 +53,30 @@ class AwardUploads {
 	}
 
 	/**
+	 * Replace field id with csv mapped column name.
+	 *
+	 * @param string $text String to search replace field id with csv column name.
+	 *
+	 * @return string
+	 */
+	public static function maybe_replace_column_name( $text ) {
+
+		foreach ( self::get_csv_header_mapping() as $csv_column => $field_id ) {
+			$text = str_replace( $field_id, $csv_column, $text );
+		}
+
+		return $text;
+	}
+
+	/**
 	 * Validate temp uploaded file.
 	 *
 	 * @param array|string $csv_file Temp uploaded file data OR file path.
+	 * @param array        $data Award uploads grantID and fiscalYear data.
 	 *
 	 * @return boolean|WP_Error Return WP_Error on empty or invalid file, else return true.
 	 */
-	public static function validate_csv_file( $csv_file ) {
+	public static function validate_csv_file( $csv_file, $data ) {
 		$file_path = is_array( $csv_file ) ? $csv_file['tmp_name'] : $csv_file;
 
 		if ( ! file_exists( $file_path ) ) {
@@ -99,7 +116,111 @@ class AwardUploads {
 			);
 		}
 
+		$row_errors = self::validate_csv_rows( $file_path, $data );
+
+		if ( is_wp_error( $row_errors ) && $row_errors->has_errors() ) {
+			return $row_errors;
+		}
+
 		return true;
+	}
+
+	/**
+	 * Validate csv row data.
+	 *
+	 * @param string $csv_file CSV file path to read and validate data.
+	 * @param array  $data Award uploads grantID and fiscalYear data.
+	 *
+	 * @return WP_Error
+	 */
+	public static function validate_csv_rows( $csv_file, $data ) {
+		$csv_errors = new WP_Error();
+		$csv_data   = self::read_csv( $csv_file );
+
+		foreach ( $csv_data as $row_index => $row ) {
+			// Note: this two value required for bulk upload but won't be part of csv file. Adding this value for validation only.
+			$row['grantID']    = $data['grantID'] ? (int) $data['grantID'] : 0;
+			$row['fiscalYear'] = $data['fiscalYear'] ?: '';
+
+			$edit_award_class = new EditGrantAwards();
+			$validated_data   = $edit_award_class->validate_fields( $row );
+
+			if ( is_wp_error( $validated_data ) && $validated_data->has_errors() ) {
+				$messages = $validated_data->get_error_messages();
+				foreach ( $messages as $message ) {
+					$message = self::maybe_replace_column_name( $message );
+					$csv_errors->add(
+						'csv_errors',
+						'ROW #' . ( $row_index + 1 ) . ' | ' . $message
+					);
+				}
+			}
+		}
+
+		return $csv_errors;
+	}
+
+	/**
+	 * Read csv file and return data as an array.
+	 *
+	 * @param string $csv_file csv file name.
+	 *
+	 * @return array
+	 */
+	public static function read_csv( $csv_file ) {
+		$file_handle = fopen( $csv_file, 'r' );
+
+		$data = [];
+
+		if ( feof( $file_handle ) ) {
+			return [];
+		}
+
+		$csv_header_mapping = self::get_csv_header_mapping();
+		$headers            = fgetcsv( $file_handle, 4096 );
+		$headers            = array_map(
+			function( $header ) use ( $csv_header_mapping ) {
+				$header = trim( $header );
+				return isset( $csv_header_mapping[ $header ] ) ? $csv_header_mapping[ $header ] : $header;
+			},
+			$headers
+		);
+
+		while ( ! feof( $file_handle ) ) {
+			$row_data       = fgetcsv( $file_handle, 4096 );
+			$row_assoc_data = [];
+
+			foreach ( $row_data as $key => $value ) {
+				switch ( $headers[ $key ] ) {
+					case 'recipientType':
+					case 'secondaryRecipients':
+					case 'geoLocationServed':
+						$value = sanitize_title( $value );
+						break;
+					case 'totalAwardAmount':
+					case 'matchingFundingAmount':
+						$value = (int) preg_replace( '/[^0-9-.]+/', '', $value );
+						break;
+					case 'grantFundedStartDate':
+					case 'grantFundedEndDate':
+						$value = $value ? date_format( date_create( $value ), 'Y-m-d\TH:i:s' ) : $value;
+						break;
+					case 'countiesServed':
+						$value = explode( ',', $value );
+						$value = array_map( 'sanitize_title', $value );
+						$value = array_filter( $value ); // Remove empty data.
+						break;
+				}
+
+				$row_assoc_data[ $headers[ $key ] ] = $value;
+			}
+
+			$data[] = $row_assoc_data;
+		}
+
+		fclose( $file_handle );
+
+		return $data;
 	}
 
 	/**

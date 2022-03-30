@@ -440,10 +440,10 @@ class Field {
 					}
 					break;
 				case 'api':
-					$fields = self::get_api_fields_by_id( $id );
-					$field  = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
-					$field  = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
-					$label_value  = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
+					$fields      = self::get_api_fields_by_id( $id );
+					$field       = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
+					$field       = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
+					$label_value = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
 					break;
 			}
 		}
@@ -1444,7 +1444,11 @@ class Field {
 					$value = wp_kses_post( $data[ $meta_field['id'] ] );
 					break;
 				case 'group':
-					$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					if ( ! empty( $meta_field['sanitize_callback'] ) ) {
+						$value = call_user_func( $meta_field['sanitize_callback'], $data[ $meta_field['id'] ] );
+					} else {
+						$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					}
 					break;
 				case 'save_to_field':
 					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
@@ -1580,16 +1584,16 @@ class Field {
 					( // Case: field is required only when dependent field is not equal to specific value.
 						'not_equal' === $field['visible']['compare']
 						&& (
-							$data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
-							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== $field['visible']['value']
+							strtolower( $data[ $field['visible']['fieldId'] ] ) !== strtolower( $field['visible']['value'] )
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== sanitize_title( $field['visible']['value'] )
 						)
 					)
 					||
 					( // Case: field is required only when dependent field is equal to specific value.
 						'equal' === $field['visible']['compare']
 						&& (
-							$data[ $field['visible']['fieldId'] ] === $field['visible']['value']
-							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === $field['visible']['value']
+							strtolower( $data[ $field['visible']['fieldId'] ] ) === strtolower( $field['visible']['value'] )
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === sanitize_title( $field['visible']['value'] )
 						)
 					)
 				)
