@@ -19,8 +19,6 @@ use const Grantsportal\Taxonomies\Counties\TAXONOMY_SLUG as COUNTIES_TAXONOMY_SL
 use const Grantsportal\Taxonomies\FiscalYear\TAXONOMY_SLUG as FISCAL_YEAR_TAXONOMY_SLUG;
 use const Grantsportal\Taxonomies\RecipientTypes\TAXONOMY_SLUG as RECIPIENT_TYPE_TAXONOMY_SLUG;
 
-use function CaGov\Grants\Core\is_portal;
-
 /**
  * GrantsEndpoint Class.
  */
