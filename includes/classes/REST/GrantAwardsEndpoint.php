@@ -276,6 +276,18 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			$new_data['$counties'] = '';
 		}
 
+		if ( is_portal() ) {
+			$geo_location_served = $new_data['geoLocationServed'];
+
+			if ( 'county' === $geo_location_served ) {
+				$new_data['geoLocationServed'] = 'County';
+			} elseif ( 'statewide' === $geo_location_served ) {
+				$new_data['geoLocationServed'] = 'Statewide';
+			} elseif ( 'out-of-state' === $geo_location_served ) {
+				$new_data['geoLocationServed'] = 'Out-of-State';
+			}
+		}
+
 		$new_response->set_data( $new_data );
 
 		return $new_response;
