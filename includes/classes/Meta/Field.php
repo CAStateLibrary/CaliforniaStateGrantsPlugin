@@ -1610,16 +1610,16 @@ class Field {
 					( // Case: field is required only when dependent field is not equal to specific value.
 						'not_equal' === $field['visible']['compare']
 						&& (
-							$data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
-							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== $field['visible']['value']
+							strtolower( $data[ $field['visible']['fieldId'] ] ) !== strtolower( $field['visible']['value'] )
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== sanitize_title( $field['visible']['value'] )
 						)
 					)
 					||
 					( // Case: field is required only when dependent field is equal to specific value.
 						'equal' === $field['visible']['compare']
 						&& (
-							$data[ $field['visible']['fieldId'] ] === $field['visible']['value']
-							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === $field['visible']['value']
+							strtolower( $data[ $field['visible']['fieldId'] ] ) === strtolower( $field['visible']['value'] )
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === sanitize_title( $field['visible']['value'] )
 						)
 					)
 				)
