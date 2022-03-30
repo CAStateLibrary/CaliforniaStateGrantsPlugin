@@ -86,6 +86,7 @@ class GrantAwards {
 				'type'        => 'select',
 				'source'      => is_portal() ? 'portal-api' : 'api',
 				'description' => __( 'Select the fiscal year in which this grant opportunity closed for applications.', 'ca-grants-plugin' ),
+				'required'    => true,
 			),
 			array(
 				'id'          => 'projectTitle',
@@ -183,6 +184,7 @@ class GrantAwards {
 				'type'          => 'number',
 				'default_value' => 0,
 				'description'   => __( 'If partial or full matching is requested or required by the agreement, enter the matched funding dollar amount. If no matched funding is requested or required, enter "0".  Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
+				'required'      => true,
 			),
 			array(
 				'id'          => 'awardAmountNotes',

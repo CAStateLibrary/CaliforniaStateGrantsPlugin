@@ -199,7 +199,7 @@ class Field {
 
 		?>
 		<tr class="post_finder_field <?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -323,7 +323,7 @@ class Field {
 		if ( ! empty( $name ) ) :
 			?>
 		<tr class="form-field-group-header <?php echo esc_attr( $class ); ?>">
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php
 				if ( ! empty( $description ) ) {
@@ -534,7 +534,7 @@ class Field {
 		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -601,7 +601,7 @@ class Field {
 		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<?php echo esc_html( $name ); ?>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -674,7 +674,7 @@ class Field {
 		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -724,7 +724,7 @@ class Field {
 		$value = $value ?: get_post_meta( get_the_ID(), $id, true );
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -985,7 +985,7 @@ class Field {
 		$value = $value ? gmdate( 'Y-m-d\TH:m', $value ) : $value;
 		?>
 		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>

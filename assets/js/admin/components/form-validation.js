@@ -451,12 +451,19 @@ const handleFormSubmit = ( event ) => {
  * Setup Wysiwygs
  */
 const setupWysiwygs = () => {
-	const requiredWysiwygs = Array.from( document.querySelectorAll( '.wysiwyg[data-required-if]' ) );
+	const requiredIfWysiwygs = Array.from( document.querySelectorAll( '.wysiwyg[data-required-if]' ) );
 
+	// Ensure all the textareas are required.
+	requiredIfWysiwygs.forEach( wysiwyg => {
+		const textarea = wysiwyg.querySelector( 'textarea' );
+		textarea.setAttribute( 'data-required-if', wysiwyg.getAttribute( 'data-required-if' ) );
+	} );
+
+	const requiredWysiwygs = Array.from( document.querySelectorAll( '.wysiwyg[required="true"]' ) );
 	// Ensure all the textareas are required.
 	requiredWysiwygs.forEach( wysiwyg => {
 		const textarea = wysiwyg.querySelector( 'textarea' );
-		textarea.setAttribute( 'data-required-if', wysiwyg.getAttribute( 'data-required-if' ) );
+		textarea.setAttribute( 'required', wysiwyg.getAttribute( 'required' ) );
 	} );
 };
 
