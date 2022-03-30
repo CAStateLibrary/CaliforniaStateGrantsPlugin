@@ -74,6 +74,8 @@ class EditGrantAwards extends BaseEdit {
 	 * Cleanup country data based on geoLocationServed value.
 	 *
 	 * @param int $post_id The ID of the currently displayed post.
+	 *
+	 * @return void
 	 */
 	public function maybe_update_cleanup_data( $post_id ) {
 
@@ -85,9 +87,32 @@ class EditGrantAwards extends BaseEdit {
 			return;
 		}
 
-		$recipientType = get_post_meta( $post_id, 'recipientType', true );
+		remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
 
-		if ( 'individual' === $recipientType ) {
+		self::update_grant_award_data( $post_id );
+
+		add_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
+	}
+
+	/**
+	 * Update grant award post title and cleanup data.
+	 *
+	 * @param int $post_id The ID of the currently displayed post.
+	 *
+	 * @return void
+	 */
+	public static function update_grant_award_data( $post_id ) {
+
+		if ( \CaGov\Grants\Core\is_portal() ) {
+			$recipientType = wp_get_post_terms( $post_id, 'recipient-types', [ 'fields' => 'slugs' ] );
+		} else {
+			$recipientType = get_post_meta( $post_id, 'recipientType', true );
+		}
+
+		if (
+			( is_array( $recipientType ) && in_array( 'individual', $recipientType, true ) )
+			|| 'individual' === $recipientType
+		) {
 			$first_name = get_post_meta( $post_id, 'primaryRecipientFirstName', true ) ?: '';
 			$last_name  = get_post_meta( $post_id, 'primaryRecipientLastName', true ) ?: '';
 			$full_name  = $first_name . ' ' . $last_name;
@@ -99,14 +124,12 @@ class EditGrantAwards extends BaseEdit {
 		}
 
 		if ( ! empty( $full_name ) ) {
-			remove_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
 			wp_update_post(
 				[
 					'ID'         => $post_id,
 					'post_title' => $full_name,
 				]
 			);
-			add_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
 		}
 
 		$geoLocationServed = get_post_meta( $post_id, 'geoLocationServed', true );
@@ -121,7 +144,7 @@ class EditGrantAwards extends BaseEdit {
 	 *
 	 * @return array
 	 */
-	protected function get_all_meta_fields() {
+	public static function get_all_meta_fields() {
 		return array_merge(
 			Meta\GrantAwardStats::get_fields(),
 			Meta\GrantAwards::get_fields()

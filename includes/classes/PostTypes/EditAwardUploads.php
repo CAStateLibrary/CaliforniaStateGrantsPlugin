@@ -67,7 +67,7 @@ class EditAwardUploads extends BaseEdit {
 	 *
 	 * @return array
 	 */
-	protected function get_all_meta_fields() {
+	public static function get_all_meta_fields() {
 		return Meta\AwardUploads::get_fields();
 	}
 

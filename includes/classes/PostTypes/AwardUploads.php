@@ -151,7 +151,7 @@ class AwardUploads {
 					$message = self::maybe_replace_column_name( $message );
 					$csv_errors->add(
 						'csv_errors',
-						'ROW #' . ( $row_index + 1 ) . ' | ' . $message
+						'ROW #' . ( $row_index + 2 ) . ' | ' . $message // Row index + 2 for header column and skip 0 as index valule.
 					);
 				}
 			}

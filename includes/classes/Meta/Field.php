@@ -10,6 +10,9 @@ namespace CaGov\Grants\Meta;
 use CaGov\Grants\Helpers\Validators;
 use DateTime;
 use WP_Error;
+
+use function CaGov\Grants\Core\is_portal;
+
 /**
  * Meta Field Class.
  */
@@ -72,6 +75,7 @@ class Field {
 				self::render_label_field( $meta_field );
 				break;
 			case 'group':
+			case 'save_to_field_group':
 				self::render_field_group( $meta_field );
 				break;
 			default:
@@ -303,7 +307,12 @@ class Field {
 			return;
 		}
 
-		$post_id       = get_the_ID();
+		$post_id = get_the_ID();
+
+		if ( 'save_to_field_group' === $meta_field['type'] && ! empty( $meta_field['field_id'] ) ) {
+			$post_id = get_post_meta( $post_id, $meta_field['field_id'], true ) ?: $post_id;
+		}
+
 		$class         = $meta_field['class'] ?? '';
 		$id            = $meta_field['id'] ?? '';
 		$name          = $meta_field['name'] ?? '';
@@ -1208,10 +1217,8 @@ class Field {
 		}
 
 		$fields_to_display = false;
-		if ( ! $portal_api ) {
-			// Retrieve from cache only if it is not portal api.
-			$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
-		}
+		$cache_key         = sprintf( '%s-%s-api-field-values', $id, is_portal() ? 'portal' : 'external' );
+		$fields_to_display = wp_cache_get( $cache_key, 'ca-grants-plugin-api-field-values' );
 
 		if ( false === $fields_to_display ) {
 			if ( $portal_api ) {
@@ -1290,9 +1297,7 @@ class Field {
 				);
 			}
 
-			if ( ! $portal_api ) {
-				wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 5 * HOUR_IN_SECONDS );
-			}
+			wp_cache_set( $cache_key, $fields_to_display, 'ca-grants-plugin-api-field-values', 60 );
 		}
 
 		return $fields_to_display;
@@ -1412,7 +1417,7 @@ class Field {
 			switch ( $meta_field['type'] ) {
 				case 'checkbox':
 					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'], $post_id );
 					} elseif ( ! empty( $data[ $meta_field['id'] ] ) && is_array( $data[ $meta_field['id'] ] ) ) {
 						$value = $data[ $meta_field['id'] ];
 						array_walk( $value, 'sanitize_text_field' );
@@ -1423,7 +1428,7 @@ class Field {
 				case 'radio':
 				case 'select':
 					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'], $post_id );
 					} else {
 						$value = sanitize_text_field( $data[ $meta_field['id'] ] );
 					}
@@ -1449,6 +1454,15 @@ class Field {
 					} else {
 						$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
 					}
+					break;
+				case 'save_to_field_group':
+					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
+					if ( ! empty( $meta_field['sanitize_callback'] ) ) {
+						$group_data = call_user_func( $meta_field['sanitize_callback'], $data[ $meta_field['id'] ] );
+					} else {
+						$group_data = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					}
+					update_post_meta( $field_post_id, $meta_field['id'], $group_data );
 					break;
 				case 'save_to_field':
 					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
@@ -1752,10 +1766,11 @@ class Field {
 	 *
 	 * @param string|array $value Taxonomy term slug or list of slug.
 	 * @param string       $id Field id to identify taxonomy.
+	 * @param int          $post_id Post id to assign the taxonomy term.
 	 *
 	 * @return boolean Return true for sucess term assignd else fail.
 	 */
-	protected static function set_taxonomy_terms( $value, $id ) {
+	protected static function set_taxonomy_terms( $value, $id, $post_id ) {
 
 		if ( empty( $value ) ) {
 			return false;
@@ -1768,7 +1783,7 @@ class Field {
 		}
 
 		$taxonomy = self::get_taxonmy_from_field_id( $id );
-		$terms    = wp_set_object_terms( get_the_ID(), $value, $taxonomy );
+		$terms    = wp_set_object_terms( $post_id, $value, $taxonomy );
 
 		return is_wp_error( $terms ) ? false : true;
 	}

@@ -385,6 +385,7 @@ function wp_safe_remote_post_multipart( $url, $args, $file_name ) {
 		),
 		'sslverify' => false,
 		'body'      => $payload,
+		'timeout'   => 300, // Increase timeout to process csv data, increased default 5 seconds to 10 seconds.
 	);
 
 	return wp_safe_remote_post( $url, $post_args );
