@@ -13,6 +13,8 @@ use CaGov\Grants\Meta\Field;
 use CaGov\Grants\PostTypes\AwardUploads;
 use CaGov\Grants\PostTypes\Grants as GrantsCPT;
 
+use function CaGov\Grants\Core\is_portal;
+
 /**
  * BulkUploadPage Class
  */
@@ -258,7 +260,7 @@ class BulkUploadPage {
 				'id'           => 'fiscalYear',
 				'name'         => __( 'Fiscal Year', 'ca-grants-plugin' ),
 				'type'         => $closed_fiscal_year ? 'label' : 'select',
-				'source'       => 'api',
+				'source'       => is_portal() ? 'portal-api' : 'api',
 				'description'  => __( 'Select the Fiscal Year to import awards for.', 'ca-grants-plugin' ),
 				'meta_value'   => $closed_fiscal_year,
 				'hidden_field' => ! empty( $closed_fiscal_year ),
