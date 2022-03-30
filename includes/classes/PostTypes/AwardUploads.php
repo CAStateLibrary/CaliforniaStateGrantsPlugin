@@ -208,6 +208,7 @@ class AwardUploads {
 					case 'countiesServed':
 						$value = explode( ',', $value );
 						$value = array_map( 'sanitize_title', $value );
+						$value = array_filter( $value ); // Remove empty data.
 						break;
 				}
 

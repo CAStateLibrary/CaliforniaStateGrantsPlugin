@@ -73,7 +73,7 @@ class Funding {
 				'id'          => 'revenueSourceNotes',
 				'name'        => __( 'Funding Source Notes', 'ca-grants-plugin' ),
 				'type'        => 'textarea',
-				'text_limit'  => 200,
+				'text_limit'  => 450,
 				'description' => __( 'Please specify information that may be helpful to applicants, such as proposition number, bond name/number, federal grant program, etc.', 'ca-grants-plugin' ),
 		);
 

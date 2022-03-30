@@ -154,7 +154,7 @@ class GrantAwards {
 		$screen = get_current_screen();
 
 		// Check if current page is from grant award cpt and it's a list page.
-		if ( $screen && static::CPT_SLUG === $screen->post_type && 'edit' === $screen->base ) {
+		if ( ! $screen || static::CPT_SLUG !== $screen->post_type || 'edit' !== $screen->base ) {
 			return;
 		}
 

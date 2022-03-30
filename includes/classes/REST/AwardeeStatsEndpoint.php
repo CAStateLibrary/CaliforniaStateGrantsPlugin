@@ -238,9 +238,10 @@ class AwardeeStatsEndpoint extends WP_REST_Controller {
 		$empty_params = array_keys(
 			array_filter(
 				$required_params,
-				function( $param ) {
-						return empty( $param );
-				}
+				function( $key ) use ( $request ) {
+						return ! $request->has_param( $key );
+				},
+				ARRAY_FILTER_USE_KEY
 			)
 		);
 
@@ -248,6 +249,24 @@ class AwardeeStatsEndpoint extends WP_REST_Controller {
 			return new WP_Error(
 				'rest_missing_param',
 				__( 'Missing parameter(s): ', 'ca-grants-plugin' ) . implode( ', ', $empty_params ),
+				array( 'status' => 400 )
+			);
+		}
+
+		// Negative value.
+		if ( (int) $required_params['grantsAwarded'] < 0 ) {
+			return new WP_Error(
+				'rest_invalid_value',
+				__( 'Invalid value for param: grantsAwarded. Please add non negative value.', 'ca-grants-plugin' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		// Negative value.
+		if ( (int) $required_params['applicationsSubmitted'] < 0 ) {
+			return new WP_Error(
+				'rest_invalid_value',
+				__( 'Invalid value for param: applicationsSubmitted. Please add non negative value.', 'ca-grants-plugin' ),
 				array( 'status' => 400 )
 			);
 		}
