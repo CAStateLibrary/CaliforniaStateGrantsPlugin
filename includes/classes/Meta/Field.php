@@ -10,6 +10,9 @@ namespace CaGov\Grants\Meta;
 use CaGov\Grants\Helpers\Validators;
 use DateTime;
 use WP_Error;
+
+use function CaGov\Grants\Core\is_portal;
+
 /**
  * Meta Field Class.
  */
@@ -72,6 +75,7 @@ class Field {
 				self::render_label_field( $meta_field );
 				break;
 			case 'group':
+			case 'save_to_field_group':
 				self::render_field_group( $meta_field );
 				break;
 			default:
@@ -303,7 +307,12 @@ class Field {
 			return;
 		}
 
-		$post_id       = get_the_ID();
+		$post_id = get_the_ID();
+
+		if ( 'save_to_field_group' === $meta_field['type'] && ! empty( $meta_field['field_id'] ) ) {
+			$post_id = get_post_meta( $post_id, $meta_field['field_id'], true ) ?: $post_id;
+		}
+
 		$class         = $meta_field['class'] ?? '';
 		$id            = $meta_field['id'] ?? '';
 		$name          = $meta_field['name'] ?? '';
@@ -440,10 +449,10 @@ class Field {
 					}
 					break;
 				case 'api':
-					$fields = self::get_api_fields_by_id( $id );
-					$field  = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
-					$field  = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
-					$label_value  = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
+					$fields      = self::get_api_fields_by_id( $id );
+					$field       = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
+					$field       = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
+					$label_value = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
 					break;
 			}
 		}
@@ -1223,10 +1232,8 @@ class Field {
 		}
 
 		$fields_to_display = false;
-		if ( ! $portal_api ) {
-			// Retrieve from cache only if it is not portal api.
-			$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
-		}
+		$cache_key         = sprintf( '%s-%s-api-field-values', $id, is_portal() ? 'portal' : 'external' );
+		$fields_to_display = wp_cache_get( $cache_key, 'ca-grants-plugin-api-field-values' );
 
 		if ( false === $fields_to_display ) {
 			if ( $portal_api ) {
@@ -1305,9 +1312,7 @@ class Field {
 				);
 			}
 
-			if ( ! $portal_api ) {
-				wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 5 * HOUR_IN_SECONDS );
-			}
+			wp_cache_set( $cache_key, $fields_to_display, 'ca-grants-plugin-api-field-values', 60 );
 		}
 
 		return $fields_to_display;
@@ -1464,6 +1469,15 @@ class Field {
 					} else {
 						$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
 					}
+					break;
+				case 'save_to_field_group':
+					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
+					if ( ! empty( $meta_field['sanitize_callback'] ) ) {
+						$group_data = call_user_func( $meta_field['sanitize_callback'], $data[ $meta_field['id'] ] );
+					} else {
+						$group_data = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					}
+					update_post_meta( $field_post_id, $meta_field['id'], $group_data );
 					break;
 				case 'save_to_field':
 					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
