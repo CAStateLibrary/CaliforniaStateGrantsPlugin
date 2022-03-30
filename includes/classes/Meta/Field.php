@@ -531,7 +531,7 @@ class Field {
 
 		// Get the saved data
 		if ( empty( $value ) && isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-			$value = self::get_value_from_taxonomy( $id );
+			$value = self::get_value_from_taxonomy( $id, get_the_ID() );
 		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
@@ -598,7 +598,7 @@ class Field {
 
 		// Get the saved data
 		if ( empty( $value ) && isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-			$value = self::get_value_from_taxonomy( $id, false );
+			$value = self::get_value_from_taxonomy( $id, get_the_ID(), false );
 		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
@@ -671,7 +671,7 @@ class Field {
 
 		// Get the saved data
 		if ( empty( $value ) && isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-			$value = self::get_value_from_taxonomy( $id, false );
+			$value = self::get_value_from_taxonomy( $id, get_the_ID(), false );
 		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
@@ -1751,12 +1751,25 @@ class Field {
 	 * Get value from taxonomy.
 	 *
 	 * @param string $id    Field id.
+	 * @param int    $post_id   Post ID.
 	 * @param bool   $multi Whether to return an array or string.
+	 * @param string $return_value Field to get from taxonomy term.
 	 *
 	 * @return array|string Value. Will be array if multi is set to true.
 	 */
-	protected static function get_value_from_taxonomy( $id, $multi = true ) {
-		$value = wp_get_post_terms( get_the_ID(), self::get_taxonmy_from_field_id( $id ), [ 'fields' => 'slugs' ] );
+	public static function get_value_from_taxonomy( $id, $post_id = 0, $multi = true, $return_value = 'slugs' ) {
+
+		if ( empty( $post_id ) ) {
+			$post_id = get_the_ID();
+		}
+
+		if ( 'name' === $return_value ) {
+			$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ) );
+			$value = ( ! empty( $value ) && ! is_wp_error( $value ) ) ? wp_list_pluck( $value, 'name' ) : [];
+		} else {
+			$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ), [ 'fields' => $return_value ] );
+		}
+
 		if ( empty( $value ) || is_wp_error( $value ) ) {
 			if ( $multi ) {
 				return [];
