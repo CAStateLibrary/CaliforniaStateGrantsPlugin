@@ -15,6 +15,7 @@ use WP_REST_Response;
 use WP_Rest_Request;
 use WP_Error;
 use function CaGov\Grants\Core\get_rest_namespace;
+use function CaGov\Grants\Core\is_portal;
 
 /**
  * Class BulkUploadEndpoint
@@ -121,9 +122,17 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 			);
 		}
 
-		$post_type = get_post_type_object( $this->post_type );
+		$grant = get_post( $request->get_param( 'grantID' ) );
 
-		if ( ! current_user_can( $post_type->cap->edit_others_posts ) ) {
+		if ( empty( $grant ) || $grant->post_type !== Grants::get_cpt_slug() ) {
+			return new WP_Error(
+				'rest_invalid_grant_id',
+				__( 'Invalid grantID found. Please provide valid data and try again.', 'ca-grants-plugin' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		if ( ! current_user_can( 'edit_grant', $grant->ID ) ) {
 			return new WP_Error(
 				'rest_cannot_edit_others',
 				__( 'Sorry, you are not allowed to create upload award as this user.', 'ca-grants-plugin' ),
@@ -131,19 +140,11 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( $post_type->cap->create_posts ) ) {
-			return new WP_Error(
-				'rest_cannot_create',
-				__( 'Sorry, you are not allowed to create posts as this user.', 'ca-grants-plugin' ),
-				array( 'status' => rest_authorization_required_code() )
-			);
-		}
-
-		if ( ! current_user_can( 'upload_files' ) ) {
+		if ( ! is_portal() && ! current_user_can( 'upload_files' ) ) {
 			return new WP_Error(
 				'rest_cannot_create',
 				__( 'Sorry, you are not allowed to upload media on this site.', 'ca-grants-plugin' ),
-				array( 'status' => 400 )
+				array( 'status' => rest_authorization_required_code() )
 			);
 		}
 
@@ -237,16 +238,6 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 			);
 		}
 
-		$grant = get_post( $required_params['grantID'] );
-
-		if ( empty( $grant ) || $grant->post_type !== Grants::get_cpt_slug() ) {
-			return new WP_Error(
-				'rest_invalid_grant_id',
-				__( 'Invalid grantID found. Please provide valid data and try again.', 'ca-grants-plugin' ) . implode( ', ', $empty_params ),
-				array( 'status' => 400 )
-			);
-		}
-
 		$additional_params = array(
 			'applicationsSubmitted' => $request->get_param( 'applicationsSubmitted' ),
 			'grantsAwarded'         => $request->get_param( 'grantsAwarded' ),
@@ -267,14 +258,14 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 		$request_params = $this->get_param_values( $request );
 
 		if ( is_wp_error( $request_params ) ) {
-			return wp_send_json_error( $request_params, 400 );
+			return wp_send_json_error( $request_params->get_error_messages(), 400 );
 		}
 
 		$headers = $request->get_headers();
-		$file    = $this->upload_from_file( $request_params['awardCSV'], $headers );
+		$file    = $this->upload_from_file( $request_params, $headers );
 
 		if ( is_wp_error( $file ) ) {
-			return wp_send_json_error( $file, 400 );
+			return wp_send_json_error( $file->get_error_messages(), 400 );
 		}
 
 		$current_user_id = get_current_user_id();
@@ -293,7 +284,7 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 		$attachment_id = wp_insert_attachment( $attachment, $file['file'], 0, true, false );
 
 		if ( is_wp_error( $attachment_id ) ) {
-			return wp_send_json_error( $attachment_id, 400 );
+			return wp_send_json_error( $attachment_id->get_error_messages(), 400 );
 		}
 
 		$meta_params_mapping = array(
@@ -328,7 +319,7 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 		if ( is_wp_error( $award_upload_id ) ) {
 			// Delete attachment csv if post insert operatoin fails.
 			wp_delete_attachment( $attachment_id );
-			return wp_send_json_error( $award_upload_id, 404 );
+			return wp_send_json_error( $award_upload_id->get_error_messages(), 404 );
 		}
 
 		// Store "Number of Applications Submitted" to provided grant ID.
@@ -346,6 +337,9 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 			array(
 				'ID'          => $attachment_id,
 				'post_parent' => $award_upload_id,
+				'meta_input'  => [
+					'bulkUploadAttachment' => true, // Keeping a flag to identify attachment is from bulk upload.
+				]
 			)
 		);
 
@@ -355,12 +349,14 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 	/**
 	 * Handles an upload via multipart/form-data ($_FILES) in REST request.
 	 *
-	 * @param array $file   Data from the `$_FILES` superglobal.
+	 * @param array $data Award uploads grantID and fiscalYear data with awardCSV $_FILES data.
 	 * @param array $headers HTTP headers from the request.
 	 *
 	 * @return array|WP_Error Data from wp_handle_upload().
 	 */
-	protected function upload_from_file( $file, $headers ) {
+	protected function upload_from_file( $data, $headers ) {
+		$file = $data['awardCSV'] ?: '';
+
 		if ( empty( $file ) ) {
 			return new WP_Error(
 				'rest_upload_no_data',
@@ -385,7 +381,7 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 		}
 
 		// Validate file before uploading it.
-		$validate_file = AwardUploads::validate_csv_file( $file );
+		$validate_file = AwardUploads::validate_csv_file( $file, $data );
 
 		if ( is_wp_error( $validate_file ) ) {
 			return $validate_file;

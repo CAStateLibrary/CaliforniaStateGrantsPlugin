@@ -10,6 +10,9 @@ namespace CaGov\Grants\Meta;
 use CaGov\Grants\Helpers\Validators;
 use DateTime;
 use WP_Error;
+
+use function CaGov\Grants\Core\is_portal;
+
 /**
  * Meta Field Class.
  */
@@ -72,6 +75,7 @@ class Field {
 				self::render_label_field( $meta_field );
 				break;
 			case 'group':
+			case 'save_to_field_group':
 				self::render_field_group( $meta_field );
 				break;
 			default:
@@ -198,7 +202,7 @@ class Field {
 
 		?>
 		<tr class="post_finder_field <?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -303,7 +307,12 @@ class Field {
 			return;
 		}
 
-		$post_id       = get_the_ID();
+		$post_id = get_the_ID();
+
+		if ( 'save_to_field_group' === $meta_field['type'] && ! empty( $meta_field['field_id'] ) ) {
+			$post_id = get_post_meta( $post_id, $meta_field['field_id'], true ) ?: $post_id;
+		}
+
 		$class         = $meta_field['class'] ?? '';
 		$id            = $meta_field['id'] ?? '';
 		$name          = $meta_field['name'] ?? '';
@@ -317,7 +326,7 @@ class Field {
 		if ( ! empty( $name ) ) :
 			?>
 		<tr class="form-field-group-header <?php echo esc_attr( $class ); ?>">
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php
 				if ( ! empty( $description ) ) {
@@ -440,10 +449,10 @@ class Field {
 					}
 					break;
 				case 'api':
-					$fields = self::get_api_fields_by_id( $id );
-					$field  = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
-					$field  = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
-					$label_value  = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
+					$fields      = self::get_api_fields_by_id( $id );
+					$field       = wp_filter_object_list( $fields, [ 'id' => $label_value ] );
+					$field       = empty( $field ) || ! is_array( $field ) ? [] : array_pop( $field );
+					$label_value = empty( $field ) || empty( $field['name'] ) ? $label_value : $field['name'];
 					break;
 			}
 		}
@@ -520,13 +529,13 @@ class Field {
 
 		// Get the saved data
 		if ( empty( $value ) && isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-			$value = self::get_value_from_taxonomy( $id );
+			$value = self::get_value_from_taxonomy( $id, get_the_ID() );
 		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -587,13 +596,13 @@ class Field {
 
 		// Get the saved data
 		if ( empty( $value ) && isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-			$value = self::get_value_from_taxonomy( $id, false );
+			$value = self::get_value_from_taxonomy( $id, get_the_ID(), false );
 		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<?php echo esc_html( $name ); ?>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -660,13 +669,13 @@ class Field {
 
 		// Get the saved data
 		if ( empty( $value ) && isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-			$value = self::get_value_from_taxonomy( $id, false );
+			$value = self::get_value_from_taxonomy( $id, get_the_ID(), false );
 		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -716,7 +725,7 @@ class Field {
 		$value = $value ?: get_post_meta( get_the_ID(), $id, true );
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -977,7 +986,7 @@ class Field {
 		$value = $value ? gmdate( 'Y-m-d\TH:m', $value ) : $value;
 		?>
 		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
-			<th>
+			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -1208,10 +1217,8 @@ class Field {
 		}
 
 		$fields_to_display = false;
-		if ( ! $portal_api ) {
-			// Retrieve from cache only if it is not portal api.
-			$fields_to_display = wp_cache_get( $id, 'ca-grants-plugin' );
-		}
+		$cache_key         = sprintf( '%s-%s-api-field-values', $id, is_portal() ? 'portal' : 'external' );
+		$fields_to_display = wp_cache_get( $cache_key, 'ca-grants-plugin-api-field-values' );
 
 		if ( false === $fields_to_display ) {
 			if ( $portal_api ) {
@@ -1290,9 +1297,7 @@ class Field {
 				);
 			}
 
-			if ( ! $portal_api ) {
-				wp_cache_set( $id, $fields_to_display, 'ca-grants-plugin', 'csl-terms', 5 * HOUR_IN_SECONDS );
-			}
+			wp_cache_set( $cache_key, $fields_to_display, 'ca-grants-plugin-api-field-values', 60 );
 		}
 
 		return $fields_to_display;
@@ -1412,7 +1417,7 @@ class Field {
 			switch ( $meta_field['type'] ) {
 				case 'checkbox':
 					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'], $post_id );
 					} elseif ( ! empty( $data[ $meta_field['id'] ] ) && is_array( $data[ $meta_field['id'] ] ) ) {
 						$value = $data[ $meta_field['id'] ];
 						array_walk( $value, 'sanitize_text_field' );
@@ -1423,7 +1428,7 @@ class Field {
 				case 'radio':
 				case 'select':
 					if ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'] );
+						self::set_taxonomy_terms( $data[ $meta_field['id'] ], $meta_field['id'], $post_id );
 					} else {
 						$value = sanitize_text_field( $data[ $meta_field['id'] ] );
 					}
@@ -1444,7 +1449,20 @@ class Field {
 					$value = wp_kses_post( $data[ $meta_field['id'] ] );
 					break;
 				case 'group':
-					$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					if ( ! empty( $meta_field['sanitize_callback'] ) ) {
+						$value = call_user_func( $meta_field['sanitize_callback'], $data[ $meta_field['id'] ] );
+					} else {
+						$value = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					}
+					break;
+				case 'save_to_field_group':
+					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
+					if ( ! empty( $meta_field['sanitize_callback'] ) ) {
+						$group_data = call_user_func( $meta_field['sanitize_callback'], $data[ $meta_field['id'] ] );
+					} else {
+						$group_data = array_filter( $data[ $meta_field['id'] ], 'array_filter' );
+					}
+					update_post_meta( $field_post_id, $meta_field['id'], $group_data );
 					break;
 				case 'save_to_field':
 					$field_post_id = absint( $data[ $meta_field['field_id'] ] );
@@ -1580,16 +1598,16 @@ class Field {
 					( // Case: field is required only when dependent field is not equal to specific value.
 						'not_equal' === $field['visible']['compare']
 						&& (
-							$data[ $field['visible']['fieldId'] ] !== $field['visible']['value']
-							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== $field['visible']['value']
+							strtolower( $data[ $field['visible']['fieldId'] ] ) !== strtolower( $field['visible']['value'] )
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) !== sanitize_title( $field['visible']['value'] )
 						)
 					)
 					||
 					( // Case: field is required only when dependent field is equal to specific value.
 						'equal' === $field['visible']['compare']
 						&& (
-							$data[ $field['visible']['fieldId'] ] === $field['visible']['value']
-							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === $field['visible']['value']
+							strtolower( $data[ $field['visible']['fieldId'] ] ) === strtolower( $field['visible']['value'] )
+							|| sanitize_title( $data[ $field['visible']['fieldId'] ] ) === sanitize_title( $field['visible']['value'] )
 						)
 					)
 				)
@@ -1727,12 +1745,25 @@ class Field {
 	 * Get value from taxonomy.
 	 *
 	 * @param string $id    Field id.
+	 * @param int    $post_id   Post ID.
 	 * @param bool   $multi Whether to return an array or string.
+	 * @param string $return_value Field to get from taxonomy term.
 	 *
 	 * @return array|string Value. Will be array if multi is set to true.
 	 */
-	protected static function get_value_from_taxonomy( $id, $multi = true ) {
-		$value = wp_get_post_terms( get_the_ID(), self::get_taxonmy_from_field_id( $id ), [ 'fields' => 'slugs' ] );
+	public static function get_value_from_taxonomy( $id, $post_id = 0, $multi = true, $return_value = 'slugs' ) {
+
+		if ( empty( $post_id ) ) {
+			$post_id = get_the_ID();
+		}
+
+		if ( 'name' === $return_value ) {
+			$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ) );
+			$value = ( ! empty( $value ) && ! is_wp_error( $value ) ) ? wp_list_pluck( $value, 'name' ) : [];
+		} else {
+			$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ), [ 'fields' => $return_value ] );
+		}
+
 		if ( empty( $value ) || is_wp_error( $value ) ) {
 			if ( $multi ) {
 				return [];
@@ -1753,10 +1784,11 @@ class Field {
 	 *
 	 * @param string|array $value Taxonomy term slug or list of slug.
 	 * @param string       $id Field id to identify taxonomy.
+	 * @param int          $post_id Post id to assign the taxonomy term.
 	 *
 	 * @return boolean Return true for sucess term assignd else fail.
 	 */
-	protected static function set_taxonomy_terms( $value, $id ) {
+	protected static function set_taxonomy_terms( $value, $id, $post_id ) {
 
 		if ( empty( $value ) ) {
 			return false;
@@ -1769,7 +1801,7 @@ class Field {
 		}
 
 		$taxonomy = self::get_taxonmy_from_field_id( $id );
-		$terms    = wp_set_object_terms( get_the_ID(), $value, $taxonomy );
+		$terms    = wp_set_object_terms( $post_id, $value, $taxonomy );
 
 		return is_wp_error( $terms ) ? false : true;
 	}

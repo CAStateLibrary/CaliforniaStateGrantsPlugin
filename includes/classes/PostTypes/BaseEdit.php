@@ -68,7 +68,7 @@ abstract class BaseEdit {
 	 *
 	 * @return array
 	 */
-	abstract protected function get_all_meta_fields();
+	abstract public static function get_all_meta_fields();
 
 	/**
 	 * Setup actions and filters with the WordPress API.

@@ -30,6 +30,7 @@ return array(
     'CaGov\\Grants\\PostTypes\\EditGrantAwards' => $baseDir . '/includes/classes/PostTypes/EditGrantAwards.php',
     'CaGov\\Grants\\PostTypes\\GrantAwards' => $baseDir . '/includes/classes/PostTypes/GrantAwards.php',
     'CaGov\\Grants\\PostTypes\\Grants' => $baseDir . '/includes/classes/PostTypes/Grants.php',
+    'CaGov\\Grants\\REST\\AwardeeStatsEndpoint' => $baseDir . '/includes/classes/REST/AwardeeStatsEndpoint.php',
     'CaGov\\Grants\\REST\\BaseEndpoint' => $baseDir . '/includes/classes/REST/BaseEndpoint.php',
     'CaGov\\Grants\\REST\\BulkUploadEndpoint' => $baseDir . '/includes/classes/REST/BulkUploadEndpoint.php',
     'CaGov\\Grants\\REST\\GrantAwardsEndpoint' => $baseDir . '/includes/classes/REST/GrantAwardsEndpoint.php',

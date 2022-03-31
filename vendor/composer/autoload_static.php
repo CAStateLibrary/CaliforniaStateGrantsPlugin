@@ -54,6 +54,7 @@ class ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1
         'CaGov\\Grants\\PostTypes\\EditGrantAwards' => __DIR__ . '/../..' . '/includes/classes/PostTypes/EditGrantAwards.php',
         'CaGov\\Grants\\PostTypes\\GrantAwards' => __DIR__ . '/../..' . '/includes/classes/PostTypes/GrantAwards.php',
         'CaGov\\Grants\\PostTypes\\Grants' => __DIR__ . '/../..' . '/includes/classes/PostTypes/Grants.php',
+        'CaGov\\Grants\\REST\\AwardeeStatsEndpoint' => __DIR__ . '/../..' . '/includes/classes/REST/AwardeeStatsEndpoint.php',
         'CaGov\\Grants\\REST\\BaseEndpoint' => __DIR__ . '/../..' . '/includes/classes/REST/BaseEndpoint.php',
         'CaGov\\Grants\\REST\\BulkUploadEndpoint' => __DIR__ . '/../..' . '/includes/classes/REST/BulkUploadEndpoint.php',
         'CaGov\\Grants\\REST\\GrantAwardsEndpoint' => __DIR__ . '/../..' . '/includes/classes/REST/GrantAwardsEndpoint.php',
