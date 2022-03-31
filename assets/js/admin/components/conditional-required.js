@@ -199,6 +199,9 @@ const maybeSetHiddenClass = el => {
 			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
 				el.querySelector( 'td' ).classList.remove( 'fieldset--is-required' );
 			}
+			if ( el.querySelector( 'th' ) ) {
+				el.querySelector( 'th' ).classList.remove( 'required' );
+			}
 		}
 	} else {
 		el.classList.remove( 'hidden' );
@@ -209,6 +212,9 @@ const maybeSetHiddenClass = el => {
 			}
 			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
 				el.querySelector( 'td' ).classList.add( 'fieldset--is-required' );
+			}
+			if ( el.querySelector( 'th' ) ) {
+				el.querySelector( 'th' ).classList.add( 'required' );
 			}
 		}
 	}
