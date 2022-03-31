@@ -324,6 +324,7 @@ class BulkAwardImport {
 				'key'     => 'failure_email_sent',
 				'compare' => 'NOT EXISTS',
 			),
+			'no_found_rows'  => true,
 		);
 
 		return ( new WP_Query( $query_args ) )->posts;
