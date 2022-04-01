@@ -26,6 +26,13 @@ class BulkAwardImport {
 	public static $hourly_check_job = 'csl_sync_awards';
 
 	/**
+	 * Cron job name to send email about failed bulk uploads.
+	 *
+	 * @var string
+	 */
+	public static $hourly_failure_email_job = 'csl_sync_failed_email';
+
+	/**
 	 * Cron job name to import csv chunk data.
 	 *
 	 * @var string
@@ -53,6 +60,8 @@ class BulkAwardImport {
 		add_action( self::$hourly_check_job, array( $this, 'schedule_import_awards_queue' ) );
 		add_action( self::$import_chunk_job, array( $this, 'import_award_upload_chunk' ), 10, 4 );
 
+		add_action( self::$hourly_failure_email_job, array( $this, 'send_import_failed_email' ) );
+
 		self::$init = true;
 	}
 
@@ -64,6 +73,10 @@ class BulkAwardImport {
 	public function register_cron_jobs() {
 		if ( ! wp_next_scheduled( self::$hourly_check_job ) ) {
 			wp_schedule_event( time(), 'hourly', self::$hourly_check_job );
+		}
+
+		if ( ! wp_next_scheduled( self::$hourly_failure_email_job ) ) {
+			wp_schedule_event( time(), 'hourly', self::$hourly_failure_email_job );
 		}
 	}
 
@@ -104,9 +117,27 @@ class BulkAwardImport {
 			wp_update_post(
 				array(
 					'ID'          => $award_upload->ID,
-					'post_status' => 'failed',
+					'post_status' => 'csl_failed',
 				)
 			);
+		}
+	}
+
+	/**
+	 * Check if there are any failed imports. If yes then send an email.
+	 *
+	 * @return void
+	 */
+	public function send_import_failed_email() {
+		$failed_upload_ids = $this->get_failed_uploads();
+
+		foreach ( $failed_upload_ids as $failed_upload_id ) {
+			/**
+			 * Bulk Award Import failed.
+			 */
+			do_action( 'csl_grants_bulk_award_import_failed', $failed_upload_id );
+
+			update_post_meta( $failed_upload_id, 'failure_email_sent', true );
 		}
 	}
 
@@ -202,7 +233,7 @@ class BulkAwardImport {
 	 */
 	public function import_award_upload_chunk( $csv_chunk, $award_upload, $grant_id, $fiscal_year = null ) {
 
-		if ( 'failed' === get_post_status( $award_upload ) ) {
+		if ( 'csl_failed' === get_post_status( $award_upload ) ) {
 			return;
 		}
 
@@ -234,7 +265,7 @@ class BulkAwardImport {
 				wp_update_post(
 					array(
 						'ID'          => $award_upload->ID,
-						'post_status' => 'failed',
+						'post_status' => 'csl_failed',
 					)
 				);
 				continue;
@@ -264,6 +295,11 @@ class BulkAwardImport {
 	 * @return void
 	 */
 	public function cleanup_award_upload( $award_upload_id ) {
+		/**
+		 * Bulk Award Import was successful.
+		 */
+		do_action( 'csl_grants_bulk_award_import_success', $award_upload_id );
+
 		$csv_file_id = get_post_meta( $award_upload_id, 'csl_award_csv', true );
 
 		if ( ! empty( $csv_file_id ) ) {
@@ -271,5 +307,26 @@ class BulkAwardImport {
 		}
 
 		wp_delete_post( $award_upload_id, true );
+	}
+
+	/**
+	 * Get the list of failed uploads for which the email has not been sent yet.
+	 *
+	 * @return int[] Failed upload ids.
+	 */
+	protected function get_failed_uploads() {
+		$query_args = array(
+			'post_type'      => AwardUploads::CPT_SLUG,
+			'post_status'    => 'csl_failed',
+			'posts_per_page' => 100, // If there are more than 100 failed uploads then they will be processed in the next batch.
+			'fields'         => 'ids',
+			'meta_query'     => array(
+				'key'     => 'failure_email_sent',
+				'compare' => 'NOT EXISTS',
+			),
+			'no_found_rows'  => true,
+		);
+
+		return ( new WP_Query( $query_args ) )->posts;
 	}
 }

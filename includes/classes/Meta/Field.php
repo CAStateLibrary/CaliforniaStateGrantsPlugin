@@ -239,6 +239,7 @@ class Field {
 		}
 
 		$type          = $meta_field['type'] ?? '';
+		$is_number     = ( 'number' === $type );
 		$name          = $meta_field['name'] ?? '';
 		$description   = $meta_field['description'] ?? '';
 		$id            = $meta_field['id'] ?? '';
@@ -248,13 +249,20 @@ class Field {
 		$maxlength     = $meta_field['maxlength'] ?? '';
 		$default_value = $meta_field['default_value'] ?? '';
 		$value         = $meta_field['meta_value'] ?? '';
-		$value         = $value ?: get_post_meta( $post_id, $id, true );
-		$value         = empty( $value ) ? $default_value : $value;
-		$minnumber     = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
-		$maxnumber     = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
-		$disabled      = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled="disabled"';
-		$readonly      = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
-		$accept_ext    = '';
+		$minnumber  = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
+		$maxnumber  = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
+		$disabled   = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled="disabled"';
+		$readonly   = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
+		$accept_ext = '';
+
+		if ( $is_number ) {
+			// Keep 0 as valid value.
+			$value = ( is_numeric( $value ) && 0 <= $value ) ? (int) $value : get_post_meta( $post_id, $id, true );
+			$value = ( is_numeric( $value ) && 0 <= $value ) ? (int) $value : $default_value;
+		} else {
+			$value = $value ?: get_post_meta( $post_id, $id, true );
+			$value = empty( $value ) ? $default_value : $value;
+		}
 
 		if ( 'file' === $meta_field['type'] && ! empty( $meta_field['accepted-ext'] ) && is_array( $meta_field['accepted-ext'] ) ) {
 			$accept_ext = sprintf( 'accept=%s', implode( ',', $meta_field['accepted-ext'] ) );
