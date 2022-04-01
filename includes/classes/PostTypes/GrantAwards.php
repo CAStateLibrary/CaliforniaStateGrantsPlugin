@@ -52,7 +52,7 @@ class GrantAwards {
 		$args = array(
 			'labels'             => $this->get_labels(),
 			'description'        => __( 'California State Grant Awards.', 'ca-grants-plugin' ),
-			'public'             => true,
+			'public'             => false,
 			'publicly_queryable' => false,
 			'show_ui'            => true,
 			'show_in_menu'       => true,

@@ -41,10 +41,6 @@ class EditGrantAwards extends BaseEdit {
 	public function __construct() {
 		parent::__construct();
 		$this->meta_groups = array(
-			'award-stats' => array(
-				'class' => 'CaGov\\Grants\\Meta\\GrantAwardStats',
-				'title' => __( 'Grant Award Stats', 'ca-grants-plugin' ),
-			),
 			'grantAwards' => array(
 				'class' => 'CaGov\\Grants\\Meta\\GrantAwards',
 				'title' => __( 'Grant Awards', 'ca-grants-plugin' ),
