@@ -106,7 +106,6 @@ class AwardStats {
 				'type'          => 'number',
 				'description'   => __( 'Enter the total applications received for this funding opportunity.', 'ca-grants-plugin' ),
 				'min'           => 0,
-				'default_value' => 0,
 			),
 			array(
 				'id'            => 'grantsAwarded',
@@ -114,7 +113,6 @@ class AwardStats {
 				'type'          => 'number',
 				'description'   => __( 'Enter the number of individual grants awarded for this grant opportunity. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'min'           => 0,
-				'default_value' => 0,
 			),
 		);
 
