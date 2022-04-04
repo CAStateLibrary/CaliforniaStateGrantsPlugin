@@ -298,7 +298,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			}
 
 			if ( 'portal-api' === $metafield_data['source'] ) {
-				$new_data[ $metafield_data['id'] ] = Meta\Field::get_value_from_taxonomy( $metafield_data['id'], $post->ID, 'checkbox' === $metafield_data['type'], 'name' );
+				$new_data[ $metafield_data['id'] ] = Meta\Field::get_value_from_taxonomy( $metafield_data['id'], $post->ID, 'checkbox' === $metafield_data['type'], 'names' );
 			}
 		}
 

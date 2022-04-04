@@ -1673,13 +1673,18 @@ class Field {
 					break;
 				case 'number':
 				case 'save_to_field':
-					$is_invalid = Validators\validate_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
+					$save_to_value = is_numeric( $data[ $id ] ) ? (int) $data[ $id ] : 0;
+					$is_invalid    = Validators\validate_int( $save_to_value ) ? ( $save_to_value <= 0 ) : true;
 					break;
 				case 'text':
 				case 'textarea':
-					$max_chars  = $field['maxlength'] ?: strlen( $data[ $id ] );
-					$max_chars  = $field['text_limit'] ?: $max_chars;
-					$is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
+					 $max_chars = $field['maxlength'] ?: strlen( $data[ $id ] );
+
+					 if ( isset( $field['text_limit'] ) && ! empty( $field['text_limit'] ) ) {
+						  $max_chars = $field['text_limit'];
+					 }
+
+					 $is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
 					break;
 				case 'checkbox':
 				case 'select':
@@ -1771,12 +1776,7 @@ class Field {
 			$post_id = get_the_ID();
 		}
 
-		if ( 'name' === $return_value ) {
-			$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ) );
-			$value = ( ! empty( $value ) && ! is_wp_error( $value ) ) ? wp_list_pluck( $value, 'name' ) : [];
-		} else {
-			$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ), [ 'fields' => $return_value ] );
-		}
+		$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ), [ 'fields' => $return_value ] );
 
 		if ( empty( $value ) || is_wp_error( $value ) ) {
 			if ( $multi ) {
