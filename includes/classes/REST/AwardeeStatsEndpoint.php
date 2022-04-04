@@ -137,14 +137,6 @@ class AwardeeStatsEndpoint extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( $post_type->cap->edit_others_posts ) ) {
-			return new WP_Error(
-				'rest_cannot_edit_others',
-				__( 'Sorry, you are not allowed to update awardee stats as this user.', 'ca-grants-plugin' ),
-				array( 'status' => rest_authorization_required_code() )
-			);
-		}
-
 		return true;
 	}
 
