@@ -1765,12 +1765,7 @@ class Field {
 			$post_id = get_the_ID();
 		}
 
-		if ( 'name' === $return_value ) {
-			$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ) );
-			$value = ( ! empty( $value ) && ! is_wp_error( $value ) ) ? wp_list_pluck( $value, 'name' ) : [];
-		} else {
-			$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ), [ 'fields' => $return_value ] );
-		}
+		$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ), [ 'fields' => $return_value ] );
 
 		if ( empty( $value ) || is_wp_error( $value ) ) {
 			if ( $multi ) {
