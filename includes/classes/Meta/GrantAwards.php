@@ -94,7 +94,6 @@ class GrantAwards {
 				'type'        => 'text',
 				'description' => __( 'The project title must match the title provided in the application.', 'ca-grants-plugin' ),
 				'maxlength'   => 300,
-				'required'    => true,
 			),
 			array(
 				'id'          => 'recipientType',
