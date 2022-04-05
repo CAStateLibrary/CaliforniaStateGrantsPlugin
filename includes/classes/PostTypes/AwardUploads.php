@@ -235,7 +235,7 @@ class AwardUploads {
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_post_status' ) );
-		add_action( 'admin_menu', array( $this, 'remove_submenu_pages' ), 11 );
+		add_action( 'admin_head', array( $this, 'remove_submenu_pages' ) );
 		add_action( 'load-post-new.php', array( $this, 'redirect_add_new_to_bulk_upload' ) );
 
 		// Post edit screen.

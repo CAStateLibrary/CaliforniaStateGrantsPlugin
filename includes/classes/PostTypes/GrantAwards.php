@@ -65,7 +65,7 @@ class GrantAwards {
 			'hierarchical'       => false,
 			'menu_icon'          => 'dashicons-awards',
 			'menu_position'      => null,
-			'supports'           => array( 'title', 'author' ),
+			'supports'           => array( 'author' ),
 		);
 
 		/**
