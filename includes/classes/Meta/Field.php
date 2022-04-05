@@ -1424,11 +1424,10 @@ class Field {
 	 * @return void
 	 */
 	public static function sanitize_and_save_fields( $meta_fields, $post_id, $data ) {
-
 		foreach ( $meta_fields as $meta_field ) {
 			$value = array();
 
-			if ( empty( $data[ $meta_field['id'] ] ) ) {
+			if ( ! isset( $data[ $meta_field['id'] ] ) ) {
 				delete_post_meta( $post_id, $meta_field['id'] );
 				continue;
 			}
@@ -1582,7 +1581,10 @@ class Field {
 			 */
 			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
 
-			if ( ! empty( $post_id ) && ! empty( $value ) ) {
+			// Allow 0 to be saved if the field type is a number.
+			$is_numeric_zero = 'number' === $meta_field['type'] && 0 === $value;
+
+			if ( ! empty( $post_id ) && ( ! empty( $value ) || $is_numeric_zero ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );
 			}
 		}

@@ -19,8 +19,9 @@ a.a11y-tip__trigger {
 	display: none;
 }
 
-th.required::before {
+th.required label::after {
 	content: "*";
+	padding-left: 0.2rem;
 }
 
 .form-field-group-wrapper > td {
