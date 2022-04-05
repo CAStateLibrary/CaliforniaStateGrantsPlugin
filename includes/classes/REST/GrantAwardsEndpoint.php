@@ -205,7 +205,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		if ( ! empty( $orderby ) ) {
 			$orderby_mappings = array(
 				'date'       => 'date', // Post Date
-				'name'       => 'title', // Post Title
+				'name'       => 'projectTitle', // Project Title
 				'project'    => 'projectTitle', // Project Title
 				'amount'     => 'totalAwardAmount', // Total Award Amount
 				'start_date' => 'grantFundedStartDate', // Beginning Date of Grant-Funded Project
@@ -248,7 +248,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		);
 
 		$new_data     = array(
-			'grantAwardTitle' => get_the_title( $post->ID ),
+			'grantAwardTitle' => get_post_meta( $post->ID, 'projectTitle', true ),
 			'uniqueID'        => $post->ID,
 		);
 		$new_response = new WP_REST_Response();
