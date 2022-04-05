@@ -205,7 +205,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		if ( ! empty( $orderby ) ) {
 			$orderby_mappings = array(
 				'date'       => 'date', // Post Date
-				'name'       => 'title', // Post Title
+				'name'       => 'title', // Post title
 				'project'    => 'projectTitle', // Project Title
 				'amount'     => 'totalAwardAmount', // Total Award Amount
 				'start_date' => 'grantFundedStartDate', // Beginning Date of Grant-Funded Project
