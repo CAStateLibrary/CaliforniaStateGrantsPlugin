@@ -1451,7 +1451,15 @@ class Field {
 					$value = absint( $data[ $meta_field['id'] ] );
 					break;
 				case 'datetime-local':
-					$value = strtotime( $data[ $meta_field['id'] ] );
+					$date          = new DateTime( $data[ $meta_field['id'] ] );
+					$is_valid_date = ( $date && $date->format( 'c' ) );
+					$max_date   = $meta_field['max_date'] ? new DateTime( $data[ $meta_field['max_date'] ] ) : false;
+					$min_date   = $meta_field['min_date'] ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
+					$is_valid_date = ( $max_date && $date < $max_date ) || ( $min_date && $date > $min_date );
+
+					if ( $is_valid_date ) {
+						$value = strtotime( $data[ $meta_field['id'] ] );
+					}
 					break;
 				case 'textarea':
 					$value = wp_kses_post( $data[ $meta_field['id'] ] );
