@@ -1605,7 +1605,7 @@ class Field {
 			$id = $field['id'];
 
 			// Check if data has value for required fields.
-			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && empty( $data[ $id ] ) ) {
+			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && ! isset( $data[ $id ] ) ) {
 				$errors->add(
 					'validation_error',
 					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
@@ -1617,9 +1617,9 @@ class Field {
 			if (
 				! empty( $field['visible'] )
 				&& ! empty( $field['visible']['required'] )
-				&& empty( $data[ $id ] )
+				&& ! isset( $data[ $id ] )
 				&& (
-					empty( $data[ $field['visible']['fieldId'] ] )
+					! isset( $data[ $field['visible']['fieldId'] ] )
 					||
 					( // Case: field is required only when dependent field is not equal to specific value.
 						'not_equal' === $field['visible']['compare']
