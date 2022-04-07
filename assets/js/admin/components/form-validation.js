@@ -69,13 +69,22 @@ const setupForms = () => {
 			},
 			isRangeValid: ( field ) => {
 				// Bail early.
-				if ( ! field.matches( '[name*="[low]"], [name*="[high]"]' ) ) {
+				if ( ! field.matches( '[name*="[low]"], [name*="[high]"], [name*="[first]"], [name*="[second]"]' ) ) {
 					return false;
 				}
 
 				const fieldset = field.closest( 'td' );
-				const lowField = fieldset.querySelector( '[name*="[low]"]' );
-				const highField = fieldset.querySelector( '[name*="[high]"]' );
+				let lowField = fieldset.querySelector( '[name*="[low]"]' );
+				let highField = fieldset.querySelector( '[name*="[high]"]' );
+
+				if ( ! lowField ) {
+					lowField = fieldset.querySelector( '[name*="[first]"]' );
+				}
+
+				if ( ! highField ) {
+					highField = fieldset.querySelector( '[name*="[second]"]' );
+				}
+
 				const low = parseInt( lowField.value );
 				const high = parseInt( highField.value );
 
@@ -98,7 +107,7 @@ const setupForms = () => {
 				}
 
 				// Check if high is indeed higher than low
-				if ( low <= high ) {
+				if ( low < high ) {
 					return false;
 				}
 
@@ -204,12 +213,12 @@ const setupForms = () => {
 			isAwardAmountValid: ( field ) => {
 
 				// Bail early.
-				if ( ! field.matches( '[name="estimatedAmounts[same][amount]"], [name="estimatedAmounts[range][low]"], [name="estimatedAmounts[range][high]"], [name="estimatedAvailableFunds"]' ) ) {
+				if ( ! field.matches( '[name="estimatedAmounts[same][amount]"], [name="estimatedAmounts[range][low]"], [name="estimatedAmounts[range][high]"], [name="estimatedAvailableFunds"], [name="estimatedAmounts[unknown][first]"], [name="estimatedAmounts[unknown][second]"]' ) ) {
 					return false;
 				}
 
 				const totalFundingField = document.querySelector( '[name="estimatedAvailableFunds"]' );
-				const estimatedAmountFields = document.querySelectorAll( '[name="estimatedAmounts[same][amount]"], [name="estimatedAmounts[range][low]"], [name="estimatedAmounts[range][high]"]' );
+				const estimatedAmountFields = document.querySelectorAll( '[name="estimatedAmounts[same][amount]"], [name="estimatedAmounts[range][low]"], [name="estimatedAmounts[range][high]"],[name="estimatedAmounts[unknown][first]"], [name="estimatedAmounts[unknown][second]"]' );
 				const { value: totalFunding } = totalFundingField;
 				const { value: estimatedAmount } = field;
 
@@ -377,7 +386,7 @@ const handleBouncerRemoveRangeError = ( event ) => {
 	const { target: field } = event;
 
 	// Bail early.
-	if ( ! field.matches( '[name*="[low]"], [name*="[high]"]' ) ) {
+	if ( ! field.matches( '[name*="[low]"], [name*="[high]"], [name*="[first]"], [name*="[second]"]' ) ) {
 		return;
 	}
 
