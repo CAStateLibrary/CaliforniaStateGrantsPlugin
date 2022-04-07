@@ -1416,7 +1416,10 @@ class Field {
 		foreach ( $meta_fields as $meta_field ) {
 			$value = array();
 
-			if ( ! isset( $data[ $meta_field['id'] ] ) ) {
+			// If a text or textarea field is an empty string, delete the post meta entirely.
+			$is_empty_text = ( 'text' === $meta_field['type'] || 'textarea' === $meta_field['type'] ) && empty( trim( $data[ $meta_field['id'] ] ) );
+
+			if ( ! isset( $data[ $meta_field['id'] ] ) || $is_empty_text ) {
 				delete_post_meta( $post_id, $meta_field['id'] );
 				continue;
 			}
