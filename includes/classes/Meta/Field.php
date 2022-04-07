@@ -683,7 +683,7 @@ class Field {
 		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
+			<th class="<?php echo ( isset( $meta_field['required'] ) && $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>

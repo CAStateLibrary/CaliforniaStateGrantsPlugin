@@ -132,7 +132,10 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( 'edit_grant', $grant->ID ) ) {
+		$grant_post_type_obj = get_post_type_object( Grants::get_cpt_slug() );
+		$edit_cap            = ! empty( $grant_post_type_obj->cap->edit_post ) ? $grant_post_type_obj->cap->edit_post : 'edit_post';
+
+		if ( ! current_user_can( $edit_cap, $grant->ID ) ) {
 			return new WP_Error(
 				'rest_cannot_edit_others',
 				__( 'Sorry, you are not allowed to create upload award as this user.', 'ca-grants-plugin' ),
