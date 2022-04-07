@@ -991,7 +991,7 @@ class Field {
 		// Get the saved data
 		$value = $meta_field['meta_value'] ?? '';
 		$value = $value ?: get_post_meta( get_the_ID(), $id, true );
-		$value = $value ? gmdate( 'Y-m-d\TH:m', $value ) : $value;
+		$value = $value ? gmdate( 'Y-m-d\TH:i', $value ) : $value;
 		?>
 		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
