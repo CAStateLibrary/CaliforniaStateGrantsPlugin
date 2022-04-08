@@ -1454,7 +1454,14 @@ class Field {
 					$is_valid_date = ( $date && $date->format( 'c' ) );
 					$max_date   = $meta_field['max_date'] ? new DateTime( $data[ $meta_field['max_date'] ] ) : false;
 					$min_date   = $meta_field['min_date'] ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
-					$is_valid_date = ( $max_date && $date < $max_date ) || ( $min_date && $date > $min_date );
+
+					if ( $is_valid_date && $max_date instanceof DateTime ) {
+						$is_valid_date = $date < $max_date;
+					}
+
+					if ( $is_valid_date && $min_date instanceof DateTime ) {
+						$is_valid_date = $date > $min_date;
+					}
 
 					if ( $is_valid_date ) {
 						$value = strtotime( $data[ $meta_field['id'] ] );
