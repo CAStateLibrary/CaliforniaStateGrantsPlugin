@@ -40,6 +40,8 @@ class GrantAwards {
 		add_action( 'restrict_manage_posts', array( $this, 'add_post_filters' ) );
 		add_action( 'parse_query', array( $this, 'filter_query' ) );
 
+		add_filter( 'ep_indexable_post_types', [ $this, 'include_in_es_index' ], 10, 1 );
+
 		self::$init = true;
 	}
 
@@ -167,5 +169,21 @@ class GrantAwards {
 		$wp_query->set( 'meta_key', 'grantID' );
 		$wp_query->set( 'meta_value', $grant_id );
 		$wp_query->set( 'meta_compare', '=' );
+	}
+
+	/**
+	 * Include Grant Awards CPT in the list of CPT's that should be indexed in ES.
+	 * Grant Awards are excluded by default since it is a private post type.
+	 *
+	 * @param array $post_types List of post types.
+	 *
+	 * @return array Modified list of post types.
+	 */
+	public function include_in_es_index( $post_types ) {
+		if ( ! in_array( self::CPT_SLUG, $post_types, true ) ) {
+			$post_types[] = self::CPT_SLUG;
+		}
+
+		return $post_types;
 	}
 }
