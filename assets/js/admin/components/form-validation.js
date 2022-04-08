@@ -230,7 +230,41 @@ const setupForms = () => {
 
 				// No conditions are met, assume valid
 				return false;
-			}
+			},
+			isValidStartDate: ( field ) => {
+				// Bail early.
+				if ( ! field.matches( 'input[data-max-date-id]' ) ) {
+					return false;
+				}
+
+				const maxDateElem = document.getElementById( field.dataset.maxDateId );
+
+				if ( ! maxDateElem || ! maxDateElem.value || ! field.value ) {
+					return false;
+				}
+
+				const minDate = new Date( field.value );
+				const maxDate = new Date( maxDateElem.value );
+
+				return ! ( minDate < maxDate );
+			},
+			isValidEndDate: ( field ) => {
+				// Bail early.
+				if ( ! field.matches( 'input[data-min-date-id]' ) ) {
+					return false;
+				}
+
+				const minDateElem = document.getElementById( field.dataset.minDateId );
+
+				if ( ! minDateElem || ! minDateElem.value || ! field.value ) {
+					return false;
+				}
+
+				const minDate = new Date( minDateElem.value );
+				const maxDate = new Date( field.value );
+
+				return ! ( minDate < maxDate );
+			},
 		},
 		messages: {
 			hasRequiredCheckboxes: 'Please check at least one value.',
@@ -239,6 +273,8 @@ const setupForms = () => {
 			isRangeValid: 'Invalid range. Please check that the first number is lower than the second one.',
 			isMatchingFundValid: 'Please set a matched funding percentage.',
 			isAwardAmountValid: 'Please check that this number is lower than the Total Estimated Available Funding.',
+			isValidStartDate: 'Start date is invalid, please select start date before end date.',
+			isValidEndDate: 'End date is invalid, please select end date after start date.',
 		},
 		disableSubmit: true // We need to handle some additional logic here for save/continue
 	} );
@@ -394,6 +430,22 @@ const handleBouncerShowFielsetError = ( event ) => {
 };
 
 /**
+ * Scroll to First Error
+ * @param {object} invalidFields fields returned that are not valid.
+ */
+const scrollToFirstError = ( invalidFields ) => {
+	const [ firstField ] = invalidFields;
+	const elementToScroll = firstField.closest( 'input' );
+
+	elementToScroll.scrollIntoView( {
+		behavior: 'smooth',
+		block: 'start',
+		inline: 'nearest'
+	} );
+};
+
+
+/**
  * Handle form click
  * @param {object} event the event object
  */
@@ -412,6 +464,7 @@ const handleFormClick = ( event ) => {
 	// Bail if not.
 	if ( invalidFields.length ) {
 		event.preventDefault();
+		scrollToFirstError( invalidFields );
 		return;
 	}
 
@@ -442,6 +495,7 @@ const handleFormSubmit = ( event ) => {
 
 		if ( invalidFields.length ) {
 			event.preventDefault();
+			scrollToFirstError( invalidFields );
 			return;
 		}
 	}

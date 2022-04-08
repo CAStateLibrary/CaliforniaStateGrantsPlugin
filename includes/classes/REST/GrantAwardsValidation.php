@@ -133,7 +133,7 @@ class GrantAwardsValidation extends WP_REST_Controller {
 			}
 
 			$schema_args[ $meta['id'] ] = array(
-				'description' => $meta['name'],
+				'description' => isset( $meta['name'] ) ? $meta['name'] : '',
 				'type'        => $type,
 				'context'     => array( 'edit' ),
 			);

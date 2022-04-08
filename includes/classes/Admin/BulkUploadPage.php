@@ -264,6 +264,7 @@ class BulkUploadPage {
 				'description'  => __( 'Select the Fiscal Year to import awards for.', 'ca-grants-plugin' ),
 				'meta_value'   => $closed_fiscal_year,
 				'hidden_field' => ! empty( $closed_fiscal_year ),
+				'required'     => true,
 			),
 			array(
 				'id'           => 'awardCSV',
@@ -317,6 +318,7 @@ class BulkUploadPage {
 			return;
 		}
 
+		
 		if ( ! empty( $this->notices['success'] ) ) :
 			$admin_url = admin_url( sprintf( 'post.php?post=%d&action=edit', esc_html( $this->notices['success'] ) ) );
 			?>
@@ -328,6 +330,7 @@ class BulkUploadPage {
 		</div>
 			<?php
 		elseif ( ! empty( $this->notices['fail'] ) ) :
+			$this->notices['fail'] = (array) $this->notices['fail'];
 			?>
 		<div class="notice notice-error is-dismissible">
 			<?php

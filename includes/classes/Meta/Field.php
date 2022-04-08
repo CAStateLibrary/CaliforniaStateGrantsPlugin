@@ -685,7 +685,7 @@ class Field {
 		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
+			<th class="<?php echo ( isset( $meta_field['required'] ) && $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -839,14 +839,14 @@ class Field {
 
 				<input <?php checked( $value['checkbox'], 'same' ); ?> type="radio" id="<?php echo esc_attr( $id . '-same' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="same" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-same' ); ?>"><?php esc_html_e( 'Same amount each award: ', 'ca-grants-plugin' ); ?></label>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-same-amount" name="<?php echo esc_attr( $id ); ?>[same][amount]" value="<?php echo esc_attr( $value['same']['amount'] ); ?>"/>
+				<input type="number" min="0" id="<?php echo esc_attr( $id ); ?>-same-amount" name="<?php echo esc_attr( $id ); ?>[same][amount]" value="<?php echo esc_attr( $value['same']['amount'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'unknown' ); ?> type="radio" id="<?php echo esc_attr( $id . '-unknown' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="unknown" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-unknown' ); ?>"><?php esc_html_e( 'Amount per award may range  between:', 'ca-grants-plugin' ); ?></label>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-unknown-first" name="<?php echo esc_attr( $id ); ?>[unknown][first]" value="<?php echo esc_attr( $value['unknown']['first'] ); ?>"/>
+				<input type="number" min="0" id="<?php echo esc_attr( $id ); ?>-unknown-first" name="<?php echo esc_attr( $id ); ?>[unknown][first]" value="<?php echo esc_attr( $value['unknown']['first'] ); ?>"/>
 				<?php esc_html_e( ' to ', 'ca-grants-plugin' ); ?>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-unknown-second" name="<?php echo esc_attr( $id ); ?>[unknown][second]" value="<?php echo esc_attr( $value['unknown']['second'] ); ?>"/>
+				<input type="number" min="0" id="<?php echo esc_attr( $id ); ?>-unknown-second" name="<?php echo esc_attr( $id ); ?>[unknown][second]" value="<?php echo esc_attr( $value['unknown']['second'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant" <?php self::conditional_required( $meta_field ); ?>>
@@ -900,14 +900,14 @@ class Field {
 			<td>
 				<input <?php checked( $value['checkbox'], 'exact' ); ?> type="radio" id="<?php echo esc_attr( $id . '-exactly' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="exact" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-exactly' ); ?>"><?php esc_html_e( 'Exactly: ', 'ca-grants-plugin' ); ?></label>
-				<input class="small-text" type="number" id="<?php echo esc_attr( $id ); ?>-exactly" name="<?php echo esc_attr( $id ); ?>[exact]" value="<?php echo esc_attr( $value['exact'] ); ?>"/>
+				<input class="small-text" type="number" min="0" id="<?php echo esc_attr( $id ); ?>-exactly" name="<?php echo esc_attr( $id ); ?>[exact]" value="<?php echo esc_attr( $value['exact'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'between' ); ?> type="radio" id="<?php echo esc_attr( $id . '-between' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="between" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-between' ); ?>"><?php esc_html_e( 'Between', 'ca-grants-plugin' ); ?></label>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-between-first" name="<?php echo esc_attr( $id ); ?>[between][low]" value="<?php echo esc_attr( $value['between']['low'] ); ?>"/>
+				<input type="number" min="0" id="<?php echo esc_attr( $id ); ?>-between-first" name="<?php echo esc_attr( $id ); ?>[between][low]" value="<?php echo esc_attr( $value['between']['low'] ); ?>"/>
 				<?php esc_html_e( ' and ', 'ca-grants-plugin' ); ?>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-between-second" name="<?php echo esc_attr( $id ); ?>[between][high]" value="<?php echo esc_attr( $value['between']['high'] ); ?>"/>
+				<input type="number" min="0" id="<?php echo esc_attr( $id ); ?>-between-second" name="<?php echo esc_attr( $id ); ?>[between][high]" value="<?php echo esc_attr( $value['between']['high'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant" <?php self::conditional_required( $meta_field ); ?>>
@@ -959,7 +959,7 @@ class Field {
 
 				<input <?php checked( $value['checkbox'], 'yes' ); ?> type="radio" id="<?php echo esc_attr( $id . '-yes' ); ?>" name="<?php echo esc_attr( $id ); ?>" value="yes" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-yes' ); ?>"><?php esc_html_e( 'Yes, with matching percentage: ', 'ca-grants-plugin' ); ?></label>
-				<input class="small-text" type="number" max="100" name="<?php echo esc_attr( $id ); ?>-percentage" value="<?php echo esc_attr( $value['percentage'] ); ?>"/>
+				<input class="small-text" type="number" min="0" max="100" name="<?php echo esc_attr( $id ); ?>-percentage" value="<?php echo esc_attr( $value['percentage'] ); ?>"/>
 			</td>
 		</tr>
 
@@ -993,7 +993,7 @@ class Field {
 		// Get the saved data
 		$value = $meta_field['meta_value'] ?? '';
 		$value = $value ?: get_post_meta( get_the_ID(), $id, true );
-		$value = $value ? gmdate( 'Y-m-d\TH:m', $value ) : $value;
+		$value = $value ? gmdate( 'Y-m-d\TH:i', $value ) : $value;
 		?>
 		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
@@ -1424,11 +1424,10 @@ class Field {
 	 * @return void
 	 */
 	public static function sanitize_and_save_fields( $meta_fields, $post_id, $data ) {
-
 		foreach ( $meta_fields as $meta_field ) {
 			$value = array();
 
-			if ( empty( $data[ $meta_field['id'] ] ) ) {
+			if ( ! isset( $data[ $meta_field['id'] ] ) ) {
 				delete_post_meta( $post_id, $meta_field['id'] );
 				continue;
 			}
@@ -1462,7 +1461,15 @@ class Field {
 					$value = absint( $data[ $meta_field['id'] ] );
 					break;
 				case 'datetime-local':
-					$value = strtotime( $data[ $meta_field['id'] ] );
+					$date          = new DateTime( $data[ $meta_field['id'] ] );
+					$is_valid_date = ( $date && $date->format( 'c' ) );
+					$max_date   = $meta_field['max_date'] ? new DateTime( $data[ $meta_field['max_date'] ] ) : false;
+					$min_date   = $meta_field['min_date'] ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
+					$is_valid_date = ( $max_date && $date < $max_date ) || ( $min_date && $date > $min_date );
+
+					if ( $is_valid_date ) {
+						$value = strtotime( $data[ $meta_field['id'] ] );
+					}
 					break;
 				case 'textarea':
 					$value = wp_kses_post( $data[ $meta_field['id'] ] );
@@ -1577,7 +1584,10 @@ class Field {
 			 */
 			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
 
-			if ( ! empty( $post_id ) && ! empty( $value ) ) {
+			// Allow 0 to be saved if the field type is a number.
+			$is_numeric_zero = 'number' === $meta_field['type'] && 0 === $value;
+
+			if ( ! empty( $post_id ) && ( ! empty( $value ) || $is_numeric_zero ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );
 			}
 		}
@@ -1598,7 +1608,7 @@ class Field {
 			$id = $field['id'];
 
 			// Check if data has value for required fields.
-			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && empty( $data[ $id ] ) ) {
+			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && ! isset( $data[ $id ] ) ) {
 				$errors->add(
 					'validation_error',
 					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
@@ -1610,9 +1620,9 @@ class Field {
 			if (
 				! empty( $field['visible'] )
 				&& ! empty( $field['visible']['required'] )
-				&& empty( $data[ $id ] )
+				&& ! isset( $data[ $id ] )
 				&& (
-					empty( $data[ $field['visible']['fieldId'] ] )
+					! isset( $data[ $field['visible']['fieldId'] ] )
 					||
 					( // Case: field is required only when dependent field is not equal to specific value.
 						'not_equal' === $field['visible']['compare']
@@ -1673,13 +1683,18 @@ class Field {
 					break;
 				case 'number':
 				case 'save_to_field':
-					$is_invalid = Validators\validate_int( $data[ $id ] ) ? ( $data[ $id ] <= 0 ) : true;
+					$save_to_value = is_numeric( $data[ $id ] ) ? (int) $data[ $id ] : 0;
+					$is_invalid    = Validators\validate_int( $save_to_value ) ? ( $save_to_value <= 0 ) : true;
 					break;
 				case 'text':
 				case 'textarea':
-					$max_chars  = $field['maxlength'] ?: strlen( $data[ $id ] );
-					$max_chars  = $field['text_limit'] ?: $max_chars;
-					$is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
+					 $max_chars = $field['maxlength'] ?: strlen( $data[ $id ] );
+
+					 if ( isset( $field['text_limit'] ) && ! empty( $field['text_limit'] ) ) {
+						  $max_chars = $field['text_limit'];
+					 }
+
+					 $is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
 					break;
 				case 'checkbox':
 				case 'select':
@@ -1771,12 +1786,7 @@ class Field {
 			$post_id = get_the_ID();
 		}
 
-		if ( 'name' === $return_value ) {
-			$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ) );
-			$value = ( ! empty( $value ) && ! is_wp_error( $value ) ) ? wp_list_pluck( $value, 'name' ) : [];
-		} else {
-			$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ), [ 'fields' => $return_value ] );
-		}
+		$value = wp_get_post_terms( $post_id, self::get_taxonmy_from_field_id( $id ), [ 'fields' => $return_value ] );
 
 		if ( empty( $value ) || is_wp_error( $value ) ) {
 			if ( $multi ) {
