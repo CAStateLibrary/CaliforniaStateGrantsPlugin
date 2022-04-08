@@ -430,6 +430,22 @@ const handleBouncerShowFielsetError = ( event ) => {
 };
 
 /**
+ * Scroll to First Error
+ * @param {object} invalidFields fields returned that are not valid.
+ */
+const scrollToFirstError = ( invalidFields ) => {
+	const [ firstField ] = invalidFields;
+	const elementToScroll = firstField.closest( 'input' );
+
+	elementToScroll.scrollIntoView( {
+		behavior: 'smooth',
+		block: 'start',
+		inline: 'nearest'
+	} );
+};
+
+
+/**
  * Handle form click
  * @param {object} event the event object
  */
@@ -448,6 +464,7 @@ const handleFormClick = ( event ) => {
 	// Bail if not.
 	if ( invalidFields.length ) {
 		event.preventDefault();
+		scrollToFirstError( invalidFields );
 		return;
 	}
 
@@ -478,6 +495,7 @@ const handleFormSubmit = ( event ) => {
 
 		if ( invalidFields.length ) {
 			event.preventDefault();
+			scrollToFirstError( invalidFields );
 			return;
 		}
 	}
