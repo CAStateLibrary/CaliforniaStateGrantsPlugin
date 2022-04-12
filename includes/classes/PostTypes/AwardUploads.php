@@ -143,7 +143,7 @@ class AwardUploads {
 			$row['fiscalYear'] = $data['fiscalYear'] ?: '';
 
 			$edit_award_class = new EditGrantAwards();
-			$validated_data   = $edit_award_class->validate_fields( array_filter( $row ) );
+			$validated_data   = $edit_award_class->validate_fields( $row );
 
 			if ( is_wp_error( $validated_data ) && $validated_data->has_errors() ) {
 				$messages = $validated_data->get_error_messages();
