@@ -27,7 +27,6 @@ function validate_field( $key, $value, $post_data ) {
 		case 'agencyURL':
 		case 'subscribe':
 		case 'events':
-		case 'applicantTypeSuggestion':
 		case 'anticipatedOpenDate':
 			return Validators\validate_string( $value );
 		case 'isForecasted':
