@@ -297,6 +297,23 @@ const setupForms = () => {
 		input.value = 0; // Default is to continue
 
 		form.appendChild( input );
+
+		const inputMaxLimitFields = Array.from( form.querySelectorAll( 'input[maxlength]' ) );
+
+		inputMaxLimitFields.forEach( input => {
+			if ( ! input.getAttribute( 'maxlength' ) || ! input.id ) {
+				return;
+			}
+
+			input.addEventListener( 'input', handleMaxLimitReachedField );
+			// Use keyup to trigger input value once max limit reached and input field doesn't allow adding char anymore.
+			input.addEventListener( 'keyup', handleMaxLimitReachedField );
+
+			const span = document.createElement( 'span' );
+			span.setAttribute( 'id', `${input.id}-characters` );
+			span.textContent = `${input.value.length} of ${input.getAttribute( 'maxlength' )} characters`;
+			input.parentNode.appendChild( span );
+		} );
 	} );
 };
 
@@ -315,6 +332,40 @@ const setupListeners = () => {
 		form.addEventListener( 'click', handleFormClick );
 		form.addEventListener( 'submit', handleFormSubmit );
 	} );
+};
+
+/**
+ * Handle input field edit/keyup event.
+ *
+ * @param {object} event
+ */
+const handleMaxLimitReachedField = ( event ) => {
+	const elem = event.target;
+	const maxLength = parseInt( elem.getAttribute( 'maxlength' ), 10 );
+	const currentValueLength = parseInt( elem.value.length, 10 );
+	const span = document.getElementById( `${elem.id}-characters` );
+	span.textContent = `${currentValueLength} of ${maxLength} characters`;
+
+	if ( currentValueLength >= maxLength ) {
+		elem.setAttribute( 'aria-invalid', true );
+
+		const message = elem.parentNode.querySelector( '.error-message' );
+
+		if ( ! message ) {
+			const errorMessage = document.createElement( 'div' );
+			errorMessage.setAttribute( 'id', `bouncer-error_${elem.name}` );
+			errorMessage.classList.add( 'error-message' );
+			errorMessage.textContent = 'Maximum characters limit reached.';
+			elem.parentNode.appendChild( errorMessage );
+		}
+	} else {
+		elem.setAttribute( 'aria-invalid', false );
+		const message = elem.parentNode.querySelector( '.error-message' );
+
+		if ( message ) {
+			elem.parentNode.removeChild( message );
+		}
+	}
 };
 
 /**
