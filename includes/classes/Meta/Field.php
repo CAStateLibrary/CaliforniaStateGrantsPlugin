@@ -1639,9 +1639,6 @@ class Field {
 				&& empty( $data[ $id ] )
 				&& ! $is_numeric_zero
 				&& (
-					( isset( $data[ $field['visible']['fieldId'] ] ) && empty( $data[ $field['visible']['fieldId'] ] ) && 0 !== $data[ $field['visible']['fieldId'] ] )
-					|| empty( $data[ $field['visible']['fieldId'] ] )
-					||
 					( // Case: field is required only when dependent field is not equal to specific value.
 						'not_equal' === $field['visible']['compare']
 						&& (
