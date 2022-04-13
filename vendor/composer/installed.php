@@ -5,7 +5,7 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'e59d475294defd0bec8ef96af63926ffeb13acbd',
+        'reference' => 'af946b57b6a94b136727e072ae1555619833f1eb',
         'name' => '10up/ca-grants-plugin',
         'dev' => false,
     ),
@@ -16,7 +16,7 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'e59d475294defd0bec8ef96af63926ffeb13acbd',
+            'reference' => 'af946b57b6a94b136727e072ae1555619833f1eb',
             'dev_requirement' => false,
         ),
         '10up/post-finder' => array(
