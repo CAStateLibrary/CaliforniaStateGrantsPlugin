@@ -158,7 +158,7 @@ class BulkAwardImport {
 			'posts_per_page'         => 1,
 			'no_found_rows'          => true,
 			'orderby'                => 'date',
-			'order'                  => 'order',
+			'order'                  => 'ASC',
 			'update_post_term_cache' => false,
 		);
 
