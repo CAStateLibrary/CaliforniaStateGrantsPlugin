@@ -303,6 +303,21 @@ const setupForms = () => {
 
 				// No conditions are met, assume invalid.
 				return true;
+			},
+			isMaxLimitReachedField: ( field ) => {
+				// Bail
+				if ( ! field.matches( 'input[data-maxlength]:not(input[pattern])' ) ) {
+					return false;
+				}
+
+				const maxLength = parseInt( field.dataset.maxlength, 10 );
+				const currentValueLength = parseInt( field.value.length, 10 );
+
+				if ( currentValueLength > maxLength ) {
+					return true;
+				} else {
+					return false;
+				}
 			}
 		},
 		messages: {
@@ -316,6 +331,7 @@ const setupForms = () => {
 			isValidEndDate: 'End date is invalid, please select end date after start date.',
 			isFundingSourceNotesRequired: 'Please add funding source notes. ( Required for funding source "Other" )',
 			isFundingMethodNotesRequired: 'Please add funding method notes. ( Required for funding method "Other" )',
+			isMaxLimitReachedField: 'Maximum characters limit reached.',
 		},
 		disableSubmit: true // We need to handle some additional logic here for save/continue
 	} );
@@ -339,20 +355,18 @@ const setupForms = () => {
 
 		form.appendChild( input );
 
-		const inputMaxLimitFields = Array.from( form.querySelectorAll( 'input[maxlength]' ) );
+		const inputMaxLimitFields = Array.from( form.querySelectorAll( 'input[data-maxlength]:not(input[pattern])' ) );
 
 		inputMaxLimitFields.forEach( input => {
-			if ( ! input.getAttribute( 'maxlength' ) || ! input.id ) {
+			if ( ! input.dataset.maxlength || ! input.id ) {
 				return;
 			}
 
 			input.addEventListener( 'input', handleMaxLimitReachedField );
-			// Use keyup to trigger input value once max limit reached and input field doesn't allow adding char anymore.
-			input.addEventListener( 'keyup', handleMaxLimitReachedField );
 
 			const span = document.createElement( 'span' );
 			span.setAttribute( 'id', `${input.id}-characters` );
-			span.textContent = `${input.value.length} of ${input.getAttribute( 'maxlength' )} characters`;
+			span.textContent = `${input.value.length} of ${input.dataset.maxlength} characters`;
 			input.parentNode.appendChild( span );
 		} );
 	} );
@@ -382,12 +396,12 @@ const setupListeners = () => {
  */
 const handleMaxLimitReachedField = ( event ) => {
 	const elem = event.target;
-	const maxLength = parseInt( elem.getAttribute( 'maxlength' ), 10 );
+	const maxLength = parseInt( elem.dataset.maxlength, 10 );
 	const currentValueLength = parseInt( elem.value.length, 10 );
 	const span = document.getElementById( `${elem.id}-characters` );
 	span.textContent = `${currentValueLength} of ${maxLength} characters`;
 
-	if ( currentValueLength >= maxLength ) {
+	if ( currentValueLength > maxLength ) {
 		elem.setAttribute( 'aria-invalid', true );
 
 		const message = elem.parentNode.querySelector( '.error-message' );
@@ -399,6 +413,7 @@ const handleMaxLimitReachedField = ( event ) => {
 			errorMessage.textContent = 'Maximum characters limit reached.';
 			elem.parentNode.appendChild( errorMessage );
 		}
+		span.setAttribute( 'style', 'color:red;' );
 	} else {
 		elem.setAttribute( 'aria-invalid', false );
 		const message = elem.parentNode.querySelector( '.error-message' );
@@ -406,6 +421,7 @@ const handleMaxLimitReachedField = ( event ) => {
 		if ( message ) {
 			elem.parentNode.removeChild( message );
 		}
+		span.removeAttribute( 'style' );
 	}
 };
 
