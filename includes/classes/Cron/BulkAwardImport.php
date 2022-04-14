@@ -158,7 +158,7 @@ class BulkAwardImport {
 			'posts_per_page'         => 1,
 			'no_found_rows'          => true,
 			'orderby'                => 'date',
-			'order'                  => 'ASC',
+			'order'                  => 'order',
 			'update_post_term_cache' => false,
 		);
 
@@ -175,7 +175,7 @@ class BulkAwardImport {
 	 * @param WP_Post $award_upload Award Upload Post Data.
 	 * @param array   $award_upload_data Award
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	public function schedule_csv_chunk_import( $file_id, $award_upload, $award_upload_data ) {
 		$csv_file_path = get_attached_file( $file_id );
@@ -197,16 +197,16 @@ class BulkAwardImport {
 		// Save total csv data count to award uploads.
 		update_post_meta( $award_upload->ID, 'csl_award_count', count( $csv_data ) );
 
-		$csv_chunks    = array_chunk( $csv_data, 10 );
-		$schedule_time = time();
+		$csv_chunks       = array_chunk( $csv_data, 10 );
+		$schedule_time    = time();
+		$scheduled_chunks = 0;
 
 		foreach ( $csv_chunks as $csv_chunk ) {
-
 			if ( empty( $csv_chunk ) ) {
 				continue;
 			}
 
-			wp_schedule_single_event(
+			$result = wp_schedule_single_event(
 				$schedule_time,
 				self::$import_chunk_job,
 				array(
@@ -214,14 +214,22 @@ class BulkAwardImport {
 					'award_upload' => $award_upload,
 					'grant_id'     => $award_upload_data['csl_grant_id'] ?: 0,
 					'fiscal_year'  => $award_upload_data['csl_fiscal_year'] ?: '',
-				)
+				),
+				true
 			);
+
+			if ( true !== $result ) {
+				return false;
+				break;
+			}
+
+			$scheduled_chunks++;
 
 			// Next event schedule after 5 min.
 			$schedule_time = $schedule_time + ( 5 * MINUTE_IN_SECONDS );
 		}
 
-		return true;
+		return count( $csv_chunks ) === $scheduled_chunks;
 	}
 
 	/**
