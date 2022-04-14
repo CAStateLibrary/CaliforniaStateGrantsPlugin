@@ -243,7 +243,7 @@ class BulkAwardImport {
 	 * @return void
 	 */
 	public function import_award_upload_chunk( $csv_chunk, $award_upload, $grant_id, $fiscal_year = null ) {
-
+		ini_set( 'xdebug.overload_var_dump', 'off'); echo '<pre>'; var_dump( $csv_chunk, $award_upload, $grant_id, $fiscal_year ); echo '</pre>';
 		if ( 'csl_failed' === get_post_status( $award_upload ) ) {
 			return;
 		}
@@ -273,6 +273,7 @@ class BulkAwardImport {
 			$grant_award_id = wp_insert_post( $args );
 
 			if ( is_wp_error( $grant_award_id ) ) {
+				ini_set( 'xdebug.overload_var_dump', 'off'); echo '<pre>'; var_dump( 'chunk failed' ); echo '</pre>';
 				wp_update_post(
 					array(
 						'ID'          => $award_upload->ID,
@@ -310,14 +311,6 @@ class BulkAwardImport {
 		 * Bulk Award Import was successful.
 		 */
 		do_action( 'csl_grants_bulk_award_import_success', $award_upload_id );
-
-		$csv_file_id = get_post_meta( $award_upload_id, 'csl_award_csv', true );
-
-		if ( ! empty( $csv_file_id ) ) {
-			wp_delete_attachment( $csv_file_id, true );
-		}
-
-		wp_delete_post( $award_upload_id, true );
 	}
 
 	/**
