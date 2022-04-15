@@ -41,6 +41,7 @@ class GrantAwards {
 		add_action( 'parse_query', array( $this, 'filter_query' ) );
 
 		add_filter( 'ep_indexable_post_types', [ $this, 'include_in_es_index' ], 20 );
+		add_filter( 'ep_searchable_post_types', [ $this, 'include_in_es_index' ], 20 );
 
 		self::$init = true;
 	}
