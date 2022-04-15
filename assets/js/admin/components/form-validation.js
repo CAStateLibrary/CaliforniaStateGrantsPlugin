@@ -246,7 +246,7 @@ const setupForms = () => {
 				const minDate = new Date( field.value );
 				const maxDate = new Date( maxDateElem.value );
 
-				return ! ( minDate < maxDate );
+				return ! ( minDate <= maxDate );
 			},
 			isValidEndDate: ( field ) => {
 				// Bail early.
@@ -263,7 +263,7 @@ const setupForms = () => {
 				const minDate = new Date( minDateElem.value );
 				const maxDate = new Date( field.value );
 
-				return ! ( minDate < maxDate );
+				return ! ( minDate <= maxDate );
 			},
 			isMaxLimitReachedField: ( field ) => {
 				// Bail
