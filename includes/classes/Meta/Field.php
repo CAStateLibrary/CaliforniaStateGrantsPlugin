@@ -282,7 +282,9 @@ class Field {
 					name="<?php echo esc_attr( $field_name ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
 					id="<?php echo esc_attr( $id ); ?>"
-					maxlength="<?php echo esc_attr( $maxlength ); ?>"
+					<?php if ( ! empty( $maxlength ) ) : ?>
+						data-maxlength="<?php echo esc_attr( $maxlength ); ?>"
+					<?php endif; ?>
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php echo esc_html( $disabled ); ?>

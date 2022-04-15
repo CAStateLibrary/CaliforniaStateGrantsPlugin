@@ -92,7 +92,7 @@ class GrantAwards {
 				'id'          => 'projectTitle',
 				'name'        => __( 'Project Title', 'ca-grants-plugin' ),
 				'type'        => 'text',
-				'description' => __( 'The project title must match the title provided in the application.', 'ca-grants-plugin' ),
+				'description' => __( 'The project title must match the title provided in the application. <strong>The max character limit is 300 characters.</strong>', 'ca-grants-plugin' ),
 				'maxlength'   => 300,
 			),
 			array(
@@ -117,7 +117,7 @@ class GrantAwards {
 				'id'          => 'primaryRecipientName',
 				'name'        => __( 'Primary Recipient Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
-				'description' => __( 'Provide the award recipient’s name (legal name of the principal investigator, project lead, or institution name), or the name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement.', 'ca-grants-plugin' ),
+				'description' => __( 'Provide the award recipient’s name (legal name of the principal investigator, project lead, or institution name), or the name of the primary awardee if multiple recipients. Please update this if changes are made in the grant agreement. <strong>The max character limit is 200 characters.</strong>', 'ca-grants-plugin' ),
 				'maxlength'   => 200,
 				'visible'     => array(
 					'fieldId'  => 'recipientType',
@@ -130,7 +130,7 @@ class GrantAwards {
 				'id'          => 'primaryRecipientFirstName',
 				'name'        => __( 'Primary Recipient’s First Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
-				'description' => __( 'Provide the award recipient’s first name, or the first name of the primary awardee if multiple recipients. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
+				'description' => __( 'Provide the award recipient’s first name, or the first name of the primary awardee if multiple recipients. Please update if changes are made in the grant agreement. <strong>The max character limit is 100 characters.</strong>', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
 				'visible'     => array(
 					'fieldId'  => 'recipientType',
@@ -143,7 +143,7 @@ class GrantAwards {
 				'id'          => 'primaryRecipientLastName',
 				'name'        => __( 'Primary Recipient’s Last Name', 'ca-grants-plugin' ),
 				'type'        => 'text',
-				'description' => __( 'Provide the award recipient’s last name, or the last name of the primary awardee if multiple recipients. Please update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
+				'description' => __( 'Provide the award recipient’s last name, or the last name of the primary awardee if multiple recipients. Please update if changes are made in the grant agreement. <strong>The max character limit is 100 characters.</strong>', 'ca-grants-plugin' ),
 				'maxlength'   => 100,
 				'visible'     => array(
 					'fieldId'  => 'recipientType',
@@ -157,7 +157,6 @@ class GrantAwards {
 				'name'        => __( 'Secondary Recipients?', 'ca-grants-plugin' ),
 				'type'        => 'select',
 				'description' => __( 'Indicate if additional recipients (e.g. sub, secondary, or co-recipients/grantees) were listed in the application. ', 'ca-grants-plugin' ),
-				'maxlength'   => 100,
 				'required'    => true,
 				'fields'      => array(
 					array(
