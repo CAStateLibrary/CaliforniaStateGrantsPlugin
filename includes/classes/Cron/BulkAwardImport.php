@@ -11,6 +11,7 @@ use CaGov\Grants\Meta\Field;
 use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\PostTypes\GrantAwards;
 use CaGov\Grants\PostTypes\AwardUploads;
+use ElasticPress\Indexables;
 use WP_Query;
 
 /**
@@ -290,6 +291,10 @@ class BulkAwardImport {
 
 			$total_imported = $total_imported + 1;
 			update_post_meta( $award_upload->ID, 'csl_imported_awards', $total_imported );
+
+			if ( class_exists( Indexables::class ) ) {
+				Indexables::factory()->get( 'post' )->index( $grant_award_id, true );
+			}
 		}
 
 		if ( $total_count === $total_imported ) {
