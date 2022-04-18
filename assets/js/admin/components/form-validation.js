@@ -266,7 +266,7 @@ const setupForms = () => {
 				return ! ( minDate <= maxDate );
 			},
 			isFundingSourceNotesRequired: ( field ) => {
-				if ( ! field.matches( '[name="revenueSourceNotes"]' ) ) {
+				if ( ! field.matches( '[name="revenueSourceNotes"]' ) || field.value ) {
 					return false;
 				}
 
@@ -281,7 +281,7 @@ const setupForms = () => {
 				return true;
 			},
 			isFundingMethodNotesRequired: ( field ) => {
-				if ( ! field.matches( '[name="disbursementMethodNotes"]' ) ) {
+				if ( ! field.matches( '[name="disbursementMethodNotes"]' ) || field.value ) {
 					return false;
 				}
 
