@@ -1543,11 +1543,16 @@ class Field {
 					$value                = $clean_value;
 					break;
 				case 'electronic-submission-method':
-					$temp_value           = $data[ $meta_field['id'] ];
-					$clean_value          = array();
-					$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
-					$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
-					$value                = $clean_value;
+					$temp_value  = $data[ $meta_field['id'] ];
+					$clean_value = array(
+						'type' => $temp_value['type'],
+					);
+					if ( 'email' === $temp_value['type'] ) {
+						$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
+					} elseif ( 'url' === $temp_value['type'] ) {
+						$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
+					}
+					$value = $clean_value;
 					break;
 				case 'application-deadline':
 					$temp_value = $data[ $meta_field['id'] ];
