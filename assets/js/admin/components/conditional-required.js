@@ -7,6 +7,8 @@ const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select
 const startDateElem = Array.from( document.querySelectorAll( 'input[data-min-date-id]' ) );
 const endDateElem = Array.from( document.querySelectorAll( 'input[data-max-date-id]' ) );
 const requiredPostFinderDiv = Array.from( document.querySelectorAll( 'tr.post_finder_field div[data-post-finder="required"]' ) );
+const fundingSources = Array.from( document.querySelectorAll( 'input[name="fundingSource"]' ) );
+const disbursementMethod = Array.from( document.querySelectorAll( 'input[name="disbursementMethod"]' ) );
 
 /**
  * Conditional requiring fields if grant is forecasted/active.
@@ -46,9 +48,19 @@ const main = () => {
 		} );
 	}
 
+	if ( fundingSources.length ) {
+		fundingSources.forEach( input => input.addEventListener( 'change', refreshFundingNotesRequireClass ) );
+	}
+
+	if ( disbursementMethod.length ) {
+		disbursementMethod.forEach( input => input.addEventListener( 'change', refreshFundingMethodNotesRequireClass ) );
+	}
+
 	// Kick things off.
 	refreshRequiredAttributes();
 	refreshMinMaxDateAttributes();
+	refreshFundingNotesRequireClass();
+	refreshFundingMethodNotesRequireClass();
 };
 
 /**
@@ -97,6 +109,58 @@ const refreshRequiredAttributes = () => {
 
 	if ( getVisableElems().length ) {
 		getVisableElems().forEach( el => maybeSetHiddenClass( el ) );
+	}
+};
+
+/**
+ * Maybe add required class to Funding Source Notes.
+ *
+ * @returns
+ */
+const refreshFundingNotesRequireClass = () => {
+	const fundingSource = document.querySelector( 'input[name="fundingSource"]:checked' );
+	const fundingSouceNotes = document.querySelector( '[name="revenueSourceNotes"]' );
+
+	if ( ! fundingSource || ! fundingSouceNotes ) {
+		return;
+	}
+
+	const fundingSouceNotesHeading = fundingSouceNotes.closest( 'tr' ).querySelector( 'th' );
+
+	if ( ! fundingSouceNotesHeading ) {
+		return;
+	}
+
+	if ( ! fundingSource || 'other' !== fundingSource.value ) {
+		fundingSouceNotesHeading.classList.remove( 'required' );
+	} else {
+		fundingSouceNotesHeading.classList.add( 'required' );
+	}
+};
+
+/**
+ * Maybe add required class to Funding Method Notes.
+ *
+ * @returns
+ */
+const refreshFundingMethodNotesRequireClass = () => {
+	const disbursementMethod = document.querySelector( 'input[name="disbursementMethod"]:checked' );
+	const fundingMethodNotes = document.querySelector( '[name="disbursementMethodNotes"]' );
+
+	if ( ! disbursementMethod || ! fundingMethodNotes ) {
+		return;
+	}
+
+	const fundingMethodNotesHeading = fundingMethodNotes.closest( 'tr' ).querySelector( 'th' );
+
+	if ( ! fundingMethodNotesHeading ) {
+		return;
+	}
+
+	if ( ! disbursementMethod || 'other' !== disbursementMethod.value ) {
+		fundingMethodNotesHeading.classList.remove( 'required' );
+	} else {
+		fundingMethodNotesHeading.classList.add( 'required' );
 	}
 };
 
