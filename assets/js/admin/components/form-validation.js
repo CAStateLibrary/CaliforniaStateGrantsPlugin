@@ -246,7 +246,7 @@ const setupForms = () => {
 				const minDate = new Date( field.value );
 				const maxDate = new Date( maxDateElem.value );
 
-				return ! ( minDate < maxDate );
+				return ! ( minDate <= maxDate );
 			},
 			isValidEndDate: ( field ) => {
 				// Bail early.
@@ -263,7 +263,7 @@ const setupForms = () => {
 				const minDate = new Date( minDateElem.value );
 				const maxDate = new Date( field.value );
 
-				return ! ( minDate < maxDate );
+				return ! ( minDate <= maxDate );
 			},
 			isFundingSourceNotesRequired: ( field ) => {
 				if ( ! field.matches( '[name="revenueSourceNotes"]' ) ) {
@@ -294,6 +294,21 @@ const setupForms = () => {
 
 				// No conditions are met, assume invalid.
 				return true;
+			},
+			isMaxLimitReachedField: ( field ) => {
+				// Bail
+				if ( ! field.matches( 'input[data-maxlength]:not(input[pattern])' ) ) {
+					return false;
+				}
+
+				const maxLength = parseInt( field.dataset.maxlength, 10 );
+				const currentValueLength = parseInt( field.value.length, 10 );
+
+				if ( currentValueLength > maxLength ) {
+					return true;
+				} else {
+					return false;
+				}
 			}
 		},
 		messages: {
@@ -307,6 +322,7 @@ const setupForms = () => {
 			isValidEndDate: 'End date is invalid, please select end date after start date.',
 			isFundingSourceNotesRequired: 'Please add funding source notes. ( Required for funding source "Other" )',
 			isFundingMethodNotesRequired: 'Please add funding method notes. ( Required for funding method "Other" )',
+			isMaxLimitReachedField: 'Maximum characters limit reached.',
 		},
 		disableSubmit: true // We need to handle some additional logic here for save/continue
 	} );
@@ -329,6 +345,21 @@ const setupForms = () => {
 		input.value = 0; // Default is to continue
 
 		form.appendChild( input );
+
+		const inputMaxLimitFields = Array.from( form.querySelectorAll( 'input[data-maxlength]:not(input[pattern])' ) );
+
+		inputMaxLimitFields.forEach( input => {
+			if ( ! input.dataset.maxlength || ! input.id ) {
+				return;
+			}
+
+			input.addEventListener( 'input', handleMaxLimitReachedField );
+
+			const span = document.createElement( 'span' );
+			span.setAttribute( 'id', `${input.id}-characters` );
+			span.textContent = `${input.value.length} of ${input.dataset.maxlength} characters`;
+			input.parentNode.appendChild( span );
+		} );
 	} );
 };
 
@@ -347,6 +378,42 @@ const setupListeners = () => {
 		form.addEventListener( 'click', handleFormClick );
 		form.addEventListener( 'submit', handleFormSubmit );
 	} );
+};
+
+/**
+ * Handle input field edit/keyup event.
+ *
+ * @param {object} event
+ */
+const handleMaxLimitReachedField = ( event ) => {
+	const elem = event.target;
+	const maxLength = parseInt( elem.dataset.maxlength, 10 );
+	const currentValueLength = parseInt( elem.value.length, 10 );
+	const span = document.getElementById( `${elem.id}-characters` );
+	span.textContent = `${currentValueLength} of ${maxLength} characters`;
+
+	if ( currentValueLength > maxLength ) {
+		elem.setAttribute( 'aria-invalid', true );
+
+		const message = elem.parentNode.querySelector( '.error-message' );
+
+		if ( ! message ) {
+			const errorMessage = document.createElement( 'div' );
+			errorMessage.setAttribute( 'id', `bouncer-error_${elem.name}` );
+			errorMessage.classList.add( 'error-message' );
+			errorMessage.textContent = 'Maximum characters limit reached.';
+			elem.parentNode.appendChild( errorMessage );
+		}
+		span.setAttribute( 'style', 'color:red;' );
+	} else {
+		elem.setAttribute( 'aria-invalid', false );
+		const message = elem.parentNode.querySelector( '.error-message' );
+
+		if ( message ) {
+			elem.parentNode.removeChild( message );
+		}
+		span.removeAttribute( 'style' );
+	}
 };
 
 /**

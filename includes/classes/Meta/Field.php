@@ -282,7 +282,9 @@ class Field {
 					name="<?php echo esc_attr( $field_name ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
 					id="<?php echo esc_attr( $id ); ?>"
-					maxlength="<?php echo esc_attr( $maxlength ); ?>"
+					<?php if ( ! empty( $maxlength ) ) : ?>
+						data-maxlength="<?php echo esc_attr( $maxlength ); ?>"
+					<?php endif; ?>
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php echo esc_html( $disabled ); ?>
@@ -1416,7 +1418,10 @@ class Field {
 		foreach ( $meta_fields as $meta_field ) {
 			$value = array();
 
-			if ( ! isset( $data[ $meta_field['id'] ] ) ) {
+			// If a text or textarea field is an empty string, delete the post meta entirely.
+			$is_empty_text = ( 'text' === $meta_field['type'] || 'textarea' === $meta_field['type'] ) && empty( trim( $data[ $meta_field['id'] ] ) );
+
+			if ( ! isset( $data[ $meta_field['id'] ] ) || $is_empty_text ) {
 				delete_post_meta( $post_id, $meta_field['id'] );
 				continue;
 			}
@@ -1538,11 +1543,16 @@ class Field {
 					$value                = $clean_value;
 					break;
 				case 'electronic-submission-method':
-					$temp_value           = $data[ $meta_field['id'] ];
-					$clean_value          = array();
-					$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
-					$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
-					$value                = $clean_value;
+					$temp_value  = $data[ $meta_field['id'] ];
+					$clean_value = array(
+						'type' => $temp_value['type'],
+					);
+					if ( 'email' === $temp_value['type'] ) {
+						$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
+					} elseif ( 'url' === $temp_value['type'] ) {
+						$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
+					}
+					$value = $clean_value;
 					break;
 				case 'application-deadline':
 					$temp_value = $data[ $meta_field['id'] ];
@@ -1602,9 +1612,10 @@ class Field {
 
 		foreach ( $fields as $field ) {
 			$id = $field['id'];
+			$is_numeric_zero = ( 'number' === $field['type'] && isset( $data[ $id ] ) && 0 === $data[ $id ] );
 
 			// Check if data has value for required fields.
-			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && ! isset( $data[ $id ] ) ) {
+			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && empty( $data[ $id ] ) && ! $is_numeric_zero ) {
 				$errors->add(
 					'validation_error',
 					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
@@ -1616,10 +1627,9 @@ class Field {
 			if (
 				! empty( $field['visible'] )
 				&& ! empty( $field['visible']['required'] )
-				&& ! isset( $data[ $id ] )
+				&& empty( $data[ $id ] )
+				&& ! $is_numeric_zero
 				&& (
-					! isset( $data[ $field['visible']['fieldId'] ] )
-					||
 					( // Case: field is required only when dependent field is not equal to specific value.
 						'not_equal' === $field['visible']['compare']
 						&& (
