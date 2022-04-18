@@ -299,7 +299,6 @@ class AwardeeStatsEndpoint extends WP_REST_Controller {
 
 		$args = array(
 			'ID'          => $grant_id,
-			'post_author' => get_current_user_id(),
 			'meta_input'  => array(
 				'awardStats' => $award_stats_data,
 			),
