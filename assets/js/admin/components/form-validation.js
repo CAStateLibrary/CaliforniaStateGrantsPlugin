@@ -265,6 +265,36 @@ const setupForms = () => {
 
 				return ! ( minDate <= maxDate );
 			},
+			isFundingSourceNotesRequired: ( field ) => {
+				if ( ! field.matches( '[name="revenueSourceNotes"]' ) || field.value ) {
+					return false;
+				}
+
+				const form = field.closest( 'form' );
+				const fundingSource = form.querySelector( 'input[name="fundingSource"]:checked' );
+
+				if ( ! fundingSource || 'other' !== fundingSource.value ) {
+					return false;
+				}
+
+				// No conditions are met, assume invalid.
+				return true;
+			},
+			isFundingMethodNotesRequired: ( field ) => {
+				if ( ! field.matches( '[name="disbursementMethodNotes"]' ) || field.value ) {
+					return false;
+				}
+
+				const form = field.closest( 'form' );
+				const fundingSource = form.querySelector( 'input[name="disbursementMethod"]:checked' );
+
+				if ( ! fundingSource || 'other' !== fundingSource.value ) {
+					return false;
+				}
+
+				// No conditions are met, assume invalid.
+				return true;
+			},
 			isMaxLimitReachedField: ( field ) => {
 				// Bail
 				if ( ! field.matches( 'input[data-maxlength]:not(input[pattern])' ) ) {
@@ -290,6 +320,8 @@ const setupForms = () => {
 			isAwardAmountValid: 'Please check that this number is lower than the Total Estimated Available Funding.',
 			isValidStartDate: 'Start date is invalid, please select start date before end date.',
 			isValidEndDate: 'End date is invalid, please select end date after start date.',
+			isFundingSourceNotesRequired: 'Please add funding source notes. ( Required for funding source "Other" )',
+			isFundingMethodNotesRequired: 'Please add funding method notes. ( Required for funding method "Other" )',
 			isMaxLimitReachedField: 'Maximum characters limit reached.',
 		},
 		disableSubmit: true // We need to handle some additional logic here for save/continue
