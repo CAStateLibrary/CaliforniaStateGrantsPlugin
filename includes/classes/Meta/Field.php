@@ -1598,6 +1598,8 @@ class Field {
 
 			if ( ! empty( $post_id ) && ( ! empty( $value ) || $is_numeric_zero ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );
+			} else if ( ! empty( $post_id ) && empty( $value ) && ! $is_numeric_zero ) {
+				delete_post_meta( $post_id, $meta_field['id'] );
 			}
 		}
 	}
