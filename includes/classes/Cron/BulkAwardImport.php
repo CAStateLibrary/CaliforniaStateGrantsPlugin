@@ -11,6 +11,7 @@ use CaGov\Grants\Meta\Field;
 use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\PostTypes\GrantAwards;
 use CaGov\Grants\PostTypes\AwardUploads;
+use ElasticPress\Indexables;
 use WP_Query;
 
 /**
@@ -175,7 +176,7 @@ class BulkAwardImport {
 	 * @param WP_Post $award_upload Award Upload Post Data.
 	 * @param array   $award_upload_data Award
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	public function schedule_csv_chunk_import( $file_id, $award_upload, $award_upload_data ) {
 		$csv_file_path = get_attached_file( $file_id );
@@ -197,16 +198,16 @@ class BulkAwardImport {
 		// Save total csv data count to award uploads.
 		update_post_meta( $award_upload->ID, 'csl_award_count', count( $csv_data ) );
 
-		$csv_chunks    = array_chunk( $csv_data, 10 );
-		$schedule_time = time();
+		$csv_chunks       = array_chunk( $csv_data, 10 );
+		$schedule_time    = time();
+		$scheduled_chunks = 0;
 
 		foreach ( $csv_chunks as $csv_chunk ) {
-
 			if ( empty( $csv_chunk ) ) {
 				continue;
 			}
 
-			wp_schedule_single_event(
+			$result = wp_schedule_single_event(
 				$schedule_time,
 				self::$import_chunk_job,
 				array(
@@ -214,14 +215,22 @@ class BulkAwardImport {
 					'award_upload' => $award_upload,
 					'grant_id'     => $award_upload_data['csl_grant_id'] ?: 0,
 					'fiscal_year'  => $award_upload_data['csl_fiscal_year'] ?: '',
-				)
+				),
+				true
 			);
+
+			if ( true !== $result ) {
+				return false;
+				break;
+			}
+
+			$scheduled_chunks++;
 
 			// Next event schedule after 5 min.
 			$schedule_time = $schedule_time + ( 5 * MINUTE_IN_SECONDS );
 		}
 
-		return true;
+		return count( $csv_chunks ) === $scheduled_chunks;
 	}
 
 	/**
@@ -235,7 +244,6 @@ class BulkAwardImport {
 	 * @return void
 	 */
 	public function import_award_upload_chunk( $csv_chunk, $award_upload, $grant_id, $fiscal_year = null ) {
-
 		if ( 'csl_failed' === get_post_status( $award_upload ) ) {
 			return;
 		}
@@ -283,6 +291,10 @@ class BulkAwardImport {
 
 			$total_imported = $total_imported + 1;
 			update_post_meta( $award_upload->ID, 'csl_imported_awards', $total_imported );
+
+			if ( class_exists( Indexables::class ) ) {
+				Indexables::factory()->get( 'post' )->index( $grant_award_id, true );
+			}
 		}
 
 		if ( $total_count === $total_imported ) {
@@ -302,14 +314,6 @@ class BulkAwardImport {
 		 * Bulk Award Import was successful.
 		 */
 		do_action( 'csl_grants_bulk_award_import_success', $award_upload_id );
-
-		$csv_file_id = get_post_meta( $award_upload_id, 'csl_award_csv', true );
-
-		if ( ! empty( $csv_file_id ) ) {
-			wp_delete_attachment( $csv_file_id, true );
-		}
-
-		wp_delete_post( $award_upload_id, true );
 	}
 
 	/**
