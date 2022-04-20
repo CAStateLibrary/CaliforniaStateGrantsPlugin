@@ -1736,8 +1736,8 @@ class Field {
 					$is_valid_date = ( $date && $date->format( 'c' ) );
 
 					if ( $is_valid_date ) {
-						$max_date   = ! empty( $meta_field['max_date'] ) ? new DateTime( $data[ $meta_field['max_date'] ] ) : false;
-						$min_date   = ! empty( $meta_field['min_date'] ) ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
+						$max_date   = ! empty( $field['max_date'] ) ? new DateTime( $data[ $field['max_date'] ] ) : false;
+						$min_date   = ! empty( $field['min_date'] ) ? new DateTime( $data[ $field['min_date'] ] ) : false;
 						$is_invalid = $max_date ? ( $date > $max_date ) : false;
 						$is_invalid = ( ! $is_invalid && $min_date ) ? ( $date < $min_date ) : false;
 					} else {
