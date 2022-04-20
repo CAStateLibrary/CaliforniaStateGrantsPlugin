@@ -64,6 +64,11 @@ function validate_string_in( $value, $valid_values = array() ) : bool {
  * @return boolean
  */
 function validate_date( $value ) : bool {
+	// Handle timestamp values.
+	if ( is_numeric( $value ) ) {
+		$value = '@' . $value;
+	}
+
 	$date = new \DateTime( $value );
 	return $date && $date->format( 'c' );
 }
@@ -78,6 +83,16 @@ function validate_date( $value ) : bool {
 function validate_date_after( $value, $compare ) : bool {
 	if ( ! validate_date( $value ) || ! validate_date( $compare ) ) {
 		return false;
+	}
+
+	// Handle timestamp values.
+	if ( is_numeric( $value ) ) {
+		$value = '@' . $value;
+	}
+
+	// Handle timestamp values.
+	if ( is_numeric( $compare ) ) {
+		$compare = '@' . $compare;
 	}
 
 	$date  = new \DateTime( $value );
