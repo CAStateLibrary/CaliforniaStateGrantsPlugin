@@ -111,7 +111,7 @@ class AwardUploads {
 			// Header miss match.
 			return new WP_Error(
 				'validate_csv_missmatch_header',
-				__( 'Invalid CSV: File header miss-matached. Please use valid csv file.', 'ca-grants-plugin' ),
+				__( 'Invalid CSV: File header miss-matched. Please use valid csv file.', 'ca-grants-plugin' ),
 				array( 'status' => 500 )
 			);
 		}
