@@ -1723,7 +1723,13 @@ class Field {
 					if ( isset( $field['source'] ) && in_array( $field['source'], [ 'api', 'portal-api' ], true ) ) {
 						$api_values = self::get_api_fields_by_id( $id, 'portal-api' === $field['source'] );
 						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
-						$values     = empty( $data[ $id ] ) ? [] : explode( ',', $data[ $id ] );
+
+						if ( is_string( $data[ $id ] ) ) {
+							$values = explode( ',', $data[ $id ] );
+						} else {
+							$values = (array) $data[ $id ];
+						}
+
 						$values     = array_map( 'sanitize_title', $values );
 						$is_invalid = ! empty( array_diff( $values, $field_ids ) );
 					} elseif ( isset( $field['fields'] ) ) {
