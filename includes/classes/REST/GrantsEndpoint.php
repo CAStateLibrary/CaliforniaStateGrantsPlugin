@@ -236,11 +236,23 @@ class GrantsEndpoint extends BaseEndpoint {
 				}
 			}
 
+			$grant_award_url_base = rest_url( 'wp/v2/grant-awards' );
+
+			if ( 
+				defined( 'CA_HTTP_AUTH_USER' ) && 
+				! empty( CA_HTTP_AUTH_USER ) && 
+				defined( 'CA_HTTP_AUTH_PASSWORD' ) && 
+				! empty( CA_HTTP_AUTH_PASSWORD )
+			 ) {
+				$auth_string = sprintf( '%s:%s@', CA_HTTP_AUTH_USER, CA_HTTP_AUTH_PASSWORD );
+				$grant_award_url_base = str_replace( '://', '://' . $auth_string, $grant_award_url_base );
+			}
+
 			$grant_awards_url = add_query_arg(
 				array(
 					'grant_id' => $post->ID,
 				),
-				rest_url( 'wp/v2/grant-awards' )
+				$grant_award_url_base
 			);
 
 			// Set up a custom api response
