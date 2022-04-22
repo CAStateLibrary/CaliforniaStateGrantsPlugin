@@ -59,8 +59,8 @@ class GrantAwardsConsent {
 
 		$fields = array(
 			array(
-				'id'     => 'grantConsent',
-				'name'   => __( 'Grant Publish/Update Consent', 'ca-grants-plugin' ),
+				'id'     => 'grantAwardConsent',
+				'name'   => __( 'Grant Award Publish/Update Consent', 'ca-grants-plugin' ),
 				'type'   => 'checkbox',
 				'fields' => array(
 					array(
