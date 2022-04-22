@@ -40,7 +40,7 @@ function validate_string( $value, $max_chars = null ) : bool {
 	}
 
 	if ( $max_chars ) {
-		return strlen( $value ) < $max_chars;
+		return strlen( $value ) <= $max_chars;
 	}
 
 	return true;

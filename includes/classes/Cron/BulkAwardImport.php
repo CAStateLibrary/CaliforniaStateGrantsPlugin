@@ -88,10 +88,9 @@ class BulkAwardImport {
 	 * @return void
 	 */
 	public function schedule_import_awards_queue() {
-		$award_upload  = $this->get_next_import_record();
-		$post_type_obj = get_post_type_object( AwardUploads::CPT_SLUG );
+		$award_upload = $this->get_next_import_record();
 
-		if ( empty( $award_upload ) || ! user_can( $award_upload->post_author, $post_type_obj->cap->edit_others_posts ) ) {
+		if ( ! $award_upload instanceof \WP_Post ) {
 			return;
 		}
 
@@ -108,6 +107,10 @@ class BulkAwardImport {
 			},
 			$award_upload_data
 		);
+
+		if ( ! user_can( $award_upload->post_author, 'edit_grant', absint( $award_upload_data['csl_grant_id'] ) ) ) {
+			return;
+		}
 
 		$is_scheduled = $this->schedule_csv_chunk_import( $award_upload_data['csl_award_csv'], $award_upload, $award_upload_data );
 
@@ -155,7 +158,7 @@ class BulkAwardImport {
 			'posts_per_page'         => 1,
 			'no_found_rows'          => true,
 			'orderby'                => 'date',
-			'order'                  => 'order',
+			'order'                  => 'ASC',
 			'update_post_term_cache' => false,
 		);
 
@@ -253,7 +256,7 @@ class BulkAwardImport {
 			$award_data = array_filter( $meta_args );
 
 			$args = array(
-				'post_author' => $award_upload->author,
+				'post_author' => $award_upload->post_author,
 				'post_title'  => $award_upload->post_title,
 				'post_type'   => GrantAwards::CPT_SLUG,
 				'post_status' => 'publish',

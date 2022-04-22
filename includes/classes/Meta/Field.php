@@ -282,7 +282,9 @@ class Field {
 					name="<?php echo esc_attr( $field_name ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
 					id="<?php echo esc_attr( $id ); ?>"
-					maxlength="<?php echo esc_attr( $maxlength ); ?>"
+					<?php if ( ! empty( $maxlength ) ) : ?>
+						data-maxlength="<?php echo esc_attr( $maxlength ); ?>"
+					<?php endif; ?>
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php echo esc_html( $disabled ); ?>
@@ -611,7 +613,10 @@ class Field {
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
-				<?php echo esc_html( $name ); ?>
+				<label for="<?php echo esc_attr( $field['id'] );?>">
+					<?php echo esc_html( $name ); ?>
+				</label>
+
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
@@ -837,14 +842,14 @@ class Field {
 
 				<input <?php checked( $value['checkbox'], 'same' ); ?> type="radio" id="<?php echo esc_attr( $id . '-same' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="same" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-same' ); ?>"><?php esc_html_e( 'Same amount each award: ', 'ca-grants-plugin' ); ?></label>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-same-amount" name="<?php echo esc_attr( $id ); ?>[same][amount]" value="<?php echo esc_attr( $value['same']['amount'] ); ?>"/>
+				<input type="number" min="0" id="<?php echo esc_attr( $id ); ?>-same-amount" name="<?php echo esc_attr( $id ); ?>[same][amount]" value="<?php echo esc_attr( $value['same']['amount'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'unknown' ); ?> type="radio" id="<?php echo esc_attr( $id . '-unknown' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="unknown" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-unknown' ); ?>"><?php esc_html_e( 'Amount per award may range  between:', 'ca-grants-plugin' ); ?></label>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-unknown-first" name="<?php echo esc_attr( $id ); ?>[unknown][first]" value="<?php echo esc_attr( $value['unknown']['first'] ); ?>"/>
+				<input type="number" min="0" id="<?php echo esc_attr( $id ); ?>-unknown-first" name="<?php echo esc_attr( $id ); ?>[unknown][first]" value="<?php echo esc_attr( $value['unknown']['first'] ); ?>"/>
 				<?php esc_html_e( ' to ', 'ca-grants-plugin' ); ?>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-unknown-second" name="<?php echo esc_attr( $id ); ?>[unknown][second]" value="<?php echo esc_attr( $value['unknown']['second'] ); ?>"/>
+				<input type="number" min="0" id="<?php echo esc_attr( $id ); ?>-unknown-second" name="<?php echo esc_attr( $id ); ?>[unknown][second]" value="<?php echo esc_attr( $value['unknown']['second'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant" <?php self::conditional_required( $meta_field ); ?>>
@@ -898,14 +903,14 @@ class Field {
 			<td>
 				<input <?php checked( $value['checkbox'], 'exact' ); ?> type="radio" id="<?php echo esc_attr( $id . '-exactly' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="exact" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-exactly' ); ?>"><?php esc_html_e( 'Exactly: ', 'ca-grants-plugin' ); ?></label>
-				<input class="small-text" type="number" id="<?php echo esc_attr( $id ); ?>-exactly" name="<?php echo esc_attr( $id ); ?>[exact]" value="<?php echo esc_attr( $value['exact'] ); ?>"/>
+				<input class="small-text" type="number" min="0" id="<?php echo esc_attr( $id ); ?>-exactly" name="<?php echo esc_attr( $id ); ?>[exact]" value="<?php echo esc_attr( $value['exact'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'between' ); ?> type="radio" id="<?php echo esc_attr( $id . '-between' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="between" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-between' ); ?>"><?php esc_html_e( 'Between', 'ca-grants-plugin' ); ?></label>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-between-first" name="<?php echo esc_attr( $id ); ?>[between][low]" value="<?php echo esc_attr( $value['between']['low'] ); ?>"/>
+				<input type="number" min="0" id="<?php echo esc_attr( $id ); ?>-between-first" name="<?php echo esc_attr( $id ); ?>[between][low]" value="<?php echo esc_attr( $value['between']['low'] ); ?>"/>
 				<?php esc_html_e( ' and ', 'ca-grants-plugin' ); ?>
-				<input type="number" id="<?php echo esc_attr( $id ); ?>-between-second" name="<?php echo esc_attr( $id ); ?>[between][high]" value="<?php echo esc_attr( $value['between']['high'] ); ?>"/>
+				<input type="number" min="0" id="<?php echo esc_attr( $id ); ?>-between-second" name="<?php echo esc_attr( $id ); ?>[between][high]" value="<?php echo esc_attr( $value['between']['high'] ); ?>"/>
 				<br><br>
 
 				<input <?php checked( $value['checkbox'], 'dependant' ); ?> type="radio" id="<?php echo esc_attr( $id . '-dependant' ); ?>" name="<?php echo esc_attr( $id ); ?>[checkbox]" value="dependant" <?php self::conditional_required( $meta_field ); ?>>
@@ -957,7 +962,7 @@ class Field {
 
 				<input <?php checked( $value['checkbox'], 'yes' ); ?> type="radio" id="<?php echo esc_attr( $id . '-yes' ); ?>" name="<?php echo esc_attr( $id ); ?>" value="yes" <?php self::conditional_required( $meta_field ); ?>>
 				<label for="<?php echo esc_attr( $id . '-yes' ); ?>"><?php esc_html_e( 'Yes, with matching percentage: ', 'ca-grants-plugin' ); ?></label>
-				<input class="small-text" type="number" max="100" name="<?php echo esc_attr( $id ); ?>-percentage" value="<?php echo esc_attr( $value['percentage'] ); ?>"/>
+				<input class="small-text" type="number" min="0" max="100" name="<?php echo esc_attr( $id ); ?>-percentage" value="<?php echo esc_attr( $value['percentage'] ); ?>"/>
 			</td>
 		</tr>
 
@@ -991,7 +996,7 @@ class Field {
 		// Get the saved data
 		$value = $meta_field['meta_value'] ?? '';
 		$value = $value ?: get_post_meta( get_the_ID(), $id, true );
-		$value = $value ? gmdate( 'Y-m-d\TH:m', $value ) : $value;
+		$value = $value ? gmdate( 'Y-m-d\TH:i', $value ) : $value;
 		?>
 		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
@@ -1416,7 +1421,10 @@ class Field {
 		foreach ( $meta_fields as $meta_field ) {
 			$value = array();
 
-			if ( ! isset( $data[ $meta_field['id'] ] ) ) {
+			// If a text or textarea field is an empty string, delete the post meta entirely.
+			$is_empty_text = ( 'text' === $meta_field['type'] || 'textarea' === $meta_field['type'] ) && isset( $data[ $meta_field['id'] ] ) && empty( trim( $data[ $meta_field['id'] ] ) );
+
+			if ( ! isset( $data[ $meta_field['id'] ] ) || $is_empty_text ) {
 				delete_post_meta( $post_id, $meta_field['id'] );
 				continue;
 			}
@@ -1452,9 +1460,16 @@ class Field {
 				case 'datetime-local':
 					$date          = new DateTime( $data[ $meta_field['id'] ] );
 					$is_valid_date = ( $date && $date->format( 'c' ) );
-					$max_date   = $meta_field['max_date'] ? new DateTime( $data[ $meta_field['max_date'] ] ) : false;
-					$min_date   = $meta_field['min_date'] ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
-					$is_valid_date = ( $max_date && $date < $max_date ) || ( $min_date && $date > $min_date );
+					$max_date   = ! empty( $meta_field['max_date'] ) ? new DateTime( $data[ $meta_field['max_date'] ] ) : false;
+					$min_date   = ! empty( $meta_field['min_date'] ) ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
+
+					if ( $is_valid_date && $max_date instanceof DateTime ) {
+						$is_valid_date = $date < $max_date;
+					}
+
+					if ( $is_valid_date && $min_date instanceof DateTime ) {
+						$is_valid_date = $date > $min_date;
+					}
 
 					if ( $is_valid_date ) {
 						$value = strtotime( $data[ $meta_field['id'] ] );
@@ -1531,11 +1546,16 @@ class Field {
 					$value                = $clean_value;
 					break;
 				case 'electronic-submission-method':
-					$temp_value           = $data[ $meta_field['id'] ];
-					$clean_value          = array();
-					$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
-					$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
-					$value                = $clean_value;
+					$temp_value  = $data[ $meta_field['id'] ];
+					$clean_value = array(
+						'type' => $temp_value['type'],
+					);
+					if ( 'email' === $temp_value['type'] ) {
+						$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
+					} elseif ( 'url' === $temp_value['type'] ) {
+						$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
+					}
+					$value = $clean_value;
 					break;
 				case 'application-deadline':
 					$temp_value = $data[ $meta_field['id'] ];
@@ -1578,6 +1598,8 @@ class Field {
 
 			if ( ! empty( $post_id ) && ( ! empty( $value ) || $is_numeric_zero ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );
+			} else if ( ! empty( $post_id ) && empty( $value ) && ! $is_numeric_zero ) {
+				delete_post_meta( $post_id, $meta_field['id'] );
 			}
 		}
 	}
@@ -1595,9 +1617,10 @@ class Field {
 
 		foreach ( $fields as $field ) {
 			$id = $field['id'];
+			$is_numeric_zero = ( 'number' === $field['type'] && isset( $data[ $id ] ) && 0 === $data[ $id ] );
 
 			// Check if data has value for required fields.
-			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && ! isset( $data[ $id ] ) ) {
+			if ( ! empty( $field['required'] ) && ( true === $field['required'] ) && empty( $data[ $id ] ) && ! $is_numeric_zero ) {
 				$errors->add(
 					'validation_error',
 					esc_html__( 'Missing required value for field: ', 'ca-grants-plugin' ) . esc_html( $id )
@@ -1609,10 +1632,9 @@ class Field {
 			if (
 				! empty( $field['visible'] )
 				&& ! empty( $field['visible']['required'] )
-				&& ! isset( $data[ $id ] )
+				&& empty( $data[ $id ] )
+				&& ! $is_numeric_zero
 				&& (
-					! isset( $data[ $field['visible']['fieldId'] ] )
-					||
 					( // Case: field is required only when dependent field is not equal to specific value.
 						'not_equal' === $field['visible']['compare']
 						&& (
@@ -1677,7 +1699,7 @@ class Field {
 					break;
 				case 'text':
 				case 'textarea':
-					 $max_chars = $field['maxlength'] ?: strlen( $data[ $id ] );
+					$max_chars = empty( $field['maxlength'] ) ? strlen( $data[ $id ] ) : $field['maxlength'];
 
 					 if ( isset( $field['text_limit'] ) && ! empty( $field['text_limit'] ) ) {
 						  $max_chars = $field['text_limit'];
@@ -1690,7 +1712,7 @@ class Field {
 					if ( isset( $field['source'] ) && in_array( $field['source'], [ 'api', 'portal-api' ], true ) ) {
 						$api_values = self::get_api_fields_by_id( $id, 'portal-api' === $field['source'] );
 						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
-						$values     = explode( ',', $data[ $id ] );
+						$values     = empty( $data[ $id ] ) ? [] : explode( ',', $data[ $id ] );
 						$values     = array_map( 'sanitize_title', $values );
 						$is_invalid = ! empty( array_diff( $values, $field_ids ) );
 					} elseif ( isset( $field['fields'] ) ) {
@@ -1703,8 +1725,8 @@ class Field {
 					$is_valid_date = ( $date && $date->format( 'c' ) );
 
 					if ( $is_valid_date ) {
-						$max_date   = $field['max_date'] ? new DateTime( $data[ $field['max_date'] ] ) : false;
-						$min_date   = $field['min_date'] ? new DateTime( $data[ $field['min_date'] ] ) : false;
+						$max_date   = ! empty( $field['max_date'] ) ? new DateTime( $data[ $field['max_date'] ] ) : false;
+						$min_date   = ! empty( $field['min_date'] ) ? new DateTime( $data[ $field['min_date'] ] ) : false;
 						$is_invalid = $max_date ? ( $date > $max_date ) : false;
 						$is_invalid = ( ! $is_invalid && $min_date ) ? ( $date < $min_date ) : false;
 					} else {
