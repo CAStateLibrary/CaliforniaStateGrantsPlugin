@@ -63,6 +63,8 @@ class GrantAwards {
 	 * @return array
 	 */
 	public static function get_fields() {
+		$grant_id = absint( filter_input( INPUT_GET, 'grant_id', FILTER_SANITIZE_NUMBER_INT ) );
+
 		return array(
 			array(
 				'id'          => 'grantID',
@@ -70,6 +72,7 @@ class GrantAwards {
 				'type'        => 'post-finder',
 				'description' => __( 'Select a grant to enter award data.', 'ca-grants-plugin' ),
 				'required'    => true,
+				'value'       => ( $grant_id > 0 ) ? (string) $grant_id : '', // pf_render function expects value to be string.
 				'options'     => array(
 					'show_numbers'   => false,
 					'show_recent'    => false,
