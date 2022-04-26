@@ -65,7 +65,7 @@ class GrantAwardsConsent {
 				'fields' => array(
 					array(
 						'id'   => 'consent-checkbox',
-						'name' => __( 'I understand that the above information will be posted to the California Grants Portal in its entirety once submitted.', 'grantsportal' ),
+						'name' => __( 'I understand that the information will be posted to the California Grants Portal in its entirety once submitted.', 'grantsportal' ),
 					),
 				),
 			),

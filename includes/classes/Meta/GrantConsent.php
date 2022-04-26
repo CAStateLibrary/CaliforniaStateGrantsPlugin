@@ -62,7 +62,7 @@ class GrantConsent {
 
 		$consent_text = __( 'I understand that the above information will be posted to the California Grants Portal in its entirety on the Grant Open Date specified.', 'grantsportal' );
 		if ( 'forecasted' === $grant_type ) {
-			$consent_text = __( 'I understand that the above information will be posted to the California Grants Portal in its entirety on the Publish Date specified.', 'grantsportal' );
+			$consent_text = __( 'I understand that the information will be posted to the California Grants Portal in its entirety on the Publish Date specified.', 'grantsportal' );
 		}
 
 		$fields = array(
