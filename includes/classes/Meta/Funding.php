@@ -115,7 +115,7 @@ class Funding {
 
 		$fields[] = array(
 				'id'          => 'disbursementMethod',
-				'name'        => __( 'Disbursement Method', 'ca-grants-plugin' ),
+				'name'        => __( 'Funding Method', 'ca-grants-plugin' ),
 				'type'        => 'radio',
 				'source'      => is_portal() ? 'portal-api' : 'api',
 				'description' => __( 'If you select "Other", please elaborate in the funding method notes field below.', 'ca-grants-plugin' ),

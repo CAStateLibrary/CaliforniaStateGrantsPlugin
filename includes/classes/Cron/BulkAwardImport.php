@@ -256,7 +256,7 @@ class BulkAwardImport {
 			$award_data = array_filter( $meta_args );
 
 			$args = array(
-				'post_author' => $award_upload->author,
+				'post_author' => $award_upload->post_author,
 				'post_title'  => $award_upload->post_title,
 				'post_type'   => GrantAwards::CPT_SLUG,
 				'post_status' => 'publish',

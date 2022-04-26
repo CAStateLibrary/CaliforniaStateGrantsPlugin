@@ -532,3 +532,16 @@ function get_award_stats( $grant_id ) {
 
 	return end( $award_stats );
 }
+
+/**
+ * Remove byte order mark special char from string.
+ *
+ * @see https://docs.microsoft.com/en-us/globalization/encoding/byte-order-mark
+ *
+ * @param string $string Text to trim byte order mark char.
+ *
+ * @return string
+ */
+function trim_byte_order_mark( $string ) {
+	return preg_replace( "/^\xEF\xBB\xBF/", '', $string );
+}
