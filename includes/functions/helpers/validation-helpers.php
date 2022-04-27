@@ -69,7 +69,6 @@ function validate_field( $key, $value, $post_data ) {
 			return(
 				Validators\validate_date( $value )
 				&& Validators\validate_date_after( $value, $post_data['openDate'] )
-				&& Validators\validate_date_after( $value, current_time( 'mysql' ) )
 			);
 		case 'estimatedAvailableFunds':
 			return Validators\validate_int( $value );

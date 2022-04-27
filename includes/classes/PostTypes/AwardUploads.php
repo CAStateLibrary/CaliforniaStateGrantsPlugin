@@ -104,6 +104,8 @@ class AwardUploads {
 		fclose( $file_handle );
 		// Trim whitespaces.
 		$headers = array_map( 'trim', $headers );
+		$headers = array_map( '\CaGov\Grants\Core\trim_byte_order_mark', $headers );
+		$headers = array_filter( $headers );
 
 		$diff = array_diff( $csv_headers, $headers );
 
@@ -111,7 +113,7 @@ class AwardUploads {
 			// Header miss match.
 			return new WP_Error(
 				'validate_csv_missmatch_header',
-				__( 'Invalid CSV: File header miss-matached. Please use valid csv file.', 'ca-grants-plugin' ),
+				__( 'Invalid CSV: File header mismatch. Please use a valid CSV file.', 'ca-grants-plugin' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -136,6 +138,13 @@ class AwardUploads {
 	public static function validate_csv_rows( $csv_file, $data ) {
 		$csv_errors = new WP_Error();
 		$csv_data   = self::read_csv( $csv_file );
+
+		if ( empty( $csv_data ) ) {
+			return new WP_Error(
+				'validation_error',
+				esc_html__( 'Invalid CSV: No row found. Please use a valid CSV file.', 'ca-grants-plugin' )
+			);
+		}
 
 		foreach ( $csv_data as $row_index => $row ) {
 			// Note: this two value required for bulk upload but won't be part of csv file. Adding this value for validation only.
@@ -178,6 +187,9 @@ class AwardUploads {
 
 		$csv_header_mapping = self::get_csv_header_mapping();
 		$headers            = fgetcsv( $file_handle, 4096 );
+		$headers            = array_map( 'trim', $headers );
+		$headers            = array_map( '\CaGov\Grants\Core\trim_byte_order_mark', $headers );
+		$headers            = array_filter( $headers );
 		$headers            = array_map(
 			function( $header ) use ( $csv_header_mapping ) {
 				$header = trim( $header );
@@ -189,6 +201,11 @@ class AwardUploads {
 		while ( ! feof( $file_handle ) ) {
 			$row_data       = fgetcsv( $file_handle, 4096 );
 			$row_assoc_data = [];
+
+			// Skip if whole row is empty.
+			if ( empty( implode( '', $row_data ) ) ) {
+				continue;
+			}
 
 			foreach ( $row_data as $key => $value ) {
 				switch ( $headers[ $key ] ) {
