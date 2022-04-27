@@ -545,3 +545,31 @@ function get_award_stats( $grant_id ) {
 function trim_byte_order_mark( $string ) {
 	return preg_replace( "/^\xEF\xBB\xBF/", '', $string );
 }
+
+/**
+ * Get Grant Award Recipent Name.
+ *
+ * @param int $grant_award_id Grant Award ID.
+ *
+ * @return string Recipent Name
+ */
+function get_grant_award_recipient_name( $grant_award_id ) {
+	if ( is_portal() ) {
+		$recipientType = wp_get_post_terms( $grant_award_id, 'recipient-types', [ 'fields' => 'slugs' ] );
+	} else {
+		$recipientType = get_post_meta( $grant_award_id, 'recipientType', true );
+	}
+
+	if (
+		( is_array( $recipientType ) && in_array( 'individual', $recipientType, true ) )
+		|| 'individual' === $recipientType
+	) {
+		$first_name = get_post_meta( $grant_award_id, 'primaryRecipientFirstName', true ) ?: '';
+		$last_name  = get_post_meta( $grant_award_id, 'primaryRecipientLastName', true ) ?: '';
+		$full_name  = $first_name . ' ' . $last_name;
+	} else {
+		$full_name = get_post_meta( $grant_award_id, 'primaryRecipientName', true );
+	}
+
+	return $full_name;
+}
