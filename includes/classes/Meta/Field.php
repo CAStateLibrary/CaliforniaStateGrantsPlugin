@@ -544,7 +544,7 @@ class Field {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
 		?>
-		<tr <?php self::conditional_visible( $meta_field ); ?>>
+		<tr class="<?php echo esc_attr( $meta_field['class'] ?? '' ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
