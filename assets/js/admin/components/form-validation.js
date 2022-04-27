@@ -435,7 +435,7 @@ const handleBouncerShowFielsetError = ( event ) => {
  */
 const scrollToFirstError = ( invalidFields ) => {
 	const [ firstField ] = invalidFields;
-	const elementToScroll = firstField.closest( 'input' );
+	const elementToScroll = firstField.parentElement;
 
 	elementToScroll.scrollIntoView( {
 		behavior: 'smooth',
