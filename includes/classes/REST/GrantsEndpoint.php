@@ -67,7 +67,6 @@ class GrantsEndpoint extends BaseEndpoint {
 	 */
 	public function modify_grants_rest_response( $response, $post, $request ) {
 		$new_response = wp_cache_get( 'grants_rest_response_' . $post->ID );
-		$new_response = false;
 		if ( false === $new_response ) {
 			// Fields that aren't needed in the REST response
 			$blacklisted_fields = array(
