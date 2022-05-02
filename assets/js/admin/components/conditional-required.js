@@ -4,6 +4,7 @@ const conditionalValidationInputs = 'input[data-required-if],textarea[data-requi
 const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
 const conditionalVisibleElems = 'tr[data-visible-if]';
 const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select[name="recipientType"]' ) );
+const estimatedAvailableFundType = Array.from( document.querySelectorAll( 'input[name="estimatedAvailableFundType"]' ) );
 const startDateElem = Array.from( document.querySelectorAll( 'input[data-min-date-id]' ) );
 const endDateElem = Array.from( document.querySelectorAll( 'input[data-max-date-id]' ) );
 const requiredPostFinderDiv = Array.from( document.querySelectorAll( 'tr.post_finder_field div[data-post-finder="required"]' ) );
@@ -17,6 +18,7 @@ const main = () => {
 
 	if ( getVisableElems().length ) {
 		grantAwardsRecipientTypes.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+		estimatedAvailableFundType.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 	}
 
