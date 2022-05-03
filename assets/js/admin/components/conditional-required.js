@@ -15,11 +15,28 @@ const disbursementMethod = Array.from( document.querySelectorAll( 'input[name="d
  * Conditional requiring fields if grant is forecasted/active.
  */
 const main = () => {
-
-	if ( getVisableElems().length ) {
+	const visibleElems = getVisableElems();
+	if ( visibleElems.length ) {
 		grantAwardsRecipientTypes.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 		estimatedAvailableFundType.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+
+		const visibleFields = [];
+		visibleElems.forEach( input => {
+			const { visibleIf }  = input.dataset;
+			const visibleOptions = JSON.parse( visibleIf );
+
+			if ( visibleOptions.fieldId && -1 === visibleFields.indexOf( visibleOptions.fieldId ) ) {
+				visibleFields.push( visibleOptions.fieldId );
+			}
+		} );
+
+		if ( visibleFields.length ) {
+			visibleFields.forEach( field => {
+				const fields = Array.from( document.querySelectorAll( `[name="${field}"]` ) );
+				fields.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+			} );
+		}
 	}
 
 	if ( grantTypeInputs.length ) {
@@ -250,6 +267,23 @@ const maybeSetHiddenClass = el => {
 		current = getCurrentGeoLocation();
 	} else if ( 'recipientType' === visibleOptions['fieldId'] && grantAwardsRecipientTypes.length ) {
 		current = getCurrentRecipientType();
+	} else {
+		const fields = Array.from( document.querySelectorAll( `[name="${visibleOptions['fieldId']}"]` ) );
+		const [field] = fields.filter( input => {
+			let value = false;
+			switch( input.type ) {
+					case 'radio':
+						value = input.checked;
+						break;
+					case 'select':
+						value = input.selectedIndex;
+						break;
+					case 'input':
+						value = input.value ? true : false;
+			}
+			return value;
+		} );
+		current = field.value;
 	}
 
 	if (

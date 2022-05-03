@@ -93,16 +93,16 @@ class Funding {
 		);
 
 		$fields[] = array(
-				'id'       => 'estimatedAvailableFundType',
+				'id'       => 'totalEstimatedFunding',
 				'name'     => __( 'Total Estimated Available Funding', 'ca-grants-plugin' ),
 				'type'     => 'radio',
 				'fields'   => array(
 						array(
-								'id'   => 'exact',
+								'id'   => 'exactFundingAmount',
 								'name' => __( 'Exact Funding Amount', 'ca-grants-plugin' ),
 						),
 						array(
-								'id'   => 'other',
+								'id'   => 'fundingAmountNotes',
 								'name' => __( 'Other Funding Amount', 'ca-grants-plugin' ),
 						),
 				),
@@ -114,8 +114,8 @@ class Funding {
 				'name'     => __( 'Available Funding Amount', 'ca-grants-plugin' ),
 				'type'     => 'number',
 				'visible'  => array(
-						'fieldId'  => 'estimatedAvailableFundType',
-						'value'    => 'exact',
+						'fieldId'  => 'totalEstimatedFunding',
+						'value'    => 'exactFundingAmount',
 						'compare'  => 'equal',
 						'required' => true,
 				),
@@ -127,8 +127,8 @@ class Funding {
 				'type'        => 'textarea',
 				'text_limit'  => 450,
 				'visible'  => array(
-						'fieldId'  => 'estimatedAvailableFundType',
-						'value'    => 'other',
+						'fieldId'  => 'totalEstimatedFunding',
+						'value'    => 'fundingAmountNotes',
 						'compare'  => 'equal',
 						'required' => true,
 				),
