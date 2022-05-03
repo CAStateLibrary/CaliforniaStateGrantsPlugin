@@ -88,38 +88,43 @@ class BulkAwardImport {
 	 * @return void
 	 */
 	public function schedule_import_awards_queue() {
-		$award_upload  = $this->get_next_import_record();
-		$post_type_obj = get_post_type_object( AwardUploads::CPT_SLUG );
+		$award_uploads = $this->get_import_records();
 
-		if ( empty( $award_upload ) || ! user_can( $award_upload->post_author, $post_type_obj->cap->edit_others_posts ) ) {
-			return;
-		}
+		foreach ( $award_uploads as $award_upload ) {
+			if ( ! $award_upload instanceof \WP_Post ) {
+				return;
+			}
 
-		$meta_keys         = array(
-			'csl_grant_id',
-			'csl_award_csv',
-			'csl_fiscal_year',
-		);
-		$award_upload_data = get_post_meta( $award_upload->ID );
-		$award_upload_data = wp_array_slice_assoc( $award_upload_data, $meta_keys );
-		$award_upload_data = array_map(
-			function( $meta_value ) {
-				return ( ! empty( $meta_value ) && is_array( $meta_value ) ) ? $meta_value[0] : $meta_value;
-			},
-			$award_upload_data
-		);
-
-		$is_scheduled = $this->schedule_csv_chunk_import( $award_upload_data['csl_award_csv'], $award_upload, $award_upload_data );
-
-		if ( $is_scheduled ) {
-			wp_trash_post( $award_upload->ID );
-		} else {
-			wp_update_post(
-				array(
-					'ID'          => $award_upload->ID,
-					'post_status' => 'csl_failed',
-				)
+			$meta_keys         = array(
+				'csl_grant_id',
+				'csl_award_csv',
+				'csl_fiscal_year',
 			);
+			$award_upload_data = get_post_meta( $award_upload->ID );
+			$award_upload_data = wp_array_slice_assoc( $award_upload_data, $meta_keys );
+			$award_upload_data = array_map(
+				function( $meta_value ) {
+					return ( ! empty( $meta_value ) && is_array( $meta_value ) ) ? $meta_value[0] : $meta_value;
+				},
+				$award_upload_data
+			);
+
+			if ( ! user_can( $award_upload->post_author, 'edit_grant', absint( $award_upload_data['csl_grant_id'] ) ) ) {
+				return;
+			}
+
+			$is_scheduled = $this->schedule_csv_chunk_import( $award_upload_data['csl_award_csv'], $award_upload, $award_upload_data );
+
+			if ( $is_scheduled ) {
+				wp_trash_post( $award_upload->ID );
+			} else {
+				wp_update_post(
+					array(
+						'ID'          => $award_upload->ID,
+						'post_status' => 'csl_failed',
+					)
+				);
+			}
 		}
 	}
 
@@ -142,26 +147,25 @@ class BulkAwardImport {
 	}
 
 	/**
-	 * Get next import award upload record.
-	 * ( Oldest Award Upload post with pending status. )
+	 * Get award upload records to schedule csv import.
 	 *
-	 * @return \WP_Post
+	 * @return \WP_Post[]
 	 */
-	public function get_next_import_record() {
+	public function get_import_records() {
 
 		$query_args = array(
 			'post_type'              => AwardUploads::CPT_SLUG,
 			'post_status'            => 'pending',
-			'posts_per_page'         => 1,
+			'posts_per_page'         => 100,
 			'no_found_rows'          => true,
 			'orderby'                => 'date',
-			'order'                  => 'order',
+			'order'                  => 'ASC',
 			'update_post_term_cache' => false,
 		);
 
 		$posts = new WP_Query( $query_args );
 
-		return ( empty( $posts->posts ) || empty( $posts->posts[0] ) ) ? 0 : $posts->posts[0];
+		return empty( $posts->posts ) ? [] : $posts->posts;
 	}
 
 	/**
@@ -253,7 +257,7 @@ class BulkAwardImport {
 			$award_data = array_filter( $meta_args );
 
 			$args = array(
-				'post_author' => $award_upload->author,
+				'post_author' => $award_upload->post_author,
 				'post_title'  => $award_upload->post_title,
 				'post_type'   => GrantAwards::CPT_SLUG,
 				'post_status' => 'publish',
