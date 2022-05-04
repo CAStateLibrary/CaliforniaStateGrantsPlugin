@@ -618,10 +618,14 @@ class Field {
 		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
+
+		if ( empty( $value ) ) {
+			$value = $meta_field['value'] ?? '';
+		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
-				<label for="<?php echo esc_attr( $field['id'] );?>">
+				<label for="<?php echo esc_attr( $meta_field['id'] );?>">
 					<?php echo esc_html( $name ); ?>
 				</label>
 

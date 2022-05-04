@@ -96,6 +96,7 @@ class Funding {
 				'id'       => 'totalEstimatedFunding',
 				'name'     => __( 'Total Estimated Available Funding', 'ca-grants-plugin' ),
 				'type'     => 'radio',
+				'value'    => 'exactFundingAmount',
 				'fields'   => array(
 						array(
 								'id'   => 'exactFundingAmount',
