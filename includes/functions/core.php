@@ -444,6 +444,19 @@ function is_closed_grant( $grant_id ) {
 }
 
 /**
+ * Check if given grant is active grant or not.
+ *
+ * @param int $grant_id Grant ID
+ *
+ * @return boolean Return true for active grant and false if its not.
+ */
+function is_active_grant( $grant_id ) {
+	$type = get_grant_type( $grant_id );
+
+	return ! empty( $type ) && 'active' === $type;
+}
+
+/**
  * Get grant type for given grant id.
  *
  * @param int $grant_id Grant status name.
@@ -469,6 +482,8 @@ function get_grant_type( $grant_id ) {
 		&& ! Validators\validate_date_after( gmdate( 'Y-m-d H:m:s', $deadline ), current_time( 'mysql' ) )
 	) {
 		$grant_status = 'closed';
+	} else if ( ! empty( $deadline ) ) {
+		$grant_status = 'active';
 	}
 
 	return $grant_status;
@@ -531,4 +546,17 @@ function get_award_stats( $grant_id ) {
 	}
 
 	return end( $award_stats );
+}
+
+/**
+ * Remove byte order mark special char from string.
+ *
+ * @see https://docs.microsoft.com/en-us/globalization/encoding/byte-order-mark
+ *
+ * @param string $string Text to trim byte order mark char.
+ *
+ * @return string
+ */
+function trim_byte_order_mark( $string ) {
+	return preg_replace( "/^\xEF\xBB\xBF/", '', $string );
 }

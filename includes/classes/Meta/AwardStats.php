@@ -139,13 +139,24 @@ class AwardStats {
 	 * @return array Sanitized award stats data.
 	 */
 	public static function sanitize_award_stats_data( $value ) {
-
 		// Remove any empty data.
 		$value       = array_filter( $value, 'array_filter' );
 		$unique_data = [];
 
 		foreach ( $value as $award_stats ) {
-			$unique_data[ $award_stats['fiscalYear'] ] = $award_stats;
+			if ( ! isset( $award_stats['fiscalYear'], $award_stats['applicationsSubmitted'], $award_stats['grantsAwarded'] ) ) {
+				continue;
+			}
+
+			if ( '' === $award_stats['fiscalYear'] || '' === $award_stats['applicationsSubmitted'] || '' === $award_stats['grantsAwarded'] ) {
+				continue;
+			}
+
+			$unique_data[ $award_stats['fiscalYear'] ] = [
+				'fiscalYear'            => sanitize_text_field( $award_stats['fiscalYear'] ),
+				'applicationsSubmitted' => absint( $award_stats['applicationsSubmitted'] ),
+				'grantsAwarded'         => absint( $award_stats['grantsAwarded'] ),
+			];
 		}
 
 		return array_values( $unique_data );
