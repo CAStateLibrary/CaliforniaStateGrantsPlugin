@@ -318,33 +318,6 @@ const setupForms = () => {
 				} else {
 					return false;
 				}
-			},
-			isConsentAccepted: ( field ) => {
-				// Bail
-				if ( ! field.matches( 'input#consent-checkbox' ) ) {
-					return false;
-				}
-
-				const consentCheckStatus = ['Update', 'Publish', 'publish', 'Schedule'];
-				const hiddenStatusField = document.getElementById( 'hidden_post_status' );
-
-				if ( // Check if it's submit button click other then publish or update button.
-					'submit' === document?.activeElement?.type
-						&& document?.activeElement?.value
-						&& ! consentCheckStatus.includes( document?.activeElement?.value )
-				) {
-					return false;
-				}
-
-				if ( // Check for form on enter field submit event with status other then publish.
-					'submit' !== document?.activeElement?.type
-						&& hiddenStatusField?.value
-						&& ! consentCheckStatus.includes( hiddenStatusField.value )
-				) {
-					return false;
-				}
-
-				return ( field && ! field.checked );
 			}
 		},
 		messages: {
@@ -358,8 +331,7 @@ const setupForms = () => {
 			isValidEndDate: 'End date is invalid, please select end date after start date.',
 			isFundingSourceNotesRequired: 'Please add funding source notes. ( Required for funding source "Other" )',
 			isFundingMethodNotesRequired: 'Please add funding method notes. ( Required for funding method "Other" )',
-			isMaxLimitReachedField: 'Maximum characters limit reached.',
-			isConsentAccepted: 'This field is required.',
+			isMaxLimitReachedField: 'Maximum characters limit reached.'
 		},
 		disableSubmit: true // We need to handle some additional logic here for save/continue
 	} );
@@ -613,9 +585,6 @@ const handleFormClick = ( event ) => {
 
 		form.appendChild( input );
 	}
-
-	// Submit.
-	form.submit();
 };
 
 /**

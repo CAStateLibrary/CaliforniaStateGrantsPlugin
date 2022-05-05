@@ -9,8 +9,6 @@ namespace CaGov\Grants\PostTypes;
 
 use CaGov\Grants\Meta;
 
-use function CaGov\Grants\Core\is_portal;
-
 /**
  * Edit grant class.
  */
@@ -68,13 +66,6 @@ class EditGrant extends BaseEdit {
 				'title' => __( 'Grant Contacts and Links', 'ca-grants-plugin' ),
 			),
 		);
-
-		if ( ! is_portal() ) {
-			$this->meta_groups['grant-consent'] = array(
-				'class' => 'CaGov\\Grants\\Meta\\GrantConsent',
-				'title' => __( 'Grant Publish Consent', 'ca-grants-plugin' ),
-			);
-		}
 	}
 
 	/**
@@ -114,16 +105,13 @@ class EditGrant extends BaseEdit {
 	 */
 	public static function get_all_meta_fields() {
 
-		$consent_fields = is_portal() ? [] : Meta\GrantConsent::get_fields();
-
 		return array_merge(
 			Meta\AwardStats::get_fields(),
 			Meta\General::get_fields(),
 			Meta\Eligibility::get_fields(),
 			Meta\Funding::get_fields(),
 			Meta\Dates::get_fields(),
-			Meta\Contact::get_fields(),
-			$consent_fields
+			Meta\Contact::get_fields()
 		);
 	}
 }
