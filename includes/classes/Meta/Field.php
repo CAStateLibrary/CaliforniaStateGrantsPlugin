@@ -1274,7 +1274,7 @@ class Field {
 					break;
 				case 'fiscalYear':
 				case 'csl_fiscal_year':
-					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=3';
+					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=100';
 					break;
 				case 'recipientType':
 					$api_url .= 'recipient-types';
