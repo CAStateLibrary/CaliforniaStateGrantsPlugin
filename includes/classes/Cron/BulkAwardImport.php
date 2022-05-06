@@ -255,14 +255,13 @@ class BulkAwardImport {
 		$total_count    = $total_count ? (int) $total_count : 0;
 
 		foreach ( $csv_chunk as $grant_award ) {
-			$meta_args  = wp_parse_args(
+			$award_data  = wp_parse_args(
 				array(
 					'grantID'    => $grant_id,
 					'fiscalYear' => $fiscal_year,
 				),
 				$grant_award
 			);
-			$award_data = array_filter( $meta_args );
 
 			$args = array(
 				'post_author' => $award_upload->post_author,
