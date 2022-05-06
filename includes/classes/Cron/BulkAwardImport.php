@@ -142,7 +142,7 @@ class BulkAwardImport {
 			 */
 			do_action( 'csl_grants_bulk_award_import_failed', $failed_upload_id );
 
-			update_post_meta( $failed_upload_id, 'failure_email_sent', true );
+			update_post_meta( $failed_upload_id, 'failure_email_sent', time() );
 		}
 	}
 
