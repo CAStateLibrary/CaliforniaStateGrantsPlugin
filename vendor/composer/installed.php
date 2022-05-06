@@ -5,7 +5,11 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'ae1639873996be905a5fef8bf41ea42ff7aa4eea',
+<<<<<<< HEAD
+        'reference' => 'b0ab8c67798fd774063c3f8f199853e187dc0d32',
+=======
+        'reference' => '26edcb32f90792bb0a6453543fd866ea1c245e16',
+>>>>>>> epic/phase-two
         'name' => '10up/ca-grants-plugin',
         'dev' => false,
     ),
@@ -16,7 +20,11 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'ae1639873996be905a5fef8bf41ea42ff7aa4eea',
+<<<<<<< HEAD
+            'reference' => 'b0ab8c67798fd774063c3f8f199853e187dc0d32',
+=======
+            'reference' => '26edcb32f90792bb0a6453543fd866ea1c245e16',
+>>>>>>> epic/phase-two
             'dev_requirement' => false,
         ),
         '10up/post-finder' => array(

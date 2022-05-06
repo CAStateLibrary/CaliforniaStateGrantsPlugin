@@ -191,9 +191,15 @@ class Field {
 			'args'           => array(),
 		);
 
-		$name        = $meta_field['name'] ?? '';
-		$id          = $meta_field['id'] ?? '';
-		$value       = get_post_meta( get_the_ID(), $id, true );
+		$name = $meta_field['name'] ?? '';
+		$id   = $meta_field['id'] ?? '';
+
+		if ( isset( $meta_field['value'] ) && $meta_field['value'] > 0 ) {
+			$value = $meta_field['value'];
+		} else {
+			$value = get_post_meta( get_the_ID(), $id, true );
+		}
+
 		$options     = $meta_field['options'] ?? array();
 		$options     = wp_parse_args( $options, $default_options );
 		$class       = $meta_field['class'] ?? '';
@@ -544,7 +550,7 @@ class Field {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
 		?>
-		<tr <?php self::conditional_visible( $meta_field ); ?>>
+		<tr class="<?php echo esc_attr( $meta_field['class'] ?? '' ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
