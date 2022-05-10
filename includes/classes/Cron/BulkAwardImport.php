@@ -12,6 +12,7 @@ use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\PostTypes\GrantAwards;
 use CaGov\Grants\PostTypes\AwardUploads;
 use ElasticPress\Indexables;
+use CaGov\Grants\PostTypes\Grants;
 use WP_Query;
 
 /**
@@ -110,7 +111,10 @@ class BulkAwardImport {
 				$award_upload_data
 			);
 
-			if ( ! user_can( $award_upload->post_author, 'edit_grant', absint( $award_upload_data['csl_grant_id'] ) ) ) {
+			$grant_post_type_obj = get_post_type_object( Grants::get_cpt_slug() );
+			$edit_cap            = ! empty( $grant_post_type_obj->cap->edit_post ) ? $grant_post_type_obj->cap->edit_post : 'edit_post';
+
+			if ( ! user_can( $award_upload->post_author, $edit_cap, absint( $award_upload_data['csl_grant_id'] ) ) ) {
 				return;
 			}
 
