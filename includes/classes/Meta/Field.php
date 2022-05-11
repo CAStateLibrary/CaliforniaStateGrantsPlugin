@@ -191,9 +191,15 @@ class Field {
 			'args'           => array(),
 		);
 
-		$name        = $meta_field['name'] ?? '';
-		$id          = $meta_field['id'] ?? '';
-		$value       = get_post_meta( get_the_ID(), $id, true );
+		$name = $meta_field['name'] ?? '';
+		$id   = $meta_field['id'] ?? '';
+
+		if ( isset( $meta_field['value'] ) && $meta_field['value'] > 0 ) {
+			$value = $meta_field['value'];
+		} else {
+			$value = get_post_meta( get_the_ID(), $id, true );
+		}
+
 		$options     = $meta_field['options'] ?? array();
 		$options     = wp_parse_args( $options, $default_options );
 		$class       = $meta_field['class'] ?? '';
@@ -544,7 +550,7 @@ class Field {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
 		?>
-		<tr <?php self::conditional_visible( $meta_field ); ?>>
+		<tr class="<?php echo esc_attr( $meta_field['class'] ?? '' ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -610,10 +616,14 @@ class Field {
 		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
+
+		if ( empty( $value ) ) {
+			$value = $meta_field['value'] ?? '';
+		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
-				<label for="<?php echo esc_attr( $field['id'] );?>">
+				<label for="<?php echo esc_attr( $meta_field['id'] );?>">
 					<?php echo esc_html( $name ); ?>
 				</label>
 
@@ -1264,7 +1274,7 @@ class Field {
 					break;
 				case 'fiscalYear':
 				case 'csl_fiscal_year':
-					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=3';
+					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=100';
 					break;
 				case 'recipientType':
 					$api_url .= 'recipient-types';
@@ -1464,11 +1474,11 @@ class Field {
 					$min_date   = ! empty( $meta_field['min_date'] ) ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
 
 					if ( $is_valid_date && $max_date instanceof DateTime ) {
-						$is_valid_date = $date < $max_date;
+						$is_valid_date = $date <= $max_date;
 					}
 
 					if ( $is_valid_date && $min_date instanceof DateTime ) {
-						$is_valid_date = $date > $min_date;
+						$is_valid_date = $date >= $min_date;
 					}
 
 					if ( $is_valid_date ) {
@@ -1594,7 +1604,7 @@ class Field {
 			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
 
 			// Allow 0 to be saved if the field type is a number.
-			$is_numeric_zero = 'number' === $meta_field['type'] && 0 === $value;
+			$is_numeric_zero = 'number' === $meta_field['type'] && ( 0 === $value || '0' === $value );
 
 			if ( ! empty( $post_id ) && ( ! empty( $value ) || $is_numeric_zero ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );

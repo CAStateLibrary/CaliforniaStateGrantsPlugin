@@ -89,7 +89,14 @@ class Grants {
 
 		printf(
 			'<a href="%s">%s</a>',
-			esc_url( admin_url( 'post-new.php?post_type=csl_grant_awards' ) ),
+			esc_url(
+				add_query_arg(
+					[
+						'grant_id' => $grant_id,
+					],
+					admin_url( 'post-new.php?post_type=csl_grant_awards' )
+				)
+			),
 			esc_html__( 'Enter Award Data', 'ca-grants-plugin' )
 		);
 
