@@ -259,8 +259,8 @@ const maybeSetHiddenClass = el => {
 		el.classList.add( 'hidden' );
 
 		if ( true === visibleOptions['required'] ) {
-			if ( el.querySelector( 'input' ) ) {
-				el.querySelector( 'input' ).removeAttribute( 'required' );
+			if ( el.querySelector( 'input:not([type="checkbox"])' ) ) {
+				el.querySelector( 'input:not([type="checkbox"])' ).removeAttribute( 'required' );
 			}
 			if ( el.querySelector( 'textarea' ) ) {
 				el.querySelector( 'textarea' ).removeAttribute( 'required' );
@@ -276,8 +276,8 @@ const maybeSetHiddenClass = el => {
 		el.classList.remove( 'hidden' );
 
 		if ( true === visibleOptions['required'] ) {
-			if ( el.querySelector( 'input' ) ) {
-				el.querySelector( 'input' ).setAttribute( 'required', true );
+			if ( el.querySelector( 'input:not([type="checkbox"])' ) ) {
+				el.querySelector( 'input:not([type="checkbox"])' ).setAttribute( 'required', true );
 			}
 			if ( el.querySelector( 'textarea' ) ) {
 				el.querySelector( 'textarea' ).setAttribute( 'required', true );
