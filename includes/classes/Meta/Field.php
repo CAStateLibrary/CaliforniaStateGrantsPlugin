@@ -1474,11 +1474,11 @@ class Field {
 					$min_date   = ! empty( $meta_field['min_date'] ) ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
 
 					if ( $is_valid_date && $max_date instanceof DateTime ) {
-						$is_valid_date = $date < $max_date;
+						$is_valid_date = $date <= $max_date;
 					}
 
 					if ( $is_valid_date && $min_date instanceof DateTime ) {
-						$is_valid_date = $date > $min_date;
+						$is_valid_date = $date >= $min_date;
 					}
 
 					if ( $is_valid_date ) {
@@ -1604,7 +1604,7 @@ class Field {
 			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
 
 			// Allow 0 to be saved if the field type is a number.
-			$is_numeric_zero = 'number' === $meta_field['type'] && 0 === $value;
+			$is_numeric_zero = 'number' === $meta_field['type'] && ( 0 === $value || '0' === $value );
 
 			if ( ! empty( $post_id ) && ( ! empty( $value ) || $is_numeric_zero ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );
