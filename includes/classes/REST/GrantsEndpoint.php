@@ -66,7 +66,8 @@ class GrantsEndpoint extends BaseEndpoint {
 	 * @return \WP_REST_Response The modified response
 	 */
 	public function modify_grants_rest_response( $response, $post, $request ) {
-		$new_response = wp_cache_get( 'grants_rest_response_' . $post->ID );
+		$new_response = wp_cache_get( 'grants_rest_response_' . $post->ID, 'ca-grants-plugin' );
+
 		if ( false === $new_response ) {
 			// Fields that aren't needed in the REST response
 			$blacklisted_fields = array(
@@ -237,10 +238,10 @@ class GrantsEndpoint extends BaseEndpoint {
 
 			$grant_award_url_base = rest_url( 'wp/v2/grant-awards' );
 
-			if ( 
-				defined( 'CA_HTTP_AUTH_USER' ) && 
-				! empty( CA_HTTP_AUTH_USER ) && 
-				defined( 'CA_HTTP_AUTH_PASSWORD' ) && 
+			if (
+				defined( 'CA_HTTP_AUTH_USER' ) &&
+				! empty( CA_HTTP_AUTH_USER ) &&
+				defined( 'CA_HTTP_AUTH_PASSWORD' ) &&
 				! empty( CA_HTTP_AUTH_PASSWORD )
 			 ) {
 				$auth_string = sprintf( '%s:%s@', CA_HTTP_AUTH_USER, CA_HTTP_AUTH_PASSWORD );
@@ -270,7 +271,7 @@ class GrantsEndpoint extends BaseEndpoint {
 				$new_response->add_link( 'award', $grant_awards_url );
 			}
 
-			wp_cache_set( 'grants_rest_response_' . $post->ID, $new_response );
+			wp_cache_set( 'grants_rest_response_' . $post->ID, $new_response, 'ca-grants-plugin', DAY_IN_SECONDS );
 		}
 
 		return $new_response;
