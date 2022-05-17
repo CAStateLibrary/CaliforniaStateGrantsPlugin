@@ -135,7 +135,7 @@ class BulkAwardImport {
 	 */
 	public function send_import_failed_email() {
 		$failed_upload_ids = $this->get_failed_uploads();
-		ini_set( 'xdebug.overload_var_dump', 'off'); echo '<pre>'; var_dump( $failed_upload_ids ); echo '</pre>'; die();
+
 		foreach ( $failed_upload_ids as $failed_upload_id ) {
 			/**
 			 * Bulk Award Import failed.
