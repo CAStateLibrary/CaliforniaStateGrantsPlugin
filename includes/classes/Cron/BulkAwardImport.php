@@ -146,7 +146,7 @@ class BulkAwardImport {
 			 */
 			do_action( 'csl_grants_bulk_award_import_failed', $failed_upload_id );
 
-			update_post_meta( $failed_upload_id, 'failure_email_sent', true );
+			update_post_meta( $failed_upload_id, 'failure_email_sent', time() );
 		}
 	}
 
@@ -327,10 +327,12 @@ class BulkAwardImport {
 			'post_status'    => 'csl_failed',
 			'posts_per_page' => 100, // If there are more than 100 failed uploads then they will be processed in the next batch.
 			'fields'         => 'ids',
-			'meta_query'     => array(
-				'key'     => 'failure_email_sent',
-				'compare' => 'NOT EXISTS',
-			),
+			'meta_query'     => [
+				[
+					'key'     => 'failure_email_sent',
+					'compare' => 'NOT EXISTS',
+				],
+			],
 			'no_found_rows'  => true,
 		);
 
