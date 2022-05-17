@@ -135,7 +135,7 @@ class BulkAwardImport {
 	 */
 	public function send_import_failed_email() {
 		$failed_upload_ids = $this->get_failed_uploads();
-
+		ini_set( 'xdebug.overload_var_dump', 'off'); echo '<pre>'; var_dump( $failed_upload_ids ); echo '</pre>'; die();
 		foreach ( $failed_upload_ids as $failed_upload_id ) {
 			/**
 			 * Bulk Award Import failed.
@@ -324,10 +324,12 @@ class BulkAwardImport {
 			'post_status'    => 'csl_failed',
 			'posts_per_page' => 100, // If there are more than 100 failed uploads then they will be processed in the next batch.
 			'fields'         => 'ids',
-			'meta_query'     => array(
-				'key'     => 'failure_email_sent',
-				'compare' => 'NOT EXISTS',
-			),
+			'meta_query'     => [
+				[
+					'key'     => 'failure_email_sent',
+					'compare' => 'NOT EXISTS',
+				],
+			],
 			'no_found_rows'  => true,
 		);
 
