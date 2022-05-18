@@ -331,10 +331,12 @@ class BulkAwardImport {
 			'post_status'    => 'csl_failed',
 			'posts_per_page' => 100, // If there are more than 100 failed uploads then they will be processed in the next batch.
 			'fields'         => 'ids',
-			'meta_query'     => array(
-				'key'     => 'failure_email_sent',
-				'compare' => 'NOT EXISTS',
-			),
+			'meta_query'     => [
+				[
+					'key'     => 'failure_email_sent',
+					'compare' => 'NOT EXISTS',
+				],
+			],
 			'no_found_rows'  => true,
 		);
 
