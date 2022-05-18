@@ -91,6 +91,22 @@ class EditGrantAwards extends BaseEdit {
 	}
 
 	/**
+	 * Handles the save post action.
+	 *
+	 * @param integer $post_id The ID of the currently displayed post.
+	 */
+	public function save_post( $post_id ) {
+		parent::save_post( $post_id );
+
+		$grant_id = get_post_meta( $post_id, 'grantID', true );
+
+		// Delete grant api rest endpoint cache.
+		if ( ! empty( $grant_id ) ) {
+			wp_cache_delete( 'grants_rest_response_' . $grant_id );
+		}
+	}
+
+	/**
 	 * Update grant award post title and cleanup data.
 	 *
 	 * @param int $post_id The ID of the currently displayed post.
