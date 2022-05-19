@@ -95,7 +95,7 @@ class EditGrant extends BaseEdit {
 	public function save_post( $post_id ) {
 		parent::save_post( $post_id );
 
-		wp_cache_delete( 'grants_rest_response_' . $post_id );
+		wp_cache_delete( 'grants_rest_response_' . $post_id, 'ca-grants-plugin' );
 	}
 
 	/**
