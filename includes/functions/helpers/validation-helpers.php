@@ -27,7 +27,6 @@ function validate_field( $key, $value, $post_data ) {
 		case 'agencyURL':
 		case 'subscribe':
 		case 'events':
-		case 'applicantTypeSuggestion':
 		case 'anticipatedOpenDate':
 			return Validators\validate_string( $value );
 		case 'isForecasted':
@@ -70,14 +69,33 @@ function validate_field( $key, $value, $post_data ) {
 				Validators\validate_date( $value )
 				&& Validators\validate_date_after( $value, $post_data['openDate'] )
 			);
-		case 'estimatedAvailableFunds':
-			return Validators\validate_int( $value );
 		case 'matchingFunds':
 			return(
 				( isset( $value['required'] ) && Validators\validate_boolean( $value['required'] ) )
 				&& ( isset( $value['percent'] ) ? Validators\validate_int( $value['percent'] ) : true )
 				&& ( isset( $value['notes'] ) ? Validators\validate_string( $value['notes'], 450 ) : true )
 			);
+		case 'totalEstimatedFunding':
+		case 'estimatedAvailableFunds':
+		case 'estimatedAvailableFundNotes':
+			if (
+				isset( $post_data['totalEstimatedFunding'] )
+				&& 'fundingAmountNotes' === $post_data['totalEstimatedFunding']
+			) {
+				return (
+					isset( $post_data['estimatedAvailableFundNotes'] )
+					&& Validators\validate_string( $post_data['estimatedAvailableFundNotes'], 450 )
+				);
+			} elseif (
+				isset( $post_data['totalEstimatedFunding'] )
+				&& 'exactFundingAmount' === $post_data['totalEstimatedFunding']
+			) {
+				return (
+					isset( $post_data['estimatedAvailableFunds'] )
+					&& Validators\validate_int( $post_data['estimatedAvailableFunds'] )
+				);
+			}
+			return true;
 		case 'estimatedAwards':
 			if ( isset( $value['exact'] ) ) {
 				return Validators\validate_int( $value['exact'] );
@@ -114,4 +132,3 @@ function validate_field( $key, $value, $post_data ) {
 			return true;
 	}
 }
-

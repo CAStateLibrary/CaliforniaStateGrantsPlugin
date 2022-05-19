@@ -1,9 +1,7 @@
 const grantTypeInputs = Array.from( document.querySelectorAll( 'input[name="isForecasted"]' ) );
-const geoLocationServedElem = Array.from( document.querySelectorAll( 'select[name="geoLocationServed"]' ) );
 const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if],input[required],textarea[required]';
 const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
 const conditionalVisibleElems = 'tr[data-visible-if]';
-const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select[name="recipientType"]' ) );
 const startDateElem = Array.from( document.querySelectorAll( 'input[data-min-date-id]' ) );
 const endDateElem = Array.from( document.querySelectorAll( 'input[data-max-date-id]' ) );
 const requiredPostFinderDiv = Array.from( document.querySelectorAll( 'tr.post_finder_field div[data-post-finder="required"]' ) );
@@ -14,20 +12,31 @@ const disbursementMethod = Array.from( document.querySelectorAll( 'input[name="d
  * Conditional requiring fields if grant is forecasted/active.
  */
 const main = () => {
+	const visibleElems = getVisableElems();
+	if ( visibleElems.length ) {
+		const visibleFields = [];
+		visibleElems.forEach( input => {
+			const { visibleIf }  = input.dataset;
+			const visibleOptions = JSON.parse( visibleIf );
 
-	if ( getVisableElems().length ) {
-		grantAwardsRecipientTypes.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
-		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+			if ( visibleOptions.fieldId && -1 === visibleFields.indexOf( visibleOptions.fieldId ) ) {
+				visibleFields.push( visibleOptions.fieldId );
+			}
+		} );
+
+		if ( visibleFields.length ) {
+			visibleFields.forEach( field => {
+				const fields = Array.from( document.querySelectorAll( `[name="${field}"]` ) );
+				fields.forEach( input => input.addEventListener( 'change', function () {
+					visibleElems.forEach( el => maybeSetHiddenClass( el ) );
+				} ) );
+			} );
+		}
 	}
 
 	if ( grantTypeInputs.length ) {
 		// Update required attributes when the input changes.
 		grantTypeInputs.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
-	}
-
-	if ( geoLocationServedElem.length ) {
-		// Update required attributes when the input changes.
-		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 	}
 
 	if ( startDateElem.length ) {
@@ -68,29 +77,6 @@ const main = () => {
  */
 const getCurrentGrantType = () => {
 	const [current] = grantTypeInputs.filter( input => input.checked );
-
-	return current ? current.value : '';
-};
-
-/**
- * Get current geo location.
- */
-const getCurrentGeoLocation = () => {
-
-	if ( ! geoLocationServedElem.length ) {
-		return '';
-	}
-
-	const [current] = geoLocationServedElem.filter( input => input.value );
-
-	return current ? current.value : '';
-};
-
-/**
- * Get current Recipient type.
- */
-const getCurrentRecipientType = () => {
-	const [current] = grantAwardsRecipientTypes.filter( input => input.selectedIndex );
 
 	return current ? current.value : '';
 };
@@ -237,18 +223,34 @@ const maybeSetRequiredClass = el => {
  */
 const maybeSetHiddenClass = el => {
 	const { visibleIf }  = el.dataset;
-	const visibleOptions = JSON.parse( visibleIf );
+
+	if ( ! visibleIf ) {
+		return;
+	}
+
+	const visibleOptions = visibleIf ? JSON.parse( visibleIf ) : null;
 	let current = '';
 
 	if ( ! visibleOptions ) {
 		return;
 	}
 
-	if ( 'geoLocationServed' === visibleOptions['fieldId'] && geoLocationServedElem.length ) {
-		current = getCurrentGeoLocation();
-	} else if ( 'recipientType' === visibleOptions['fieldId'] && grantAwardsRecipientTypes.length ) {
-		current = getCurrentRecipientType();
-	}
+	const fields = Array.from( document.querySelectorAll( `[name="${visibleOptions['fieldId']}"]` ) );
+	const [field] = fields.filter( input => {
+		let value = false;
+		switch( input.type ) {
+				case 'radio':
+					value = input.checked;
+					break;
+				case 'select-one':
+					value = input.selectedIndex;
+					break;
+				case 'input':
+					value = input.value ? true : false;
+		}
+		return value;
+	} );
+	current = field ? field.value : '';
 
 	if (
 		'not_equal' === visibleOptions['compare'] && current === visibleOptions['value']
@@ -257,8 +259,11 @@ const maybeSetHiddenClass = el => {
 		el.classList.add( 'hidden' );
 
 		if ( true === visibleOptions['required'] ) {
-			if ( el.querySelector( 'input[type="text"]' ) ) {
-				el.querySelector( 'input[type="text"]' ).removeAttribute( 'required' );
+			if ( el.querySelector( 'input:not([type="checkbox"])' ) ) {
+				el.querySelector( 'input:not([type="checkbox"])' ).removeAttribute( 'required' );
+			}
+			if ( el.querySelector( 'textarea' ) ) {
+				el.querySelector( 'textarea' ).removeAttribute( 'required' );
 			}
 			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
 				el.querySelector( 'td' ).classList.remove( 'fieldset--is-required' );
@@ -271,8 +276,11 @@ const maybeSetHiddenClass = el => {
 		el.classList.remove( 'hidden' );
 
 		if ( true === visibleOptions['required'] ) {
-			if ( el.querySelector( 'input[type="text"]' ) ) {
-				el.querySelector( 'input[type="text"]' ).setAttribute( 'required', true );
+			if ( el.querySelector( 'input:not([type="checkbox"])' ) ) {
+				el.querySelector( 'input:not([type="checkbox"])' ).setAttribute( 'required', true );
+			}
+			if ( el.querySelector( 'textarea' ) ) {
+				el.querySelector( 'textarea' ).setAttribute( 'required', true );
 			}
 			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
 				el.querySelector( 'td' ).classList.add( 'fieldset--is-required' );

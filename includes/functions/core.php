@@ -10,6 +10,7 @@ namespace CaGov\Grants\Core;
 use CaGov\Grants\Admin\Settings;
 use CaGov\Grants\Helpers\Validators;
 use CaGov\Grants\PostTypes\GrantAwards;
+use CaGov\Grants\PostTypes\Grants;
 use DateTime;
 use WP_Query;
 use \WP_Error as WP_Error;
@@ -179,6 +180,21 @@ function admin_scripts() {
 		[],
 		CA_GRANTS_VERSION,
 		true
+	);
+
+	wp_localize_script(
+		'csl_grants_submissions_admin',
+		'CAGrantPlugin',
+		[
+			'isPortal'       => is_portal(),
+			'grantSlug'      => Grants::get_cpt_slug(),
+			'grantAwardSlug' => GrantAwards::CPT_SLUG,
+			'l10n'           => [
+				'activeGrantConsent'  => __( 'I understand that the information will be posted to the California Grants Portal in its entirety on the Grant Open Date specified.', 'grantsportal' ),
+				'forcastGrantConsent' => __( 'I understand that the information will be posted to the California Grants Portal in its entirety on the Publish Date specified.', 'grantsportal' ),
+				'grantAwardConsent'   => __( 'I understand that the information will be posted to the California Grants Portal in its entirety once submitted.', 'grantsportal' ),
+			],
+		]
 	);
 
 	wp_enqueue_script( 'jquery-ui-datepicker' );
@@ -482,7 +498,7 @@ function get_grant_type( $grant_id ) {
 		&& ! Validators\validate_date_after( gmdate( 'Y-m-d H:m:s', $deadline ), current_time( 'mysql' ) )
 	) {
 		$grant_status = 'closed';
-	} else if ( ! empty( $deadline ) ) {
+	} elseif ( ! empty( $deadline ) ) {
 		$grant_status = 'active';
 	}
 

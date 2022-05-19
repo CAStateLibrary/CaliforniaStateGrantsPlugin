@@ -21,11 +21,6 @@ use Composer\Semver\VersionParser;
  * See also https://getcomposer.org/doc/07-runtime.md#installed-versions
  *
  * To require its presence, you can require `composer-runtime-api ^2.0`
-<<<<<<< HEAD
- *
- * @final
-=======
->>>>>>> epic/phase-two
  */
 class InstalledVersions
 {

@@ -384,7 +384,16 @@ class BulkUploadEndpoint extends WP_REST_Controller {
 		}
 
 		// Validate file before uploading it.
-		$validate_file = AwardUploads::validate_csv_file( $file, $data );
+		if (
+			defined( 'CSL_INVALID_BULK_UPLOAD_CSV_TEST_FILENAME' ) &&
+			! empty( $file['name'] ) &&
+			CSL_INVALID_BULK_UPLOAD_CSV_TEST_FILENAME === $file['name']
+		) {
+			// Bypass validation to test the failure notice sent out when an upload is created but the awards fail to import for some reason.
+			$validate_file = true;
+		} else {
+			$validate_file = AwardUploads::validate_csv_file( $file, $data );
+		}
 
 		if ( is_wp_error( $validate_file ) ) {
 			return $validate_file;

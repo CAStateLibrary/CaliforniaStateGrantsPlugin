@@ -11,6 +11,7 @@ use CaGov\Grants\Meta\Field;
 use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\PostTypes\GrantAwards;
 use CaGov\Grants\PostTypes\AwardUploads;
+use CaGov\Grants\PostTypes\Grants;
 use WP_Query;
 
 /**
@@ -109,7 +110,10 @@ class BulkAwardImport {
 				$award_upload_data
 			);
 
-			if ( ! user_can( $award_upload->post_author, 'edit_grant', absint( $award_upload_data['csl_grant_id'] ) ) ) {
+			$grant_post_type_obj = get_post_type_object( Grants::get_cpt_slug() );
+			$edit_cap            = ! empty( $grant_post_type_obj->cap->edit_post ) ? $grant_post_type_obj->cap->edit_post : 'edit_post';
+
+			if ( ! user_can( $award_upload->post_author, $edit_cap, absint( $award_upload_data['csl_grant_id'] ) ) ) {
 				return;
 			}
 
@@ -142,7 +146,7 @@ class BulkAwardImport {
 			 */
 			do_action( 'csl_grants_bulk_award_import_failed', $failed_upload_id );
 
-			update_post_meta( $failed_upload_id, 'failure_email_sent', true );
+			update_post_meta( $failed_upload_id, 'failure_email_sent', time() );
 		}
 	}
 
@@ -247,14 +251,13 @@ class BulkAwardImport {
 		$total_count    = $total_count ? (int) $total_count : 0;
 
 		foreach ( $csv_chunk as $grant_award ) {
-			$meta_args  = wp_parse_args(
+			$award_data  = wp_parse_args(
 				array(
 					'grantID'    => $grant_id,
 					'fiscalYear' => $fiscal_year,
 				),
 				$grant_award
 			);
-			$award_data = array_filter( $meta_args );
 
 			$args = array(
 				'post_author' => $award_upload->post_author,
@@ -324,10 +327,12 @@ class BulkAwardImport {
 			'post_status'    => 'csl_failed',
 			'posts_per_page' => 100, // If there are more than 100 failed uploads then they will be processed in the next batch.
 			'fields'         => 'ids',
-			'meta_query'     => array(
-				'key'     => 'failure_email_sent',
-				'compare' => 'NOT EXISTS',
-			),
+			'meta_query'     => [
+				[
+					'key'     => 'failure_email_sent',
+					'compare' => 'NOT EXISTS',
+				],
+			],
 			'no_found_rows'  => true,
 		);
 

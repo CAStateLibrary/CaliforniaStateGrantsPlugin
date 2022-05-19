@@ -9,8 +9,6 @@ namespace CaGov\Grants\PostTypes;
 
 use CaGov\Grants\Meta;
 
-use function CaGov\Grants\Core\is_portal;
-
 /**
  * Edit grant awards class.
  */
@@ -48,13 +46,6 @@ class EditGrantAwards extends BaseEdit {
 				'title' => __( 'Grant Awards', 'ca-grants-plugin' ),
 			),
 		);
-
-		if ( ! is_portal() ) {
-			$this->meta_groups['grant-award-consent'] = array(
-				'class' => 'CaGov\\Grants\\Meta\\GrantAwardsConsent',
-				'title' => __( 'Grant Award Publish Consent', 'ca-grants-plugin' ),
-			);
-		}
 	}
 
 	/**
@@ -97,6 +88,22 @@ class EditGrantAwards extends BaseEdit {
 		self::update_grant_award_data( $post_id );
 
 		add_action( 'save_post_' . static::$cpt_slug, array( $this, 'maybe_update_cleanup_data' ), 11 );
+	}
+
+	/**
+	 * Handles the save post action.
+	 *
+	 * @param integer $post_id The ID of the currently displayed post.
+	 */
+	public function save_post( $post_id ) {
+		parent::save_post( $post_id );
+
+		$grant_id = get_post_meta( $post_id, 'grantID', true );
+
+		// Delete grant api rest endpoint cache.
+		if ( ! empty( $grant_id ) ) {
+			wp_cache_delete( 'grants_rest_response_' . $grant_id );
+		}
 	}
 
 	/**
@@ -150,12 +157,10 @@ class EditGrantAwards extends BaseEdit {
 	 * @return array
 	 */
 	public static function get_all_meta_fields() {
-		$consent_fields = is_portal() ? [] : Meta\GrantAwardsConsent::get_fields();
 
 		return array_merge(
 			Meta\GrantAwardStats::get_fields(),
-			Meta\GrantAwards::get_fields(),
-			$consent_fields
+			Meta\GrantAwards::get_fields()
 		);
 	}
 }
