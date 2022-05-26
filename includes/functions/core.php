@@ -404,6 +404,15 @@ function wp_safe_remote_post_multipart( $url, $args, $file_name ) {
 		'timeout'   => 300, // Increase timeout to process csv data, increased default 5 seconds to 10 seconds.
 	);
 
+	if (
+		defined( 'CA_HTTP_AUTH_USER' ) &&
+		! empty( CA_HTTP_AUTH_USER ) &&
+		defined( 'CA_HTTP_AUTH_PASSWORD' ) &&
+		! empty( CA_HTTP_AUTH_PASSWORD )
+	 ) {
+		$post_args['headers']['Authorization'] = 'Basic ' . base64_encode( CA_HTTP_AUTH_USER . ':' . CA_HTTP_AUTH_PASSWORD );
+	}
+
 	return wp_safe_remote_post( $url, $post_args );
 }
 
