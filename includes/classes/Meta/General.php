@@ -74,7 +74,6 @@ class General {
 					'id'   => 'uniqueID',
 					'name' => __( 'Unique ID', 'ca-grants-plugin' ),
 					'type' => 'text',
-					'csv'  => 'PortalID',
 			);
 		}
 
