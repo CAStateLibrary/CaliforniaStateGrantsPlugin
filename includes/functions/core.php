@@ -410,8 +410,7 @@ function wp_safe_remote_post_multipart( $url, $args, $file_name ) {
 		defined( 'CA_HTTP_AUTH_PASSWORD' ) &&
 		! empty( CA_HTTP_AUTH_PASSWORD )
 	 ) {
-		$auth_string = sprintf( '%s:%s@', CA_HTTP_AUTH_USER, CA_HTTP_AUTH_PASSWORD );
-		$url         = str_replace( '://', '://' . $auth_string, $url );
+		$post_args['headers']['Authorization'] = 'Basic ' . base64_encode( CA_HTTP_AUTH_USER . ':' . CA_HTTP_AUTH_PASSWORD );
 	}
 
 	return wp_safe_remote_post( $url, $post_args );
