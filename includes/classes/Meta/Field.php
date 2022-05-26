@@ -168,6 +168,23 @@ class Field {
 		}
 	}
 
+	private static function get_fiscal_years() {
+		$grant_id = is_portal() ? get_post_meta(get_the_ID(), 'grantID', true) : self::get_value_from_taxonomy( 'grantID', get_the_ID(), false );
+		if ($grant_id) {
+			$grant_award_stats = is_portal() ? get_post_meta( $grant_id, 'awardStats', true ) : self::get_value_from_taxonomy( 'awardStats', get_the_ID(), false );;
+			if (!$grant_award_stats) {
+				return '&slug[]=9999';
+			}
+			$options = '';
+			foreach ($grant_award_stats as $stat) {
+				$options .= "&slug[]=" . $stat['fiscalYear'];
+			}
+			return $options;
+		} else {
+			return '&slug[]=9999';
+		}
+	}
+
 	/**
 	 * Render an post finder field
 	 *
@@ -671,15 +688,21 @@ class Field {
 		$default_value = $meta_field['default_value'] ?? '';
 		$value         = empty( $value ) ? $default_value : $value;
 		$disabled      = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled';
+		$options       = null;
+
 
 		if ( empty( $name ) || empty( $id ) ) {
 			return;
 		}
 
+		if ($id === 'fiscalYear') {
+			$options = self::get_fiscal_years();
+		}
+
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
-			$fields = self::get_api_fields_by_id( $id );
+			$fields = self::get_api_fields_by_id( $id, false, $options );
 		} elseif ( isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
-			$fields = self::get_api_fields_by_id( $id, true );
+			$fields = self::get_api_fields_by_id( $id, true, $options );
 		} elseif ( isset( $meta_field['fields'] ) ) {
 			$fields = $meta_field['fields'];
 		} else {
@@ -1234,7 +1257,7 @@ class Field {
 	 *
 	 * @return array $fields The data from the WP API
 	 */
-	public static function get_api_fields_by_id( $id = '', $portal_api = false ) {
+	public static function get_api_fields_by_id( $id = '', $portal_api = false, $options = array() ) {
 		if ( empty( $id ) ) {
 			return array();
 		}
@@ -1274,7 +1297,7 @@ class Field {
 					break;
 				case 'fiscalYear':
 				case 'csl_fiscal_year':
-					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=100';
+					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=100&' . $options;
 					break;
 				case 'recipientType':
 					$api_url .= 'recipient-types';
@@ -1711,11 +1734,11 @@ class Field {
 				case 'textarea':
 					$max_chars = empty( $field['maxlength'] ) ? strlen( $data[ $id ] ) : $field['maxlength'];
 
-					 if ( isset( $field['text_limit'] ) && ! empty( $field['text_limit'] ) ) {
-						  $max_chars = $field['text_limit'];
-					 }
+					if ( isset( $field['text_limit'] ) && ! empty( $field['text_limit'] ) ) {
+						$max_chars = $field['text_limit'];
+					}
 
-					 $is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
+					$is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
 					break;
 				case 'checkbox':
 				case 'select':
