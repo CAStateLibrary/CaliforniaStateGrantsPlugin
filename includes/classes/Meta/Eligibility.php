@@ -74,7 +74,6 @@ class Eligibility {
 					'id'   => 'applicantTypeSuggestion',
 					'name' => __( 'Applicant Type Suggestion(s)', 'ca-grants-plugin' ),
 					'type' => 'text',
-					'csv'  => 'ApplicantTypeOther',
 			);
 		}
 

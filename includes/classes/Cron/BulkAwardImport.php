@@ -12,6 +12,7 @@ use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\PostTypes\GrantAwards;
 use CaGov\Grants\PostTypes\AwardUploads;
 use ElasticPress\Indexables;
+use CaGov\Grants\PostTypes\Grants;
 use WP_Query;
 
 /**
@@ -89,41 +90,46 @@ class BulkAwardImport {
 	 * @return void
 	 */
 	public function schedule_import_awards_queue() {
-		$award_upload = $this->get_next_import_record();
+		$award_uploads = $this->get_import_records();
 
-		if ( ! $award_upload instanceof \WP_Post ) {
-			return;
-		}
+		foreach ( $award_uploads as $award_upload ) {
+			if ( ! $award_upload instanceof \WP_Post ) {
+				return;
+			}
 
-		$meta_keys         = array(
-			'csl_grant_id',
-			'csl_award_csv',
-			'csl_fiscal_year',
-		);
-		$award_upload_data = get_post_meta( $award_upload->ID );
-		$award_upload_data = wp_array_slice_assoc( $award_upload_data, $meta_keys );
-		$award_upload_data = array_map(
-			function( $meta_value ) {
-				return ( ! empty( $meta_value ) && is_array( $meta_value ) ) ? $meta_value[0] : $meta_value;
-			},
-			$award_upload_data
-		);
-
-		if ( ! user_can( $award_upload->post_author, 'edit_grant', absint( $award_upload_data['csl_grant_id'] ) ) ) {
-			return;
-		}
-
-		$is_scheduled = $this->schedule_csv_chunk_import( $award_upload_data['csl_award_csv'], $award_upload, $award_upload_data );
-
-		if ( $is_scheduled ) {
-			wp_trash_post( $award_upload->ID );
-		} else {
-			wp_update_post(
-				array(
-					'ID'          => $award_upload->ID,
-					'post_status' => 'csl_failed',
-				)
+			$meta_keys         = array(
+				'csl_grant_id',
+				'csl_award_csv',
+				'csl_fiscal_year',
 			);
+			$award_upload_data = get_post_meta( $award_upload->ID );
+			$award_upload_data = wp_array_slice_assoc( $award_upload_data, $meta_keys );
+			$award_upload_data = array_map(
+				function( $meta_value ) {
+					return ( ! empty( $meta_value ) && is_array( $meta_value ) ) ? $meta_value[0] : $meta_value;
+				},
+				$award_upload_data
+			);
+
+			$grant_post_type_obj = get_post_type_object( Grants::get_cpt_slug() );
+			$edit_cap            = ! empty( $grant_post_type_obj->cap->edit_post ) ? $grant_post_type_obj->cap->edit_post : 'edit_post';
+
+			if ( ! user_can( $award_upload->post_author, $edit_cap, absint( $award_upload_data['csl_grant_id'] ) ) ) {
+				return;
+			}
+
+			$is_scheduled = $this->schedule_csv_chunk_import( $award_upload_data['csl_award_csv'], $award_upload, $award_upload_data );
+
+			if ( $is_scheduled ) {
+				wp_trash_post( $award_upload->ID );
+			} else {
+				wp_update_post(
+					array(
+						'ID'          => $award_upload->ID,
+						'post_status' => 'csl_failed',
+					)
+				);
+			}
 		}
 	}
 
@@ -141,22 +147,21 @@ class BulkAwardImport {
 			 */
 			do_action( 'csl_grants_bulk_award_import_failed', $failed_upload_id );
 
-			update_post_meta( $failed_upload_id, 'failure_email_sent', true );
+			update_post_meta( $failed_upload_id, 'failure_email_sent', time() );
 		}
 	}
 
 	/**
-	 * Get next import award upload record.
-	 * ( Oldest Award Upload post with pending status. )
+	 * Get award upload records to schedule csv import.
 	 *
-	 * @return \WP_Post
+	 * @return \WP_Post[]
 	 */
-	public function get_next_import_record() {
+	public function get_import_records() {
 
 		$query_args = array(
 			'post_type'              => AwardUploads::CPT_SLUG,
 			'post_status'            => 'pending',
-			'posts_per_page'         => 1,
+			'posts_per_page'         => 100,
 			'no_found_rows'          => true,
 			'orderby'                => 'date',
 			'order'                  => 'ASC',
@@ -165,7 +170,7 @@ class BulkAwardImport {
 
 		$posts = new WP_Query( $query_args );
 
-		return ( empty( $posts->posts ) || empty( $posts->posts[0] ) ) ? 0 : $posts->posts[0];
+		return empty( $posts->posts ) ? [] : $posts->posts;
 	}
 
 	/**
@@ -254,17 +259,16 @@ class BulkAwardImport {
 		$total_count    = $total_count ? (int) $total_count : 0;
 
 		foreach ( $csv_chunk as $grant_award ) {
-			$meta_args  = wp_parse_args(
+			$award_data  = wp_parse_args(
 				array(
 					'grantID'    => $grant_id,
 					'fiscalYear' => $fiscal_year,
 				),
 				$grant_award
 			);
-			$award_data = array_filter( $meta_args );
 
 			$args = array(
-				'post_author' => $award_upload->author,
+				'post_author' => $award_upload->post_author,
 				'post_title'  => $award_upload->post_title,
 				'post_type'   => GrantAwards::CPT_SLUG,
 				'post_status' => 'publish',
@@ -327,10 +331,12 @@ class BulkAwardImport {
 			'post_status'    => 'csl_failed',
 			'posts_per_page' => 100, // If there are more than 100 failed uploads then they will be processed in the next batch.
 			'fields'         => 'ids',
-			'meta_query'     => array(
-				'key'     => 'failure_email_sent',
-				'compare' => 'NOT EXISTS',
-			),
+			'meta_query'     => [
+				[
+					'key'     => 'failure_email_sent',
+					'compare' => 'NOT EXISTS',
+				],
+			],
 			'no_found_rows'  => true,
 		);
 

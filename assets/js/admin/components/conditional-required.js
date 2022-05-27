@@ -1,31 +1,42 @@
 const grantTypeInputs = Array.from( document.querySelectorAll( 'input[name="isForecasted"]' ) );
-const geoLocationServedElem = Array.from( document.querySelectorAll( 'select[name="geoLocationServed"]' ) );
 const conditionalValidationInputs = 'input[data-required-if],textarea[data-required-if],input[required],textarea[required]';
 const conditionalValidationOther = '[data-required-if]:not(input):not(textarea)';
 const conditionalVisibleElems = 'tr[data-visible-if]';
-const grantAwardsRecipientTypes = Array.from( document.querySelectorAll( 'select[name="recipientType"]' ) );
 const startDateElem = Array.from( document.querySelectorAll( 'input[data-min-date-id]' ) );
 const endDateElem = Array.from( document.querySelectorAll( 'input[data-max-date-id]' ) );
 const requiredPostFinderDiv = Array.from( document.querySelectorAll( 'tr.post_finder_field div[data-post-finder="required"]' ) );
+const fundingSources = Array.from( document.querySelectorAll( 'input[name="fundingSource"]' ) );
+const disbursementMethod = Array.from( document.querySelectorAll( 'input[name="disbursementMethod"]' ) );
 
 /**
  * Conditional requiring fields if grant is forecasted/active.
  */
 const main = () => {
+	const visibleElems = getVisableElems();
+	if ( visibleElems.length ) {
+		const visibleFields = [];
+		visibleElems.forEach( input => {
+			const { visibleIf }  = input.dataset;
+			const visibleOptions = JSON.parse( visibleIf );
 
-	if ( getVisableElems().length ) {
-		grantAwardsRecipientTypes.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
-		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
+			if ( visibleOptions.fieldId && -1 === visibleFields.indexOf( visibleOptions.fieldId ) ) {
+				visibleFields.push( visibleOptions.fieldId );
+			}
+		} );
+
+		if ( visibleFields.length ) {
+			visibleFields.forEach( field => {
+				const fields = Array.from( document.querySelectorAll( `[name="${field}"]` ) );
+				fields.forEach( input => input.addEventListener( 'change', function () {
+					visibleElems.forEach( el => maybeSetHiddenClass( el ) );
+				} ) );
+			} );
+		}
 	}
 
 	if ( grantTypeInputs.length ) {
 		// Update required attributes when the input changes.
 		grantTypeInputs.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
-	}
-
-	if ( geoLocationServedElem.length ) {
-		// Update required attributes when the input changes.
-		geoLocationServedElem.forEach( input => input.addEventListener( 'change', refreshRequiredAttributes ) );
 	}
 
 	if ( startDateElem.length ) {
@@ -46,9 +57,19 @@ const main = () => {
 		} );
 	}
 
+	if ( fundingSources.length ) {
+		fundingSources.forEach( input => input.addEventListener( 'change', refreshFundingNotesRequireClass ) );
+	}
+
+	if ( disbursementMethod.length ) {
+		disbursementMethod.forEach( input => input.addEventListener( 'change', refreshFundingMethodNotesRequireClass ) );
+	}
+
 	// Kick things off.
 	refreshRequiredAttributes();
 	refreshMinMaxDateAttributes();
+	refreshFundingNotesRequireClass();
+	refreshFundingMethodNotesRequireClass();
 };
 
 /**
@@ -56,29 +77,6 @@ const main = () => {
  */
 const getCurrentGrantType = () => {
 	const [current] = grantTypeInputs.filter( input => input.checked );
-
-	return current ? current.value : '';
-};
-
-/**
- * Get current geo location.
- */
-const getCurrentGeoLocation = () => {
-
-	if ( ! geoLocationServedElem.length ) {
-		return '';
-	}
-
-	const [current] = geoLocationServedElem.filter( input => input.value );
-
-	return current ? current.value : '';
-};
-
-/**
- * Get current Recipient type.
- */
-const getCurrentRecipientType = () => {
-	const [current] = grantAwardsRecipientTypes.filter( input => input.selectedIndex );
 
 	return current ? current.value : '';
 };
@@ -97,6 +95,58 @@ const refreshRequiredAttributes = () => {
 
 	if ( getVisableElems().length ) {
 		getVisableElems().forEach( el => maybeSetHiddenClass( el ) );
+	}
+};
+
+/**
+ * Maybe add required class to Funding Source Notes.
+ *
+ * @returns
+ */
+const refreshFundingNotesRequireClass = () => {
+	const fundingSource = document.querySelector( 'input[name="fundingSource"]:checked' );
+	const fundingSouceNotes = document.querySelector( '[name="revenueSourceNotes"]' );
+
+	if ( ! fundingSource || ! fundingSouceNotes ) {
+		return;
+	}
+
+	const fundingSouceNotesHeading = fundingSouceNotes.closest( 'tr' ).querySelector( 'th' );
+
+	if ( ! fundingSouceNotesHeading ) {
+		return;
+	}
+
+	if ( ! fundingSource || 'other' !== fundingSource.value ) {
+		fundingSouceNotesHeading.classList.remove( 'required' );
+	} else {
+		fundingSouceNotesHeading.classList.add( 'required' );
+	}
+};
+
+/**
+ * Maybe add required class to Funding Method Notes.
+ *
+ * @returns
+ */
+const refreshFundingMethodNotesRequireClass = () => {
+	const disbursementMethod = document.querySelector( 'input[name="disbursementMethod"]:checked' );
+	const fundingMethodNotes = document.querySelector( '[name="disbursementMethodNotes"]' );
+
+	if ( ! disbursementMethod || ! fundingMethodNotes ) {
+		return;
+	}
+
+	const fundingMethodNotesHeading = fundingMethodNotes.closest( 'tr' ).querySelector( 'th' );
+
+	if ( ! fundingMethodNotesHeading ) {
+		return;
+	}
+
+	if ( ! disbursementMethod || 'other' !== disbursementMethod.value ) {
+		fundingMethodNotesHeading.classList.remove( 'required' );
+	} else {
+		fundingMethodNotesHeading.classList.add( 'required' );
 	}
 };
 
@@ -173,18 +223,34 @@ const maybeSetRequiredClass = el => {
  */
 const maybeSetHiddenClass = el => {
 	const { visibleIf }  = el.dataset;
-	const visibleOptions = JSON.parse( visibleIf );
+
+	if ( ! visibleIf ) {
+		return;
+	}
+
+	const visibleOptions = visibleIf ? JSON.parse( visibleIf ) : null;
 	let current = '';
 
 	if ( ! visibleOptions ) {
 		return;
 	}
 
-	if ( 'geoLocationServed' === visibleOptions['fieldId'] && geoLocationServedElem.length ) {
-		current = getCurrentGeoLocation();
-	} else if ( 'recipientType' === visibleOptions['fieldId'] && grantAwardsRecipientTypes.length ) {
-		current = getCurrentRecipientType();
-	}
+	const fields = Array.from( document.querySelectorAll( `[name="${visibleOptions['fieldId']}"]` ) );
+	const [field] = fields.filter( input => {
+		let value = false;
+		switch( input.type ) {
+				case 'radio':
+					value = input.checked;
+					break;
+				case 'select-one':
+					value = input.selectedIndex;
+					break;
+				case 'input':
+					value = input.value ? true : false;
+		}
+		return value;
+	} );
+	current = field ? field.value : '';
 
 	if (
 		'not_equal' === visibleOptions['compare'] && current === visibleOptions['value']
@@ -193,8 +259,11 @@ const maybeSetHiddenClass = el => {
 		el.classList.add( 'hidden' );
 
 		if ( true === visibleOptions['required'] ) {
-			if ( el.querySelector( 'input[type="text"]' ) ) {
-				el.querySelector( 'input[type="text"]' ).removeAttribute( 'required' );
+			if ( el.querySelector( 'input:not([type="checkbox"])' ) ) {
+				el.querySelector( 'input:not([type="checkbox"])' ).removeAttribute( 'required' );
+			}
+			if ( el.querySelector( 'textarea' ) ) {
+				el.querySelector( 'textarea' ).removeAttribute( 'required' );
 			}
 			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
 				el.querySelector( 'td' ).classList.remove( 'fieldset--is-required' );
@@ -207,8 +276,11 @@ const maybeSetHiddenClass = el => {
 		el.classList.remove( 'hidden' );
 
 		if ( true === visibleOptions['required'] ) {
-			if ( el.querySelector( 'input[type="text"]' ) ) {
-				el.querySelector( 'input[type="text"]' ).setAttribute( 'required', true );
+			if ( el.querySelector( 'input:not([type="checkbox"])' ) ) {
+				el.querySelector( 'input:not([type="checkbox"])' ).setAttribute( 'required', true );
+			}
+			if ( el.querySelector( 'textarea' ) ) {
+				el.querySelector( 'textarea' ).setAttribute( 'required', true );
 			}
 			if ( el.querySelector( 'td' ) && el.querySelectorAll( 'input[type="checkbox"]' ).length ) {
 				el.querySelector( 'td' ).classList.add( 'fieldset--is-required' );

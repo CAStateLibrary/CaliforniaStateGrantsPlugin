@@ -3,6 +3,7 @@ import CheckboxSelectAll from './components/checkbox-select-all';
 import Tooltips from './components/tooltips';
 import ConditionalRequired from './components/conditional-required';
 import FormValidation from './components/form-validation';
+import FormConsentAccepted from './components/form-consent-accepted';
 import Wysiwyg from './components/wysiwyg';
 import ConditionalFormFields from './components/conditional-form-fields';
 import RepeaterFormFormFields from './components/repeater-form-field';
@@ -27,6 +28,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	Wysiwyg();
 	ConditionalRequired();
 	FormValidation();
+	FormConsentAccepted();
 	ConditionalFormFields();
 	RepeaterFormFormFields();
 } );

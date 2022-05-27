@@ -191,9 +191,15 @@ class Field {
 			'args'           => array(),
 		);
 
-		$name        = $meta_field['name'] ?? '';
-		$id          = $meta_field['id'] ?? '';
-		$value       = get_post_meta( get_the_ID(), $id, true );
+		$name = $meta_field['name'] ?? '';
+		$id   = $meta_field['id'] ?? '';
+
+		if ( isset( $meta_field['value'] ) && $meta_field['value'] > 0 ) {
+			$value = $meta_field['value'];
+		} else {
+			$value = get_post_meta( get_the_ID(), $id, true );
+		}
+
 		$options     = $meta_field['options'] ?? array();
 		$options     = wp_parse_args( $options, $default_options );
 		$class       = $meta_field['class'] ?? '';
@@ -282,7 +288,9 @@ class Field {
 					name="<?php echo esc_attr( $field_name ); ?>"
 					value="<?php echo esc_attr( $value ); ?>"
 					id="<?php echo esc_attr( $id ); ?>"
-					maxlength="<?php echo esc_attr( $maxlength ); ?>"
+					<?php if ( ! empty( $maxlength ) ) : ?>
+						data-maxlength="<?php echo esc_attr( $maxlength ); ?>"
+					<?php endif; ?>
 					<?php echo ( 'tel' === $type ) ? esc_attr( $pattern ) : ''; ?>
 					<?php self::conditional_required( $meta_field ); ?>
 					<?php echo esc_html( $disabled ); ?>
@@ -542,7 +550,7 @@ class Field {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
 		?>
-		<tr <?php self::conditional_visible( $meta_field ); ?>>
+		<tr class="<?php echo esc_attr( $meta_field['class'] ?? '' ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
 				<label><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
@@ -608,10 +616,17 @@ class Field {
 		} elseif ( empty( $value ) ) {
 			$value = get_post_meta( get_the_ID(), $id, true );
 		}
+
+		if ( empty( $value ) ) {
+			$value = $meta_field['value'] ?? '';
+		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
 			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
-				<?php echo esc_html( $name ); ?>
+				<label for="<?php echo esc_attr( $meta_field['id'] );?>">
+					<?php echo esc_html( $name ); ?>
+				</label>
+
 				<?php self::tooltip( $description ); ?>
 			</th>
 			<td>
@@ -1259,7 +1274,7 @@ class Field {
 					break;
 				case 'fiscalYear':
 				case 'csl_fiscal_year':
-					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=3';
+					$api_url .= 'fiscal-year?orderby=name&order=desc&per_page=100';
 					break;
 				case 'recipientType':
 					$api_url .= 'recipient-types';
@@ -1416,7 +1431,10 @@ class Field {
 		foreach ( $meta_fields as $meta_field ) {
 			$value = array();
 
-			if ( ! isset( $data[ $meta_field['id'] ] ) ) {
+			// If a text or textarea field is an empty string, delete the post meta entirely.
+			$is_empty_text = ( 'text' === $meta_field['type'] || 'textarea' === $meta_field['type'] ) && isset( $data[ $meta_field['id'] ] ) && empty( trim( $data[ $meta_field['id'] ] ) );
+
+			if ( ! isset( $data[ $meta_field['id'] ] ) || $is_empty_text ) {
 				delete_post_meta( $post_id, $meta_field['id'] );
 				continue;
 			}
@@ -1452,15 +1470,15 @@ class Field {
 				case 'datetime-local':
 					$date          = new DateTime( $data[ $meta_field['id'] ] );
 					$is_valid_date = ( $date && $date->format( 'c' ) );
-					$max_date   = $meta_field['max_date'] ? new DateTime( $data[ $meta_field['max_date'] ] ) : false;
-					$min_date   = $meta_field['min_date'] ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
+					$max_date   = ! empty( $meta_field['max_date'] ) ? new DateTime( $data[ $meta_field['max_date'] ] ) : false;
+					$min_date   = ! empty( $meta_field['min_date'] ) ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
 
 					if ( $is_valid_date && $max_date instanceof DateTime ) {
-						$is_valid_date = $date < $max_date;
+						$is_valid_date = $date <= $max_date;
 					}
 
 					if ( $is_valid_date && $min_date instanceof DateTime ) {
-						$is_valid_date = $date > $min_date;
+						$is_valid_date = $date >= $min_date;
 					}
 
 					if ( $is_valid_date ) {
@@ -1538,11 +1556,16 @@ class Field {
 					$value                = $clean_value;
 					break;
 				case 'electronic-submission-method':
-					$temp_value           = $data[ $meta_field['id'] ];
-					$clean_value          = array();
-					$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
-					$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
-					$value                = $clean_value;
+					$temp_value  = $data[ $meta_field['id'] ];
+					$clean_value = array(
+						'type' => $temp_value['type'],
+					);
+					if ( 'email' === $temp_value['type'] ) {
+						$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
+					} elseif ( 'url' === $temp_value['type'] ) {
+						$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
+					}
+					$value = $clean_value;
 					break;
 				case 'application-deadline':
 					$temp_value = $data[ $meta_field['id'] ];
@@ -1581,10 +1604,12 @@ class Field {
 			$value = apply_filters( 'ca_grants_post_meta_' . $meta_field['id'], $value );
 
 			// Allow 0 to be saved if the field type is a number.
-			$is_numeric_zero = 'number' === $meta_field['type'] && 0 === $value;
+			$is_numeric_zero = 'number' === $meta_field['type'] && ( 0 === $value || '0' === $value );
 
 			if ( ! empty( $post_id ) && ( ! empty( $value ) || $is_numeric_zero ) ) {
 				update_post_meta( $post_id, $meta_field['id'], $value );
+			} else if ( ! empty( $post_id ) && empty( $value ) && ! $is_numeric_zero ) {
+				delete_post_meta( $post_id, $meta_field['id'] );
 			}
 		}
 	}
@@ -1684,7 +1709,7 @@ class Field {
 					break;
 				case 'text':
 				case 'textarea':
-					 $max_chars = $field['maxlength'] ?: strlen( $data[ $id ] );
+					$max_chars = empty( $field['maxlength'] ) ? strlen( $data[ $id ] ) : $field['maxlength'];
 
 					 if ( isset( $field['text_limit'] ) && ! empty( $field['text_limit'] ) ) {
 						  $max_chars = $field['text_limit'];
@@ -1698,7 +1723,9 @@ class Field {
 						$api_values = self::get_api_fields_by_id( $id, 'portal-api' === $field['source'] );
 						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
 
-						if ( is_string( $data[ $id ] ) ) {
+						if ( empty( $data[ $id ] ) ) {
+							$values = [];
+						} else if ( is_string( $data[ $id ] ) ) {
 							$values = explode( ',', $data[ $id ] );
 						} else {
 							$values = (array) $data[ $id ];
@@ -1716,8 +1743,8 @@ class Field {
 					$is_valid_date = ( $date && $date->format( 'c' ) );
 
 					if ( $is_valid_date ) {
-						$max_date   = $field['max_date'] ? new DateTime( $data[ $field['max_date'] ] ) : false;
-						$min_date   = $field['min_date'] ? new DateTime( $data[ $field['min_date'] ] ) : false;
+						$max_date   = ! empty( $field['max_date'] ) ? new DateTime( $data[ $field['max_date'] ] ) : false;
+						$min_date   = ! empty( $field['min_date'] ) ? new DateTime( $data[ $field['min_date'] ] ) : false;
 						$is_invalid = $max_date ? ( $date > $max_date ) : false;
 						$is_invalid = ( ! $is_invalid && $min_date ) ? ( $date < $min_date ) : false;
 					} else {

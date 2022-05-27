@@ -93,10 +93,46 @@ class Funding {
 		);
 
 		$fields[] = array(
-				'id'       => 'estimatedAvailableFunds',
+				'id'       => 'totalEstimatedFunding',
 				'name'     => __( 'Total Estimated Available Funding', 'ca-grants-plugin' ),
-				'type'     => 'number',
+				'type'     => 'radio',
+				'value'    => 'exactFundingAmount',
+				'fields'   => array(
+						array(
+								'id'   => 'exactFundingAmount',
+								'name' => __( 'Exact Funding Amount', 'ca-grants-plugin' ),
+						),
+						array(
+								'id'   => 'fundingAmountNotes',
+								'name' => __( 'Other Funding Amount', 'ca-grants-plugin' ),
+						),
+				),
 				'required' => array( 'active' ),
+		);
+
+		$fields[] = array(
+				'id'       => 'estimatedAvailableFunds',
+				'name'     => __( 'Available Funding Amount', 'ca-grants-plugin' ),
+				'type'     => 'number',
+				'visible'  => array(
+						'fieldId'  => 'totalEstimatedFunding',
+						'value'    => 'exactFundingAmount',
+						'compare'  => 'equal',
+						'required' => true,
+				),
+		);
+
+		$fields[] = array(
+				'id'          => 'estimatedAvailableFundNotes',
+				'name'        => __( 'Available Funding Notes', 'ca-grants-plugin' ),
+				'type'        => 'textarea',
+				'text_limit'  => 450,
+				'visible'  => array(
+						'fieldId'  => 'totalEstimatedFunding',
+						'value'    => 'fundingAmountNotes',
+						'compare'  => 'equal',
+						'required' => true,
+				),
 		);
 
 		$fields[] = array(
@@ -115,7 +151,7 @@ class Funding {
 
 		$fields[] = array(
 				'id'          => 'disbursementMethod',
-				'name'        => __( 'Disbursement Method', 'ca-grants-plugin' ),
+				'name'        => __( 'Funding Method', 'ca-grants-plugin' ),
 				'type'        => 'radio',
 				'source'      => is_portal() ? 'portal-api' : 'api',
 				'description' => __( 'If you select "Other", please elaborate in the funding method notes field below.', 'ca-grants-plugin' ),
