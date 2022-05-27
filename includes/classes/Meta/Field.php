@@ -168,10 +168,15 @@ class Field {
 		}
 	}
 
+	/**
+	 * Builds a string of fiscal year slugs to filter an API request
+	 *
+	 * @return string fiscal year slugs query string
+	 */
 	private static function get_fiscal_years() {
-		$grant_id = is_portal() ? get_post_meta(get_the_ID(), 'grantID', true) : self::get_value_from_taxonomy( 'grantID', get_the_ID(), false );
+		$grant_id = get_post_meta(get_the_ID(), 'grantID', true);
 		if ($grant_id) {
-			$grant_award_stats = is_portal() ? get_post_meta( $grant_id, 'awardStats', true ) : self::get_value_from_taxonomy( 'awardStats', get_the_ID(), false );;
+			$grant_award_stats = get_post_meta( $grant_id, 'awardStats', true );
 			if (!$grant_award_stats) {
 				return '&slug[]=9999';
 			}
@@ -1257,7 +1262,7 @@ class Field {
 	 *
 	 * @return array $fields The data from the WP API
 	 */
-	public static function get_api_fields_by_id( $id = '', $portal_api = false, $options = array() ) {
+	public static function get_api_fields_by_id( $id = '', $portal_api = false, $options = '' ) {
 		if ( empty( $id ) ) {
 			return array();
 		}
