@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
+        'pretty_version' => 'dev-trunk',
+        'version' => 'dev-trunk',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '74c98971bb9aca2d319e3245c48c396d3cf1ce60',
+        'reference' => '724b8567d63cfd7cb1ddda9b23a4a740cf88259d',
         'name' => '10up/ca-grants-plugin',
         'dev' => false,
     ),
     'versions' => array(
         '10up/ca-grants-plugin' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
+            'pretty_version' => 'dev-trunk',
+            'version' => 'dev-trunk',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '74c98971bb9aca2d319e3245c48c396d3cf1ce60',
+            'reference' => '724b8567d63cfd7cb1ddda9b23a4a740cf88259d',
             'dev_requirement' => false,
         ),
         '10up/post-finder' => array(

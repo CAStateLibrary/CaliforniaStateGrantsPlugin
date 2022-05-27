@@ -1734,7 +1734,9 @@ class Field {
 						$api_values = self::get_api_fields_by_id( $id, 'portal-api' === $field['source'] );
 						$field_ids  = empty( $api_values ) ? array() : wp_filter_object_list( $api_values, array(), 'and', 'id' );
 
-						if ( is_string( $data[ $id ] ) ) {
+						if ( empty( $data[ $id ] ) ) {
+							$values = [];
+						} else if ( is_string( $data[ $id ] ) ) {
 							$values = explode( ',', $data[ $id ] );
 						} else {
 							$values = (array) $data[ $id ];

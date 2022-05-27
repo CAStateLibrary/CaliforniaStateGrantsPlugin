@@ -40,7 +40,8 @@ class GrantAwards {
 		add_action( 'restrict_manage_posts', array( $this, 'add_post_filters' ) );
 		add_action( 'parse_query', array( $this, 'filter_query' ) );
 
-		add_filter( 'ep_indexable_post_types', [ $this, 'include_in_es_index' ], 10, 1 );
+		add_filter( 'ep_indexable_post_types', [ $this, 'include_in_es_index' ], 20 );
+		add_filter( 'ep_searchable_post_types', [ $this, 'include_in_es_index' ], 20 );
 
 		self::$init = true;
 	}
