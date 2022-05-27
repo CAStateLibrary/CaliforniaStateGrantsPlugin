@@ -1259,6 +1259,7 @@ class Field {
 	 *
 	 * @param string $id         The identifier for the type of field data needed.
 	 * @param bool   $portal_api Whether to call the API from the portal server.
+	 * @param string $options    Options to append to the API url to modify the request.
 	 *
 	 * @return array $fields The data from the WP API
 	 */
