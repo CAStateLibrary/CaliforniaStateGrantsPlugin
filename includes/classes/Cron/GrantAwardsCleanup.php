@@ -48,7 +48,7 @@ class GrantAwardsCleanup {
 
 		add_action( 'trashed_post', [ $this, 'schedule_trash_grant_awards' ] );
 		add_action( 'untrashed_post', [ $this, 'schedule_untrash_grant_awards' ] );
-		add_action( 'deleted_post', [ $this, 'schedule_delete_grant_awards' ] );
+		add_action( 'deleted_post', [ $this, 'schedule_delete_grant_awards' ], 10, 2 );
 
 		add_action( self::$cleanup_job, [ $this, 'cleanup_grant_awards' ], 10, 3 );
 		add_action( self::$restore_job, [ $this, 'restore_grant_awards' ] );
