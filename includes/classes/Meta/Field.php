@@ -1857,14 +1857,28 @@ class Field {
 			return false;
 		}
 
+		$taxonomy = self::get_taxonmy_from_field_id( $id );
+
 		if ( is_array( $value ) ) {
 			array_walk( $value, 'sanitize_text_field' );
+			foreach ($value as $k => $v) {
+				if (!term_exists($v, $taxonomy)) {
+					unset($value[$k]);
+				}
+			}
 		} else {
 			$value = sanitize_text_field( $value );
+			if (!term_exists($value, $taxonomy)) {
+				$value = null;
+			}
 		}
 
-		$taxonomy = self::get_taxonmy_from_field_id( $id );
-		$terms    = wp_set_object_terms( $post_id, $value, $taxonomy );
+		// recheck, array may be empty as well
+		if ( empty( $value ) ) {
+			return false;
+		}
+
+		$terms = wp_set_object_terms( $post_id, $value, $taxonomy );
 
 		return is_wp_error( $terms ) ? false : true;
 	}
