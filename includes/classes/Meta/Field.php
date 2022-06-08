@@ -1689,6 +1689,24 @@ class Field {
 					);
 					continue;
 				}
+			} elseif ( empty( $is_invalid ) && 'countiesServed' === $id ) {
+				if ( is_array( $data[$id] ) ) {
+					foreach ($data[$id] as $k => $v) {
+						if (!term_exists($v, 'counties')) {
+							$is_invalid = true;
+						}
+					}
+				} else {
+					if (!term_exists($data[$id], 'counties')) {
+						$is_invalid = true;
+					}
+				}
+				if ($is_invalid) {
+					$errors->add(
+						'validation_error',
+						esc_html__( 'Invalid valud found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+					);
+				}
 			}
 
 			// If field is not required and have empty value it's valid data, skip other checks.
@@ -1711,11 +1729,11 @@ class Field {
 				case 'textarea':
 					$max_chars = empty( $field['maxlength'] ) ? strlen( $data[ $id ] ) : $field['maxlength'];
 
-					 if ( isset( $field['text_limit'] ) && ! empty( $field['text_limit'] ) ) {
-						  $max_chars = $field['text_limit'];
-					 }
+					if ( isset( $field['text_limit'] ) && ! empty( $field['text_limit'] ) ) {
+						$max_chars = $field['text_limit'];
+					}
 
-					 $is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
+					$is_invalid = ! Validators\validate_string( $data[ $id ], $max_chars );
 					break;
 				case 'checkbox':
 				case 'select':
