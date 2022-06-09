@@ -146,7 +146,7 @@ class Field {
 			} else {
 				printf( 'data-required-if="%s"', esc_attr( implode( ',', $meta_field['required'] ) ) );
 			}
-		} elseif ( $meta_field['required'] === true ) {
+		} elseif ( true === $meta_field['required'] ) {
 			echo ' required="true" ';
 		}
 	}
@@ -208,7 +208,7 @@ class Field {
 
 		?>
 		<tr class="post_finder_field <?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
-			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
+			<th class="<?php echo ( true === $meta_field['required'] ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -240,7 +240,8 @@ class Field {
 		$post_id = get_the_ID();
 
 		if ( 'save_to_field' === $meta_field['type'] && ! empty( $meta_field['field_id'] ) ) {
-			$post_id            = get_post_meta( $post_id, $meta_field['field_id'], true ) ?: $post_id;
+			$field_id           = get_post_meta( $post_id, $meta_field['field_id'], true );
+			$post_id            = $field_id ? $field_id : $post_id;
 			$meta_field['type'] = 'number';
 		}
 
@@ -250,23 +251,23 @@ class Field {
 		$description   = $meta_field['description'] ?? '';
 		$id            = $meta_field['id'] ?? '';
 		$field_name    = $meta_field['field_name'] ?? '';
-		$field_name    = $field_name ?: $id;
+		$field_name    = $field_name ? $field_name : $id;
 		$class         = $meta_field['class'] ?? '';
 		$maxlength     = $meta_field['maxlength'] ?? '';
 		$default_value = $meta_field['default_value'] ?? '';
 		$value         = $meta_field['meta_value'] ?? '';
-		$minnumber  = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
-		$maxnumber  = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
-		$disabled   = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled="disabled"';
-		$readonly   = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
-		$accept_ext = '';
+		$minnumber     = isset( $meta_field['min'] ) ? sprintf( 'min=%d', absint( $meta_field['min'] ) ) : 'min=0';
+		$maxnumber     = isset( $meta_field['max'] ) ? sprintf( 'max=%d', absint( $meta_field['max'] ) ) : '';
+		$disabled      = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled="disabled"';
+		$readonly      = empty( $meta_field['readonly'] ) || ( true !== $meta_field['readonly'] ) ? '' : 'readonly="true"';
+		$accept_ext    = '';
 
 		if ( $is_number ) {
 			// Keep 0 as valid value.
 			$value = ( is_numeric( $value ) && 0 <= $value ) ? (int) $value : get_post_meta( $post_id, $id, true );
 			$value = ( is_numeric( $value ) && 0 <= $value ) ? (int) $value : $default_value;
 		} else {
-			$value = $value ?: get_post_meta( $post_id, $id, true );
+			$value = $value ? $value : get_post_meta( $post_id, $id, true );
 			$value = empty( $value ) ? $default_value : $value;
 		}
 
@@ -298,8 +299,8 @@ class Field {
 					<?php echo esc_html( $accept_ext ); ?>
 					<?php
 					if ( 'number' === $type ) {
-						  echo esc_html( $minnumber );
-						  echo esc_html( $maxnumber );
+						echo esc_html( $minnumber );
+						echo esc_html( $maxnumber );
 					}
 					?>
 				/>
@@ -326,7 +327,8 @@ class Field {
 		$post_id = get_the_ID();
 
 		if ( 'save_to_field_group' === $meta_field['type'] && ! empty( $meta_field['field_id'] ) ) {
-			$post_id = get_post_meta( $post_id, $meta_field['field_id'], true ) ?: $post_id;
+			$field_id = get_post_meta( $post_id, $meta_field['field_id'], true );
+			$post_id  = $field_id ? $field_id : $post_id;
 		}
 
 		$class         = $meta_field['class'] ?? '';
@@ -342,7 +344,7 @@ class Field {
 		if ( ! empty( $name ) ) :
 			?>
 		<tr class="form-field-group-header <?php echo esc_attr( $class ); ?>">
-			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
+			<th class="<?php echo ( true === $meta_field['required'] ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php
 				if ( ! empty( $description ) ) {
@@ -448,7 +450,7 @@ class Field {
 		$class        = $meta_field['class'] ?? '';
 		$hidden_field = $meta_field['hidden_field'] ?? false;
 		$value        = $meta_field['meta_value'] ?? '';
-		$value        = $value ?: get_post_meta( $post_id, $id, true );
+		$value        = $value ? $value : get_post_meta( $post_id, $id, true );
 		$link         = ( 'post-link' === $meta_field['link'] ) ? get_edit_post_link( $value ) : false;
 		$label_value  = $value;
 
@@ -491,13 +493,13 @@ class Field {
 				>
 					<?php
 					if ( ! empty( $link ) ) {
-						 printf( '<a href="%s" target="_blank">', esc_url( $link ) );
+						printf( '<a href="%s" target="_blank">', esc_url( $link ) );
 					}
 					?>
 					<?php echo esc_html( $label_value ); ?>
 					<?php
 					if ( ! empty( $link ) ) {
-						 echo '</a>';
+						echo '</a>';
 					}
 					?>
 				</span>
@@ -520,7 +522,7 @@ class Field {
 		$description = $meta_field['description'] ?? '';
 		$id          = $meta_field['id'] ?? '';
 		$field_name  = $meta_field['field_name'] ?? '';
-		$field_name  = $field_name ?: $id;
+		$field_name  = $field_name ? $field_name : $id;
 		$value       = $meta_field['meta_value'] ?? '';
 		$disabled    = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled';
 
@@ -551,7 +553,7 @@ class Field {
 		}
 		?>
 		<tr class="<?php echo esc_attr( $meta_field['class'] ?? '' ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
-			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
+			<th class="<?php echo ( true === $meta_field['required'] ) ? 'required' : ''; ?>">
 				<label><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -586,7 +588,7 @@ class Field {
 		$description = $meta_field['description'] ?? '';
 		$id          = $meta_field['id'] ?? '';
 		$field_name  = $meta_field['field_name'] ?? '';
-		$field_name  = $field_name ?: $id;
+		$field_name  = $field_name ? $field_name : $id;
 		$value       = $meta_field['meta_value'] ?? '';
 		$disabled    = empty( $meta_field['disabled'] ) || ( true !== $meta_field['disabled'] ) ? '' : 'disabled';
 
@@ -622,8 +624,8 @@ class Field {
 		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
-				<label for="<?php echo esc_attr( $meta_field['id'] );?>">
+			<th class="<?php echo ( true === $meta_field['required'] ) ? 'required' : ''; ?>">
+				<label for="<?php echo esc_attr( $meta_field['id'] ); ?>">
 					<?php echo esc_html( $name ); ?>
 				</label>
 
@@ -666,7 +668,7 @@ class Field {
 		$description   = $meta_field['description'] ?? '';
 		$id            = $meta_field['id'] ?? '';
 		$field_name    = $meta_field['field_name'] ?? '';
-		$field_name    = $field_name ?: $id;
+		$field_name    = $field_name ? $field_name : $id;
 		$value         = $meta_field['meta_value'] ?? '';
 		$default_value = $meta_field['default_value'] ?? '';
 		$value         = empty( $value ) ? $default_value : $value;
@@ -698,7 +700,7 @@ class Field {
 		}
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th class="<?php echo ( isset( $meta_field['required'] ) && $meta_field['required'] === true ) ? 'required' : ''; ?>">
+			<th class="<?php echo ( isset( $meta_field['required'] ) && true === $meta_field['required'] ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -733,7 +735,7 @@ class Field {
 		$name        = $meta_field['name'] ?? '';
 		$id          = $meta_field['id'] ?? '';
 		$field_name  = $meta_field['field_name'] ?? '';
-		$field_name  = $field_name ?: $id;
+		$field_name  = $field_name ? $field_name : $id;
 		$limit       = $meta_field['text_limit'] ?? '';
 		$description = $meta_field['description'] ?? '';
 
@@ -745,10 +747,10 @@ class Field {
 
 		// Get the saved data
 		$value = $meta_field['meta_value'] ?? '';
-		$value = $value ?: get_post_meta( get_the_ID(), $id, true );
+		$value = $value ? $value : get_post_meta( get_the_ID(), $id, true );
 		?>
 		<tr <?php self::conditional_visible( $meta_field ); ?>>
-			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
+			<th class="<?php echo ( true === $meta_field['required'] ) ? 'required' : ''; ?>">
 				<label for="<?php esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -992,7 +994,7 @@ class Field {
 		$name        = $meta_field['name'] ?? '';
 		$id          = $meta_field['id'] ?? '';
 		$field_name  = $meta_field['field_name'] ?? '';
-		$field_name  = $field_name ?: $id;
+		$field_name  = $field_name ? $field_name : $id;
 		$class       = $meta_field['class'] ?? '';
 		$description = $meta_field['description'] ?? '';
 		$max_date    = empty( $meta_field['max_date'] ) ? '' : 'data-max-date-id=' . $meta_field['max_date'];
@@ -1005,11 +1007,11 @@ class Field {
 
 		// Get the saved data
 		$value = $meta_field['meta_value'] ?? '';
-		$value = $value ?: get_post_meta( get_the_ID(), $id, true );
+		$value = $value ? $value : get_post_meta( get_the_ID(), $id, true );
 		$value = $value ? gmdate( 'Y-m-d\TH:i', $value ) : $value;
 		?>
 		<tr class="<?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
-			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
+			<th class="<?php echo ( true === $meta_field['required'] ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -1068,7 +1070,7 @@ class Field {
 						<label for="<?php echo esc_attr( $id ); ?>-name"><?php esc_html_e( 'Name', 'ca-grants-plugin' ); ?></label>
 					</th>
 					<td>
-						<?php if ( $id == 'contactInfo' ) : ?>
+						<?php if ( 'contactInfo' === $id ) : ?>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>"/>
 						<?php else : ?>
 							<input type="text" id="<?php echo esc_attr( $id ); ?>-name" name="<?php echo esc_attr( $id ); ?>[name]" value="<?php echo esc_attr( $value['name'] ); ?>" <?php self::conditional_required( $meta_field ); ?>/>
@@ -1470,8 +1472,8 @@ class Field {
 				case 'datetime-local':
 					$date          = new DateTime( $data[ $meta_field['id'] ] );
 					$is_valid_date = ( $date && $date->format( 'c' ) );
-					$max_date   = ! empty( $meta_field['max_date'] ) ? new DateTime( $data[ $meta_field['max_date'] ] ) : false;
-					$min_date   = ! empty( $meta_field['min_date'] ) ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
+					$max_date      = ! empty( $meta_field['max_date'] ) ? new DateTime( $data[ $meta_field['max_date'] ] ) : false;
+					$min_date      = ! empty( $meta_field['min_date'] ) ? new DateTime( $data[ $meta_field['min_date'] ] ) : false;
 
 					if ( $is_valid_date && $max_date instanceof DateTime ) {
 						$is_valid_date = $date <= $max_date;
@@ -1563,7 +1565,7 @@ class Field {
 					if ( 'email' === $temp_value['type'] ) {
 						$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
 					} elseif ( 'url' === $temp_value['type'] ) {
-						$clean_value['url']   = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
+						$clean_value['url'] = ( isset( $temp_value['url'] ) ) ? esc_url_raw( $temp_value['url'] ) : '';
 					}
 					$value = $clean_value;
 					break;
@@ -1626,7 +1628,7 @@ class Field {
 		$errors = new WP_Error();
 
 		foreach ( $fields as $field ) {
-			$id = $field['id'];
+			$id              = $field['id'];
 			$is_numeric_zero = ( 'number' === $field['type'] && isset( $data[ $id ] ) && 0 === $data[ $id ] );
 
 			// Check if data has value for required fields.
@@ -1676,11 +1678,11 @@ class Field {
 				);
 				continue;
 			} elseif ( empty( $is_invalid ) && empty( $data[ $id ] ) && 'fiscalYear' === $field['id'] && ! empty( $data['grantID'] ) ) {
-				$grant_id     = $data['grantID'];
-				$isForecasted = get_post_meta( $grant_id, 'isForecasted', true );
-				$is_active    = 'active' === $isForecasted;
-				$deadline     = get_post_meta( $grant_id, 'deadline', true );
-				$is_invalid   = ( $is_active && empty( $deadline ) );
+				$grant_id      = $data['grantID'];
+				$is_forecasted = get_post_meta( $grant_id, 'isForecasted', true );
+				$is_active     = 'active' === $is_forecasted;
+				$deadline      = get_post_meta( $grant_id, 'deadline', true );
+				$is_invalid    = ( $is_active && empty( $deadline ) );
 
 				if ( $is_active && empty( $deadline ) ) {
 					$errors->add(
@@ -1690,21 +1692,21 @@ class Field {
 					continue;
 				}
 			} elseif ( empty( $is_invalid ) && 'countiesServed' === $id ) {
-				if ( is_array( $data[$id] ) ) {
-					foreach ($data[$id] as $k => $v) {
-						if (!term_exists($v, 'counties')) {
+				if ( is_array( $data[ $id ] ) ) {
+					foreach ( $data[ $id ] as $term ) {
+						if ( ! term_exists( $term, 'counties' ) ) {
 							$is_invalid = true;
 						}
 					}
 				} else {
-					if (!term_exists($data[$id], 'counties')) {
+					if ( ! term_exists( $data[ $id ], 'counties' ) ) {
 						$is_invalid = true;
 					}
 				}
-				if ($is_invalid) {
+				if ( $is_invalid ) {
 					$errors->add(
 						'validation_error',
-						esc_html__( 'Invalid valud found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
+						esc_html__( 'Invalid value found for field: ', 'ca-grants-plugin' ) . esc_html( $id )
 					);
 				}
 			}
@@ -1745,7 +1747,7 @@ class Field {
 						$is_invalid = ! empty( array_diff( $values, $field_ids ) );
 					} elseif ( isset( $field['fields'] ) ) {
 						$defined_values = wp_filter_object_list( $field['fields'], array(), 'and', 'id' );
-						$is_invalid     = ! in_array( $data[ $id ], $defined_values ) && ! in_array( sanitize_title( $data[ $id ] ), $defined_values );
+						$is_invalid     = ! in_array( $data[ $id ], $defined_values, true ) && ! in_array( sanitize_title( $data[ $id ] ), $defined_values, true );
 					}
 					break;
 				case 'datetime-local':
@@ -1861,14 +1863,14 @@ class Field {
 
 		if ( is_array( $value ) ) {
 			array_walk( $value, 'sanitize_text_field' );
-			foreach ($value as $k => $v) {
-				if (!term_exists($v, $taxonomy)) {
-					unset($value[$k]);
+			foreach ( $value as $key => $term ) {
+				if ( ! term_exists( $term, $taxonomy ) ) {
+					unset( $value[ $key ] );
 				}
 			}
 		} else {
 			$value = sanitize_text_field( $value );
-			if (!term_exists($value, $taxonomy)) {
+			if ( ! term_exists( $value, $taxonomy ) ) {
 				$value = null;
 			}
 		}
