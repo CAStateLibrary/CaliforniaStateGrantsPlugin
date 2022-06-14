@@ -21,7 +21,6 @@ return array(
     'CaGov\\Grants\\Meta\\Field' => $baseDir . '/includes/classes/Meta/Field.php',
     'CaGov\\Grants\\Meta\\Funding' => $baseDir . '/includes/classes/Meta/Funding.php',
     'CaGov\\Grants\\Meta\\General' => $baseDir . '/includes/classes/Meta/General.php',
-    'CaGov\\Grants\\Meta\\GrantAwardStats' => $baseDir . '/includes/classes/Meta/GrantAwardStats.php',
     'CaGov\\Grants\\Meta\\GrantAwards' => $baseDir . '/includes/classes/Meta/GrantAwards.php',
     'CaGov\\Grants\\PostTypes\\AwardUploads' => $baseDir . '/includes/classes/PostTypes/AwardUploads.php',
     'CaGov\\Grants\\PostTypes\\BaseEdit' => $baseDir . '/includes/classes/PostTypes/BaseEdit.php',
