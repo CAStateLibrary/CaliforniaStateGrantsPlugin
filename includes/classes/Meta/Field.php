@@ -1694,12 +1694,12 @@ class Field {
 			} elseif ( empty( $is_invalid ) && 'countiesServed' === $id ) {
 				if ( is_array( $data[ $id ] ) ) {
 					foreach ( $data[ $id ] as $term ) {
-						if ( ! term_exists( $term, 'counties' ) ) {
+						if ( ! empty( $term ) && ! term_exists( $term, 'counties' ) ) {
 							$is_invalid = true;
 						}
 					}
 				} else {
-					if ( ! term_exists( $data[ $id ], 'counties' ) ) {
+					if ( ! empty( $data[ $id ] ) && ! term_exists( $data[ $id ], 'counties' ) ) {
 						$is_invalid = true;
 					}
 				}
