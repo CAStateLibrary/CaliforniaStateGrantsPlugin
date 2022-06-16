@@ -318,6 +318,41 @@ const setupForms = () => {
 				} else {
 					return false;
 				}
+			},
+			isFiscalYearValid: async ( field ) => {
+
+				if ( ! field.matches( 'select#fiscalYear' ) ) {
+					return false;
+				}
+
+				const grantID = document.querySelector( 'input[name="grantID"]' );
+
+				if ( ! grantID?.value ) {
+					return true;
+				}
+
+				const ajaxUrl = window.location.origin + window.ajaxurl;
+				const nonce   = document.querySelector( 'input[name="_wpnonce"]' );
+				console.log( 'Field Matches', { field }, { grantID }, {nonce} );
+
+				const data = {
+					action: 'get_fiscal_years_by_grant',
+					grantID: grantID.value,
+					nonce: nonce.value
+				};
+				const fyResponse = await fetch( ajaxUrl, {
+					method: 'POST',
+					body: JSON.stringify( {data} ),
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				} );
+				const fyJson     = await fyResponse.json();
+
+				console.log( {fyJson} );
+
+				// no conditions are met, assume invalid
+				return true;
 			}
 		},
 		messages: {

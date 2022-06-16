@@ -20,6 +20,16 @@ class Field {
 	const API_URL = 'https://www.grants.ca.gov';
 
 	/**
+	 * Constructor.
+	 * Setup ajax hooks.
+	 *
+	 * @return void
+	 */
+	public function __construct() {
+		add_action( 'wp_ajax_get_fiscal_years_by_grant', array( $this, 'get_fiscal_years_by_grant' ) );
+	}
+
+	/**
 	 * Factory.
 	 *
 	 * @static
@@ -171,22 +181,25 @@ class Field {
 	/**
 	 * Builds a string of fiscal year slugs to filter an API request
 	 *
+	 * @param int $id The ID of the grant.
+	 *
 	 * @return string fiscal year slugs query string
 	 */
-	private static function get_fiscal_years() {
-		$grant_id = get_post_meta(get_the_ID(), 'grantID', true);
-		if ($grant_id) {
+	public static function get_fiscal_years( $id ) {
+		$post_id  = $id ? $id : get_the_ID();
+		$grant_id = get_post_meta( $post_id, 'grantID', true );
+		if ( $grant_id ) {
 			$grant_award_stats = get_post_meta( $grant_id, 'awardStats', true );
-			if (!$grant_award_stats) {
+			if ( ! $grant_award_stats ) {
 				return '&slug[]=9999';
 			}
 			$options = '';
-			foreach ($grant_award_stats as $stat) {
-				$options .= "&slug[]=" . $stat['fiscalYear'];
+			foreach ( $grant_award_stats as $stat ) {
+				$options .= '&slug[]=' . $stat['fiscalYear'];
 			}
 			return $options;
 		} else {
-			return '&slug[]=9999';
+			return '';
 		}
 	}
 
@@ -700,8 +713,8 @@ class Field {
 			return;
 		}
 
-		if ($id === 'fiscalYear') {
-			$options = self::get_fiscal_years();
+		if ( 'fiscalYear' === $id ) {
+			$options = self::get_fiscal_years( null );
 		}
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
@@ -1910,4 +1923,28 @@ class Field {
 
 		return $field_id_to_taxonomy_map[ $id ] ?? '';
 	}
+
+
+	/**
+	 * Undocumented function
+	 *
+	 * @return void
+	 */
+	public function get_fiscal_years_by_grant() {
+
+		error_log( 'get_fiscal_years_by_grant' . $_REQUEST['nonce'] );
+		error_log( print_r($_REQUEST, 1) );
+
+		if ( ! wp_verify_nonce( $_REQUEST['nonce'], '_wpnonce' ) ) {
+			exit( 'No naughty business please' );
+		}
+
+		$grant_id = $_REQUEST['grantID'];
+		$options  = self::get_fiscal_years( $grant_id );
+		$fields   = self::get_api_fields_by_id( 'fiscalYear', false, $options );
+
+		wp_send_json( $fields );
+	}
 }
+
+new Field();
