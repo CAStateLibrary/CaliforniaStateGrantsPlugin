@@ -319,7 +319,7 @@ const setupForms = () => {
 					return false;
 				}
 			},
-			isFiscalYearValid: async ( field ) => {
+			isFiscalYearValid: ( field ) => {
 
 				if ( ! field.matches( 'select#fiscalYear' ) ) {
 					return false;
@@ -327,32 +327,53 @@ const setupForms = () => {
 
 				const grantID = document.querySelector( 'input[name="grantID"]' );
 
-				if ( ! grantID?.value ) {
+				if ( ! grantID?.value || ! field.value ) {
 					return true;
 				}
 
-				const ajaxUrl = window.location.origin + window.ajaxurl;
+				const ajaxUrl = `//${window.location.host}${window.ajaxurl}`;
 				const nonce   = document.querySelector( 'input[name="_wpnonce"]' );
-				console.log( 'Field Matches', { field }, { grantID }, {nonce} );
+				console.log( 'Field Matches', field.value, { grantID } );
 
-				const data = {
+				const data = new URLSearchParams( {
 					action: 'get_fiscal_years_by_grant',
 					grantID: grantID.value,
 					nonce: nonce.value
-				};
-				const fyResponse = await fetch( ajaxUrl, {
-					method: 'POST',
-					body: JSON.stringify( {data} ),
-					headers: {
-						'Content-Type': 'application/json',
-					},
 				} );
-				const fyJson     = await fyResponse.json();
 
-				console.log( {fyJson} );
+				// this returns a promise, which isn't going to work.
+				return ( async () => {
+					try {
+						const response = await fetch( ajaxUrl, {
+							method: 'POST',
+							credentials: 'same-origin',
+							body: data.toString(),
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded',
+								'Cache-Control': 'no-cache',
+							},
+						} );
 
-				// no conditions are met, assume invalid
-				return true;
+						if ( !response.ok ) {
+							throw new Error( response.statusText );
+						}
+
+						return await response.json();
+
+					} catch ( error ) {
+						console.log( { error } );
+					}
+				} )().then( json => {
+					const fiscalYears = json.map( fy => fy.id );
+
+					if ( fiscalYears.includes( field.value ) ) {
+						console.log( 'Fiscal Year Matches', field.value, { json } );
+						return false;
+					}
+
+					// no conditions are met, assume invalid
+					return true;
+				} );
 			}
 		},
 		messages: {
@@ -366,7 +387,8 @@ const setupForms = () => {
 			isValidEndDate: 'End date is invalid, please select end date after start date.',
 			isFundingSourceNotesRequired: 'Please add funding source notes. ( Required for funding source "Other" )',
 			isFundingMethodNotesRequired: 'Please add funding method notes. ( Required for funding method "Other" )',
-			isMaxLimitReachedField: 'Maximum characters limit reached.'
+			isMaxLimitReachedField: 'Maximum characters limit reached.',
+			isFiscalYearValid: 'Fiscal year does not match the Associated Grant.',
 		},
 		disableSubmit: true // We need to handle some additional logic here for save/continue
 	} );
@@ -416,7 +438,7 @@ const setupListeners = () => {
 	document.addEventListener( 'bouncerRemoveError', handleBouncerRemoveDeadlineDateError, false );
 	document.addEventListener( 'bouncerRemoveError', handleBouncerRemoveRangeError, false );
 
-	document.addEventListener( 'bouncerShowError', handleBouncerShowFielsetError, false );
+	document.addEventListener( 'bouncerShowError', handleBouncerShowFieldsetError, false );
 
 	forms.forEach( form => {
 		form.addEventListener( 'click', handleFormClick );
@@ -533,7 +555,7 @@ const handleBouncerRemoveRangeError = ( event ) => {
  * Handle bouncer show fieldset error
  * @param {object} event the event object
  */
-const handleBouncerShowFielsetError = ( event ) => {
+const handleBouncerShowFieldsetError = ( event ) => {
 	const { target: field } = event;
 	const fieldset = field.closest( '.fieldset--is-required' );
 

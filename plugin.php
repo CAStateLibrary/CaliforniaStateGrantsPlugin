@@ -155,3 +155,13 @@ add_action(
 	}
 );
 
+add_action(
+	'admin_init',
+	function() {
+		error_log( 'admin init' );
+		if ( class_exists( 'CaGov\Grants\Meta\Field' ) ) {
+			error_log( 'admin init class exists' );
+			new CaGov\Grants\Meta\Field();
+		}
+	}
+);

@@ -29,6 +29,7 @@ class GrantAwards {
 	 */
 	public function __construct() {
 		$this->description = __( 'Enter general grant award information.', 'ca-grants-plugin' );
+		new Field();
 	}
 
 	/**

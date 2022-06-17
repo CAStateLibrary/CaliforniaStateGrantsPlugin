@@ -26,7 +26,9 @@ class Field {
 	 * @return void
 	 */
 	public function __construct() {
+		error_log( 'Meta Field Class Constructor' );
 		add_action( 'wp_ajax_get_fiscal_years_by_grant', array( $this, 'get_fiscal_years_by_grant' ) );
+		add_action( 'wp_ajax_nopriv_get_fiscal_years_by_grant', array( $this, 'get_fiscal_years_by_grant' ) );
 	}
 
 	/**
@@ -1932,12 +1934,10 @@ class Field {
 	 */
 	public function get_fiscal_years_by_grant() {
 
-		error_log( 'get_fiscal_years_by_grant' . $_REQUEST['nonce'] );
-		error_log( print_r($_REQUEST, 1) );
-
-		if ( ! wp_verify_nonce( $_REQUEST['nonce'], '_wpnonce' ) ) {
-			exit( 'No naughty business please' );
-		}
+		// properly verify nonce
+		// if ( ! wp_verify_nonce( $_REQUEST['nonce'] ) ) {
+		// 	exit( 'No naughty business please' );
+		// }
 
 		$grant_id = $_REQUEST['grantID'];
 		$options  = self::get_fiscal_years( $grant_id );
@@ -1946,5 +1946,3 @@ class Field {
 		wp_send_json( $fields );
 	}
 }
-
-new Field();
