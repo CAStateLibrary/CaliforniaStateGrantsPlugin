@@ -102,7 +102,7 @@ class EditGrantAwards extends BaseEdit {
 
 		// Delete grant api rest endpoint cache.
 		if ( ! empty( $grant_id ) ) {
-			wp_cache_delete( 'grants_rest_response_' . $grant_id );
+			wp_cache_delete( 'grants_rest_response_' . $grant_id, 'ca-grants-plugin' );
 		}
 	}
 
