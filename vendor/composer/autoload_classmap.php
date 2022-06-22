@@ -13,6 +13,7 @@ return array(
     'CaGov\\Grants\\Admin\\Taxonomies' => $baseDir . '/includes/classes/Admin/Taxonomies.php',
     'CaGov\\Grants\\Admin\\WelcomePage' => $baseDir . '/includes/classes/Admin/WelcomePage.php',
     'CaGov\\Grants\\Cron\\BulkAwardImport' => $baseDir . '/includes/classes/Cron/BulkAwardImport.php',
+    'CaGov\\Grants\\Cron\\GrantAwardsCleanup' => $baseDir . '/includes/classes/Cron/GrantAwardsCleanup.php',
     'CaGov\\Grants\\Meta\\AwardStats' => $baseDir . '/includes/classes/Meta/AwardStats.php',
     'CaGov\\Grants\\Meta\\AwardUploads' => $baseDir . '/includes/classes/Meta/AwardUploads.php',
     'CaGov\\Grants\\Meta\\Contact' => $baseDir . '/includes/classes/Meta/Contact.php',
