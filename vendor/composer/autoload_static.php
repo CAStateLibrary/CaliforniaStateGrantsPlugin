@@ -37,6 +37,7 @@ class ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1
         'CaGov\\Grants\\Admin\\Taxonomies' => __DIR__ . '/../..' . '/includes/classes/Admin/Taxonomies.php',
         'CaGov\\Grants\\Admin\\WelcomePage' => __DIR__ . '/../..' . '/includes/classes/Admin/WelcomePage.php',
         'CaGov\\Grants\\Cron\\BulkAwardImport' => __DIR__ . '/../..' . '/includes/classes/Cron/BulkAwardImport.php',
+        'CaGov\\Grants\\Cron\\GrantAwardsCleanup' => __DIR__ . '/../..' . '/includes/classes/Cron/GrantAwardsCleanup.php',
         'CaGov\\Grants\\Meta\\AwardStats' => __DIR__ . '/../..' . '/includes/classes/Meta/AwardStats.php',
         'CaGov\\Grants\\Meta\\AwardUploads' => __DIR__ . '/../..' . '/includes/classes/Meta/AwardUploads.php',
         'CaGov\\Grants\\Meta\\Contact' => __DIR__ . '/../..' . '/includes/classes/Meta/Contact.php',

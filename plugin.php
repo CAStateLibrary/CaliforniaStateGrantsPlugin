@@ -104,6 +104,7 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\PostTypes\EditAwardUploads',
 		'CaGov\Grants\Admin\BulkUploadPage',
 		'CaGov\Grants\Cron\BulkAwardImport',
+		'CaGov\Grants\Cron\GrantAwardsCleanup',
 		'CaGov\Grants\REST\GrantAwardsEndpoint',
 		'CaGov\Grants\REST\BulkUploadEndpoint',
 		'CaGov\Grants\REST\GrantAwardsValidation',
