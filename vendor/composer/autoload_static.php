@@ -61,7 +61,6 @@ class ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1
         'CaGov\\Grants\\REST\\GrantAwardsEndpoint' => __DIR__ . '/../..' . '/includes/classes/REST/GrantAwardsEndpoint.php',
         'CaGov\\Grants\\REST\\GrantAwardsValidation' => __DIR__ . '/../..' . '/includes/classes/REST/GrantAwardsValidation.php',
         'CaGov\\Grants\\REST\\GrantsEndpoint' => __DIR__ . '/../..' . '/includes/classes/REST/GrantsEndpoint.php',
-        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Composer\\Installers\\AglInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AglInstaller.php',
         'Composer\\Installers\\AimeosInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AimeosInstaller.php',
         'Composer\\Installers\\AnnotateCmsInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AnnotateCmsInstaller.php',
