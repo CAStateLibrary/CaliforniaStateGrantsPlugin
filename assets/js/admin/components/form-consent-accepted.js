@@ -51,9 +51,16 @@ const main = () => {
 			return true;
 		}
 
+		// eslint-disable-next-line no-alert
 		if ( confirm( message ) ) {
 			this.submit();
 			return true;
+		}
+
+		// Remove the post_status hidden input that's added when the Publish button is clicked.
+		const postStatus = document.querySelector( 'input[name="post_status"][value="publish"]' );
+		if ( postStatus ) {
+			postStatus.remove();
 		}
 
 		event.preventDefault();

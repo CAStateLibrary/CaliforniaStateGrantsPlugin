@@ -303,7 +303,6 @@ function script_loader_tag( $tag, $handle ) {
 function tiny_mce_before_init( $mce_init ) {
 
 	$mce_init['setup'] = "function(editor) {
-		console.log( 'setting up editor' );
 		editor.on('keyup', function( event ) {
 			window.parent.postMessage( JSON.stringify({
 				type: 'editor.keyup',
