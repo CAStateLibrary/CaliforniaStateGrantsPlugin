@@ -109,6 +109,7 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\REST\BulkUploadEndpoint',
 		'CaGov\Grants\REST\GrantAwardsValidation',
 		'CaGov\Grants\REST\AwardeeStatsEndpoint',
+		'CaGov\Grants\Meta\FiscalYearField',
 	);
 
 	if ( true !== \CaGov\Grants\Core\is_portal() ) {
@@ -152,16 +153,5 @@ add_action(
 
 		// Enable updates.
 		ca_grants_enable_updates();
-	}
-);
-
-add_action(
-	'admin_init',
-	function() {
-		error_log( 'admin init' );
-		if ( class_exists( 'CaGov\Grants\Meta\Field' ) ) {
-			error_log( 'admin init class exists' );
-			new CaGov\Grants\Meta\Field();
-		}
 	}
 );
