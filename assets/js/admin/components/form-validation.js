@@ -325,56 +325,14 @@ const setupForms = () => {
 					return false;
 				}
 
-				const grantID = document.querySelector( 'input[name="grantID"]' );
-
-				if ( ! grantID?.value || ! field.value ) {
-					return true;
+				if ( window.allowedFiscalYears?.includes( field.value ) ) {
+					return false;
 				}
 
-				const ajaxUrl = `//${window.location.host}${window.ajaxurl}`;
-				const nonce   = document.querySelector( 'input[name="_wpnonce"]' );
-				console.log( 'Field Matches', field.value, { grantID } );
+				// No conditions are met, assume invalid.
+				return true;
+			},
 
-				const data = new URLSearchParams( {
-					action: 'get_fiscal_years_by_grant',
-					grantID: grantID.value,
-					nonce: nonce.value
-				} );
-
-				// this returns a promise, which isn't going to work.
-				return ( async () => {
-					try {
-						const response = await fetch( ajaxUrl, {
-							method: 'POST',
-							credentials: 'same-origin',
-							body: data.toString(),
-							headers: {
-								'Content-Type': 'application/x-www-form-urlencoded',
-								'Cache-Control': 'no-cache',
-							},
-						} );
-
-						if ( !response.ok ) {
-							throw new Error( response.statusText );
-						}
-
-						return await response.json();
-
-					} catch ( error ) {
-						console.log( { error } );
-					}
-				} )().then( json => {
-					const fiscalYears = json.map( fy => fy.id );
-
-					if ( fiscalYears.includes( field.value ) ) {
-						console.log( 'Fiscal Year Matches', field.value, { json } );
-						return false;
-					}
-
-					// no conditions are met, assume invalid
-					return true;
-				} );
-			}
 		},
 		messages: {
 			hasRequiredCheckboxes: 'Please check at least one value.',

@@ -1899,8 +1899,9 @@ class Field {
  * @return string fiscal year slugs query string
  */
 function get_fiscal_years( $id ) {
-	$post_id  = $id ? $id : get_the_ID();
-	$grant_id = get_post_meta( $post_id, 'grantID', true );
+	// $post_id  = $id ? $id : get_the_ID();
+	$grant_id = $id ? $id : get_post_meta( get_the_ID(), 'grantID', true );
+	error_log( 'GET FISCAL YEARS: ' . $grant_id . ' -- ' . $id );
 	if ( $grant_id ) {
 		$grant_award_stats = get_post_meta( $grant_id, 'awardStats', true );
 		if ( ! $grant_award_stats ) {

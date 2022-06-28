@@ -44,17 +44,15 @@ class FiscalYearField extends Field {
 	 * @return void JSON response.
 	 */
 	public function get_fiscal_years_by_grant() {
-		error_log( 'Get Fiscal Year By Grant' );
-
 		// properly verify the nonce
-		// if ( ! wp_verify_nonce( $_REQUEST['nonce'] ) ) {
-		// exit( 'No naughty business please' );
-		// }
+		if ( ! wp_verify_nonce( $_REQUEST['nonce'], 'post_finder' ) ) {
+			exit( 'No naughty business please' );
+		}
 
-		$grant_id = $_REQUEST['grantID'];
+		$grant_id = $_REQUEST['grantId'];
 		$options  = get_fiscal_years( $grant_id );
 		$fields   = parent::get_api_fields_by_id( 'fiscalYear', false, $options );
 
-		wp_send_json( $fields );
+		wp_send_json( wp_list_pluck( $fields, 'id' ) );
 	}
 }
