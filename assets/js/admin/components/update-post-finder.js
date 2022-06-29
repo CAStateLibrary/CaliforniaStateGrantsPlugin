@@ -1,7 +1,7 @@
 /**
  *
  */
-function main() {
+export default function updatePostFinder() {
 	// updatePostFinder event is fired from the Post Finder plugin
 	window.addEventListener( 'updatePostFinder', async ( event ) => {
 		const { ids } = event.detail;
@@ -52,5 +52,3 @@ function main() {
 
 	} );
 }
-
-export default main;
