@@ -1,17 +1,19 @@
 <?php
 /**
- * Meta fields.
+ * Fiscal Year AJAX Class.
  *
  * @package CaGov\Grants
  */
 
 namespace CaGov\Grants\Meta;
 
+use CAGov\Grants\Meta\Field;
+use CaGov\Grants\Helpers\FiscalYear;
+
 /**
- * Meta Field Class.
+ * Fiscal Year AJAX logic
  */
-class FiscalYearField extends Field {
-	const API_URL = 'https://www.grants.ca.gov';
+class FiscalYearAJAX {
 
 	/**
 	 * Init
@@ -27,10 +29,8 @@ class FiscalYearField extends Field {
 	 */
 	public function setup() {
 		if ( self::$init ) {
-			error_log( 'fiscal year field already initialized' );
 			return;
 		}
-		error_log( 'FiscalYearField::setup()' );
 
 		add_action( 'wp_ajax_get_fiscal_years_by_grant', [ $this, 'get_fiscal_years_by_grant' ] );
 		add_action( 'wp_ajax_nopriv_get_fiscal_years_by_grant', [ $this, 'get_fiscal_years_by_grant' ] );
@@ -46,13 +46,18 @@ class FiscalYearField extends Field {
 	public function get_fiscal_years_by_grant() {
 		// properly verify the nonce
 		if ( ! wp_verify_nonce( $_REQUEST['nonce'], 'post_finder' ) ) {
-			exit( 'No naughty business please' );
+			wp_send_json_error( 'Error: Invalid nonce' );
 		}
 
-		$grant_id = $_REQUEST['grantId'];
-		$options  = get_fiscal_years( $grant_id );
-		$fields   = parent::get_api_fields_by_id( 'fiscalYear', false, $options );
+		$grant_id = intval( $_REQUEST['grantId'] );
 
-		wp_send_json( wp_list_pluck( $fields, 'id' ) );
+		if ( ! $grant_id ) {
+			wp_send_json_error( 'Error: Missing Grant ID' );
+		}
+
+		$options = FiscalYear\get_fiscal_years_query_string( $grant_id );
+		$fields  = Field::get_api_fields_by_id( 'fiscalYear', false, $options );
+
+		wp_send_json_success( wp_list_pluck( $fields, 'id' ) );
 	}
 }

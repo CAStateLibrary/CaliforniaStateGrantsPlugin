@@ -8,6 +8,7 @@
 namespace CaGov\Grants\Meta;
 
 use CaGov\Grants\Helpers\Validators;
+use CaGov\Grants\Helpers\FiscalYear;
 use DateTime;
 use WP_Error;
 
@@ -18,6 +19,26 @@ use function CaGov\Grants\Core\is_portal;
  */
 class Field {
 	const API_URL = 'https://www.grants.ca.gov';
+
+	/**
+	 * Init
+	 *
+	 * @var boolean
+	 */
+	public static $init = false;
+
+	/**
+	 * Setup class.
+	 *
+	 * @return void
+	 */
+	public function setup() {
+		if ( self::$init ) {
+			return;
+		}
+
+		self::$init = true;
+	}
 
 	/**
 	 * Factory.
@@ -146,7 +167,7 @@ class Field {
 			} else {
 				printf( 'data-required-if="%s"', esc_attr( implode( ',', $meta_field['required'] ) ) );
 			}
-		} elseif ( $meta_field['required'] === true ) {
+		} elseif ( true === $meta_field['required'] ) {
 			echo ' required="true" ';
 		}
 	}
@@ -208,7 +229,7 @@ class Field {
 
 		?>
 		<tr class="post_finder_field <?php echo esc_attr( $class ); ?>" <?php self::conditional_visible( $meta_field ); ?>>
-			<th class="<?php echo ( $meta_field['required'] === true ) ? 'required' : ''; ?>">
+			<th class="<?php echo ( true === $meta_field['required'] ) ? 'required' : ''; ?>">
 				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $name ); ?></label>
 				<?php self::tooltip( $description ); ?>
 			</th>
@@ -679,7 +700,7 @@ class Field {
 		}
 
 		if ( 'fiscalYear' === $id ) {
-			$options = get_fiscal_years( null );
+			$options = FiscalYear\get_fiscal_years_query_string();
 		}
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
@@ -1889,30 +1910,4 @@ class Field {
 		return $field_id_to_taxonomy_map[ $id ] ?? '';
 	}
 
-}
-
-/**
- * Builds a string of fiscal year slugs to filter an API request
- *
- * @param int $id The ID of the grant.
- *
- * @return string fiscal year slugs query string
- */
-function get_fiscal_years( $id ) {
-	// $post_id  = $id ? $id : get_the_ID();
-	$grant_id = $id ? $id : get_post_meta( get_the_ID(), 'grantID', true );
-	error_log( 'GET FISCAL YEARS: ' . $grant_id . ' -- ' . $id );
-	if ( $grant_id ) {
-		$grant_award_stats = get_post_meta( $grant_id, 'awardStats', true );
-		if ( ! $grant_award_stats ) {
-			return '&slug[]=9999';
-		}
-		$options = '';
-		foreach ( $grant_award_stats as $stat ) {
-			$options .= '&slug[]=' . $stat['fiscalYear'];
-		}
-		return $options;
-	} else {
-		return '';
-	}
 }

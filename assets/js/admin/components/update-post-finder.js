@@ -39,8 +39,12 @@ function main() {
 
 			json = await response.json();
 
+			if ( ! json.success ) {
+				throw new Error( json.data );
+			}
+
 			// add allowed fiscal years to the global scope.
-			window.allowedFiscalYears = json;
+			window.allowedFiscalYears = json.data;
 
 		} catch ( error ) {
 			console.log( { error } );
