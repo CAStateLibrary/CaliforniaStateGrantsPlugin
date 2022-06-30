@@ -11,11 +11,12 @@ use CaGov\Grants\Admin\Settings;
 use CaGov\Grants\Helpers\Validators;
 use CaGov\Grants\PostTypes\GrantAwards;
 use CaGov\Grants\PostTypes\Grants;
-use CaGov\Grants\Helpers\FiscalYear;
 use CAGov\Grants\Meta\Field;
 use DateTime;
 use WP_Query;
 use \WP_Error as WP_Error;
+
+use function CaGov\Grants\Helpers\FiscalYear\get_fiscal_years_query_string;
 
 /**
  * Default setup routine
@@ -208,7 +209,7 @@ function admin_scripts() {
 			return;
 		}
 
-		$options = FiscalYear\get_fiscal_years_query_string( $grant_id );
+		$options = get_fiscal_years_query_string( $grant_id );
 		$fields  = Field::get_api_fields_by_id( 'fiscalYear', false, $options );
 		$fy_ids  = wp_list_pluck( $fields, 'id' );
 

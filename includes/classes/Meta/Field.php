@@ -8,11 +8,11 @@
 namespace CaGov\Grants\Meta;
 
 use CaGov\Grants\Helpers\Validators;
-use CaGov\Grants\Helpers\FiscalYear;
 use DateTime;
 use WP_Error;
 
 use function CaGov\Grants\Core\is_portal;
+use function CaGov\Grants\Helpers\FiscalYear\get_fiscal_years_query_string;
 
 /**
  * Meta Field Class.
@@ -700,7 +700,7 @@ class Field {
 		}
 
 		if ( 'fiscalYear' === $id ) {
-			$options = FiscalYear\get_fiscal_years_query_string();
+			$options = get_fiscal_years_query_string();
 		}
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {

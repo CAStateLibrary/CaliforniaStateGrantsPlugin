@@ -8,7 +8,7 @@
 namespace CaGov\Grants\Meta;
 
 use CAGov\Grants\Meta\Field;
-use CaGov\Grants\Helpers\FiscalYear;
+use function CaGov\Grants\Helpers\FiscalYear\get_fiscal_years_query_string;
 
 /**
  * Fiscal Year AJAX logic
@@ -55,7 +55,7 @@ class FiscalYearAJAX {
 			wp_send_json_error( 'Error: Missing Grant ID' );
 		}
 
-		$options = FiscalYear\get_fiscal_years_query_string( $grant_id );
+		$options = get_fiscal_years_query_string( $grant_id );
 		$fields  = Field::get_api_fields_by_id( 'fiscalYear', false, $options );
 
 		wp_send_json_success( wp_list_pluck( $fields, 'id' ) );
