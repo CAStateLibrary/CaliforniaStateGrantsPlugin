@@ -677,7 +677,7 @@ class Field {
 	}
 
 	/**
-	 * Render a radio field
+	 * Render a select field
 	 *
 	 * @param array $meta_field The meta field to render
 	 */
