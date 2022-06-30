@@ -20,6 +20,7 @@ return array(
     'CaGov\\Grants\\Meta\\Dates' => $baseDir . '/includes/classes/Meta/Dates.php',
     'CaGov\\Grants\\Meta\\Eligibility' => $baseDir . '/includes/classes/Meta/Eligibility.php',
     'CaGov\\Grants\\Meta\\Field' => $baseDir . '/includes/classes/Meta/Field.php',
+    'CaGov\\Grants\\Meta\\FiscalYearAJAX' => $baseDir . '/includes/classes/Meta/FiscalYearAJAX.php',
     'CaGov\\Grants\\Meta\\Funding' => $baseDir . '/includes/classes/Meta/Funding.php',
     'CaGov\\Grants\\Meta\\General' => $baseDir . '/includes/classes/Meta/General.php',
     'CaGov\\Grants\\Meta\\GrantAwards' => $baseDir . '/includes/classes/Meta/GrantAwards.php',

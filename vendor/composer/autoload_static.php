@@ -44,6 +44,7 @@ class ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1
         'CaGov\\Grants\\Meta\\Dates' => __DIR__ . '/../..' . '/includes/classes/Meta/Dates.php',
         'CaGov\\Grants\\Meta\\Eligibility' => __DIR__ . '/../..' . '/includes/classes/Meta/Eligibility.php',
         'CaGov\\Grants\\Meta\\Field' => __DIR__ . '/../..' . '/includes/classes/Meta/Field.php',
+        'CaGov\\Grants\\Meta\\FiscalYearAJAX' => __DIR__ . '/../..' . '/includes/classes/Meta/FiscalYearAJAX.php',
         'CaGov\\Grants\\Meta\\Funding' => __DIR__ . '/../..' . '/includes/classes/Meta/Funding.php',
         'CaGov\\Grants\\Meta\\General' => __DIR__ . '/../..' . '/includes/classes/Meta/General.php',
         'CaGov\\Grants\\Meta\\GrantAwards' => __DIR__ . '/../..' . '/includes/classes/Meta/GrantAwards.php',
