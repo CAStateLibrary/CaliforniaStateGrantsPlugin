@@ -16,7 +16,7 @@ use CaGov\Grants\Admin\Taxonomies;
  */
 
 // Useful global constants.
-define( 'CA_GRANTS_VERSION', '1.1.10' );
+define( 'CA_GRANTS_VERSION', '1.2' );
 define( 'CA_GRANTS_URL', plugin_dir_url( __FILE__ ) );
 define( 'CA_GRANTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CA_GRANTS_INC', CA_GRANTS_PATH . 'includes/' );
@@ -104,6 +104,7 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\PostTypes\EditAwardUploads',
 		'CaGov\Grants\Admin\BulkUploadPage',
 		'CaGov\Grants\Cron\BulkAwardImport',
+		'CaGov\Grants\Cron\GrantAwardsCleanup',
 		'CaGov\Grants\REST\GrantAwardsEndpoint',
 		'CaGov\Grants\REST\BulkUploadEndpoint',
 		'CaGov\Grants\REST\GrantAwardsValidation',
