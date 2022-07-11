@@ -559,18 +559,25 @@ function get_fiscal_year( $datetime = 'now' ) {
 /**
  * Get latest award stats for the grant.
  *
- * @param [type] $grant_id
+ * @param int    $grant_id Grant id.
+ * @param string $fiscal_year Fiscal year to filter award stats data.
  *
  * @return array
  */
-function get_award_stats( $grant_id ) {
+function get_award_stats( $grant_id, $fiscal_year = '' ) {
 	$award_stats = get_post_meta( $grant_id, 'awardStats', true );
 
 	if ( empty( $award_stats ) || ! is_array( $award_stats ) ) {
 		return [];
 	}
 
-	return end( $award_stats );
+	if ( empty( $fiscal_year ) || count( $award_stats ) <= 1 ) {
+		return end( $award_stats );
+	}
+
+	$filtered_fy = wp_list_filter( $award_stats, [ 'fiscalYear' => $fiscal_year ] );
+
+	return empty( $filtered_fy ) ? end( $award_stats ) : end( $filtered_fy );
 }
 
 /**
