@@ -33,6 +33,7 @@ if ( ! defined( 'CA_GRANTS_PORTAL_JSON_URL' ) ) {
 
 // Include files.
 require_once CA_GRANTS_INC . 'functions/core.php';
+require_once CA_GRANTS_INC . 'functions/helpers/fiscal-year.php';
 require_once CA_GRANTS_INC . 'functions/helpers/validators.php';
 require_once CA_GRANTS_INC . 'functions/helpers/validation-helpers.php';
 
@@ -109,16 +110,21 @@ function ca_grants_plugin_setup() {
 		'CaGov\Grants\REST\BulkUploadEndpoint',
 		'CaGov\Grants\REST\GrantAwardsValidation',
 		'CaGov\Grants\REST\AwardeeStatsEndpoint',
+		'CaGov\Grants\Meta\Field',
+		'CaGov\Grants\Meta\FiscalYearAJAX',
 	);
 
 	if ( true !== \CaGov\Grants\Core\is_portal() ) {
-		$classes = array_merge( $classes, [
-			'CaGov\Grants\Admin\Settings',
-			'CaGov\Grants\Admin\SettingsPage',
-			'CaGov\Grants\Admin\WelcomePage',
-			'CaGov\Grants\Admin\Notices',
-			'CaGov\Grants\REST\GrantsEndpoint',
-		] );
+		$classes = array_merge(
+			$classes,
+			[
+				'CaGov\Grants\Admin\Settings',
+				'CaGov\Grants\Admin\SettingsPage',
+				'CaGov\Grants\Admin\WelcomePage',
+				'CaGov\Grants\Admin\Notices',
+				'CaGov\Grants\REST\GrantsEndpoint',
+			]
+		);
 	}
 
 	if ( \CaGov\Grants\Core\is_portal() ) {
@@ -141,10 +147,13 @@ function ca_grants_plugin_setup() {
 }
 
 // Set up the plugin after the theme to mae sure hooks in the theme are set up first.
-add_action( 'after_setup_theme', function() {
-	// Setup the plugin.
-	ca_grants_plugin_setup();
+add_action(
+	'after_setup_theme',
+	function() {
+		// Setup the plugin.
+		ca_grants_plugin_setup();
 
-	// Enable updates.
-	ca_grants_enable_updates();
-} );
+		// Enable updates.
+		ca_grants_enable_updates();
+	}
+);
