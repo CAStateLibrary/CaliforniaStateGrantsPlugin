@@ -11,9 +11,12 @@ use CaGov\Grants\Admin\Settings;
 use CaGov\Grants\Helpers\Validators;
 use CaGov\Grants\PostTypes\GrantAwards;
 use CaGov\Grants\PostTypes\Grants;
+use CAGov\Grants\Meta\Field;
 use DateTime;
 use WP_Query;
 use \WP_Error as WP_Error;
+
+use function CaGov\Grants\Helpers\FiscalYear\get_fiscal_years_query_string;
 
 /**
  * Default setup routine
@@ -196,6 +199,25 @@ function admin_scripts() {
 			],
 		]
 	);
+
+	$screen = get_current_screen();
+	if ( GrantAwards::CPT_SLUG === $screen->id ) {
+		$grant_id = get_post_meta( get_the_ID(), 'grantID', true );
+
+		// if we don't have a grant id, there aren't any fiscal years to inline
+		if ( ! $grant_id ) {
+			return;
+		}
+
+		$options = get_fiscal_years_query_string( $grant_id );
+		$fields  = Field::get_api_fields_by_id( 'fiscalYear', false, $options );
+		$fy_ids  = wp_list_pluck( $fields, 'id' );
+
+		wp_add_inline_script(
+			'csl_grants_submissions_admin',
+			'window.allowedFiscalYears = ' . wp_json_encode( $fy_ids ) . ';'
+		);
+	}
 
 	wp_enqueue_script( 'jquery-ui-datepicker' );
 }

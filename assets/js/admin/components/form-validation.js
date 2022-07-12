@@ -318,7 +318,21 @@ const setupForms = () => {
 				} else {
 					return false;
 				}
-			}
+			},
+			isFiscalYearValid: ( field ) => {
+
+				if ( ! field.matches( 'select#fiscalYear' ) ) {
+					return false;
+				}
+
+				if ( window.allowedFiscalYears?.includes( field.value ) ) {
+					return false;
+				}
+
+				// No conditions are met, assume invalid.
+				return true;
+			},
+
 		},
 		messages: {
 			hasRequiredCheckboxes: 'Please check at least one value.',
@@ -331,7 +345,8 @@ const setupForms = () => {
 			isValidEndDate: 'End date is invalid, please select end date after start date.',
 			isFundingSourceNotesRequired: 'Please add funding source notes. ( Required for funding source "Other" )',
 			isFundingMethodNotesRequired: 'Please add funding method notes. ( Required for funding method "Other" )',
-			isMaxLimitReachedField: 'Maximum characters limit reached.'
+			isMaxLimitReachedField: 'Maximum characters limit reached.',
+			isFiscalYearValid: 'Fiscal year does not match the Associated Grant.',
 		},
 		disableSubmit: true // We need to handle some additional logic here for save/continue
 	} );
@@ -381,7 +396,7 @@ const setupListeners = () => {
 	document.addEventListener( 'bouncerRemoveError', handleBouncerRemoveDeadlineDateError, false );
 	document.addEventListener( 'bouncerRemoveError', handleBouncerRemoveRangeError, false );
 
-	document.addEventListener( 'bouncerShowError', handleBouncerShowFielsetError, false );
+	document.addEventListener( 'bouncerShowError', handleBouncerShowFieldsetError, false );
 
 	forms.forEach( form => {
 		form.addEventListener( 'click', handleFormClick );
@@ -498,7 +513,7 @@ const handleBouncerRemoveRangeError = ( event ) => {
  * Handle bouncer show fieldset error
  * @param {object} event the event object
  */
-const handleBouncerShowFielsetError = ( event ) => {
+const handleBouncerShowFieldsetError = ( event ) => {
 	const { target: field } = event;
 	const fieldset = field.closest( '.fieldset--is-required' );
 
