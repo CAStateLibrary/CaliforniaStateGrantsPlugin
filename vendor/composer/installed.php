@@ -3,7 +3,7 @@
         'name' => '10up/ca-grants-plugin',
         'pretty_version' => 'dev-trunk',
         'version' => 'dev-trunk',
-        'reference' => 'ef2f7bf639732ab6ab3266edf5fb5da307a71111',
+        'reference' => '52057aa15d942867fcfce330f8e318e480e0a11b',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '10up/ca-grants-plugin' => array(
             'pretty_version' => 'dev-trunk',
             'version' => 'dev-trunk',
-            'reference' => 'ef2f7bf639732ab6ab3266edf5fb5da307a71111',
+            'reference' => '52057aa15d942867fcfce330f8e318e480e0a11b',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
