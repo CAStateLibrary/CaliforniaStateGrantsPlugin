@@ -10,7 +10,6 @@ namespace CaGov\Grants\REST;
 use CaGov\Grants\PostTypes\AwardUploads;
 use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\Meta\GrantAwards;
-use CaGov\Grants\Meta\GrantAwardStats;
 use WP_REST_Controller;
 use WP_REST_Server;
 use WP_Rest_Request;
@@ -113,10 +112,7 @@ class GrantAwardsValidation extends WP_REST_Controller {
 			return $this->schema;
 		}
 
-		$metafields  = array_merge(
-			GrantAwardStats::get_fields(),
-		 	GrantAwards::get_fields()
-		);
+		$metafields  = GrantAwards::get_fields();
 		$schema_args = array();
 
 		foreach ( $metafields as $meta ) {

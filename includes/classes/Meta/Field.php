@@ -12,12 +12,33 @@ use DateTime;
 use WP_Error;
 
 use function CaGov\Grants\Core\is_portal;
+use function CaGov\Grants\Helpers\FiscalYear\get_fiscal_years_query_string;
 
 /**
  * Meta Field Class.
  */
 class Field {
 	const API_URL = 'https://www.grants.ca.gov';
+
+	/**
+	 * Init
+	 *
+	 * @var boolean
+	 */
+	public static $init = false;
+
+	/**
+	 * Setup class.
+	 *
+	 * @return void
+	 */
+	public function setup() {
+		if ( self::$init ) {
+			return;
+		}
+
+		self::$init = true;
+	}
 
 	/**
 	 * Factory.
@@ -165,28 +186,6 @@ class Field {
 
 		if ( is_array( $meta_field['visible'] ) ) {
 			printf( 'data-visible-if="%s"', esc_attr( wp_json_encode( $meta_field['visible'] ) ) );
-		}
-	}
-
-	/**
-	 * Builds a string of fiscal year slugs to filter an API request
-	 *
-	 * @return string fiscal year slugs query string
-	 */
-	private static function get_fiscal_years() {
-		$grant_id = get_post_meta(get_the_ID(), 'grantID', true);
-		if ($grant_id) {
-			$grant_award_stats = get_post_meta( $grant_id, 'awardStats', true );
-			if (!$grant_award_stats) {
-				return '&slug[]=9999';
-			}
-			$options = '';
-			foreach ($grant_award_stats as $stat) {
-				$options .= "&slug[]=" . $stat['fiscalYear'];
-			}
-			return $options;
-		} else {
-			return '&slug[]=9999';
 		}
 	}
 
@@ -677,7 +676,7 @@ class Field {
 	}
 
 	/**
-	 * Render a radio field
+	 * Render a select field
 	 *
 	 * @param array $meta_field The meta field to render
 	 */
@@ -702,8 +701,8 @@ class Field {
 			return;
 		}
 
-		if ($id === 'fiscalYear') {
-			$options = self::get_fiscal_years();
+		if ( 'fiscalYear' === $id ) {
+			$options = get_fiscal_years_query_string();
 		}
 
 		if ( isset( $meta_field['source'] ) && 'api' === $meta_field['source'] ) {
@@ -1944,4 +1943,5 @@ class Field {
 
 		return $field_id_to_taxonomy_map[ $id ] ?? '';
 	}
+
 }
