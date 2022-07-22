@@ -129,8 +129,9 @@ class GrantAwards {
 	 * @return string
 	 */
 	private function render_portal_id( $grant_award_id ) {
-		$grant_id = get_post_meta( $grant_award_id, 'grantID', true );
-		return get_post_meta( $grant_id, 'grantID', true );
+		return $grant_award_id;
+		// $grant_id = get_post_meta( $grant_award_id, 'grantID', true );
+		// return get_post_meta( $grant_id, 'grantID', true );
 	}
 
 	/**
