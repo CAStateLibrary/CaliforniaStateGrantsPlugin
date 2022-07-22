@@ -118,8 +118,7 @@ class GrantAwards {
 	 * @return string
 	 */
 	private function render_project_title( $grant_award_id ) {
-		$title = get_post_meta( 'projectTitle', $grant_award_id, true );
-		return "Title: $grant_award_id and $title";
+		return get_post_meta( $grant_award_id, 'projectTitle', true );
 	}
 
 	/**
@@ -130,10 +129,8 @@ class GrantAwards {
 	 * @return string
 	 */
 	private function render_portal_id( $grant_award_id ) {
-		$grant_id  = get_post_meta( $grant_award_id, 'grantID', true );
-		$portal_id = get_post_meta( $grant_id, 'portalId', true );
-
-		return "Portal ID: $portal_id";
+		$grant_id = get_post_meta( $grant_award_id, 'grantID', true );
+		return get_post_meta( $grant_id, 'grantID', true );
 	}
 
 	/**
