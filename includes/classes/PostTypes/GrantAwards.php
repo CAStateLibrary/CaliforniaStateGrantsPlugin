@@ -43,7 +43,109 @@ class GrantAwards {
 		add_filter( 'ep_indexable_post_types', [ $this, 'include_in_es_index' ], 20 );
 		add_filter( 'ep_searchable_post_types', [ $this, 'include_in_es_index' ], 20 );
 
+		add_filter( 'manage_' . self::CPT_SLUG . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
+		add_action( 'manage_' . self::CPT_SLUG . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
+
 		self::$init = true;
+	}
+
+	/**
+	 * Get custom column data.
+	 *
+	 * @return array
+	 */
+	private function get_custom_columns() {
+		return [
+			[
+				'key'   => 'project_title',
+				'label' => __( 'Project Title', 'ca-grants-plugin' ),
+			],
+			[
+				'key'   => 'portal_id',
+				'label' => __( 'Portal ID', 'ca-grants-plugin' ),
+			],
+			[
+				'key'   => 'associated_grant_name',
+				'label' => __( 'Associated Grant Name', 'ca-grants-plugin' ),
+			],
+		];
+	}
+
+	/**
+	 * Add custom column to grant awards CPT.
+	 *
+	 * @param array $columns List of post columns.
+	 *
+	 * @return array Return all columns data.
+	 */
+	public function set_custom_edit_columns( $columns ) {
+		$custom_columns = $this->get_custom_columns();
+
+		foreach ( $custom_columns as $column ) {
+			$columns[ $column['key'] ] = $column['label'];
+		}
+
+		return $columns;
+	}
+
+	/**
+	 * Custom column renderer to show data for custom defined column.
+	 *
+	 * @param string $column Column name/slug.
+	 * @param int    $grant_award_id The current grant ID.
+	 *
+	 * @return void
+	 */
+	public function custom_column_renderer( $column, $grant_award_id ) {
+		$custom_columns = $this->get_custom_columns();
+
+		if ( ! in_array( $column, wp_list_pluck( $custom_columns, 'key' ), true ) ) {
+			return;
+		}
+
+		$method = 'render_' . str_replace( '-', '_', $column );
+		if ( method_exists( $this, $method ) ) {
+			print( esc_html( $this->$method( $grant_award_id ) ) );
+		}
+
+	}
+
+	/**
+	 * Render project title.
+	 *
+	 * @param int $grant_award_id The current grant ID.
+	 *
+	 * @return string
+	 */
+	private function render_project_title( $grant_award_id ) {
+		$title = get_post_meta( 'projectTitle', $grant_award_id, true );
+		return "Title: $grant_award_id and $title";
+	}
+
+	/**
+	 * Render Portal ID.
+	 *
+	 * @param int $grant_award_id The current grant ID.
+	 *
+	 * @return string
+	 */
+	private function render_portal_id( $grant_award_id ) {
+		$grant_id  = get_post_meta( $grant_award_id, 'grantID', true );
+		$portal_id = get_post_meta( $grant_id, 'portalId', true );
+
+		return "Portal ID: $portal_id";
+	}
+
+	/**
+	 * Render Portal ID.
+	 *
+	 * @param int $grant_award_id The current grant ID.
+	 *
+	 * @return string
+	 */
+	private function render_associated_grant_name( $grant_award_id ) {
+		$grant_id = get_post_meta( $grant_award_id, 'grantID', true );
+		return get_the_title( $grant_id );
 	}
 
 	/**
