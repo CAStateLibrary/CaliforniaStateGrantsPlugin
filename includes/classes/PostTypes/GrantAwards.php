@@ -113,7 +113,7 @@ class GrantAwards {
 
 		$method = 'render_' . str_replace( '-', '_', $column );
 		if ( method_exists( $this, $method ) ) {
-			print( esc_html( $this->$method( $grant_award_id ) ) );
+			echo esc_html( $this->$method( $grant_award_id ) );
 		}
 
 	}
