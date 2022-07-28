@@ -94,11 +94,12 @@ class Funding {
 		);
 
 		$fields[] = array(
-			'id'       => 'totalEstimatedFunding',
-			'name'     => __( 'Total Estimated Available Funding', 'ca-grants-plugin' ),
-			'type'     => 'radio',
-			'value'    => 'exactFundingAmount',
-			'fields'   => array(
+			'id'          => 'totalEstimatedFunding',
+			'name'        => __( 'Total Estimated Available Funding', 'ca-grants-plugin' ),
+			'description' => __( 'If you know the exact amount of funding available, select “Exact Funding Amount” and input the dollar amount available for this grant opportunity. Only input numbers; do not use punctuation such as commas or periods. If funding has not yet been determined by your agency, select “Other Funding Amount,” and provide notes.', 'ca-grants-plugin' ),
+			'type'        => 'radio',
+			'value'       => 'exactFundingAmount',
+			'fields'      => array(
 				array(
 					'id'   => 'exactFundingAmount',
 					'name' => __( 'Exact Funding Amount', 'ca-grants-plugin' ),
@@ -112,11 +113,10 @@ class Funding {
 		);
 
 		$fields[] = array(
-			'id'          => 'estimatedAvailableFunds',
-			'name'        => __( 'Available Funding Amount', 'ca-grants-plugin' ),
-			'type'        => 'number',
-			'description' => __( 'If you know the exact amount of funding available, select “Exact Funding Amount” and input the dollar amount available for this grant opportunity. Only input numbers; do not use punctuation such as commas or periods. If funding has not yet been determined by your agency, select “Other Funding Amount,” and provide notes.', 'ca-grants-plugin' ),
-			'visible'     => array(
+			'id'      => 'estimatedAvailableFunds',
+			'name'    => __( 'Available Funding Amount', 'ca-grants-plugin' ),
+			'type'    => 'number',
+			'visible' => array(
 				'fieldId'  => 'totalEstimatedFunding',
 				'value'    => 'exactFundingAmount',
 				'compare'  => 'equal',
@@ -125,11 +125,11 @@ class Funding {
 		);
 
 		$fields[] = array(
-			'id'          => 'estimatedAvailableFundNotes',
-			'name'        => __( 'Available Funding Notes', 'ca-grants-plugin' ),
-			'type'        => 'textarea',
-			'text_limit'  => 450,
-			'visible'  => array(
+			'id'         => 'estimatedAvailableFundNotes',
+			'name'       => __( 'Available Funding Notes', 'ca-grants-plugin' ),
+			'type'       => 'textarea',
+			'text_limit' => 450,
+			'visible'    => array(
 				'fieldId'  => 'totalEstimatedFunding',
 				'value'    => 'fundingAmountNotes',
 				'compare'  => 'equal',

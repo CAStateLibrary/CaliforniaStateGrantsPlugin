@@ -43,7 +43,113 @@ class GrantAwards {
 		add_filter( 'ep_indexable_post_types', [ $this, 'include_in_es_index' ], 20 );
 		add_filter( 'ep_searchable_post_types', [ $this, 'include_in_es_index' ], 20 );
 
+		add_filter( 'manage_' . self::CPT_SLUG . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
+		add_action( 'manage_' . self::CPT_SLUG . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
+		add_filter( 'manage_edit-' . self::CPT_SLUG . '_sortable_columns', array( $this, 'custom_columns_sortable' ) );
+
 		self::$init = true;
+	}
+
+	/**
+	 * Get custom column data.
+	 *
+	 * @return array
+	 */
+	private function get_custom_columns() {
+		return [
+			'project_title'         => __( 'Project Title', 'ca-grants-plugin' ),
+			'portal_id'             => __( 'Portal ID', 'ca-grants-plugin' ),
+			'associated_grant_name' => __( 'Associated Grant Name', 'ca-grants-plugin' ),
+		];
+	}
+
+	/**
+	 * Make Custom Columns Sortable
+	 *
+	 * @param array $columns List of post columns.
+	 * @return array
+	 */
+	public function custom_columns_sortable( $columns ) {
+		$custom_columns = $this->get_custom_columns();
+
+		foreach ( $custom_columns as $key => $value ) {
+			$columns[ $key ] = $key;
+		}
+
+		return $columns;
+	}
+
+	/**
+	 * Add custom column to grant awards CPT.
+	 *
+	 * @param array $columns List of post columns.
+	 *
+	 * @return array Return all columns data.
+	 */
+	public function set_custom_edit_columns( $columns ) {
+		$custom_columns = $this->get_custom_columns();
+
+		foreach ( $custom_columns as $key => $value ) {
+			$columns[ $key ] = $value;
+		}
+
+		return $columns;
+	}
+
+	/**
+	 * Custom column renderer to show data for custom defined column.
+	 *
+	 * @param string $column Column name/slug.
+	 * @param int    $grant_award_id The current grant ID.
+	 *
+	 * @return void
+	 */
+	public function custom_column_renderer( $column, $grant_award_id ) {
+		$custom_columns = $this->get_custom_columns();
+
+		if ( ! in_array( $column, array_keys( $custom_columns ), true ) ) {
+			return;
+		}
+
+		$method = 'render_' . str_replace( '-', '_', $column );
+		if ( method_exists( $this, $method ) ) {
+			echo esc_html( $this->$method( $grant_award_id ) );
+		}
+
+	}
+
+	/**
+	 * Render project title.
+	 *
+	 * @param int $grant_award_id The current grant ID.
+	 *
+	 * @return string
+	 */
+	private function render_project_title( $grant_award_id ) {
+		return get_post_meta( $grant_award_id, 'projectTitle', true );
+	}
+
+	/**
+	 * Render Portal ID.
+	 *
+	 * @param int $grant_award_id The current grant ID.
+	 *
+	 * @return string
+	 */
+	private function render_portal_id( $grant_award_id ) {
+		return $grant_award_id;
+	}
+
+	/**
+	 * Render Portal ID.
+	 *
+	 * @param int $grant_award_id The current grant ID.
+	 *
+	 * @return string
+	 */
+	private function render_associated_grant_name( $grant_award_id ) {
+		$grant_id = get_post_meta( $grant_award_id, 'grantID', true );
+		return get_the_title( $grant_id );
 	}
 
 	/**
