@@ -51,14 +51,33 @@ class GrantAwards {
 	}
 
 	/**
+	 * Column Order
+	 *
+	 * @var array
+	 */
+	private function get_column_order() {
+		return [
+			'portal_id',
+			'associated_grant_name',
+			'project_title',
+			'title',
+			'author',
+			'taxonomy-recipient-types',
+			'taxonomy-fiscal-year',
+			'taxonomy-counties',
+			'date',
+		];
+	}
+
+	/**
 	 * Get custom column data.
 	 *
 	 * @return array
 	 */
 	private function get_custom_columns() {
 		return [
-			'project_title'         => __( 'Project Title', 'ca-grants-plugin' ),
 			'portal_id'             => __( 'Portal ID', 'ca-grants-plugin' ),
+			'project_title'         => __( 'Project Title', 'ca-grants-plugin' ),
 			'associated_grant_name' => __( 'Associated Grant Name', 'ca-grants-plugin' ),
 		];
 	}
@@ -88,10 +107,25 @@ class GrantAwards {
 	 */
 	public function set_custom_edit_columns( $columns ) {
 		$custom_columns = $this->get_custom_columns();
+		$column_order   = $this->get_column_order();
 
+		// Add custom columns to the columns array.
 		foreach ( $custom_columns as $key => $value ) {
 			$columns[ $key ] = $value;
 		}
+
+		// Reorder columns.
+		uksort(
+			$columns,
+			function ( $a, $b ) use ( $column_order ) {
+				$pos_a = array_search( $a, $column_order, true );
+				$pos_b = array_search( $b, $column_order, true );
+				return $pos_a - $pos_b;
+			}
+		);
+
+		// Change Title label to Recipient Name.
+		$columns['title'] = __( 'Recipient Name', 'ca-grants-plugin' );
 
 		return $columns;
 	}
