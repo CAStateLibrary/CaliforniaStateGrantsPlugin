@@ -39,25 +39,9 @@ class Grants {
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
 		add_filter( 'manage_' . self::get_cpt_slug() . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
 		add_action( 'manage_' . self::get_cpt_slug() . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
-		add_filter( 'manage_edit-' . self::get_cpt_slug() . '_sortable_columns', array( $this, 'custom_columns_sortable' ) );
 
 		self::$init = true;
 	}
-
-	/**
-	 * Make Custom Columns Sortable
-	 *
-	 * @param array $columns List of post columns.
-	 * @return array
-	 */
-	public function custom_columns_sortable( $columns ) {
-		if ( \CaGov\Grants\Core\is_portal() ) {
-			$columns['applicationNotes'] = 'applicationNotes';
-		}
-
-		return $columns;
-	}
-
 
 	/**
 	 * Add custom column to grant CPT.
@@ -86,10 +70,6 @@ class Grants {
 	 * @return void
 	 */
 	public function custom_column_renderer( $column, $grant_id ) {
-
-		if ( 'award_data' !== $column || 'applicationNotes' !== $column ) {
-			return;
-		}
 
 		if ( 'applicationNotes' === $column && \CaGov\Grants\Core\is_portal() ) {
 			$application_notes = get_post_meta( $grant_id, 'applicationNotes', true );
