@@ -104,15 +104,6 @@ class Dates {
 			'description' => __( 'Leave empty if this opportunity has no deadline.', 'ca-grants-plugin' ),
 		];
 
-		if ( is_portal() ) {
-			$fields[] = [
-				'id'          => 'applicationNotes',
-				'name'        => __( 'Application Notes', 'ca-grants-plugin' ),
-				'type'        => 'text',
-				'description' => __( 'Deadline extension, perhaps?', 'ca-grants-plugin' ),
-			];
-		}
-
 		return $fields;
 	}
 }

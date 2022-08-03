@@ -42,34 +42,54 @@ class EditGrant extends BaseEdit {
 		parent::__construct();
 		$this->meta_groups = array(
 			'award-stats' => array(
-				'class' => 'CaGov\\Grants\\Meta\\AwardStats',
-				'title' => __( 'Award Stats', 'ca-grants-plugin' ),
+				'class'    => 'CaGov\\Grants\\Meta\\AwardStats',
+				'title'    => __( 'Award Stats', 'ca-grants-plugin' ),
+				'context'  => 'normal',
+				'priority' => 'high',
 			),
 			'general'     => array(
-				'class' => 'CaGov\\Grants\\Meta\General',
-				'title' => __( 'General Grant Information', 'ca-grants-plugin' ),
+				'class'    => 'CaGov\\Grants\\Meta\General',
+				'title'    => __( 'General Grant Information', 'ca-grants-plugin' ),
+				'context'  => 'normal',
+				'priority' => 'high',
 			),
 			'eligibility' => array(
-				'class' => 'CaGov\\Grants\\Meta\Eligibility',
-				'title' => __( 'Grant Eligibility Details', 'ca-grants-plugin' ),
+				'class'    => 'CaGov\\Grants\\Meta\Eligibility',
+				'title'    => __( 'Grant Eligibility Details', 'ca-grants-plugin' ),
+				'context'  => 'normal',
+				'priority' => 'high',
 			),
 			'funding'     => array(
-				'class' => 'CaGov\\Grants\\Meta\Funding',
-				'title' => __( 'Grant Funding Details', 'ca-grants-plugin' ),
+				'class'    => 'CaGov\\Grants\\Meta\Funding',
+				'title'    => __( 'Grant Funding Details', 'ca-grants-plugin' ),
+				'context'  => 'normal',
+				'priority' => 'high',
 			),
 			'dates'       => array(
-				'class' => 'CaGov\\Grants\\Meta\Dates',
-				'title' => __( 'Grant Dates &amp; Deadlines', 'ca-grants-plugin' ),
+				'class'    => 'CaGov\\Grants\\Meta\Dates',
+				'title'    => __( 'Grant Dates &amp; Deadlines', 'ca-grants-plugin' ),
+				'context'  => 'normal',
+				'priority' => 'high',
 			),
 			'contact'     => array(
-				'class' => 'CaGov\\Grants\\Meta\Contact',
-				'title' => __( 'Grant Contacts and Links', 'ca-grants-plugin' ),
+				'class'    => 'CaGov\\Grants\\Meta\Contact',
+				'title'    => __( 'Grant Contacts and Links', 'ca-grants-plugin' ),
+				'context'  => 'normal',
+				'priority' => 'high',
+			),
+			'notes'       => array(
+				'class'    => 'CaGov\\Grants\\Meta\Notes',
+				'title'    => __( 'Grant Notes', 'ca-grants-plugin' ),
+				'context'  => 'side',
+				'priority' => 'low',
 			),
 		);
 	}
 
 	/**
 	 * Setup actions and filters with the WordPress API.
+	 *
+	 * @param string $cpt_slug CPT slug.
 	 *
 	 * @return void
 	 */
@@ -84,7 +104,7 @@ class EditGrant extends BaseEdit {
 
 		parent::setup( $cpt_slug );
 
-		static::$init     = true;
+		static::$init = true;
 	}
 
 	/**

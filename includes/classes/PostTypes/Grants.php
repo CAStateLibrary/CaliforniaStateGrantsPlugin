@@ -39,8 +39,23 @@ class Grants {
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
 		add_filter( 'manage_' . self::get_cpt_slug() . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
 		add_action( 'manage_' . self::get_cpt_slug() . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
+		add_filter( 'manage_edit-' . self::get_cpt_slug() . '_sortable_columns', array( $this, 'custom_columns_sortable' ) );
 
 		self::$init = true;
+	}
+
+	/**
+	 * Make Custom Columns Sortable
+	 *
+	 * @param array $columns List of post columns.
+	 * @return array
+	 */
+	public function custom_columns_sortable( $columns ) {
+		if ( \CaGov\Grants\Core\is_portal() ) {
+			$columns['applicationNotes'] = 'applicationNotes';
+		}
+
+		return $columns;
 	}
 
 
@@ -52,6 +67,10 @@ class Grants {
 	 * @return array Return all columns data.
 	 */
 	public function set_custom_edit_columns( $columns ) {
+
+		if ( \CaGov\Grants\Core\is_portal() ) {
+			$columns['applicationNotes'] = __( 'Application Notes', 'ca-grants-plugin' );
+		}
 
 		$columns['award_data'] = __( 'Award Data', 'ca-grants-plugin' );
 
@@ -68,43 +87,16 @@ class Grants {
 	 */
 	public function custom_column_renderer( $column, $grant_id ) {
 
-		if ( 'award_data' !== $column ) {
+		if ( 'award_data' !== $column || 'applicationNotes' !== $column ) {
 			return;
 		}
 
-		printf(
-			'<a href="%s">%s</a>',
-			esc_url(
-				add_query_arg(
-					[
-						'grant_id' => $grant_id,
-					],
-					admin_url( 'edit.php?post_type=csl_grant_awards' )
-				)
-			),
-			esc_html__( 'View Award Data', 'ca-grants-plugin' )
-		);
+		if ( 'applicationNotes' === $column && \CaGov\Grants\Core\is_portal() ) {
+			$application_notes = get_post_meta( $grant_id, 'applicationNotes', true );
+			echo esc_html( $application_notes );
+		}
 
-		echo '<br/>';
-
-		printf(
-			'<a href="%s">%s</a>',
-			esc_url(
-				add_query_arg(
-					[
-						'grant_id' => $grant_id,
-					],
-					admin_url( 'post-new.php?post_type=csl_grant_awards' )
-				)
-			),
-			esc_html__( 'Enter Award Data', 'ca-grants-plugin' )
-		);
-
-		echo '<br/>';
-
-		$grant_type = Core\get_grant_type( $grant_id );
-
-		if ( ! empty( $grant_type ) && in_array( $grant_type, [ 'ongoing', 'closed' ] ) ) {
+		if ( 'award_data' === $column ) {
 			printf(
 				'<a href="%s">%s</a>',
 				esc_url(
@@ -112,11 +104,45 @@ class Grants {
 						[
 							'grant_id' => $grant_id,
 						],
-						admin_url( 'edit.php?post_type=csl_award_uploads&page=bulk-upload' )
+						admin_url( 'edit.php?post_type=csl_grant_awards' )
 					)
 				),
-				esc_html__( 'Bulk Upload Award Data', 'ca-grants-plugin' )
+				esc_html__( 'View Award Data', 'ca-grants-plugin' )
 			);
+
+			echo '<br/>';
+
+			printf(
+				'<a href="%s">%s</a>',
+				esc_url(
+					add_query_arg(
+						[
+							'grant_id' => $grant_id,
+						],
+						admin_url( 'post-new.php?post_type=csl_grant_awards' )
+					)
+				),
+				esc_html__( 'Enter Award Data', 'ca-grants-plugin' )
+			);
+
+			echo '<br/>';
+
+			$grant_type = Core\get_grant_type( $grant_id );
+
+			if ( ! empty( $grant_type ) && in_array( $grant_type, [ 'ongoing', 'closed' ] ) ) {
+				printf(
+					'<a href="%s">%s</a>',
+					esc_url(
+						add_query_arg(
+							[
+								'grant_id' => $grant_id,
+							],
+							admin_url( 'edit.php?post_type=csl_award_uploads&page=bulk-upload' )
+						)
+					),
+					esc_html__( 'Bulk Upload Award Data', 'ca-grants-plugin' )
+				);
+			}
 		}
 	}
 
