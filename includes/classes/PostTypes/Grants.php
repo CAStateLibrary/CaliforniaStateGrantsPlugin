@@ -73,7 +73,7 @@ class Grants {
 
 		if ( 'applicationNotes' === $column && \CaGov\Grants\Core\is_portal() ) {
 			$application_notes = get_post_meta( $grant_id, 'applicationNotes', true );
-			echo esc_html( $application_notes );
+			echo esc_html( wp_trim_words( $application_notes, 4 ) );
 		}
 
 		if ( 'award_data' === $column ) {

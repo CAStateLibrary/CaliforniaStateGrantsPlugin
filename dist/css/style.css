@@ -1,1 +1,51 @@
-:root{--c-black:#000;--c-white:#fff}:root{@custom-media --bp-tiny ( min-width: 25em );@custom-media --bp-small ( min-width: 30em );@custom-media --bp-medium ( min-width: 48em );@custom-media --bp-large ( min-width: 64em );@custom-media --bp-xlarge ( min-width: 80em );@custom-media --bp-xxlarge ( min-width: 90em );@custom-media --wp-small ( min-width: 600px );@custom-media --wp-medium-max (max-width: 782px)}
+/**
+ * CaGov\Grants
+ */
+
+/* Global - global pieces like media queries, mixins and placholders */
+
+/*
+ * Colors
+ */
+
+:root {
+	--c-black: #000;
+	--c-white: #fff;
+}
+
+/*
+ * Media Queries
+ */
+
+:root {
+
+	@custom-media --bp-tiny ( min-width: 25em ); /* 400px */
+	@custom-media --bp-small ( min-width: 30em ); /* 480px */
+	@custom-media --bp-medium ( min-width: 48em ); /* 768px */
+	@custom-media --bp-large ( min-width: 64em ); /* 1024px */
+	@custom-media --bp-xlarge ( min-width: 80em ); /* 1280px */
+	@custom-media --bp-xxlarge ( min-width: 90em ); /* 1440px */
+
+	/* WP Core Breakpoints (used for the admin bar for example) */
+	@custom-media --wp-small ( min-width: 600px );
+	@custom-media --wp-medium-max (max-width: 782px);
+}
+
+/* Base - base styles such as fonts, typography, and wordpress overrides */
+
+/* @import url("base/index.css"); */
+
+/* Layout - styles specific to layout */
+
+/* @import url("layout/index"); */
+
+/* Templates */
+
+/* @import url("templates/index"); */
+
+/* Components */
+
+/* @import url("components/index"); */
+
+
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY3NzL3N0eWxlLmNzcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL2Fzc2V0cy9jc3MvZnJvbnRlbmQvc3R5bGUuY3NzIiwid2VicGFjazovLy8uL2Fzc2V0cy9jc3MvZnJvbnRlbmQvZ2xvYmFsL2NvbG9ycy5jc3MiLCJ3ZWJwYWNrOi8vLy4vYXNzZXRzL2Nzcy9mcm9udGVuZC9nbG9iYWwvbWVkaWEtcXVlcmllcy5jc3MiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBDYUdvdlxcR3JhbnRzXG4gKi9cblxuLyogR2xvYmFsIC0gZ2xvYmFsIHBpZWNlcyBsaWtlIG1lZGlhIHF1ZXJpZXMsIG1peGlucyBhbmQgcGxhY2hvbGRlcnMgKi9cbkBpbXBvcnQgdXJsKFwiZ2xvYmFsL2luZGV4XCIpO1xuXG4vKiBCYXNlIC0gYmFzZSBzdHlsZXMgc3VjaCBhcyBmb250cywgdHlwb2dyYXBoeSwgYW5kIHdvcmRwcmVzcyBvdmVycmlkZXMgKi9cblxuLyogQGltcG9ydCB1cmwoXCJiYXNlL2luZGV4LmNzc1wiKTsgKi9cblxuLyogTGF5b3V0IC0gc3R5bGVzIHNwZWNpZmljIHRvIGxheW91dCAqL1xuXG4vKiBAaW1wb3J0IHVybChcImxheW91dC9pbmRleFwiKTsgKi9cblxuLyogVGVtcGxhdGVzICovXG5cbi8qIEBpbXBvcnQgdXJsKFwidGVtcGxhdGVzL2luZGV4XCIpOyAqL1xuXG4vKiBDb21wb25lbnRzICovXG5cbi8qIEBpbXBvcnQgdXJsKFwiY29tcG9uZW50cy9pbmRleFwiKTsgKi9cbiIsIi8qXG4gKiBDb2xvcnNcbiAqL1xuOnJvb3Qge1xuXHQtLWMtYmxhY2s6ICMwMDA7XG5cdC0tYy13aGl0ZTogI2ZmZjtcbn1cbiIsIi8qXG4gKiBNZWRpYSBRdWVyaWVzXG4gKi9cbjpyb290IHtcblxuXHRAY3VzdG9tLW1lZGlhIC0tYnAtdGlueSAoIG1pbi13aWR0aDogMjVlbSApOyAvKiA0MDBweCAqL1xuXHRAY3VzdG9tLW1lZGlhIC0tYnAtc21hbGwgKCBtaW4td2lkdGg6IDMwZW0gKTsgLyogNDgwcHggKi9cblx0QGN1c3RvbS1tZWRpYSAtLWJwLW1lZGl1bSAoIG1pbi13aWR0aDogNDhlbSApOyAvKiA3NjhweCAqL1xuXHRAY3VzdG9tLW1lZGlhIC0tYnAtbGFyZ2UgKCBtaW4td2lkdGg6IDY0ZW0gKTsgLyogMTAyNHB4ICovXG5cdEBjdXN0b20tbWVkaWEgLS1icC14bGFyZ2UgKCBtaW4td2lkdGg6IDgwZW0gKTsgLyogMTI4MHB4ICovXG5cdEBjdXN0b20tbWVkaWEgLS1icC14eGxhcmdlICggbWluLXdpZHRoOiA5MGVtICk7IC8qIDE0NDBweCAqL1xuXG5cdC8qIFdQIENvcmUgQnJlYWtwb2ludHMgKHVzZWQgZm9yIHRoZSBhZG1pbiBiYXIgZm9yIGV4YW1wbGUpICovXG5cdEBjdXN0b20tbWVkaWEgLS13cC1zbWFsbCAoIG1pbi13aWR0aDogNjAwcHggKTtcblx0QGN1c3RvbS1tZWRpYSAtLXdwLW1lZGl1bS1tYXggKG1heC13aWR0aDogNzgycHgpO1xufVxuIl0sIm1hcHBpbmdzIjoiQUFBQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQ0xBOztBQUVBO0FBQ0E7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FDUEE7O0FBRUE7QUFDQTtBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUZUQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7OyIsInNvdXJjZVJvb3QiOiIifQ==*/

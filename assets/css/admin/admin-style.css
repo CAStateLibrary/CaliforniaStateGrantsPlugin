@@ -28,3 +28,19 @@ th.required label::after {
 	border: 1px solid #c3c4c7;
 	display: block;
 }
+
+#side-sortables .form-table.--side,
+#side-sortables .form-table.--side tr,
+#side-sortables .form-table.--side td,
+#side-sortables .form-table.--side th {
+	display: block;
+}
+
+#side-sortables .form-table.--side th {
+	padding-bottom: 0;
+}
+
+#side-sortables .form-table.--side td {
+	padding-left: 0;
+	padding-right: 0;
+}

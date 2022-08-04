@@ -27,7 +27,7 @@ class Notes {
 	public function render_metabox() {
 		?>
 
-		<table class="form-table" role="presentation">
+		<table class="form-table --side" role="presentation">
 			<tbody>
 			<?php
 			foreach ( self::get_fields() as $field ) {
@@ -51,10 +51,10 @@ class Notes {
 
 		if ( is_portal() ) {
 			$fields[] = [
-				'id'          => 'applicationNotes',
-				'name'        => __( 'Application Notes', 'ca-grants-plugin' ),
-				'type'        => 'text',
-				'description' => __( 'Deadline extension, perhaps?', 'ca-grants-plugin' ),
+				'id'         => 'applicationNotes',
+				'name'       => __( 'Application Notes', 'ca-grants-plugin' ),
+				'type'       => 'textarea',
+				'text_limit' => '150',
 			];
 		}
 
