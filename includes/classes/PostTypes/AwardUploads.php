@@ -213,6 +213,8 @@ class AwardUploads {
 					continue;
 				}
 
+				$value = \CaGov\Grants\Core\convert_smart_quotes( $value );
+
 				switch ( $headers[ $key ] ) {
 					case 'recipientType':
 					case 'secondaryRecipients':

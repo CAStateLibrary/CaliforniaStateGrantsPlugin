@@ -183,7 +183,6 @@ class GrantAwards {
 				'id'            => 'matchingFundingAmount',
 				'name'          => __( 'Matching Funding Amount', 'ca-grants-plugin' ),
 				'type'          => 'number',
-				'type'          => 'number',
 				'description'   => __( 'If partial or full matching is requested or required by the agreement or voluntarily contributed by the awardee, enter the matched funding dollar amount. If no matched funding is contributed enter "0". Update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
 				'required'      => true,
 			),

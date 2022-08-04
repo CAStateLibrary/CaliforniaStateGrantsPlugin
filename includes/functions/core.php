@@ -615,6 +615,33 @@ function trim_byte_order_mark( $string ) {
 }
 
 /**
+ * Convert smart quotes to repective UTF-8 char.
+ *
+ * @param string $string Text to convert smart qoutes.
+ *
+ * @return string
+ */
+function convert_smart_quotes( $string ) {
+	$search = array(
+		chr( 145 ),
+		chr( 146 ),
+		chr( 147 ),
+		chr( 148 ),
+		chr( 151 ),
+	);
+
+	$replace = array(
+		"'",
+		"'",
+		'"',
+		'"',
+		'-',
+	);
+
+	return str_replace( $search, $replace, $string );
+}
+
+/**
  * Get Grant Award Recipent Name.
  *
  * @param int $grant_award_id Grant Award ID.
