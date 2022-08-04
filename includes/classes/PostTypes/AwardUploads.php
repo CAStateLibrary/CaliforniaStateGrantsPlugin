@@ -203,11 +203,16 @@ class AwardUploads {
 			$row_assoc_data = [];
 
 			// Skip if whole row is empty.
-			if ( empty( implode( '', $row_data ) ) ) {
+			if ( empty( $row_data ) || empty( implode( '', $row_data ) ) ) {
 				continue;
 			}
 
 			foreach ( $row_data as $key => $value ) {
+				// Do not get data for columns which are not in header column.
+				if ( ! isset( $headers[ $key ] ) ) {
+					continue;
+				}
+
 				switch ( $headers[ $key ] ) {
 					case 'recipientType':
 					case 'secondaryRecipients':
