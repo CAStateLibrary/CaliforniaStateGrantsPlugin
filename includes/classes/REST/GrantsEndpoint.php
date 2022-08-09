@@ -84,7 +84,8 @@ class GrantsEndpoint extends BaseEndpoint {
 				Meta\Eligibility::get_fields(),
 				Meta\Funding::get_fields(),
 				Meta\Dates::get_fields(),
-				Meta\Contact::get_fields()
+				Meta\Contact::get_fields(),
+				Meta\Notes::get_fields()
 			);
 
 			$new_data = array(

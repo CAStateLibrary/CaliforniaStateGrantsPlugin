@@ -48,6 +48,7 @@ class ComposerStaticInit06969f8ab9a1e1cf9da9a9328f0802f1
         'CaGov\\Grants\\Meta\\Funding' => __DIR__ . '/../..' . '/includes/classes/Meta/Funding.php',
         'CaGov\\Grants\\Meta\\General' => __DIR__ . '/../..' . '/includes/classes/Meta/General.php',
         'CaGov\\Grants\\Meta\\GrantAwards' => __DIR__ . '/../..' . '/includes/classes/Meta/GrantAwards.php',
+        'CaGov\\Grants\\Meta\\Notes' => __DIR__ . '/../..' . '/includes/classes/Meta/Notes.php',
         'CaGov\\Grants\\PostTypes\\AwardUploads' => __DIR__ . '/../..' . '/includes/classes/PostTypes/AwardUploads.php',
         'CaGov\\Grants\\PostTypes\\BaseEdit' => __DIR__ . '/../..' . '/includes/classes/PostTypes/BaseEdit.php',
         'CaGov\\Grants\\PostTypes\\EditAwardUploads' => __DIR__ . '/../..' . '/includes/classes/PostTypes/EditAwardUploads.php',

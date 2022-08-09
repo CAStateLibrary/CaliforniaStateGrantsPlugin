@@ -566,6 +566,8 @@ class Field {
 			);
 		}
 
+		$fields = self::maybe_sort_fields( $fields, $meta_field );
+
 		// Get the saved data
 		if ( empty( $value ) && isset( $meta_field['source'] ) && 'portal-api' === $meta_field['source'] ) {
 			$value = self::get_value_from_taxonomy( $id, get_the_ID() );
@@ -1442,6 +1444,15 @@ class Field {
 						return ( $index_of( $a['name'] ) < $index_of( $b['name'] ) ) ? -1 : 1;
 					}
 				);
+				return $fields;
+			case 'applicantType':
+				// Move 'other' to the bottom of the list.
+				foreach ( $fields as $index => $field ) {
+					if ( isset( $field['id'] ) && 'other' === $field['id'] ) {
+						unset( $fields[ $index ] );
+						array_push( $fields, $field );
+					}
+				}
 				return $fields;
 			default:
 				return $fields;

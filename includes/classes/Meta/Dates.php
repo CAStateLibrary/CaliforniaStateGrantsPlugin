@@ -62,46 +62,46 @@ class Dates {
 
 		if ( ! is_portal() ) {
 			$fields[] = [
-					'id'          => 'openDate',
-					'name'        => __( 'Publish Date', 'ca-grants-plugin' ),
-					'type'        => 'datetime-local',
-					'description' => __( 'Please indicate when the grant should be made available in full on the portal (Open Date).', 'ca-grants-plugin' ),
-					'required'    => [ 'active', 'forecasted' ],
+				'id'          => 'openDate',
+				'name'        => __( 'Publish Date', 'ca-grants-plugin' ),
+				'type'        => 'datetime-local',
+				'description' => __( 'Please indicate when the grant should be made available in full on the portal (Open Date).', 'ca-grants-plugin' ),
+				'required'    => [ 'active', 'forecasted' ],
 			];
 		}
 
 		$fields[] = [
-				'id'          => 'anticipatedOpenDate',
-				'class'       => 'onlyForecasted',
-				'name'        => __( 'Anticipated Open Date', 'ca-grants-plugin' ),
-				'type'        => 'text',
-				'description' => __( 'For <strong>forecasted</strong> grants only. You can use things like "Q1" or "Summer 2020"', 'ca-grants-plugin' ),
+			'id'          => 'anticipatedOpenDate',
+			'class'       => 'onlyForecasted',
+			'name'        => __( 'Anticipated Open Date', 'ca-grants-plugin' ),
+			'type'        => 'text',
+			'description' => __( 'For <strong>forecasted</strong> grants only. You can use things like "Q1" or "Summer 2020"', 'ca-grants-plugin' ),
 		];
 
 		$fields[] = [
-				'id'          => 'periodOfPerformance',
-				'name'        => __( 'Period of Performance', 'ca-grants-plugin' ),
-				'type'        => 'text',
-				'description' => __( 'What is the total length of time that the award is available and active (i.e. do recipients have access to grant funds only within a specific timeframe)? <strong>The max character limit is 20 characters.</strong>', 'ca-grants-plugin' ),
-				'maxlength'   => 20,
-				'required'    => [ 'active' ],
+			'id'          => 'periodOfPerformance',
+			'name'        => __( 'Period of Performance', 'ca-grants-plugin' ),
+			'type'        => 'text',
+			'description' => __( 'What is the total length of time that the award is available and active (i.e. do recipients have access to grant funds only within a specific timeframe)? <strong>The max character limit is 20 characters.</strong>', 'ca-grants-plugin' ),
+			'maxlength'   => 20,
+			'required'    => [ 'active' ],
 		];
 
 		$fields[] = [
-				'id'          => 'expectedAwardDate',
-				'name'        => __( 'Expected Award Announcement Date', 'ca-grants-plugin' ),
-				'type'        => 'text',
-				'description' => __( '<strong>The max character limit is 20 characters.</strong>', 'ca-grants-plugin' ),
-				'maxlength'   => 20,
-				'required'    => [ 'active' ],
+			'id'          => 'expectedAwardDate',
+			'name'        => __( 'Expected Award Announcement Date', 'ca-grants-plugin' ),
+			'type'        => 'text',
+			'description' => __( '<strong>The max character limit is 20 characters.</strong>', 'ca-grants-plugin' ),
+			'maxlength'   => 20,
+			'required'    => [ 'active' ],
 		];
 
 		$fields[] = [
-				'id'          => 'deadline',
-				'class'       => 'onlyActive',
-				'name'        => __( 'Application Deadline', 'ca-grants-plugin' ),
-				'type'        => 'datetime-local',
-				'description' => __( 'Leave empty if this opportunity has no deadline.', 'ca-grants-plugin' ),
+			'id'          => 'deadline',
+			'class'       => 'onlyActive',
+			'name'        => __( 'Application Deadline', 'ca-grants-plugin' ),
+			'type'        => 'datetime-local',
+			'description' => __( 'Leave empty if this opportunity has no deadline.', 'ca-grants-plugin' ),
 		];
 
 		return $fields;

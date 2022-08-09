@@ -203,11 +203,18 @@ class AwardUploads {
 			$row_assoc_data = [];
 
 			// Skip if whole row is empty.
-			if ( empty( implode( '', $row_data ) ) ) {
+			if ( empty( $row_data ) || empty( implode( '', $row_data ) ) ) {
 				continue;
 			}
 
 			foreach ( $row_data as $key => $value ) {
+				// Do not get data for columns which are not in header column.
+				if ( ! isset( $headers[ $key ] ) ) {
+					continue;
+				}
+
+				$value = \CaGov\Grants\Core\convert_smart_quotes( $value );
+
 				switch ( $headers[ $key ] ) {
 					case 'recipientType':
 					case 'secondaryRecipients':
