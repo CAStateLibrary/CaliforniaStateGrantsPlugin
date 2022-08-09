@@ -61,37 +61,37 @@ class Eligibility {
 		$fields = [];
 
 		$fields[] = array(
-				'id'          => 'applicantType',
-				'name'        => __( 'Eligibility: Applicant Type', 'ca-grants-plugin' ),
-				'type'        => 'checkbox',
-				'source'      => is_portal() ? 'portal-api' : 'api',
-				'description' => __( 'Please indicate the applicant type(s) eligible to apply for this grant opportunity.<br/><br/>Note: Non-profits do not need to have 501(c)(3) status; Public agency can be state, county, city, town, or special district, and can also be K-12, college or university affiliated; Tribal nation groups can be federally recognized and/or state recognised, or have no government recognition.<br/><br/>If you select "other", please elaborate in the applicant type notes field below.', 'ca-grants-plugin' ),
-				'required'    => array( 'active' ),
+			'id'          => 'applicantType',
+			'name'        => __( 'Eligibility: Applicant Type', 'ca-grants-plugin' ),
+			'type'        => 'checkbox',
+			'source'      => is_portal() ? 'portal-api' : 'api',
+			'description' => __( 'Please indicate the applicant type(s) eligible to apply for this grant opportunity.<br/><br/>Note: Non-profits do not need to have 501(c)(3) status; Public agency can be state, county, city, town, or special district, and can also be K-12, college or university affiliated; Tribal nation groups can be federally recognized and/or state recognised, or have no government recognition.<br/><br/>If you select "other", please elaborate in the applicant type notes field below.', 'ca-grants-plugin' ),
+			'required'    => array( 'active' ),
 		);
 
 		if ( is_portal() ) {
 			$fields[] = array(
-					'id'   => 'applicantTypeSuggestion',
-					'name' => __( 'Applicant Type Suggestion(s)', 'ca-grants-plugin' ),
-					'type' => 'text',
+				'id'   => 'applicantTypeSuggestion',
+				'name' => __( 'Applicant Type Suggestion(s)', 'ca-grants-plugin' ),
+				'type' => 'text',
 			);
 		}
 
 		$fields[] = array(
-				'id'          => 'applicantTypeNotes',
-				'name'        => __( 'Applicant Type Notes', 'ca-grants-plugin' ),
-				'type'        => 'textarea',
-				'text_limit'  => 450,
-				'description' => __( 'If applicable, include any clarifications or additional information regarding applicant type eligibility.', 'ca-grants-plugin' ),
+			'id'          => 'applicantTypeNotes',
+			'name'        => __( 'Applicant Type Notes', 'ca-grants-plugin' ),
+			'type'        => 'textarea',
+			'text_limit'  => 450,
+			'description' => __( 'If applicable, include any clarifications or additional information regarding applicant type eligibility.', 'ca-grants-plugin' ),
 
 		);
 
 		$fields[] = array(
-				'id'          => 'geoLimitations',
-				'name'        => __( 'Eligibility: Geographic', 'ca-grants-plugin' ),
-				'type'        => 'textarea',
-				'text_limit'  => 450,
-				'description' => __( 'If applicable, provide details on any geographic requirements, limitations, or exclusions.<br/><br/>Must applicants live or do business in a specified geographic area? Does the grant money have to be spent only in certain geographic areas, or are there any focused priorities, such as disadvantage communities?', 'ca-grants-plugin' ),
+			'id'          => 'geoLimitations',
+			'name'        => __( 'Eligibility: Geographic', 'ca-grants-plugin' ),
+			'type'        => 'textarea',
+			'text_limit'  => 450,
+			'description' => __( 'If applicable, provide details on any geographic requirements, limitations, or exclusions.<br/><br/>Must applicants live or do business in a specified geographic area? Does the grant money have to be spent only in certain geographic areas, or are there any focused priorities, such as disadvantage communities?', 'ca-grants-plugin' ),
 		);
 
 		return $fields;

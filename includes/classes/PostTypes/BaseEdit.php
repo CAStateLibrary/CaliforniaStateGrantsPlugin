@@ -106,8 +106,8 @@ abstract class BaseEdit {
 				$meta_group['title'],
 				array( $class, 'render_metabox' ),
 				static::$cpt_slug,
-				'normal',
-				'high'
+				$meta_group['context'] ?? 'normal',
+				$meta_group['priority'] ?? 'high'
 			);
 		}
 	}
