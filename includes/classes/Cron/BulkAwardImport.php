@@ -216,7 +216,7 @@ class BulkAwardImport {
 				$schedule_time,
 				self::$import_chunk_job,
 				array(
-					'csv_chunk'    => $csv_chunk,
+					'csv_chunk'    => wp_json_encode( $csv_chunk ),
 					'award_upload' => $award_upload,
 					'grant_id'     => $award_upload_data['csl_grant_id'] ?: 0,
 					'fiscal_year'  => $award_upload_data['csl_fiscal_year'] ?: '',
@@ -241,7 +241,7 @@ class BulkAwardImport {
 	/**
 	 * Import award upload chunk to Grant Award CPT.
 	 *
-	 * @param array   $csv_chunk CSV Data.
+	 * @param string  $csv_chunk CSV Data.
 	 * @param WP_Post $award_upload Award Bulk Upload post object.
 	 * @param int     $grant_id Grant ID.
 	 * @param string  $fiscal_year Fiscal Year data.
@@ -257,9 +257,14 @@ class BulkAwardImport {
 		$total_imported = $total_imported ? (int) $total_imported : 0;
 		$total_count    = get_post_meta( $award_upload->ID, 'csl_award_count', true );
 		$total_count    = $total_count ? (int) $total_count : 0;
+		$csv_chunk      = json_decode( $csv_chunk, true );
+
+		if ( empty( $csv_chunk ) ) {
+			return;
+		}
 
 		foreach ( $csv_chunk as $grant_award ) {
-			$award_data  = wp_parse_args(
+			$award_data = wp_parse_args(
 				array(
 					'grantID'    => $grant_id,
 					'fiscalYear' => $fiscal_year,
