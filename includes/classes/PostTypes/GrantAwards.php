@@ -7,6 +7,8 @@
 
 namespace CaGov\Grants\PostTypes;
 
+use function Aws\filter;
+
 /**
  * Grants Awards post type class.
  */
@@ -256,30 +258,56 @@ class GrantAwards {
 			return;
 		}
 
+		$fiscal_year = filter_input( INPUT_GET, 'fiscal_year', FILTER_SANITIZE_STRING );
+		$award_maker = filter_input( INPUT_GET, 'award_maker', FILTER_VALIDATE_INT ) ?: 0;
 		$grant_id    = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT ) ?: 0;
 		$grant_title = get_the_title( $grant_id );
 
-		if ( empty( $grant_id ) || empty( $grant_title ) ) {
-			return;
+		if ( ! empty( $grant_id ) || ! empty( $grant_title ) ) {
+			sprintf(
+				'<label class="screen-reader-text" for="ca-grants-filter">%s</label>',
+				esc_html__( 'Filter by Grant', 'ca-grants-plugin' )
+			);
+			echo '<select name="grant_id" id="ca-grants-filter">';
+				printf(
+					'<option value="">%s</option>',
+					esc_html__( 'Any Grant', 'ca-grants-plugin' )
+				);
+			if ( ! empty( $grant_id ) && ! empty( $grant_title ) ) {
+				printf(
+					'<option value="%d" selected="selected">%s</option>',
+					esc_attr( $grant_id ),
+					esc_html( $grant_title )
+				);
+			}
+			echo '</select>';
 		}
 
-		sprintf(
-			'<label class="screen-reader-text" for="ca-grants-filter">%s</label>',
-			esc_html__( 'Filter by Grant', 'ca-grants-plugin' )
-		);
-		echo '<select name="grant_id" id="ca-grants-filter">';
-			printf(
-				'<option value="">%s</option>',
-				esc_html__( 'Any Grant', 'ca-grants-plugin' )
+		if ( ( 'CSL_IS_PORTAL' ) && CSL_IS_PORTAL ) {
+			$taxonomy = get_taxonomy( 'fiscal-year' );
+			$selected = ! empty( $fiscal_year ) ? get_term_by( 'slug', $fiscal_year, 'fiscal-year' ) : null;
+			$fy_args  = array(
+				'show_option_all' => $taxonomy->labels->all_items,
+				'taxonomy'        => 'fiscal-year',
+				'name'            => 'fiscal_year',
+				'orderby'         => 'name',
+				'selected'        => ! is_null( $selected ) ? $selected->term_id : 0,
+				'hierarchical'    => true,
 			);
-		if ( ! empty( $grant_id ) && ! empty( $grant_title ) ) {
-			printf(
-				'<option value="%d" selected="selected">%s</option>',
-				esc_attr( $grant_id ),
-				esc_html( $grant_title )
-			);
+			wp_dropdown_categories( $fy_args );
 		}
-		echo '</select>';
+
+		$author_args = array(
+			'show_option_all'  => 'All Grant Makers',
+			'orderby'          => 'display_name',
+			'order'            => 'ASC',
+			'name'             => 'award_maker',
+			'who'              => 'authors',
+			'role__in'         => array( 'grant-contributor', 'grant-editor', 'administrator' ),
+			'include_selected' => true,
+			'selected'         => $award_maker,
+		);
+		wp_dropdown_users( $author_args );
 	}
 
 	/**
@@ -301,15 +329,31 @@ class GrantAwards {
 			return;
 		}
 
-		$grant_id = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
+		$grant_id    = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
+		$award_maker = filter_input( INPUT_GET, 'award_maker', FILTER_VALIDATE_INT );
+		$fiscal_year = filter_input( INPUT_GET, 'fiscal_year', FILTER_SANITIZE_STRING );
 
-		if ( empty( $grant_id ) ) {
-			return;
+		if ( ! empty( $grant_id ) ) {
+			$wp_query->set( 'meta_key', 'grantID' );
+			$wp_query->set( 'meta_value', $grant_id );
+			$wp_query->set( 'meta_compare', '=' );
 		}
 
-		$wp_query->set( 'meta_key', 'grantID' );
-		$wp_query->set( 'meta_value', $grant_id );
-		$wp_query->set( 'meta_compare', '=' );
+		if ( ! empty( $award_maker ) ) {
+			$wp_query->set( 'author', $award_maker );
+		}
+
+		if ( ! empty( $fiscal_year ) ) {
+			$tax_query = array(
+				array(
+					'taxonomy' => 'fiscal-year',
+					'field'    => 'slug',
+					'terms'    => $fiscal_year,
+				),
+			);
+
+			$wp_query->set( 'tax_query', $tax_query );
+		}
 	}
 
 	/**
