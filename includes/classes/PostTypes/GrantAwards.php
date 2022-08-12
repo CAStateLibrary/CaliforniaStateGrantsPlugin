@@ -49,6 +49,9 @@ class GrantAwards {
 		add_action( 'manage_' . self::CPT_SLUG . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
 		add_filter( 'manage_edit-' . self::CPT_SLUG . '_sortable_columns', array( $this, 'custom_columns_sortable' ) );
 
+		// doesn't work yet. so close.
+		// add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
+
 		self::$init = true;
 	}
 
@@ -329,14 +332,18 @@ class GrantAwards {
 			return;
 		}
 
-		$grant_id    = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
-		$award_maker = filter_input( INPUT_GET, 'award_maker', FILTER_VALIDATE_INT );
-		$fiscal_year = filter_input( INPUT_GET, 'fiscal_year', FILTER_SANITIZE_STRING );
+		$grant_id     = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
+		$award_maker  = filter_input( INPUT_GET, 'award_maker', FILTER_VALIDATE_INT );
+		$fiscal_year  = filter_input( INPUT_GET, 'fiscal_year', FILTER_SANITIZE_STRING );
+		$search_query = get_search_query();
+		$meta_query   = array( 'relation' => 'AND' );
 
 		if ( ! empty( $grant_id ) ) {
-			$wp_query->set( 'meta_key', 'grantID' );
-			$wp_query->set( 'meta_value', $grant_id );
-			$wp_query->set( 'meta_compare', '=' );
+			$meta_query[] = array(
+				'key'     => 'grant_id',
+				'value'   => $grant_id,
+				'compare' => '=',
+			);
 		}
 
 		if ( ! empty( $award_maker ) ) {
@@ -354,6 +361,47 @@ class GrantAwards {
 
 			$wp_query->set( 'tax_query', $tax_query );
 		}
+
+		if ( ! empty( $search_query ) ) {
+			$wp_query->set( '_meta_or_title', $search_query );
+			$wp_query->set( '_meta_query_relation', 'OR' );
+			$meta_query[] = array(
+				'key'     => 'projectTitle',
+				'value'   => $search_query,
+				'compare' => 'LIKE',
+			);
+		}
+
+		$wp_query->set( 'meta_query', $meta_query );
+	}
+
+	/**
+	 * Undocumented function
+	 *
+	 * @param [type] $where
+	 * @param [type] $query
+	 * @return void
+	 */
+	public function posts_where( $where, $wp_query ) {
+		global $wpdb;
+		// if ( $wp_query->get( '_meta_or_title' ) ) :
+		// 	$search_term     = $wpdb->esc_like( $wp_query->get( '_meta_or_title' ) );
+		// 	$search_term     = ' \'%' . $search_term . '%\'';
+		// 	$search_relation = ( strtoupper( $wp_query->get( '_meta_query_relation' ) ) == 'OR' ? 'OR' : 'AND' );
+		// 	$where          .= " $search_relation {$wpdb->posts}.post_title LIKE $search_term ";
+		// 	echo "<pre>$search_term";
+		// 	print_r( $where );
+		// 	echo '</pre>';
+		// endif;
+		// return $where;
+
+		$mq_relation = ( isset( $wp_query->query_vars['_meta_query_relation'] ) ? $wp_query->query_vars['_meta_query_relation'] : '' );
+		if ( 'OR' === $mq_relation ) { // WordPress defaults to AND
+			$where = str_replace( ')))  AND', ') OR', $where );
+			$where = str_replace( ') AND wp_posts.post_type', '))) AND wp_posts.post_type', $where );
+		}
+
+		return $where;
 	}
 
 	/**
