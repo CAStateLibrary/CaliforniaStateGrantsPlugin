@@ -7,8 +7,6 @@
 
 namespace CaGov\Grants\PostTypes;
 
-use function Aws\filter;
-
 /**
  * Grants Awards post type class.
  */
@@ -50,8 +48,7 @@ class GrantAwards {
 		add_action( 'manage_' . self::CPT_SLUG . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
 		add_filter( 'manage_edit-' . self::CPT_SLUG . '_sortable_columns', array( $this, 'custom_columns_sortable' ) );
 
-		// doesn't work yet. so close.
-		// add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
+		add_filter( 'posts_clauses', array( $this, 'meta_or_title_search_clauses' ), 10, 2 );
 
 		add_filter(
 			'ep_weighting_fields_for_post_type',
@@ -351,7 +348,7 @@ class GrantAwards {
 	/**
 	 * Filter wires stories for WP_Query post list view.
 	 *
-	 * @param WP_Query $wp_query WP_Query object.
+	 * @param \WP_Query $wp_query WP_Query object.
 	 */
 	public function filter_query( $wp_query ) {
 
@@ -367,11 +364,10 @@ class GrantAwards {
 			return;
 		}
 
-		$grant_id     = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
-		$award_maker  = filter_input( INPUT_GET, 'award_maker', FILTER_VALIDATE_INT );
-		$fiscal_year  = filter_input( INPUT_GET, 'fiscal_year', FILTER_SANITIZE_STRING );
-		$search_query = get_search_query();
-		$meta_query   = array( 'relation' => 'AND' );
+		$grant_id    = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
+		$award_maker = filter_input( INPUT_GET, 'award_maker', FILTER_VALIDATE_INT );
+		$fiscal_year = filter_input( INPUT_GET, 'fiscal_year', FILTER_SANITIZE_STRING );
+		$meta_query  = array( 'relation' => 'AND' );
 
 		if ( ! empty( $grant_id ) ) {
 			$meta_query[] = array(
@@ -397,46 +393,93 @@ class GrantAwards {
 			$wp_query->set( 'tax_query', $tax_query );
 		}
 
-		if ( ! empty( $search_query ) ) {
+		$search_query = urldecode( $wp_query->get( 's' ) );
+
+		if ( $wp_query->is_search() && ! empty( $search_query ) ) {
+
+			// Reset search param to clean-up title/excerpt/content search query in posts_where.
+			$wp_query->set( 's', '' );
+
+			$search_meta_fields = [
+				'projectTitle',
+			];
 			$wp_query->set( '_meta_or_title', $search_query );
-			$wp_query->set( '_meta_query_relation', 'OR' );
-			$meta_query[] = array(
-				'key'     => 'projectTitle',
-				'value'   => $search_query,
-				'compare' => 'LIKE',
-			);
+			$wp_query->set( '_search_meta_fields', $search_meta_fields );
 		}
 
 		$wp_query->set( 'meta_query', $meta_query );
 	}
 
 	/**
-	 * Undocumented function
+	 * Search posts by meta or title matching query string.
 	 *
-	 * @param [type] $where
-	 * @param [type] $query
-	 * @return void
+	 * @param array     $clauses Associative array of the clauses for the query.
+	 * @param \WP_Query $wp_query The WP_Query instance (passed by reference).
+	 *
+	 * @return array
 	 */
-	public function posts_where( $where, $wp_query ) {
-		global $wpdb;
-		// if ( $wp_query->get( '_meta_or_title' ) ) :
-		// 	$search_term     = $wpdb->esc_like( $wp_query->get( '_meta_or_title' ) );
-		// 	$search_term     = ' \'%' . $search_term . '%\'';
-		// 	$search_relation = ( strtoupper( $wp_query->get( '_meta_query_relation' ) ) == 'OR' ? 'OR' : 'AND' );
-		// 	$where          .= " $search_relation {$wpdb->posts}.post_title LIKE $search_term ";
-		// 	echo "<pre>$search_term";
-		// 	print_r( $where );
-		// 	echo '</pre>';
-		// endif;
-		// return $where;
+	public function meta_or_title_search_clauses( $clauses, $wp_query ) {
 
-		$mq_relation = ( isset( $wp_query->query_vars['_meta_query_relation'] ) ? $wp_query->query_vars['_meta_query_relation'] : '' );
-		if ( 'OR' === $mq_relation ) { // WordPress defaults to AND
-			$where = str_replace( ')))  AND', ') OR', $where );
-			$where = str_replace( ') AND wp_posts.post_type', '))) AND wp_posts.post_type', $where );
+		if ( ! $wp_query->is_main_query() || ! $wp_query->is_search() ) {
+			return $clauses;
 		}
 
-		return $where;
+		$search_query       = $wp_query->get( '_meta_or_title' );
+		$search_meta_fields = $wp_query->get( '_search_meta_fields' );
+
+		if ( empty( $search_query ) || empty( $search_meta_fields ) ) {
+			return $clauses;
+		}
+
+		global $wpdb;
+
+		$meta_field_like = [];
+		$join            = '';
+
+		foreach ( $search_meta_fields as $index => $meta_field_key ) {
+			$join .= " INNER JOIN {$wpdb->postmeta} as grantportal_meta_search_{$index} ON ( wp_posts.ID = grantportal_meta_search_{$index}.post_id ) ";
+
+			$meta_field_like[] = "(grantportal_meta_search_{$index}.meta_key = '{$meta_field_key}' AND grantportal_meta_search_{$index}.meta_value LIKE '%1\$s')";
+		}
+
+		$meta_field_like_sql = implode( ' OR ', $meta_field_like );
+		$meta_field_like_sql = '( ' . $meta_field_like_sql . ' )';
+		$search_query        = str_replace( [ "\r", "\n" ], '', $search_query );
+
+		// Copied regex logic from $wp_query->parse_search() to get search terms.
+		preg_match_all( '/".*?("|$)|((?<=[\t ",+])|^)[^\t ",+]+/', $search_query, $matches );
+
+		$search_terms = empty( $matches[0] ) ? [] : $matches[0];
+
+		// If the search string has only short terms, or is 10+ terms long, match it as sentence.
+		if ( empty( $search_terms ) || count( $search_terms ) > 9 ) {
+			$search_terms = [ $search_query ];
+		}
+
+		$searchand = empty( $clauses['where'] ) ? '' : ' AND ';
+		$search    = '';
+
+		foreach ( $search_terms as $term ) {
+			$like            = '%' . $wpdb->esc_like( $term ) . '%';
+			$meta_field_like = [];
+
+			$search .= $wpdb->prepare(
+				"{$searchand}(({$wpdb->posts}.post_title LIKE %s) OR ",
+				$like
+			);
+
+			$search .= $wpdb->prepare(
+				$meta_field_like_sql . ')',
+				$like
+			);
+		}
+
+		if ( ! empty( $join ) && ! empty( $search ) ) {
+			$clauses['join']  .= $join;
+			$clauses['where'] .= $search;
+		}
+
+		return $clauses;
 	}
 
 	/**
