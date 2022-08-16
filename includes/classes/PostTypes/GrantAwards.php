@@ -265,7 +265,7 @@ class GrantAwards {
 			return;
 		}
 
-		$fiscal_year = filter_input( INPUT_GET, 'fiscal_year', FILTER_SANITIZE_STRING );
+		$fiscal_year = filter_input( INPUT_GET, 'fiscal-year', FILTER_SANITIZE_STRING );
 		$award_maker = filter_input( INPUT_GET, 'award_maker', FILTER_VALIDATE_INT ) ?: 0;
 		$grant_id    = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT ) ?: 0;
 		$grant_title = get_the_title( $grant_id );
@@ -296,9 +296,10 @@ class GrantAwards {
 			$fy_args  = array(
 				'show_option_all' => $taxonomy->labels->all_items,
 				'taxonomy'        => 'fiscal-year',
-				'name'            => 'fiscal_year',
+				'name'            => 'fiscal-year',
 				'orderby'         => 'name',
-				'selected'        => ! is_null( $selected ) ? $selected->term_id : 0,
+				'value_field'     => 'slug',
+				'selected'        => ! is_null( $selected ) ? $selected->slug : 0,
 				'hierarchical'    => true,
 			);
 			wp_dropdown_categories( $fy_args );
@@ -338,7 +339,7 @@ class GrantAwards {
 
 		$grant_id    = filter_input( INPUT_GET, 'grant_id', FILTER_VALIDATE_INT );
 		$award_maker = filter_input( INPUT_GET, 'award_maker', FILTER_VALIDATE_INT );
-		$fiscal_year = filter_input( INPUT_GET, 'fiscal_year', FILTER_SANITIZE_STRING );
+		$fiscal_year = filter_input( INPUT_GET, 'fiscal-year', FILTER_SANITIZE_STRING );
 		$meta_query  = array( 'relation' => 'AND' );
 
 		if ( ! empty( $grant_id ) ) {
