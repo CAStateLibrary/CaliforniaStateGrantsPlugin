@@ -42,7 +42,6 @@ class GrantAwards {
 
 		add_filter( 'ep_indexable_post_types', [ $this, 'include_in_es_index' ], 20 );
 		add_filter( 'ep_searchable_post_types', [ $this, 'include_in_es_index' ], 20 );
-		add_filter( 'ep_admin_wp_query_integration', __return_true() );
 
 		add_filter( 'manage_' . self::CPT_SLUG . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
 		add_action( 'manage_' . self::CPT_SLUG . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
@@ -58,33 +57,6 @@ class GrantAwards {
 		);
 
 		self::$init = true;
-	}
-
-	/**
-	 * Undocumented function
-	 *
-	 * @param [array]  $fields array of fields
-	 * @param [string] $post_type post type
-	 * @return array $fields
-	 */
-	public function ep_custom_field_weighting( $fields, $post_type ) {
-		if ( self::CPT_SLUG === $post_type ) {
-			if ( empty( $fields['meta'] ) ) {
-				$fields['meta'] = array(
-					'label'    => 'Custom Fields',
-					'children' => array(),
-				);
-			}
-
-			$key = 'meta.projectTitle.value';
-
-			$fields['meta']['children'][ $key ] = array(
-				'key'   => $key,
-				'label' => __( 'Project Title', 'ca-grants-plugin' ),
-			);
-		}
-
-		return $fields;
 	}
 
 	/**
@@ -475,8 +447,9 @@ class GrantAwards {
 		}
 
 		if ( ! empty( $join ) && ! empty( $search ) ) {
-			$clauses['join']  .= $join;
-			$clauses['where'] .= $search;
+			$clauses['join']    .= $join;
+			$clauses['where']   .= $search;
+			$clauses['distinct'] = 'distinct';
 		}
 
 		return $clauses;
