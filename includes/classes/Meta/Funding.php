@@ -58,15 +58,20 @@ class Funding {
 	 * @return array
 	 */
 	public static function get_fields() {
+		global $post;
+
+		$is_forecasted = get_post_meta( $post->ID, 'isForecasted', true );
+		$is_forecasted = 'forecasted' === $is_forecasted ? true : false;
+
 		$fields = [];
 
 		$fields[] = array(
-				'id'          => 'fundingSource',
-				'name'        => __( 'Funding Source', 'ca-grants-plugin' ),
-				'type'        => 'radio',
-				'source'      => is_portal() ? 'portal-api' : 'api',
-				'description' => __( 'If you select "Other", please elaborate in the funding source notes field below.', 'ca-grants-plugin' ),
-				'required'    => array( 'active' ),
+			'id'          => 'fundingSource',
+			'name'        => __( 'Funding Source', 'ca-grants-plugin' ),
+			'type'        => 'radio',
+			'source'      => is_portal() ? 'portal-api' : 'api',
+			'description' => __( 'If you select "Other", please elaborate in the funding source notes field below.', 'ca-grants-plugin' ),
+			'required'    => array( 'active' ),
 		);
 
 		$fields[] = array(
@@ -113,15 +118,15 @@ class Funding {
 		);
 
 		$fields[] = array(
-			'id'      => 'estimatedAvailableFunds',
-			'name'    => __( 'Available Funding Amount', 'ca-grants-plugin' ),
-			'type'    => 'number',
-			'visible' => array(
-				'fieldId'  => 'totalEstimatedFunding',
-				'value'    => 'exactFundingAmount',
-				'compare'  => 'equal',
-				'required' => true,
+			'id'       => 'estimatedAvailableFunds',
+			'name'     => __( 'Available Funding Amount', 'ca-grants-plugin' ),
+			'type'     => 'number',
+			'visible'  => array(
+				'fieldId' => 'totalEstimatedFunding',
+				'value'   => 'exactFundingAmount',
+				'compare' => 'equal',
 			),
+			'required' => array( 'active' ),
 		);
 
 		$fields[] = array(
