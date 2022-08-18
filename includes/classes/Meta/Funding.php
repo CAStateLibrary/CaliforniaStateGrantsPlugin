@@ -58,11 +58,6 @@ class Funding {
 	 * @return array
 	 */
 	public static function get_fields() {
-		global $post;
-
-		$is_forecasted = get_post_meta( $post->ID, 'isForecasted', true );
-		$is_forecasted = 'forecasted' === $is_forecasted ? true : false;
-
 		$fields = [];
 
 		$fields[] = array(
