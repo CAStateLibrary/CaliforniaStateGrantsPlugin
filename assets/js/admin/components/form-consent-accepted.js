@@ -8,7 +8,7 @@ const hiddenStatusField = document.getElementById( 'hidden_post_status' );
  * Conditional requiring fields if grant is forecasted/active.
  */
 const main = () => {
-	form.addEventListener( 'submit', function( event ) {
+	form?.addEventListener( 'submit', function( event ) {
 		// We do not need consent box on portal site.
 		if ( CAGrantPlugin.isPortal ) {
 			this.submit();

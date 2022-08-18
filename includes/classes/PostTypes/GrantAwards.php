@@ -49,13 +49,6 @@ class GrantAwards {
 
 		add_filter( 'posts_clauses', array( $this, 'meta_or_title_search_clauses' ), 10, 2 );
 
-		add_filter(
-			'ep_weighting_fields_for_post_type',
-			array( $this, 'ep_custom_field_weighting' ),
-			10,
-			2
-		);
-
 		self::$init = true;
 	}
 
