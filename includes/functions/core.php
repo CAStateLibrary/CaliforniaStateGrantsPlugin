@@ -514,7 +514,7 @@ function get_grant_type( $grant_id ) {
 	$is_forecasted = get_post_meta( $grant_id, 'isForecasted', true );
 
 	if ( empty( $is_forecasted ) || 'forecasted' === $is_forecasted ) {
-		return $grant_status;
+		return 'forecasted';
 	}
 
 	if ( 'active' === $is_forecasted ) {

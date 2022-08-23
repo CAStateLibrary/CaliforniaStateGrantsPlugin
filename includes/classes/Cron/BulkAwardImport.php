@@ -87,10 +87,12 @@ class BulkAwardImport {
 	 * data import from csv.
 	 * ( Schedule single event with csv data chunk of 10 record )
 	 *
+	 * @param WP_Post[] $posts Array of award posts.
+	 *
 	 * @return void
 	 */
-	public function schedule_import_awards_queue() {
-		$award_uploads = $this->get_import_records();
+	public static function schedule_import_awards_queue( $posts = [] ) {
+		$award_uploads = empty( $posts ) ? self::get_import_records() : $posts;
 
 		foreach ( $award_uploads as $award_upload ) {
 			if ( ! $award_upload instanceof \WP_Post ) {
@@ -118,7 +120,7 @@ class BulkAwardImport {
 				return;
 			}
 
-			$is_scheduled = $this->schedule_csv_chunk_import( $award_upload_data['csl_award_csv'], $award_upload, $award_upload_data );
+			$is_scheduled = self::schedule_csv_chunk_import( $award_upload_data['csl_award_csv'], $award_upload, $award_upload_data );
 
 			if ( $is_scheduled ) {
 				wp_trash_post( $award_upload->ID );
@@ -156,7 +158,7 @@ class BulkAwardImport {
 	 *
 	 * @return \WP_Post[]
 	 */
-	public function get_import_records() {
+	public static function get_import_records() {
 
 		$query_args = array(
 			'post_type'              => AwardUploads::CPT_SLUG,
@@ -183,7 +185,7 @@ class BulkAwardImport {
 	 *
 	 * @return boolean
 	 */
-	public function schedule_csv_chunk_import( $file_id, $award_upload, $award_upload_data ) {
+	public static function schedule_csv_chunk_import( $file_id, $award_upload, $award_upload_data ) {
 		$csv_file_path = get_attached_file( $file_id );
 		$data          = [
 			'grantID'    => $award_upload_data['csl_grant_id'] ?: 0,
@@ -319,6 +321,11 @@ class BulkAwardImport {
 	 * @return void
 	 */
 	public function cleanup_award_upload( $award_upload_id ) {
+		// Do cleanup only if it's moved to trash.
+		if ( 'trash' === get_post_status( $award_upload_id ) ) {
+			return;
+		}
+
 		/**
 		 * Bulk Award Import was successful.
 		 */
