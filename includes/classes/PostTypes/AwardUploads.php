@@ -7,6 +7,7 @@
 
 namespace CaGov\Grants\PostTypes;
 
+use CaGov\Grants\Cron\BulkAwardImport;
 use CaGov\Grants\PostTypes\EditGrantAwards;
 use CaGov\Grants\Admin\BulkUploadPage;
 use WP_Error;
@@ -270,7 +271,38 @@ class AwardUploads {
 
 		add_filter( 'display_post_states', array( $this, 'display_failed_post_states' ), 10, 2 );
 
+		// Schedual bulk award import.
+		add_action( 'publish_' . self::CPT_SLUG, [ $this, 'trigger_bulk_award_import' ], 10, 2 );
+
 		self::$init = true;
+	}
+
+	/**
+	 * Trigger bulk award import on publish.
+	 *
+	 * @param int      $award_upload_id Post ID.
+	 * @param \WP_Post $post            Post object.
+	 */
+	public function trigger_bulk_award_import( $award_upload_id, $award_upload ) {
+
+		$result = wp_schedule_single_event(
+			time(),
+			BulkAwardImport::$hourly_check_job,
+			array(
+				'posts' => [ $award_upload ],
+			),
+			true
+		);
+
+		if ( true !== $result ) {
+			wp_update_post(
+				array(
+					'ID'          => $award_upload_id,
+					'post_status' => 'csl_failed',
+				)
+			);
+			return;
+		}
 	}
 
 	/**
