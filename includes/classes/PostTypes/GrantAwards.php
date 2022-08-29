@@ -361,16 +361,24 @@ class GrantAwards {
 
 		$search_query = urldecode( $wp_query->get( 's' ) );
 
+		$is_query_int = filter_var( $search_query, FILTER_VALIDATE_INT );
+
 		if ( $wp_query->is_search() && ! empty( $search_query ) ) {
 
 			// Reset search param to clean-up title/excerpt/content search query in posts_where.
 			$wp_query->set( 's', '' );
 
-			$search_meta_fields = [
-				'projectTitle',
-			];
-			$wp_query->set( '_meta_or_title', $search_query );
-			$wp_query->set( '_search_meta_fields', $search_meta_fields );
+			if ( $is_query_int ) {
+				// Search Portal ID
+				$wp_query->set( 'p', intval( $search_query ) );
+			} else {
+				// Search Project Title
+				$search_meta_fields = [
+					'projectTitle',
+				];
+				$wp_query->set( '_meta_or_title', $search_query );
+				$wp_query->set( '_search_meta_fields', $search_meta_fields );
+			}
 		}
 
 		$wp_query->set( 'meta_query', $meta_query );
