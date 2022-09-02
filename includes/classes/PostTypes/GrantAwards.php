@@ -78,6 +78,7 @@ class GrantAwards {
 	 */
 	private function get_custom_columns() {
 		return [
+
 			'portal_id'             => __( 'Portal ID', 'ca-grants-plugin' ),
 			'project_title'         => __( 'Project Title', 'ca-grants-plugin' ),
 			'associated_grant_name' => __( 'Associated Grant Name', 'ca-grants-plugin' ),
@@ -96,6 +97,8 @@ class GrantAwards {
 		foreach ( $custom_columns as $key => $value ) {
 			$columns[ $key ] = $key;
 		}
+
+		$columns['author'] = 'author';
 
 		return $columns;
 	}
@@ -394,6 +397,21 @@ class GrantAwards {
 	 */
 	public function meta_or_title_search_clauses( $clauses, $wp_query ) {
 
+		// author orderby
+		if ( isset( $wp_query->query['orderby'] ) && 'author' === $wp_query->query['orderby'] ) {
+			global $wpdb;
+
+			$clauses['join'] .= " LEFT JOIN {$wpdb->users} u
+			ON u.ID = {$wpdb->posts}.post_author ";
+
+			$clauses['orderby'] = str_replace(
+				"{$wpdb->posts}.post_author",
+				' u.display_name',
+				$clauses['orderby']
+			);
+		}
+
+		// bail if we're not searching
 		if ( ! $wp_query->is_main_query() || ! $wp_query->is_search() ) {
 			return $clauses;
 		}
