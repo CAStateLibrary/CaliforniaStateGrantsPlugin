@@ -78,6 +78,7 @@ class GrantAwards {
 	 */
 	private function get_custom_columns() {
 		return [
+
 			'portal_id'             => __( 'Portal ID', 'ca-grants-plugin' ),
 			'project_title'         => __( 'Project Title', 'ca-grants-plugin' ),
 			'associated_grant_name' => __( 'Associated Grant Name', 'ca-grants-plugin' ),
@@ -92,10 +93,13 @@ class GrantAwards {
 	 */
 	public function custom_columns_sortable( $columns ) {
 		$custom_columns = $this->get_custom_columns();
+		unset( $custom_columns['associated_grant_name'] );
 
 		foreach ( $custom_columns as $key => $value ) {
 			$columns[ $key ] = $key;
 		}
+
+		$columns['author'] = 'author';
 
 		return $columns;
 	}
@@ -312,7 +316,7 @@ class GrantAwards {
 	}
 
 	/**
-	 * Filter wires stories for WP_Query post list view.
+	 * Filter Grants for WP_Query post list view.
 	 *
 	 * @param \WP_Query $wp_query WP_Query object.
 	 */
@@ -361,16 +365,24 @@ class GrantAwards {
 
 		$search_query = urldecode( $wp_query->get( 's' ) );
 
+		$is_query_int = filter_var( $search_query, FILTER_VALIDATE_INT );
+
 		if ( $wp_query->is_search() && ! empty( $search_query ) ) {
 
 			// Reset search param to clean-up title/excerpt/content search query in posts_where.
 			$wp_query->set( 's', '' );
 
-			$search_meta_fields = [
-				'projectTitle',
-			];
-			$wp_query->set( '_meta_or_title', $search_query );
-			$wp_query->set( '_search_meta_fields', $search_meta_fields );
+			if ( $is_query_int ) {
+				// Search Portal ID
+				$wp_query->set( 'p', intval( $search_query ) );
+			} else {
+				// Search Project Title
+				$search_meta_fields = [
+					'projectTitle',
+				];
+				$wp_query->set( '_meta_or_title', $search_query );
+				$wp_query->set( '_search_meta_fields', $search_meta_fields );
+			}
 		}
 
 		$wp_query->set( 'meta_query', $meta_query );
@@ -386,6 +398,37 @@ class GrantAwards {
 	 */
 	public function meta_or_title_search_clauses( $clauses, $wp_query ) {
 
+		if ( isset( $wp_query->query['orderby'] ) ) {
+			global $wpdb;
+			$order = $wp_query->get( 'order' );
+
+			// author orderby
+			if ( 'author' === $wp_query->query['orderby'] ) {
+				$clauses['join'] .= " LEFT JOIN {$wpdb->users} u
+				ON u.ID = {$wpdb->posts}.post_author ";
+
+				$clauses['orderby'] = str_replace(
+					"{$wpdb->posts}.post_author",
+					' u.display_name',
+					$clauses['orderby']
+				);
+			}
+
+			// portal id orderby
+			if ( 'portal_id' === $wp_query->query['orderby'] ) {
+				$clauses['orderby'] = "{$wpdb->posts}.ID $order";
+			}
+
+			// project title orderby
+			if ( 'project_title' === $wp_query->query['orderby'] ) {
+				$clauses['join'] .= " JOIN {$wpdb->postmeta} AS meta ON meta.post_id = {$wpdb->posts}.ID AND
+meta.meta_key = 'projectTitle'";
+
+				$clauses['orderby'] = "meta.meta_value $order";
+			}
+		}
+
+		// bail if we're not searching
 		if ( ! $wp_query->is_main_query() || ! $wp_query->is_search() ) {
 			return $clauses;
 		}
