@@ -428,10 +428,6 @@ meta.meta_key = 'projectTitle'";
 			}
 		}
 
-		echo '<pre>';
-		print_r( $clauses );
-		echo '</pre>';
-
 		// bail if we're not searching
 		if ( ! $wp_query->is_main_query() || ! $wp_query->is_search() ) {
 			return $clauses;
