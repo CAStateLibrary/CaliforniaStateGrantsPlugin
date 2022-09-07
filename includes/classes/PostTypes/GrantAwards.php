@@ -93,6 +93,7 @@ class GrantAwards {
 	 */
 	public function custom_columns_sortable( $columns ) {
 		$custom_columns = $this->get_custom_columns();
+		unset( $custom_columns['associated_grant_name'] );
 
 		foreach ( $custom_columns as $key => $value ) {
 			$columns[ $key ] = $key;
@@ -315,7 +316,7 @@ class GrantAwards {
 	}
 
 	/**
-	 * Filter wires stories for WP_Query post list view.
+	 * Filter Grants for WP_Query post list view.
 	 *
 	 * @param \WP_Query $wp_query WP_Query object.
 	 */
@@ -397,19 +398,39 @@ class GrantAwards {
 	 */
 	public function meta_or_title_search_clauses( $clauses, $wp_query ) {
 
-		// author orderby
-		if ( isset( $wp_query->query['orderby'] ) && 'author' === $wp_query->query['orderby'] ) {
+		if ( isset( $wp_query->query['orderby'] ) ) {
 			global $wpdb;
+			$order = $wp_query->get( 'order' );
 
-			$clauses['join'] .= " LEFT JOIN {$wpdb->users} u
-			ON u.ID = {$wpdb->posts}.post_author ";
+			// author orderby
+			if ( 'author' === $wp_query->query['orderby'] ) {
+				$clauses['join'] .= " LEFT JOIN {$wpdb->users} u
+				ON u.ID = {$wpdb->posts}.post_author ";
 
-			$clauses['orderby'] = str_replace(
-				"{$wpdb->posts}.post_author",
-				' u.display_name',
-				$clauses['orderby']
-			);
+				$clauses['orderby'] = str_replace(
+					"{$wpdb->posts}.post_author",
+					' u.display_name',
+					$clauses['orderby']
+				);
+			}
+
+			// portal id orderby
+			if ( 'portal_id' === $wp_query->query['orderby'] ) {
+				$clauses['orderby'] = "{$wpdb->posts}.ID $order";
+			}
+
+			// project title orderby
+			if ( 'project_title' === $wp_query->query['orderby'] ) {
+				$clauses['join'] .= " JOIN {$wpdb->postmeta} AS meta ON meta.post_id = {$wpdb->posts}.ID AND
+meta.meta_key = 'projectTitle'";
+
+				$clauses['orderby'] = "meta.meta_value $order";
+			}
 		}
+
+		echo '<pre>';
+		print_r( $clauses );
+		echo '</pre>';
 
 		// bail if we're not searching
 		if ( ! $wp_query->is_main_query() || ! $wp_query->is_search() ) {
