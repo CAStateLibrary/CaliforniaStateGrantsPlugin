@@ -19,6 +19,28 @@ a.a11y-tip__trigger {
 	display: none;
 }
 
-th.required::before {
+th.required label::after {
 	content: "*";
+	padding-left: 0.2rem;
+}
+
+.form-field-group-wrapper > td {
+	border: 1px solid #c3c4c7;
+	display: block;
+}
+
+#side-sortables .form-table.--side,
+#side-sortables .form-table.--side tr,
+#side-sortables .form-table.--side td,
+#side-sortables .form-table.--side th {
+	display: block;
+}
+
+#side-sortables .form-table.--side th {
+	padding-bottom: 0;
+}
+
+#side-sortables .form-table.--side td {
+	padding-left: 0;
+	padding-right: 0;
 }

@@ -7,32 +7,23 @@
 
 namespace CaGov\Grants\REST;
 
+use CaGov\Grants\PostTypes\Grants;
 use CaGov\Grants\Core;
 use CaGov\Grants\Meta;
-use CaGov\Grants\Admin\Settings;
-use CaGov\Grants\PostTypes\Grants;
 use WP_REST_Response;
 use WP_Rest_Request;
-use WP_Error;
-use WP_Http;
 
 /**
  * GrantsEndpoint Class.
  */
-class GrantsEndpoint {
-	/**
-	 * Init
-	 *
-	 * @var boolean
-	 */
-	public static $init = false;
+class GrantsEndpoint extends BaseEndpoint {
 
 	/**
-	 * Constructor.
+	 * Rest url Slug.
+	 *
+	 * @var string
 	 */
-	public function __construct() {
-		$this->settings = new Settings();
-	}
+	public static $rest_slug = 'grants';
 
 	/**
 	 * Setup actions and filters with the WordPress API.
@@ -44,85 +35,12 @@ class GrantsEndpoint {
 			return;
 		}
 
-		add_filter( 'rest_prepare_ca_grants', array( $this, 'modify_grants_rest_response' ), 10, 3 );
-		add_filter( 'rest_ca_grants_query', array( $this, 'modify_grants_rest_params' ), 10, 2 );
-		add_filter( 'rest_request_before_callbacks', array( $this, 'authenticate_rest_request' ), 10, 3 );
+		parent::setup();
+
+		add_filter( 'rest_prepare_' . Grants::get_cpt_slug(), array( $this, 'modify_grants_rest_response' ), 10, 3 );
+		add_filter( 'rest_' . Grants::get_cpt_slug() . '_query', array( $this, 'modify_grants_rest_params' ), 10, 2 );
 
 		self::$init = true;
-	}
-
-	/**
-	 * Authenticate the REST Requests
-	 *
-	 * @param  \WP_HTTP_Response|WP_Error $response Result to send.
-	 * @param  array                      $handler  Route handler used.
-	 * @param  \WP_REST_Request           $request  Request used to generate response.
-	 * @return \WP_HTTP_Response|WP_Error           WP_HTTP_Response if authentication succeeded,
-	 *                                              WP_Error otherwise.
-	 */
-	public function authenticate_rest_request( $response, $handler, $request ) {
-		if ( 0 !== strpos( $request->get_route(), '/wp/v2/grants' ) ) {
-			return $response;
-		}
-
-		// Ensure authorization header is present.
-		$auth_header_present = $this->auth_header_present( $response, $request );
-		if ( is_wp_error( $auth_header_present ) ) {
-			return $auth_header_present;
-		}
-
-		// Ensure bearer token is valid.
-		$token_valid = $this->auth_token_valid( $response, $request );
-		if ( is_wp_error( $token_valid ) ) {
-			return $token_valid;
-		}
-
-		// Authorization successful.
-		return $response;
-	}
-
-	/**
-	 * Auth header present.
-	 *
-	 * @param  mixed           $response The current response object.
-	 * @param  WP_REST_Request $request  The current request object.
-	 * @return mixed                     Response if successful, WP_Error otherwise.
-	 */
-	protected function auth_header_present( $response, WP_REST_Request $request ) {
-		$auth_header = $request->get_header( 'X-CaGov-Token' );
-		if ( empty( $auth_header ) ) {
-			return new WP_Error(
-				'empty_auth_header',
-				__( 'An authorization header must be provided.', 'ca-grants-plugin' ),
-				array(
-					'status' => WP_Http::BAD_REQUEST,
-				)
-			);
-		}
-		return $response;
-	}
-
-	/**
-	 * Auth token valid.
-	 *
-	 * @param  mixed           $response The current response object.
-	 * @param  WP_REST_Request $request  The current request object.
-	 * @return mixed                     Response if successful, WP_Error otherwise.
-	 */
-	protected function auth_token_valid( $response, WP_REST_Request $request ) {
-		$auth_header  = $request->get_header( 'X-CaGov-Token' );
-		$auth_token   = sanitize_text_field( $auth_header );
-		$stored_token = sha1( $this->settings->get_auth_token() );
-		if ( empty( $stored_token ) || $stored_token !== $auth_token ) {
-			return new WP_Error(
-				'invalid_auth',
-				__( 'The authorization token does not match.', 'ca-grants-plugin' ),
-				array(
-					'status' => WP_Http::UNAUTHORIZED,
-				)
-			);
-		}
-		return $response;
 	}
 
 	/**
@@ -148,8 +66,8 @@ class GrantsEndpoint {
 	 * @return \WP_REST_Response The modified response
 	 */
 	public function modify_grants_rest_response( $response, $post, $request ) {
-		$new_response = wp_cache_get( 'grants_rest_response_' . $post->ID );
-		$new_response = false;
+		$new_response = wp_cache_get( 'grants_rest_response_' . $post->ID, 'ca-grants-plugin' );
+
 		if ( false === $new_response ) {
 			// Fields that aren't needed in the REST response
 			$blacklisted_fields = array(
@@ -161,11 +79,13 @@ class GrantsEndpoint {
 			);
 
 			$metafields = array_merge(
+				Meta\AwardStats::get_fields(),
 				Meta\General::get_fields(),
 				Meta\Eligibility::get_fields(),
 				Meta\Funding::get_fields(),
 				Meta\Dates::get_fields(),
-				Meta\Contact::get_fields()
+				Meta\Contact::get_fields(),
+				Meta\Notes::get_fields()
 			);
 
 			$new_data = array(
@@ -223,7 +143,7 @@ class GrantsEndpoint {
 
 							break;
 
-						case 'fundingMethod':
+						case 'disbursementMethod':
 							$notes = get_post_meta( $post->ID, 'disbursementMethodNotes', true );
 
 							$new_data['fundingMethod'] = array(
@@ -307,11 +227,34 @@ class GrantsEndpoint {
 						case 'disbursementMethodNotes':
 							break;
 						default:
-							$new_data[ $metafield_data['id'] ] = $metadata;
+							if ( 'number' === $metafield_data['type'] ) {
+								$new_data[ $metafield_data['id'] ] = absint( $metadata );
+							} else {
+								$new_data[ $metafield_data['id'] ] = $metadata;
+							}
 							break;
 					}
 				}
 			}
+
+			$grant_award_url_base = rest_url( 'wp/v2/grant-awards' );
+
+			if (
+				defined( 'CA_HTTP_AUTH_USER' ) &&
+				! empty( CA_HTTP_AUTH_USER ) &&
+				defined( 'CA_HTTP_AUTH_PASSWORD' ) &&
+				! empty( CA_HTTP_AUTH_PASSWORD )
+			 ) {
+				$auth_string = sprintf( '%s:%s@', CA_HTTP_AUTH_USER, CA_HTTP_AUTH_PASSWORD );
+				$grant_award_url_base = str_replace( '://', '://' . $auth_string, $grant_award_url_base );
+			}
+
+			$grant_awards_url = add_query_arg(
+				array(
+					'grant_id' => $post->ID,
+				),
+				$grant_award_url_base
+			);
 
 			// Set up a custom api response
 			$new_response = new WP_REST_Response();
@@ -325,7 +268,11 @@ class GrantsEndpoint {
 				)
 			);
 
-			wp_cache_set( 'grants_rest_response_' . $post->ID, $new_response );
+			if ( Core\has_grant_awards( $post->ID ) ) {
+				$new_response->add_link( 'award', $grant_awards_url );
+			}
+
+			wp_cache_set( 'grants_rest_response_' . $post->ID, $new_response, 'ca-grants-plugin', DAY_IN_SECONDS );
 		}
 
 		return $new_response;

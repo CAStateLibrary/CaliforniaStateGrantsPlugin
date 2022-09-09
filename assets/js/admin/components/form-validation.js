@@ -52,7 +52,7 @@ const setupForms = () => {
 				const deadlineInput = document.querySelector( '[name="deadline"]' );
 
 				// Bail if either the values are missing.
-				if ( ! openDateInput.value || ! deadlineInput.value ) {
+				if ( ! openDateInput || ! openDateInput.value || ! deadlineInput || ! deadlineInput.value ) {
 					return false;
 				}
 
@@ -69,13 +69,22 @@ const setupForms = () => {
 			},
 			isRangeValid: ( field ) => {
 				// Bail early.
-				if ( ! field.matches( '[name*="[low]"], [name*="[high]"]' ) ) {
+				if ( ! field.matches( '[name*="[low]"], [name*="[high]"], [name*="[first]"], [name*="[second]"]' ) ) {
 					return false;
 				}
 
 				const fieldset = field.closest( 'td' );
-				const lowField = fieldset.querySelector( '[name*="[low]"]' );
-				const highField = fieldset.querySelector( '[name*="[high]"]' );
+				let lowField = fieldset.querySelector( '[name*="[low]"]' );
+				let highField = fieldset.querySelector( '[name*="[high]"]' );
+
+				if ( ! lowField ) {
+					lowField = fieldset.querySelector( '[name*="[first]"]' );
+				}
+
+				if ( ! highField ) {
+					highField = fieldset.querySelector( '[name*="[second]"]' );
+				}
+
 				const low = parseInt( lowField.value );
 				const high = parseInt( highField.value );
 
@@ -98,7 +107,7 @@ const setupForms = () => {
 				}
 
 				// Check if high is indeed higher than low
-				if ( low <= high ) {
+				if ( low < high ) {
 					return false;
 				}
 
@@ -204,12 +213,12 @@ const setupForms = () => {
 			isAwardAmountValid: ( field ) => {
 
 				// Bail early.
-				if ( ! field.matches( '[name="estimatedAmounts[same][amount]"], [name="estimatedAmounts[range][low]"], [name="estimatedAmounts[range][high]"], [name="estimatedAvailableFunds"]' ) ) {
+				if ( ! field.matches( '[name="estimatedAmounts[same][amount]"], [name="estimatedAmounts[range][low]"], [name="estimatedAmounts[range][high]"], [name="estimatedAvailableFunds"], [name="estimatedAmounts[unknown][first]"], [name="estimatedAmounts[unknown][second]"]' ) ) {
 					return false;
 				}
 
 				const totalFundingField = document.querySelector( '[name="estimatedAvailableFunds"]' );
-				const estimatedAmountFields = document.querySelectorAll( '[name="estimatedAmounts[same][amount]"], [name="estimatedAmounts[range][low]"], [name="estimatedAmounts[range][high]"]' );
+				const estimatedAmountFields = document.querySelectorAll( '[name="estimatedAmounts[same][amount]"], [name="estimatedAmounts[range][low]"], [name="estimatedAmounts[range][high]"],[name="estimatedAmounts[unknown][first]"], [name="estimatedAmounts[unknown][second]"]' );
 				const { value: totalFunding } = totalFundingField;
 				const { value: estimatedAmount } = field;
 
@@ -230,7 +239,100 @@ const setupForms = () => {
 
 				// No conditions are met, assume valid
 				return false;
-			}
+			},
+			isValidStartDate: ( field ) => {
+				// Bail early.
+				if ( ! field.matches( 'input[data-max-date-id]' ) ) {
+					return false;
+				}
+
+				const maxDateElem = document.getElementById( field.dataset.maxDateId );
+
+				if ( ! maxDateElem || ! maxDateElem.value || ! field.value ) {
+					return false;
+				}
+
+				const minDate = new Date( field.value );
+				const maxDate = new Date( maxDateElem.value );
+
+				return ! ( minDate <= maxDate );
+			},
+			isValidEndDate: ( field ) => {
+				// Bail early.
+				if ( ! field.matches( 'input[data-min-date-id]' ) ) {
+					return false;
+				}
+
+				const minDateElem = document.getElementById( field.dataset.minDateId );
+
+				if ( ! minDateElem || ! minDateElem.value || ! field.value ) {
+					return false;
+				}
+
+				const minDate = new Date( minDateElem.value );
+				const maxDate = new Date( field.value );
+
+				return ! ( minDate <= maxDate );
+			},
+			isFundingSourceNotesRequired: ( field ) => {
+				if ( ! field.matches( '[name="revenueSourceNotes"]' ) || field.value ) {
+					return false;
+				}
+
+				const form = field.closest( 'form' );
+				const fundingSource = form.querySelector( 'input[name="fundingSource"]:checked' );
+
+				if ( ! fundingSource || 'other' !== fundingSource.value ) {
+					return false;
+				}
+
+				// No conditions are met, assume invalid.
+				return true;
+			},
+			isFundingMethodNotesRequired: ( field ) => {
+				if ( ! field.matches( '[name="disbursementMethodNotes"]' ) || field.value ) {
+					return false;
+				}
+
+				const form = field.closest( 'form' );
+				const fundingSource = form.querySelector( 'input[name="disbursementMethod"]:checked' );
+
+				if ( ! fundingSource || 'other' !== fundingSource.value ) {
+					return false;
+				}
+
+				// No conditions are met, assume invalid.
+				return true;
+			},
+			isMaxLimitReachedField: ( field ) => {
+				// Bail
+				if ( ! field.matches( 'input[data-maxlength]:not(input[pattern])' ) ) {
+					return false;
+				}
+
+				const maxLength = parseInt( field.dataset.maxlength, 10 );
+				const currentValueLength = parseInt( field.value.length, 10 );
+
+				if ( currentValueLength > maxLength ) {
+					return true;
+				} else {
+					return false;
+				}
+			},
+			isFiscalYearValid: ( field ) => {
+
+				if ( ! field.matches( 'select#fiscalYear' ) ) {
+					return false;
+				}
+
+				if ( window.allowedFiscalYears?.includes( field.value ) ) {
+					return false;
+				}
+
+				// No conditions are met, assume invalid.
+				return true;
+			},
+
 		},
 		messages: {
 			hasRequiredCheckboxes: 'Please check at least one value.',
@@ -239,6 +341,12 @@ const setupForms = () => {
 			isRangeValid: 'Invalid range. Please check that the first number is lower than the second one.',
 			isMatchingFundValid: 'Please set a matched funding percentage.',
 			isAwardAmountValid: 'Please check that this number is lower than the Total Estimated Available Funding.',
+			isValidStartDate: 'Start date is invalid, please select start date before end date.',
+			isValidEndDate: 'End date is invalid, please select end date after start date.',
+			isFundingSourceNotesRequired: 'Please add funding source notes. ( Required for funding source "Other" )',
+			isFundingMethodNotesRequired: 'Please add funding method notes. ( Required for funding method "Other" )',
+			isMaxLimitReachedField: 'Maximum characters limit reached.',
+			isFiscalYearValid: 'Fiscal year does not match the Associated Grant.',
 		},
 		disableSubmit: true // We need to handle some additional logic here for save/continue
 	} );
@@ -261,6 +369,21 @@ const setupForms = () => {
 		input.value = 0; // Default is to continue
 
 		form.appendChild( input );
+
+		const inputMaxLimitFields = Array.from( form.querySelectorAll( 'input[data-maxlength]:not(input[pattern])' ) );
+
+		inputMaxLimitFields.forEach( input => {
+			if ( ! input.dataset.maxlength || ! input.id ) {
+				return;
+			}
+
+			input.addEventListener( 'input', handleMaxLimitReachedField );
+
+			const span = document.createElement( 'span' );
+			span.setAttribute( 'id', `${input.id}-characters` );
+			span.textContent = `${input.value.length} of ${input.dataset.maxlength} characters`;
+			input.parentNode.appendChild( span );
+		} );
 	} );
 };
 
@@ -273,12 +396,48 @@ const setupListeners = () => {
 	document.addEventListener( 'bouncerRemoveError', handleBouncerRemoveDeadlineDateError, false );
 	document.addEventListener( 'bouncerRemoveError', handleBouncerRemoveRangeError, false );
 
-	document.addEventListener( 'bouncerShowError', handleBouncerShowFielsetError, false );
+	document.addEventListener( 'bouncerShowError', handleBouncerShowFieldsetError, false );
 
 	forms.forEach( form => {
 		form.addEventListener( 'click', handleFormClick );
 		form.addEventListener( 'submit', handleFormSubmit );
 	} );
+};
+
+/**
+ * Handle input field edit/keyup event.
+ *
+ * @param {object} event
+ */
+const handleMaxLimitReachedField = ( event ) => {
+	const elem = event.target;
+	const maxLength = parseInt( elem.dataset.maxlength, 10 );
+	const currentValueLength = parseInt( elem.value.length, 10 );
+	const span = document.getElementById( `${elem.id}-characters` );
+	span.textContent = `${currentValueLength} of ${maxLength} characters`;
+
+	if ( currentValueLength > maxLength ) {
+		elem.setAttribute( 'aria-invalid', true );
+
+		const message = elem.parentNode.querySelector( '.error-message' );
+
+		if ( ! message ) {
+			const errorMessage = document.createElement( 'div' );
+			errorMessage.setAttribute( 'id', `bouncer-error_${elem.name}` );
+			errorMessage.classList.add( 'error-message' );
+			errorMessage.textContent = 'Maximum characters limit reached.';
+			elem.parentNode.appendChild( errorMessage );
+		}
+		span.setAttribute( 'style', 'color:red;' );
+	} else {
+		elem.setAttribute( 'aria-invalid', false );
+		const message = elem.parentNode.querySelector( '.error-message' );
+
+		if ( message ) {
+			elem.parentNode.removeChild( message );
+		}
+		span.removeAttribute( 'style' );
+	}
 };
 
 /**
@@ -341,7 +500,7 @@ const handleBouncerRemoveRangeError = ( event ) => {
 	const { target: field } = event;
 
 	// Bail early.
-	if ( ! field.matches( '[name*="[low]"], [name*="[high]"]' ) ) {
+	if ( ! field.matches( '[name*="[low]"], [name*="[high]"], [name*="[first]"], [name*="[second]"]' ) ) {
 		return;
 	}
 
@@ -354,7 +513,7 @@ const handleBouncerRemoveRangeError = ( event ) => {
  * Handle bouncer show fieldset error
  * @param {object} event the event object
  */
-const handleBouncerShowFielsetError = ( event ) => {
+const handleBouncerShowFieldsetError = ( event ) => {
 	const { target: field } = event;
 	const fieldset = field.closest( '.fieldset--is-required' );
 
@@ -394,6 +553,22 @@ const handleBouncerShowFielsetError = ( event ) => {
 };
 
 /**
+ * Scroll to First Error
+ * @param {object} invalidFields fields returned that are not valid.
+ */
+const scrollToFirstError = ( invalidFields ) => {
+	const [ firstField ] = invalidFields;
+	const elementToScroll = firstField.parentElement;
+
+	elementToScroll.scrollIntoView( {
+		behavior: 'smooth',
+		block: 'start',
+		inline: 'nearest'
+	} );
+};
+
+
+/**
  * Handle form click
  * @param {object} event the event object
  */
@@ -405,9 +580,6 @@ const handleFormClick = ( event ) => {
 	}
 
 	const form = target.closest( '.form--validate' );
-	if ( target.matches( '#save-post' ) ) {
-		form.submit();
-	}
 
 	const invalidFields = bouncer.validateAll( form );
 
@@ -415,6 +587,7 @@ const handleFormClick = ( event ) => {
 	// Bail if not.
 	if ( invalidFields.length ) {
 		event.preventDefault();
+		scrollToFirstError( invalidFields );
 		return;
 	}
 
@@ -427,9 +600,6 @@ const handleFormClick = ( event ) => {
 
 		form.appendChild( input );
 	}
-
-	// Submit.
-	form.submit();
 };
 
 /**
@@ -445,6 +615,7 @@ const handleFormSubmit = ( event ) => {
 
 		if ( invalidFields.length ) {
 			event.preventDefault();
+			scrollToFirstError( invalidFields );
 			return;
 		}
 	}
@@ -454,12 +625,19 @@ const handleFormSubmit = ( event ) => {
  * Setup Wysiwygs
  */
 const setupWysiwygs = () => {
-	const requiredWysiwygs = Array.from( document.querySelectorAll( '.wysiwyg[data-required-if]' ) );
+	const requiredIfWysiwygs = Array.from( document.querySelectorAll( '.wysiwyg[data-required-if]' ) );
 
+	// Ensure all the textareas are required.
+	requiredIfWysiwygs.forEach( wysiwyg => {
+		const textarea = wysiwyg.querySelector( 'textarea' );
+		textarea.setAttribute( 'data-required-if', wysiwyg.getAttribute( 'data-required-if' ) );
+	} );
+
+	const requiredWysiwygs = Array.from( document.querySelectorAll( '.wysiwyg[required="true"]' ) );
 	// Ensure all the textareas are required.
 	requiredWysiwygs.forEach( wysiwyg => {
 		const textarea = wysiwyg.querySelector( 'textarea' );
-		textarea.setAttribute( 'data-required-if', wysiwyg.getAttribute( 'data-required-if' ) );
+		textarea.setAttribute( 'required', wysiwyg.getAttribute( 'required' ) );
 	} );
 };
 
@@ -467,7 +645,6 @@ const setupWysiwygs = () => {
  * Init
  */
 const init = () => {
-
 	// Bail early.
 	if ( ! forms.length ) {
 		return;

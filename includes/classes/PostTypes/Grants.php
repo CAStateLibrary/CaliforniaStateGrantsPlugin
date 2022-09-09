@@ -7,12 +7,12 @@
 
 namespace CaGov\Grants\PostTypes;
 
+use CaGov\Grants\Core;
+
 /**
  * Grants post type class.
  */
 class Grants {
-	const CPT_SLUG = 'ca_grants';
-
 	/**
 	 * Init
 	 *
@@ -37,8 +37,142 @@ class Grants {
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
+		add_filter( 'manage_' . self::get_cpt_slug() . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
+		add_action( 'manage_' . self::get_cpt_slug() . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
+
+		add_filter( 'default_post_metadata', array( $this, 'award_stats_default_meta_value' ), 10, 3 );
 
 		self::$init = true;
+	}
+
+	/**
+	 * Add defualt/fallback values for Grant awardstats data.
+	 *
+	 * @param mixed  $value Post meta value.
+	 * @param int    $post_id Post ID.
+	 * @param string $meta_key Meta key for the default value.
+	 *
+	 * @return mixed
+	 */
+	public function award_stats_default_meta_value( $value, $post_id, $meta_key ) {
+		if (
+			empty( $value )
+			&& (
+			 'awardStats' !== $meta_key
+			 || self::get_cpt_slug() !== get_post_type( $post_id )
+			)
+		) {
+			return $value;
+		}
+
+		remove_filter( 'default_post_metadata', array( $this, 'award_stats_default_meta_value' ) );
+
+		$applications = get_post_meta( $post_id, 'applicationsSubmitted', true );
+
+		// If empty and non-zero value.
+		if ( empty( $applications ) && 0 !== $applications ) {
+			return $value;
+		}
+
+		$grant_type = Core\get_grant_type( $post_id );
+
+		if ( 'ongoing' === $grant_type ) {
+			$fiscal_year = '2020-2021';
+		} else {
+			$fiscal_year = Core\get_deadline_fiscal_year( $this->post_id );
+		}
+
+		add_filter( 'default_post_metadata', array( $this, 'award_stats_default_meta_value' ), 10, 3 );
+
+		return [
+			[
+				'fiscalYear'            => $fiscal_year,
+				'applicationsSubmitted' => $applications,
+			],
+		];
+	}
+
+	/**
+	 * Add custom column to grant CPT.
+	 *
+	 * @param array $columns List of post columns.
+	 *
+	 * @return array Return all columns data.
+	 */
+	public function set_custom_edit_columns( $columns ) {
+
+		if ( \CaGov\Grants\Core\is_portal() ) {
+			$columns['applicationNotes'] = __( 'Application Notes', 'ca-grants-plugin' );
+		}
+
+		$columns['award_data'] = __( 'Award Data', 'ca-grants-plugin' );
+
+		return $columns;
+	}
+
+	/**
+	 * Custom column renderer to show data for custom defined column.
+	 *
+	 * @param string $column Column name/slug.
+	 * @param int    $grant_id The current grant ID.
+	 *
+	 * @return void
+	 */
+	public function custom_column_renderer( $column, $grant_id ) {
+
+		if ( 'applicationNotes' === $column && \CaGov\Grants\Core\is_portal() ) {
+			$application_notes = get_post_meta( $grant_id, 'applicationNotes', true );
+			echo esc_html( wp_trim_words( $application_notes, 4 ) );
+		}
+
+		if ( 'award_data' === $column ) {
+			printf(
+				'<a href="%s">%s</a>',
+				esc_url(
+					add_query_arg(
+						[
+							'grant_id' => $grant_id,
+						],
+						admin_url( 'edit.php?post_type=csl_grant_awards' )
+					)
+				),
+				esc_html__( 'View Award Data', 'ca-grants-plugin' )
+			);
+
+			echo '<br/>';
+
+			printf(
+				'<a href="%s">%s</a>',
+				esc_url(
+					add_query_arg(
+						[
+							'grant_id' => $grant_id,
+						],
+						admin_url( 'post-new.php?post_type=csl_grant_awards' )
+					)
+				),
+				esc_html__( 'Enter Award Data', 'ca-grants-plugin' )
+			);
+
+			echo '<br/>';
+
+			$grant_type = Core\get_grant_type( $grant_id );
+
+			if ( ! empty( $grant_type ) && in_array( $grant_type, [ 'ongoing', 'closed' ] ) ) {
+				printf(
+					'<a href="%s">%s</a>',
+					esc_url(
+						add_query_arg(
+							[
+								'grant_id' => $grant_id,
+							],
+							admin_url( 'edit.php?post_type=csl_award_uploads&page=bulk-upload' )
+						)
+					),
+					esc_html__( 'Bulk Upload Award Data', 'ca-grants-plugin' )
+				);
+			}
+		}
 	}
 
 	/**
@@ -50,16 +184,16 @@ class Grants {
 		$args = array(
 			'labels'             => $this->get_labels(),
 			'description'        => __( 'California State Grants.', 'ca-grants-plugin' ),
-			'public'             => false,
-			'publicly_queryable' => true,
+			'public'             => true,
+			'publicly_queryable' => false, // Hide single page.
 			'show_ui'            => true,
 			'show_in_menu'       => true,
-			'show_in_rest'       => true,
+			'show_in_rest'       => ( ! \CaGov\Grants\Core\is_portal() ),
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'grants' ),
 			'rest_base'          => 'grants',
 			'capability_type'    => 'post',
-			'has_archive'        => true,
+			'has_archive'        => false, // Hide archive page.
 			'hierarchical'       => false,
 			'menu_icon'          => 'dashicons-awards',
 			'menu_position'      => null,
@@ -73,7 +207,25 @@ class Grants {
 		 */
 		$args = apply_filters( 'ca_grants_post_type_args', $args );
 
-		register_post_type( self::CPT_SLUG, $args );
+		register_post_type( self::get_cpt_slug(), $args );
+	}
+
+	/**
+	 * Returns the custom post-type slug used when registering
+	 * the grants post-type.
+	 *
+	 * @return string The post-type slug.
+	 */
+	public static function get_cpt_slug() {
+		$cpt_slug = 'ca_grants';
+
+		/**
+		 * Filters the slug used in registration
+		 * of the grants post-type.
+		 *
+		 * @param $cpt_slug string The filtered post-type slug.
+		 */
+		return apply_filters( 'ca_grants_cpt_slug', $cpt_slug );
 	}
 
 	/**
@@ -109,7 +261,7 @@ class Grants {
 	 * @return bool
 	 */
 	public function disable_block_editor( $use, $post_type ) {
-		if ( self::CPT_SLUG === $post_type ) {
+		if ( self::get_cpt_slug() === $post_type ) {
 			return false;
 		}
 
@@ -123,6 +275,6 @@ class Grants {
 	 * @return int
 	 */
 	public static function get_published_count() {
-		return absint( wp_count_posts( self::CPT_SLUG )->publish );
+		return absint( wp_count_posts( self::get_cpt_slug() )->publish );
 	}
 }

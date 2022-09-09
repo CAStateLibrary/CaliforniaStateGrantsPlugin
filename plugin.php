@@ -1,9 +1,12 @@
 <?php
+
+use CaGov\Grants\Admin\Taxonomies;
+
 /**
  * Plugin Name: California State Grants
  * Plugin URI:  https://github.com/CAStateLibrary/CaliforniaStateGrantsPlugin
  * Description: This plugin provides a WordPress dashboard interface to input California State Grant information and facilitate syncing that data with the California State Grants Portal.
- * Version:     1.1
+ * Version:     1.2.14
  * Author:      CSL
  * Author URI:  https://www.library.ca.gov/
  * Text Domain: CaliforniaStateGrantsPlugin
@@ -13,7 +16,7 @@
  */
 
 // Useful global constants.
-define( 'CA_GRANTS_VERSION', '1.1.1' );
+define( 'CA_GRANTS_VERSION', '1.2.14' );
 define( 'CA_GRANTS_URL', plugin_dir_url( __FILE__ ) );
 define( 'CA_GRANTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CA_GRANTS_INC', CA_GRANTS_PATH . 'includes/' );
@@ -30,6 +33,9 @@ if ( ! defined( 'CA_GRANTS_PORTAL_JSON_URL' ) ) {
 
 // Include files.
 require_once CA_GRANTS_INC . 'functions/core.php';
+require_once CA_GRANTS_INC . 'functions/helpers/fiscal-year.php';
+require_once CA_GRANTS_INC . 'functions/helpers/validators.php';
+require_once CA_GRANTS_INC . 'functions/helpers/validation-helpers.php';
 
 // Require Composer autoloader if it exists.
 if ( file_exists( CA_GRANTS_PATH . '/vendor/autoload.php' ) ) {
@@ -92,13 +98,43 @@ function ca_grants_enable_updates() {
 function ca_grants_plugin_setup() {
 	$classes = array(
 		'CaGov\Grants\PostTypes\Grants',
+		'CaGov\Grants\PostTypes\GrantAwards',
+		'CaGov\Grants\PostTypes\AwardUploads',
 		'CaGov\Grants\PostTypes\EditGrant',
-		'CaGov\Grants\Admin\Settings',
-		'CaGov\Grants\Admin\SettingsPage',
-		'CaGov\Grants\Admin\WelcomePage',
-		'CaGov\Grants\Admin\Notices',
-		'CaGov\Grants\REST\GrantsEndpoint',
+		'CaGov\Grants\PostTypes\EditGrantAwards',
+		'CaGov\Grants\PostTypes\EditAwardUploads',
+		'CaGov\Grants\Admin\BulkUploadPage',
+		'CaGov\Grants\Cron\BulkAwardImport',
+		'CaGov\Grants\Cron\GrantAwardsCleanup',
+		'CaGov\Grants\REST\GrantAwardsEndpoint',
+		'CaGov\Grants\REST\BulkUploadEndpoint',
+		'CaGov\Grants\REST\GrantAwardsValidation',
+		'CaGov\Grants\REST\AwardeeStatsEndpoint',
+		'CaGov\Grants\Meta\Field',
+		'CaGov\Grants\Meta\FiscalYearAJAX',
 	);
+
+	if ( true !== \CaGov\Grants\Core\is_portal() ) {
+		$classes = array_merge(
+			$classes,
+			[
+				'CaGov\Grants\Admin\Settings',
+				'CaGov\Grants\Admin\SettingsPage',
+				'CaGov\Grants\Admin\WelcomePage',
+				'CaGov\Grants\Admin\Notices',
+				'CaGov\Grants\REST\GrantsEndpoint',
+			]
+		);
+	}
+
+	if ( \CaGov\Grants\Core\is_portal() ) {
+		$classes = array_merge(
+			$classes,
+			[
+				Taxonomies::class,
+			]
+		);
+	}
 
 	return array_map(
 		function( $class ) {
@@ -110,8 +146,14 @@ function ca_grants_plugin_setup() {
 	);
 }
 
-// Setup the plugin.
-ca_grants_plugin_setup();
+// Set up the plugin after the theme to mae sure hooks in the theme are set up first.
+add_action(
+	'after_setup_theme',
+	function() {
+		// Setup the plugin.
+		ca_grants_plugin_setup();
 
-// Enable updates.
-ca_grants_enable_updates();
+		// Enable updates.
+		ca_grants_enable_updates();
+	}
+);

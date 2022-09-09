@@ -1,10 +1,13 @@
-import CopyToClipboard from './components/copy-to-clipboard';
-import CheckboxSelectAll from './components/checkbox-select-all';
-import Tooltips from './components/tooltips';
+import copyToClipboard from './components/copy-to-clipboard';
+import checkboxSelectAll from './components/checkbox-select-all';
+import tooltips from './components/tooltips';
 import ConditionalRequired from './components/conditional-required';
 import FormValidation from './components/form-validation';
-import Wysiwyg from './components/wysiwyg';
-import ConditionalFormFields from './components/conditional-form-fields';
+import FormConsentAccepted from './components/form-consent-accepted';
+import wysiwyg from './components/wysiwyg';
+import conditionalFormFields from './components/conditional-form-fields';
+import repeaterFormFormFields from './components/repeater-form-field';
+import updatePostFinder from './components/update-post-finder';
 
 // polyfill closest.
 if ( !Element.prototype.closest ) {
@@ -20,11 +23,14 @@ if ( !Element.prototype.closest ) {
 }
 
 document.addEventListener( 'DOMContentLoaded', () => {
-	CopyToClipboard();
-	CheckboxSelectAll();
-	Tooltips();
-	Wysiwyg();
+	copyToClipboard();
+	checkboxSelectAll();
+	tooltips();
+	wysiwyg();
 	ConditionalRequired();
 	FormValidation();
-	ConditionalFormFields();
+	FormConsentAccepted();
+	conditionalFormFields();
+	repeaterFormFormFields();
+	updatePostFinder();
 } );
