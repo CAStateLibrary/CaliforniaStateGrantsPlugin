@@ -2,9 +2,9 @@
 Contributors: castatelibrary
 Tags: grants, loans, state government, California Grants Portal, submit your grants, California state agencies
 Requires at least: 5.0
-Tested up to: 5.8.1
+Tested up to: 6.0.2
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.2.14
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,14 @@ The California State Grants Plugin is the official WordPress plugin allowing the
 **Instructions**
 
 Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
+
+== Screenshots ==
+
+1. Hover over “Plugins” on the left-hand toolbar. Select “Add New.”
+2. Type California State Grants in the search box. When the California State Grants plugin appears, select “Install Now”.
+3. The grant submission form
+4. Endpoint URL submission form on the California Grants Portal
+5. The Endpoint URL and Authorization Token
 
 == Frequently Asked Questions ==
 
@@ -55,15 +63,10 @@ Organizations using the WordPress plugin must edit their grants through their Wo
 
 Yes, Grant Contributors can use both the WordPress plugin and online form to submit grant opportunities. Grant Contributors should reference the State Grantmakers Guide for instructions on submitting opportunities through the online form. Grant Contributors should note that grants submitted via WordPress plugin must be edited in the WordPress admin dashboard while grants submitted via online form must be edited in the Grants Portal.
 
-== Screenshots ==
-
-1. Hover over “Plugins” on the left-hand toolbar. Select “Add New.”
-2. Type California State Grants in the search box. When the California State Grants plugin appears, select “Install Now”.
-3. The grant submission form
-4. Endpoint URL submission form on the California Grants Portal
-5. The Endpoint URL and Authorization Token
-
 == Changelog ==
+
+= 2.0.0 =
+* Added Grant Awards
 
 = 1.1.1 =
 * Tested plugin functionality up to 5.8.1
