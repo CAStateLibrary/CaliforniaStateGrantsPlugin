@@ -23,7 +23,7 @@ The California State Grants Plugin is the official WordPress plugin allowing the
 
 **Instructions**
 
-Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
+Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) **(state agencies must log in prior to accessing this link)** to learn how to submit your grant opportunities to the Grants Portal.
 
 == Screenshots ==
 
@@ -41,7 +41,7 @@ This option is best if your organization uses a public WordPress website and has
 
 = Where can I find more instructions for submitting grants as well as definitions for all of the terms and fields in the grants form? =
 
-The [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) (#state agencies must log in prior to accessing this link#) includes instructions on creating accounts, uploading grants, and includes a glossary of terms and fields used in the grants form.
+The [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) **(state agencies must log in prior to accessing this link)** includes instructions on creating accounts, uploading grants, and includes a glossary of terms and fields used in the grants form.
 
 = Do I need to create a Grant Contributor account to publish grants via WordPress plugin? =
 
@@ -53,15 +53,15 @@ No, Grant Contributors only need to submit an Endpoint URL and Authorization Tok
 
 = How often does the Grants Portal sync? Can I force a sync? =
 
-The Grants Portal automatically syncs every 24 hours. However, Grant Contributors have the option to force a sync of all published grants by navigating to their Grants Dashboard in the California Grants Portal. Once there, select "force sync" next to any grant. Note: When "force sync" is selected on any grant in the Grants Dashboard, all of the Grant Contributor’s published grants will also sync. Grant drafts will remain unpublished. See [State Grantmakers Guide](https://www.grants.ca.gov/part-iii-submitting-updating-and-maintaining-information/) for more details.
+The Grants Portal automatically syncs every 24 hours. However, Grant Contributors have the option to force a sync of all published grants by navigating to their Grants Dashboard in the California Grants Portal. Once there, select "force sync" next to any grant. Note: When "force sync" is selected on any grant in the Grants Dashboard, all of the Grant Contributor’s published grants will also sync. Grant drafts will remain unpublished. See [State Grantmakers Guide](https://www.grants.ca.gov/part-iii-submitting-updating-and-maintaining-information/) **(state agencies must log in prior to accessing this link)** for more details.
 
 = How do I edit previously published grants? =
 
-Organizations using the WordPress plugin must edit their grants through their WordPress Admin Dashboard, rather than the California Grants Portal. See instructions in the [State Grantmakers Guide](https://www.grants.ca.gov/part-iii-submitting-updating-and-maintaining-information/) about editing grants with the WordPress plugin.
+Organizations using the WordPress plugin must edit their grants through their WordPress Admin Dashboard, rather than the California Grants Portal. See instructions in the [State Grantmakers Guide](https://www.grants.ca.gov/part-iii-submitting-updating-and-maintaining-information/) **(state agencies must log in prior to accessing this link)** about editing grants with the WordPress plugin.
 
 = Can Grant Contributors submit grants through both the WordPress plugin and the online form? =
 
-Yes, Grant Contributors can use both the WordPress plugin and online form to submit grant opportunities. Grant Contributors should reference the State Grantmakers Guide for instructions on submitting opportunities through the online form. Grant Contributors should note that grants submitted via WordPress plugin must be edited in the WordPress admin dashboard while grants submitted via online form must be edited in the Grants Portal.
+Yes, Grant Contributors can use both the WordPress plugin and online form to submit grant opportunities. Grant Contributors should reference the State Grantmakers Guide **(state agencies must log in prior to accessing this link)** for instructions on submitting opportunities through the online form. Grant Contributors should note that grants submitted via WordPress plugin must be edited in the WordPress admin dashboard while grants submitted via online form must be edited in the Grants Portal.
 
 == Changelog ==
 
