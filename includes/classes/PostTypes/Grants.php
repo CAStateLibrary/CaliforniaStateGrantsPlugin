@@ -69,6 +69,8 @@ class Grants {
 
 		$applications = get_post_meta( $post_id, 'applicationsSubmitted', true );
 
+		add_filter( 'default_post_metadata', array( $this, 'award_stats_default_meta_value' ), 10, 3 );
+
 		// If empty and non-zero value.
 		if ( empty( $applications ) && 0 !== $applications ) {
 			return $value;
@@ -81,8 +83,6 @@ class Grants {
 		} else {
 			$fiscal_year = Core\get_deadline_fiscal_year( $this->post_id );
 		}
-
-		add_filter( 'default_post_metadata', array( $this, 'award_stats_default_meta_value' ), 10, 3 );
 
 		return [
 			[

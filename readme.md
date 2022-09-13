@@ -25,7 +25,7 @@ The California State Grants Plugin is the official WordPress plugin allowing the
 
 ## Specifications
 
-Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
+Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) **(state agencies must log in prior to accessing this link)**  to learn how to submit your grant opportunities to the Grants Portal.
 
 ## Requirements
 
@@ -52,12 +52,12 @@ The plugin targets the following modern browsers:
 
 1. Upload the entire `/CaliforniaStateGrantsPlugin` directory to the `/wp-content/plugins/` directory.
 2. Activate California State Grants plugin through the 'Plugins' menu in WordPress.
-3. Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
+3. Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) **(state agencies must log in prior to accessing this link)**   to learn how to submit your grant opportunities to the Grants Portal.
 
 ### Installing the California State Grants plugin from the WordPress plugin store
 
 1. Install and activate the [California State Grants plugin](https://wordpress.org/plugins/california-state-grants/) from the WordPress plugin store.
-2. Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) to learn how to submit your grant opportunities to the Grants Portal.
+2. Please follow the detailed instructions provided in the [State Grantmakers Guide](https://www.grants.ca.gov/state-grantmakers-guide/) **(state agencies must log in prior to accessing this link)**  to learn how to submit your grant opportunities to the Grants Portal.
 
 ## Support Level
 
