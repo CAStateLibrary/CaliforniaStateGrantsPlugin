@@ -1602,9 +1602,7 @@ class Field {
 					break;
 				case 'electronic-submission-method':
 					$temp_value  = $data[ $meta_field['id'] ];
-					$clean_value = array(
-						'type' => $temp_value['type'],
-					);
+					$clean_value = array();
 					if ( 'email' === $temp_value['type'] ) {
 						$clean_value['email'] = ( isset( $temp_value['email'] ) ) ? sanitize_email( $temp_value['email'] ) : '';
 					} elseif ( 'url' === $temp_value['type'] ) {
