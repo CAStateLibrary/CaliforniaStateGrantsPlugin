@@ -40,56 +40,7 @@ class Grants {
 		add_filter( 'manage_' . self::get_cpt_slug() . '_posts_columns', array( $this, 'set_custom_edit_columns' ) );
 		add_action( 'manage_' . self::get_cpt_slug() . '_posts_custom_column', array( $this, 'custom_column_renderer' ), 10, 2 );
 
-		add_filter( 'default_post_metadata', array( $this, 'award_stats_default_meta_value' ), 10, 3 );
-
 		self::$init = true;
-	}
-
-	/**
-	 * Add defualt/fallback values for Grant awardstats data.
-	 *
-	 * @param mixed  $value Post meta value.
-	 * @param int    $post_id Post ID.
-	 * @param string $meta_key Meta key for the default value.
-	 *
-	 * @return mixed
-	 */
-	public function award_stats_default_meta_value( $value, $post_id, $meta_key ) {
-		if (
-			empty( $value )
-			&& (
-			 'awardStats' !== $meta_key
-			 || self::get_cpt_slug() !== get_post_type( $post_id )
-			)
-		) {
-			return $value;
-		}
-
-		remove_filter( 'default_post_metadata', array( $this, 'award_stats_default_meta_value' ) );
-
-		$applications = get_post_meta( $post_id, 'applicationsSubmitted', true );
-
-		add_filter( 'default_post_metadata', array( $this, 'award_stats_default_meta_value' ), 10, 3 );
-
-		// If empty and non-zero value.
-		if ( empty( $applications ) && 0 !== $applications ) {
-			return $value;
-		}
-
-		$grant_type = Core\get_grant_type( $post_id );
-
-		if ( 'ongoing' === $grant_type ) {
-			$fiscal_year = '2020-2021';
-		} else {
-			$fiscal_year = Core\get_deadline_fiscal_year( $this->post_id );
-		}
-
-		return [
-			[
-				'fiscalYear'            => $fiscal_year,
-				'applicationsSubmitted' => $applications,
-			],
-		];
 	}
 
 	/**
