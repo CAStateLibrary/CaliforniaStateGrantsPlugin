@@ -252,13 +252,20 @@ const maybeSetHiddenClass = el => {
 	} );
 	current = field ? field.value : '';
 
+	// Check if parent/depedent field has required-if set for active or forecasted grant type.
+	const grantType = getCurrentGrantType();
+	const { requiredIf } = field.dataset;
+	const isFieldRequiredCheck = ( ! requiredIf || ! grantType )
+		? true
+		: -1 !== requiredIf.split( ',' ).map( s => s.trim() ).indexOf( grantType );
+
 	if (
 		'not_equal' === visibleOptions['compare'] && current === visibleOptions['value']
 		|| 'equal' === visibleOptions['compare'] && current !== visibleOptions['value']
 	) {
 		el.classList.add( 'hidden' );
 
-		if ( true === visibleOptions['required'] ) {
+		if ( isFieldRequiredCheck && true === visibleOptions['required'] ) {
 			if ( el.querySelector( 'input:not([type="checkbox"])' ) ) {
 				el.querySelector( 'input:not([type="checkbox"])' ).removeAttribute( 'required' );
 			}
@@ -275,7 +282,7 @@ const maybeSetHiddenClass = el => {
 	} else {
 		el.classList.remove( 'hidden' );
 
-		if ( true === visibleOptions['required'] ) {
+		if ( isFieldRequiredCheck && true === visibleOptions['required'] ) {
 			if ( el.querySelector( 'input:not([type="checkbox"])' ) ) {
 				el.querySelector( 'input:not([type="checkbox"])' ).setAttribute( 'required', true );
 			}
