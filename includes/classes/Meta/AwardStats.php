@@ -148,7 +148,7 @@ class AwardStats {
 				continue;
 			}
 
-			if ( '' === $award_stats['fiscalYear'] || '' === $award_stats['applicationsSubmitted'] || '' === $award_stats['grantsAwarded'] ) {
+			if ( '' === $award_stats['fiscalYear'] || '' === $award_stats['applicationsSubmitted'] ) {
 				continue;
 			}
 
