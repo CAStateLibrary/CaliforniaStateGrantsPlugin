@@ -101,7 +101,7 @@ class Dates {
 			'class'       => 'onlyActive',
 			'name'        => __( 'Application Deadline', 'ca-grants-plugin' ),
 			'type'        => 'datetime-local',
-			'description' => __( 'Leave empty if this opportunity has no deadline.', 'ca-grants-plugin' ),
+			'description' => __( "Leave empty if this opportunity has no deadline.<br/><br/>Please enter the time in 24 hour format (e.g. 14:30). When grants close at midnight, the grant details page will display 00:00, which can be confusing for users. If possible, use '23:59' (11:59pm) for clarity.", 'ca-grants-plugin' ),
 		];
 
 		return $fields;

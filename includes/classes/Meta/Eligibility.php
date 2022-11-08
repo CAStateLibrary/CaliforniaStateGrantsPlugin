@@ -91,7 +91,7 @@ class Eligibility {
 			'name'        => __( 'Eligibility: Geographic', 'ca-grants-plugin' ),
 			'type'        => 'textarea',
 			'text_limit'  => 450,
-			'description' => __( 'If applicable, provide details on any geographic requirements, limitations, or exclusions.<br/><br/>Must applicants live or do business in a specified geographic area? Does the grant money have to be spent only in certain geographic areas, or are there any focused priorities, such as disadvantage communities?', 'ca-grants-plugin' ),
+			'description' => __( "If applicable, provide details on any geographic requirements, limitations, or exclusions. Please add the following language if projects operated on state or federal lands are eligible to apply for the grant: 'Projects may occur on state or federal lands.'<br/><br/>Must applicants live or do business in a specified geographic area? Does the grant money have to be spent only in certain geographic areas, or are there any focused priorities, such as disadvantage communities?", 'ca-grants-plugin' ),
 		);
 
 		return $fields;
