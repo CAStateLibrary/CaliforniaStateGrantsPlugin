@@ -66,6 +66,7 @@ Yes, Grant Contributors can use both the WordPress plugin and online form to sub
 == Changelog ==
 
 = 2.0.9 =
+* Adds Other Legal Entity to the list of recipient types
 * Updates package.json
 * Updates readme
 
