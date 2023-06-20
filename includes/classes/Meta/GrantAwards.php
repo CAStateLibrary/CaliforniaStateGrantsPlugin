@@ -111,6 +111,7 @@ class GrantAwards {
 					<li>Nonprofit Organization: Any nonprofit (501(c)(3) or others) or tax-exempt organization, including private schools and private universities.</li>
 					<li>Public Agency: Counties, cities, special districts, public K12 or higher education institutions, or any other government entity.</li>
 					<li>Tribal Government: Federally recognized Tribes located in California and non-federally recognized Tribes located in California with an established government structure.</li>
+					<li>Other Legal Entity: This type encompasses all other legal entities that are not listed in the previous options, including but not limited to all trusts, estates, and other organizations that have legal rights and obligations.</li>
 				</ol>',
 					'ca-grants-plugin'
 				),
