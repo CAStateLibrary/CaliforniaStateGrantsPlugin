@@ -10,6 +10,8 @@
  * Author URI:        
  * License:           GPLv2
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Update URI:        https://github.com/10up/post-finder
+ * 
  */
 
  if ( ! defined( 'ABSPATH' ) ) {

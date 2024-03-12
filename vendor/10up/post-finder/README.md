@@ -2,7 +2,7 @@
 
 > Creates a rich input field that allows a user to curate and rank content items (posts or other custom post types)
 
-[![Support Level](https://img.shields.io/badge/support-stable-blue.svg)](#support-level) [![Release Version](https://img.shields.io/github/release/10up/post-finder.svg)](https://github.com/10up/post-finder/releases/latest) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.4%20tested-success.svg) [![GPLv2 License](https://img.shields.io/github/license/10up/post-finder.svg)](https://github.com/10up/post-finder/blob/develop/LICENSE.md)
+[![Support Level](https://img.shields.io/badge/support-stable-blue.svg)](#support-level) [![Release Version](https://img.shields.io/github/release/10up/post-finder.svg)](https://github.com/10up/post-finder/releases/latest) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.8%20tested-success.svg) [![GPLv2 License](https://img.shields.io/github/license/10up/post-finder.svg)](https://github.com/10up/post-finder/blob/develop/LICENSE.md)
 
 
 ## Installation
@@ -45,4 +45,4 @@ Please read [CODE_OF_CONDUCT.md](https://github.com/10up/post-finder/blob/develo
 
 ## Like what you see?
 
-<a href="http://10up.com/contact/"><img src="https://10updotcom-wpengine.s3.amazonaws.com/uploads/2016/10/10up-Github-Banner.png" width="850" alt="Work with us at 10up"></a>
+<a href="http://10up.com/contact/"><img src="https://10up.com/uploads/2016/10/10up-Github-Banner.png" width="850" alt="Work with us at 10up"></a>

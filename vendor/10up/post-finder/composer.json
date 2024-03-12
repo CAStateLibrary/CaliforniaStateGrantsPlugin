@@ -22,7 +22,7 @@
 		"source": "https://github.com/10up/post-finder"
 	},
 	"require": {
-		"composer/installers": "~1.0"
+		"composer/installers": "~1.0 || ~2.0"
 	},
 	"autoload": {
 		"files": [
