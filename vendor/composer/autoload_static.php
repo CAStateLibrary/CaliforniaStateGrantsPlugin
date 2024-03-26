@@ -4,14 +4,14 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit93184774a5d067e5898442fb1dec8474
+class ComposerStaticInit4950e33dc87319a4c203f31aa0133e8d
 {
     public static $files = array (
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         'c72349b1fe8d0deeedd3a52e8aa814d8' => __DIR__ . '/..' . '/mockery/mockery/library/helpers.php',
         'ce9671a430e4846b44e1c68c7611f9f5' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
-        'f0dfc2753ba4b943b88bf8d4f2038beb' => __DIR__ . '/../..' . '/wp-content/plugins/post-finder/post-finder.php',
+        'f0dfc2753ba4b943b88bf8d4f2038beb' => __DIR__ . '/..' . '/10up/post-finder/post-finder.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -788,9 +788,9 @@ class ComposerStaticInit93184774a5d067e5898442fb1dec8474
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit93184774a5d067e5898442fb1dec8474::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit93184774a5d067e5898442fb1dec8474::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit93184774a5d067e5898442fb1dec8474::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit4950e33dc87319a4c203f31aa0133e8d::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit4950e33dc87319a4c203f31aa0133e8d::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit4950e33dc87319a4c203f31aa0133e8d::$classMap;
 
         }, null, ClassLoader::class);
     }

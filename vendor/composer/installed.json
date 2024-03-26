@@ -92,7 +92,7 @@
                 "issues": "https://github.com/10up/post-finder/issues",
                 "source": "https://github.com/10up/post-finder"
             },
-            "install-path": "../../wp-content/plugins/post-finder"
+            "install-path": "../10up/post-finder"
         },
         {
             "name": "10up/wp_mock",

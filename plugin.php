@@ -6,7 +6,7 @@ use CaGov\Grants\Admin\Taxonomies;
  * Plugin Name: California State Grants
  * Plugin URI:  https://github.com/CAStateLibrary/CaliforniaStateGrantsPlugin
  * Description: This plugin provides a WordPress dashboard interface to input California State Grant information and facilitate syncing that data with the California State Grants Portal.
- * Version:     2.0.11
+ * Version:     2.0.12
  * Author:      CSL
  * Author URI:  https://www.library.ca.gov/
  * Text Domain: CaliforniaStateGrantsPlugin
@@ -16,7 +16,7 @@ use CaGov\Grants\Admin\Taxonomies;
  */
 
 // Useful global constants.
-define( 'CA_GRANTS_VERSION', '2.0.11' );
+define( 'CA_GRANTS_VERSION', '2.0.12' );
 define( 'CA_GRANTS_URL', plugin_dir_url( __FILE__ ) );
 define( 'CA_GRANTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CA_GRANTS_INC', CA_GRANTS_PATH . 'includes/' );
@@ -148,7 +148,7 @@ function ca_grants_plugin_setup() {
 
 // Set up the plugin after the theme to mae sure hooks in the theme are set up first.
 add_action(
-	'setup_theme',
+	'after_setup_theme',
 	function() {
 		// Setup the plugin.
 		ca_grants_plugin_setup();
