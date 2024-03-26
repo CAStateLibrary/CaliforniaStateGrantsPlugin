@@ -1,9 +1,0 @@
-.sass-cache
-.DS_Store
-node_modules
-release
-vendor
-composer.lock
-yarn.lock
-phpunit.xml
-.idea
