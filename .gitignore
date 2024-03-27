@@ -23,13 +23,3 @@ Session.vim
 # Windows
 Thumbs.db
 Desktop.ini
-
-# Vendor Stuff
-/vendor/*
-!/vendor/autoload.php
-!/vendor/composer
-!/vendor/symfony
-!/vendor/myclabs
-!/vendor/10up
-/vendor/10up/phpcs-composer
-/vendor/10up/wp_mock
