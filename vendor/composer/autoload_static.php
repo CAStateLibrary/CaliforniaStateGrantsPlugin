@@ -40,7 +40,11 @@ class ComposerStaticInit4950e33dc87319a4c203f31aa0133e8d
         'C' => 
         array (
             'Composer\\Installers\\' => 20,
-            'CaGov\\Grants\\' => 13,
+            'CaGov\\Grants\\REST\\' => 18,
+            'CaGov\\Grants\\PostTypes\\' => 23,
+            'CaGov\\Grants\\Meta\\' => 18,
+            'CaGov\\Grants\\Cron\\' => 18,
+            'CaGov\\Grants\\Admin\\' => 19,
         ),
     );
 
@@ -77,9 +81,25 @@ class ComposerStaticInit4950e33dc87319a4c203f31aa0133e8d
         array (
             0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
         ),
-        'CaGov\\Grants\\' => 
+        'CaGov\\Grants\\REST\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/includes/classes',
+            0 => __DIR__ . '/../..' . '/includes/classes/REST',
+        ),
+        'CaGov\\Grants\\PostTypes\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/includes/classes/PostTypes',
+        ),
+        'CaGov\\Grants\\Meta\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/includes/classes/Meta',
+        ),
+        'CaGov\\Grants\\Cron\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/includes/classes/Cron',
+        ),
+        'CaGov\\Grants\\Admin\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/includes/classes/Admin',
         ),
     );
 

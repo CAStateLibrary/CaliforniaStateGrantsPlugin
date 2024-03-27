@@ -15,7 +15,11 @@
   },
   "autoload": {
     "psr-4": {
-      "CaGov\\Grants\\": "includes/classes/"
+      "CaGov\\Grants\\Admin\\": "includes/classes/Admin/",
+      "CaGov\\Grants\\Cron\\": "includes/classes/Cron/",
+      "CaGov\\Grants\\Meta\\": "includes/classes/Meta/",
+      "CaGov\\Grants\\PostTypes\\": "includes/classes/PostTypes/",
+      "CaGov\\Grants\\REST\\": "includes/classes/REST/"
     }
   },
   "require-dev": {

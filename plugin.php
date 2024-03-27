@@ -6,7 +6,7 @@ use CaGov\Grants\Admin\Taxonomies;
  * Plugin Name: California State Grants
  * Plugin URI:  https://github.com/CAStateLibrary/CaliforniaStateGrantsPlugin
  * Description: This plugin provides a WordPress dashboard interface to input California State Grant information and facilitate syncing that data with the California State Grants Portal.
- * Version:     2.0.12
+ * Version:     2.0.13
  * Author:      CSL
  * Author URI:  https://www.library.ca.gov/
  * Text Domain: CaliforniaStateGrantsPlugin
@@ -16,7 +16,7 @@ use CaGov\Grants\Admin\Taxonomies;
  */
 
 // Useful global constants.
-define( 'CA_GRANTS_VERSION', '2.0.12' );
+define( 'CA_GRANTS_VERSION', '2.0.13' );
 define( 'CA_GRANTS_URL', plugin_dir_url( __FILE__ ) );
 define( 'CA_GRANTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CA_GRANTS_INC', CA_GRANTS_PATH . 'includes/' );
@@ -38,7 +38,7 @@ require_once CA_GRANTS_INC . 'functions/helpers/validators.php';
 require_once CA_GRANTS_INC . 'functions/helpers/validation-helpers.php';
 
 // Require Composer autoloader if it exists.
-if ( file_exists( CA_GRANTS_PATH . '/vendor/autoload.php' ) ) {
+if ( file_exists( CA_GRANTS_PATH . 'vendor/autoload.php' ) ) {
 	require_once CA_GRANTS_PATH . 'vendor/autoload.php';
 } else {
 	// No composer, autoload our own classes.

@@ -14,5 +14,9 @@ return array(
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
     'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
     'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
-    'CaGov\\Grants\\' => array($baseDir . '/includes/classes'),
+    'CaGov\\Grants\\REST\\' => array($baseDir . '/includes/classes/REST'),
+    'CaGov\\Grants\\PostTypes\\' => array($baseDir . '/includes/classes/PostTypes'),
+    'CaGov\\Grants\\Meta\\' => array($baseDir . '/includes/classes/Meta'),
+    'CaGov\\Grants\\Cron\\' => array($baseDir . '/includes/classes/Cron'),
+    'CaGov\\Grants\\Admin\\' => array($baseDir . '/includes/classes/Admin'),
 );

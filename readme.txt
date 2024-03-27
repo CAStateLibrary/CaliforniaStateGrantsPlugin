@@ -4,7 +4,7 @@ Tags: grants, loans, state government, California Grants Portal, submit your gra
 Requires at least: 5.0
 Tested up to: 6.0.2
 Requires PHP: 7.4
-Stable tag: 2.0.12
+Stable tag: 2.0.13
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,7 +65,11 @@ Yes, Grant Contributors can use both the WordPress plugin and online form to sub
 
 == Changelog ==
 
-= 2.0.11 =
+= 2.0.13 =
+* Updates composer.json with more namespaces in autoload
+* Updates readme
+
+= 2.0.12 =
 * Updates composer.json to disable installer
 * Updates plugin.php to use the old hook
 * Updates readme
