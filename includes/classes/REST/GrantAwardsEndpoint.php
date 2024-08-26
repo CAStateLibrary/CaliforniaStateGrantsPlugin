@@ -64,6 +64,9 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 	 */
 	public function modify_collection_params( $query_params ) {
 
+		$query_params['status']['default']           = [ 'publish', 'csl_cancelled' ];
+		$query_params['status']['sanitize_callback'] = [ $this, 'sanitize_status' ];
+
 		$query_params['grant_id'] = array(
 			'description'       => __( 'Grant id to get list of awards associated with this grant.', 'ca-grants-plugin' ),
 			'type'              => 'integer',
@@ -90,7 +93,7 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 			// Validate to ensure the param is in the form of YYYY-YYYY where the second number is one year later than the first.
-			'validate_callback' => function( $original_param ) {
+			'validate_callback' => function ( $original_param ) {
 				$param = sanitize_text_field( $original_param );
 
 				if ( ! empty( $param ) ) {
@@ -112,6 +115,51 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 		);
 
 		return $query_params;
+	}
+
+	/**
+	 * Sanitizes and validates the list of post statuses, including whether the
+	 * user can query private statuses.
+	 * Use default value as array of statuses to allow multiple statuses instead string only.
+	 *
+	 * @param string|array    $statuses  One or more post statuses.
+	 * @param WP_REST_Request $request   Full details about the request.
+	 * @param string          $parameter Additional parameter to pass to validation.
+	 *
+	 * @return array|WP_Error A list of valid statuses, otherwise WP_Error object.
+	 */
+	public function sanitize_status( $statuses, $request, $parameter ) {
+		$statuses = wp_parse_slug_list( $statuses );
+
+		// The default status is different in WP_REST_Attachments_Controller.
+		$attributes     = $request->get_attributes();
+		$default_status = $attributes['args']['status']['default'];
+
+		foreach ( $statuses as $status ) {
+			if ( in_array( $status, $default_status, true ) ) {
+				continue;
+			}
+
+			$post_type_obj = get_post_type_object( GrantAwards::CPT_SLUG );
+
+			if (
+				current_user_can( $post_type_obj->cap->edit_posts )
+				|| ( 'private' === $status && current_user_can( $post_type_obj->cap->read_private_posts ) )
+			) {
+				$result = rest_validate_request_arg( $status, $request, $parameter );
+				if ( is_wp_error( $result ) ) {
+					return $result;
+				}
+			} else {
+				return new WP_Error(
+					'rest_forbidden_status',
+					__( 'Status is forbidden.' ),
+					array( 'status' => rest_authorization_required_code() )
+				);
+			}
+		}
+
+		return $statuses;
 	}
 
 	/**
@@ -275,14 +323,19 @@ class GrantAwardsEndpoint extends BaseEndpoint {
 			}
 
 			// Get the metadata for this post
-			$meta_value = empty( $metadata[ $metafield_data['id'] ][0] ) ? '' : $metadata[ $metafield_data['id'] ][0];
+			$meta_value = isset( $metadata[ $metafield_data['id'] ] ) && isset( $metadata[ $metafield_data['id'] ][0] ) ? $metadata[ $metafield_data['id'] ][0] : '';
 
 			// Some fields need special handling
 			switch ( $metafield_data['type'] ) {
 
 				case 'post-finder':
 				case 'number':
-					$new_data[ $metafield_data['id'] ] = absint( $meta_value );
+					// Convert to absint only if there is a value.
+					if ( ! empty( $meta_value ) || 0 === $meta_value || '0' === $meta_value ) {
+						$new_data[ $metafield_data['id'] ] = absint( $meta_value );
+					} else {
+						$new_data[ $metafield_data['id'] ] = $meta_value;
+					}
 					break;
 				case 'datetime-local':
 					$new_data[ $metafield_data['id'] ] = $meta_value ? gmdate( 'Y-m-d\TH:m', $meta_value ) : $meta_value;

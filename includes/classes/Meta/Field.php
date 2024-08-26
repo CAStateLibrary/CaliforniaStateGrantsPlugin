@@ -1510,7 +1510,11 @@ class Field {
 					$value = esc_url_raw( $data[ $meta_field['id'] ] );
 					break;
 				case 'number':
-					$value = absint( $data[ $meta_field['id'] ] );
+					$value = $data[ $meta_field['id'] ];
+					// Convert to absint only if there is a value.
+					if ( ! empty( $value ) || 0 === $value || '0' === $value ) {
+						$value = absint( $value );
+					}
 					break;
 				case 'datetime-local':
 					$date          = new DateTime( $data[ $meta_field['id'] ] );

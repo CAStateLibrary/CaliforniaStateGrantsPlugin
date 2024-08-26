@@ -10,19 +10,19 @@ import repeaterFormFormFields from './components/repeater-form-field';
 import updatePostFinder from './components/update-post-finder';
 
 // polyfill closest.
-if ( !Element.prototype.closest ) {
-	Element.prototype.closest = function( s ) {
+if (!Element.prototype.closest) {
+	Element.prototype.closest = function (s) {
 		let el = this;
 
 		do {
-			if ( el.matches( s ) ) return el;
+			if (el.matches(s)) return el;
 			el = el.parentElement || el.parentNode;
-		} while ( null !== el && 1 === el.nodeType );
+		} while (el !== null && el.nodeType === 1);
 		return null;
 	};
 }
 
-document.addEventListener( 'DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 	copyToClipboard();
 	checkboxSelectAll();
 	tooltips();
@@ -33,4 +33,4 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	conditionalFormFields();
 	repeaterFormFormFields();
 	updatePostFinder();
-} );
+});

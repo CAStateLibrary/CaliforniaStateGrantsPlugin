@@ -181,11 +181,11 @@ class GrantAwards {
 				'required'    => true,
 			),
 			array(
-				'id'            => 'matchingFundingAmount',
-				'name'          => __( 'Matching Funding Amount', 'ca-grants-plugin' ),
-				'type'          => 'number',
-				'description'   => __( 'If partial or full matching is requested or required by the agreement or voluntarily contributed by the awardee, enter the matched funding dollar amount. If no matched funding is contributed enter "0". Update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
-				'required'      => true,
+				'id'          => 'matchingFundingAmount',
+				'name'        => __( 'Matching Funding Amount', 'ca-grants-plugin' ),
+				'type'        => 'number',
+				'description' => __( 'If partial or full matching is requested or required by the agreement or voluntarily contributed by the awardee, enter the matched funding dollar amount. If no matched funding is contributed enter "0". Update if changes are made in the grant agreement.', 'ca-grants-plugin' ),
+				'required'    => true,
 			),
 			array(
 				'id'          => 'awardAmountNotes',
@@ -267,6 +267,25 @@ class GrantAwards {
 				'type'        => 'textarea',
 				'description' => __( 'Provide details on geographic locations served by this grant opportunity, with emphasis on priority communities, underserved areas, or communities impacted by and benefiting from the funding. ', 'ca-grants-plugin' ),
 				'text_limit'  => 300,
+			),
+			array(
+				'id'            => 'totalAwardUsed',
+				'name'          => __( 'Total Award Used', 'ca-grants-plugin' ),
+				'type'          => 'number',
+				'description'   => __( 'Total Award Used', 'ca-grants-plugin' ),
+				'default_value' => '',
+			),
+			array(
+				'id'          => 'awardCancellingNotes',
+				'name'        => __( 'Cancelling Award Notes', 'ca-grants-plugin' ),
+				'type'        => 'textarea',
+				'description' => __( 'Please provide a brief summary of cancelling this grant award.', 'ca-grants-plugin' ),
+				'text_limit'  => 300,
+				'visible'     => array(
+					'fieldId'  => 'totalAwardUsed',
+					'compare'  => 'not_empty',
+					'required' => true,
+				),
 			),
 		);
 	}

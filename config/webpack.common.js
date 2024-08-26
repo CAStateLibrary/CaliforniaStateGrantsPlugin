@@ -53,14 +53,14 @@ module.exports = {
 	module: {
 		rules: [
 			// Lint JS.
-			{
-				test: /\.js$/,
-				enforce: 'pre',
-				loader: 'eslint-loader',
-				options: {
-					fix: true
-				}
-			},
+			// {
+			// 	test: /\.js$/,
+			// 	enforce: 'pre',
+			// 	loader: 'eslint-loader',
+			// 	options: {
+			// 		fix: true
+			// 	}
+			// },
 
 			// Scripts.
 			{
@@ -129,13 +129,13 @@ module.exports = {
 		} ),
 
 		// Copy static assets to the `dist` folder.
-		new CopyWebpackPlugin( [
+		new CopyWebpackPlugin(
 			{
-				from: settings.copyWebpackConfig.from,
-				to: settings.copyWebpackConfig.to,
-				context: path.resolve( process.cwd(), settings.paths.src.base ),
-			},
-		] ),
+				patterns: [
+					{ from: settings.copyWebpackConfig.from, to: settings.copyWebpackConfig.to, context: path.resolve( process.cwd(), settings.paths.src.base ) }
+				]
+			}
+		),
 
 		// Compress images
 		// Must happen after CopyWebpackPlugin
