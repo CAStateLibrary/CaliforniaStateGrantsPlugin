@@ -16,7 +16,7 @@ use CaGov\Grants\Admin\Taxonomies;
  */
 
 // Useful global constants.
-define( 'CA_GRANTS_VERSION', '2.0.13' );
+define( 'CA_GRANTS_VERSION', '2.0.14' );
 define( 'CA_GRANTS_URL', plugin_dir_url( __FILE__ ) );
 define( 'CA_GRANTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CA_GRANTS_INC', CA_GRANTS_PATH . 'includes/' );

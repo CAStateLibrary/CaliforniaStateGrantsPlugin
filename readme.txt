@@ -2,9 +2,9 @@
 Contributors: castatelibrary
 Tags: grants, loans, state government, California Grants Portal, submit your grants, California state agencies, post awards
 Requires at least: 5.0
-Tested up to: 6.0.2
-Requires PHP: 7.4
-Stable tag: 2.0.13
+Tested up to: 6.6.1
+Requires PHP: 8.1
+Stable tag: 2.0.14
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,6 +64,10 @@ Organizations using the WordPress plugin must edit their grants through their Wo
 Yes, Grant Contributors can use both the WordPress plugin and online form to submit grant opportunities. Grant Contributors should reference the State Grantmakers Guide **(state agencies must log in prior to accessing this link)** for instructions on submitting opportunities through the online form. Grant Contributors should note that grants submitted via WordPress plugin must be edited in the WordPress admin dashboard while grants submitted via online form must be edited in the Grants Portal.
 
 == Changelog ==
+
+= 2.0.13 =
+* Adds new cancel feature for grant awards
+* Updates readme
 
 = 2.0.13 =
 * Updates composer.json with more namespaces in autoload
