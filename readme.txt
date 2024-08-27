@@ -65,7 +65,7 @@ Yes, Grant Contributors can use both the WordPress plugin and online form to sub
 
 == Changelog ==
 
-= 2.0.13 =
+= 2.0.14 =
 * Adds new cancel feature for grant awards
 * Updates readme
 
